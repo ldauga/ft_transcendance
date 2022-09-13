@@ -1,0 +1,112 @@
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+.joinQueue {
+    width: 50%;
+    height: 40%;
+
+    margin: auto;
+
+    margin-top: 5%;
+
+    background-color: #3A3935;
+}
+
+video {
+    position: absolute;
+    height: 94.5%;
+    width: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+  }
+  
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.finishCanvas {
+    width: 100%;
+    background-color: #1A1A1A;
+}
+
+.modal .bi {
+    color: black;
+}
+
+.flex {
+    display: flex;
+}
+
+.modal .replayButton, a .replayButton{
+    width: 40%;
+    height: 100%;
+
+    background-color: #1A1A1A;
+    border: 0;
+    color: white;
+
+    font-size: 200%;
+
+    box-shadow: inset #901644 0 0 10px;
+
+    margin: auto;
+
+    font-size: calc(1vh + 1vw);
+}
+
+.modal .replayButton:hover {
+    transition: 300ms;
+
+    background-color: #FFFFFF;
+    color: black;
+}
+
+.winnerHeader {
+    text-shadow: 1px 1px 1px #3C3C3C;
+    text-align: center;
+    color: #1A1A1A;
+    font-size: calc(1vh + 1vw);
+}
+
+.saveButton {
+	
+    margin-top: 5%;
+
+    width: 20%;
+    height: 10%;
+
+    border-radius: 20px;
+
+    background-color:#44c767;
+	border:1px solid #18ab29;
+
+	color:#ffffff;
+	
+    font-size: calc(2vh + 2vw);
+}
+
+.saveButton:hover {
+	background-color:#1e5d2f;
+}
+.saveButton:active, .spectateButton:active, .queueButton:active {
+	position:relative;
+	top:1px;
+}

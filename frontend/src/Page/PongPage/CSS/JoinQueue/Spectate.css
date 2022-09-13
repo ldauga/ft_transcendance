@@ -1,0 +1,43 @@
+.spectateDiv {
+	margin-top: 1%;
+	/* margin: 1%; */
+	
+    width: 99%;
+    height: 48%;
+    background: #302E2D;
+	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+	transition: all 0.5s;
+}
+
+.spectateDiv:hover {
+	transition: all 0.5s;
+	box-shadow: #901644 2.4px 2.4px 10px;
+}
+
+.spectateButton {
+    margin-top: 10%;
+    
+    width: 60%;
+ 
+    background-color: #1A1A1A;
+    border: 0;
+    color: white;
+
+    font-size: calc(2vh + 2vw);
+
+    box-shadow: inset #901644 0 0 10px;
+}
+
+.spectateInput {
+    margin-top: 10%;
+
+    width: calc(80% - 8px);
+
+    font-size: calc(1vh + 1vw);
+
+    color: #FFFFFF;
+
+    background-color: #1A1A1A;
+
+    border: 2px black solid;
+}

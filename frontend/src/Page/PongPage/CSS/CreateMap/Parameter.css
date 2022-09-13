@@ -1,0 +1,160 @@
+.Button {
+    margin: auto;
+    margin-top: 10%;
+    
+    width: 45%;
+    
+    border: 0;
+    border-radius: 100px;
+    font-size: calc(1vh + 1vw);
+
+    border: 2px black solid;
+    cursor: pointer;
+
+}
+
+.Button:hover {
+    transition: all 0.25s;
+    background-color: aliceblue;
+}
+
+.Button:active {
+    transform: translateY(2px);
+}
+
+.addObstacle {
+    background-color: green;
+}
+
+.delObstacle {
+    background-color: #7d0000;
+}
+
+input[type=range].rangeBar {
+  width: 100%;
+  margin: 12.5px 0;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+  
+input[type=range].rangeBar:focus {
+    outline: none;
+}
+
+input[type=range].rangeBar::-webkit-slider-runnable-track {
+    background: #000000;
+    border: 1px solid #010101;
+    border-radius: 25px;
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+}
+
+input[type=range].rangeBar::-webkit-slider-thumb {
+    margin-top: -13.5px;
+    width: 21px;
+    height: 35px;
+    background: #4c4c4c;
+    border: 1.6px solid #000000;
+    border-radius: 26px;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+input[type=range].rangeBar::-moz-range-track {
+    background: #000000;
+    border: 1px solid #010101;
+    border-radius: 25px;
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+}
+
+input[type=range].rangeBar::-moz-range-thumb {
+    width: 21px;
+    height: 35px;
+    background: #4c4c4c;
+    border: 1.6px solid #000000;
+    border-radius: 26px;
+    cursor: pointer;
+}
+
+input[type=range].rangeBar::-ms-track {
+    background: transparent;
+    border-color: transparent;
+    border-width: 13.5px 0;
+    color: transparent;
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+}
+
+input[type=range].rangeBar::-ms-fill-lower {
+    background: #000000;
+    border: 1px solid #010101;
+    border-radius: 50px;
+}
+
+input[type=range].rangeBar::-ms-fill-upper {
+    background: #000000;
+    border: 1px solid #010101;
+    border-radius: 50px;
+}
+
+input[type=range].rangeBar::-ms-thumb {
+    width: 21px;
+    height: 35px;
+    background: #4c4c4c;
+    border: 1.6px solid #000000;
+    border-radius: 26px;
+    cursor: pointer;
+}
+
+input[type=range].rangeBar:focus::-ms-fill-lower {
+    background: #000000;
+}
+
+input[type=range].rangeBar:focus::-ms-fill-upper {
+    background: #000000;
+}
+
+.rangediv {
+    margin: auto;
+    margin-top: 5%;
+
+    width: 80%;
+    height: 20%;
+
+    border: 2px black solid;
+    border-radius: 15px;
+
+    background-color: #1d1d1d;
+
+    display: flex;
+    justify-content: center;
+}
+
+.inviteBar {
+    margin: auto;
+    margin-top: 40%;
+
+    width: 80%;
+
+    font-size: calc(1vh + 1vw);
+
+    border: 2px black solid;
+    border-radius: 15px;
+
+    background-color: #1d1d1d;
+
+    color: white;
+
+    padding: 2%;
+}
+
+.invite {
+    width: 80%;
+
+    background-color: darkblue;
+    padding: 5%;
+}

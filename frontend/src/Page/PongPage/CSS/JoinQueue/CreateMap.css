@@ -1,0 +1,36 @@
+.createMapDiv {
+	margin-top: 1%;
+	/* margin: 1%; */
+	
+    width: 99%;
+    height: 49%;
+    background: #302E2D;
+	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+	transition: all 0.5s;
+}
+
+.createMapDiv:hover {
+	transition: all 0.5s;
+	box-shadow: #901644 2.4px 2.4px 10px;
+}
+
+.createMapButton {
+    margin-top: 17%;
+    
+    width: 80%;
+
+    background-color: #1A1A1A;
+    border: 0;
+    color: white;
+
+    font-size: calc(4vh + 4vw);
+
+    box-shadow: inset #901644 0 0 10px;
+}
+
+.createMapButton:hover {
+    transition: 300ms;
+
+    background-color: #FFFFFF;
+    color: black;
+}

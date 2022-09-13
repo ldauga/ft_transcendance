@@ -1,0 +1,40 @@
+.blocksContainerCenter {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.blocksContainerCollumn {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+}
+
+.blocksContainerRow {
+    display: flex;
+    flex-direction: row;
+    margin-top: 0;
+
+    width: 100%;
+    height: 100%;
+}
+
+.div50 {
+    width: 50%;
+    height: 100%;
+}
+
+main{
+    margin: auto;
+    margin-top: 1%;
+
+    background: #3A3935;
+
+    display: flex;
+
+    width: 98%;
+
+    height: 90%;
+
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}

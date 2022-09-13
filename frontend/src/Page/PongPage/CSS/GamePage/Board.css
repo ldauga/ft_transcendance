@@ -1,0 +1,18 @@
+.boardDiv {
+	margin-top: 5vw;
+}
+
+.pongBoard {
+    border: 0.8vw #1B1B1B solid;
+
+    width: 40%;
+
+    background-color: #1A1A1A;
+
+    box-shadow: 5px 5px 50px blue,
+                -5px -5px 50px rgb(255, 0, 0);
+}
+
+.spectate {
+    width: calc(15% - 0.8vw);
+}

@@ -1,0 +1,36 @@
+.queueDiv {
+	margin-top: 1%;
+	margin-left: 1%;
+	
+    width: 98%;
+    height: 98%;
+    background: #302E2D;
+	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+	transition: all 0.5s;
+}
+
+.queueDiv:hover, .spectateDiv:hover {
+	transition: all 0.5s;
+	box-shadow: #901644 2.4px 2.4px 10px;
+}
+
+.queueButton {
+    margin-top: 10%;
+    
+    width: 60%;
+
+    background-color: #1A1A1A;
+    border: 0;
+    color: white;
+
+    font-size: calc(2vh + 2vw);
+
+    box-shadow: inset #901644 0 0 10px;
+}
+
+.queueButton:hover, .spectateButton:hover {
+    transition: 300ms;
+
+    background-color: #FFFFFF;
+    color: black;
+}

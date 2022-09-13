@@ -1,0 +1,20 @@
+.canvasDiv {
+	width: 65.7%;
+	height: 98%;
+
+	margin: auto;
+	margin-left: 1;
+	margin-top: 1;
+
+    background: #302E2D;
+}
+
+.parameterDiv {
+	width: 32.5%;
+	height: 98%;
+ 
+	margin: auto;
+	margin-top: 1;
+	
+	background: #302E2D;
+}

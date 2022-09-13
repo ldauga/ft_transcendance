@@ -1,0 +1,14 @@
+.main_container {
+    height: 100%;
+    border-radius: 1.5vh;
+    margin: 0.65%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    padding: 2%;
+    color: black;
+}
+
+#main_chat {
+    display: flex;
+    flex-direction: row;
+}
