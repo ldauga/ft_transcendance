@@ -11,7 +11,11 @@ import { RootState } from '../../State';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 
-import rankImg from '../assets/bronze_rank.png'
+import iron_rank_img from '../assets/iron_rank.png'
+import bronze_rank_img from '../assets/bronze_rank.png'
+import gold_rank_img from '../assets/gold_rank.png'
+import diamond_rank_img from '../assets/diamond_rank.png'
+import master_rank_img from '../assets/master_rank.png'
 
 var test = false
 const matches: any[] = [];
@@ -24,6 +28,8 @@ const HomePage = (props: any) => {
 
     const [matchesHistory, setMatchesHistory] = useState(Array<any>)
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
+
+    const [rankImage, setRankImage] = useState("")
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
@@ -64,8 +70,49 @@ const HomePage = (props: any) => {
             axios.get('http://localhost:5001/user').then((res) => {
                 let tmp: any[] = []
                 res.data.forEach((item: any) => {
+
+                    if (item.login == userData.user?.login) {
+                        const tmp1 = document.getElementById('numberWinsValue')
+                        if (tmp1)
+                            tmp1.textContent = item.wins
+                        const tmp2 = document.getElementById('numberLossesValue')
+                        if (tmp2)
+                            tmp2.textContent = item.wins
+                        const tmp3 = document.getElementById('winRateValue')
+                        if (tmp3)
+                            tmp3.textContent = Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'
+                        const tmp4 = document.getElementById('rankNameValue')
+                        if (tmp4) {
+                            setRankImage(iron_rank_img)
+                            tmp4.textContent = 'Iron | Noobies'
+                            if (item.wins > 5) {
+                                setRankImage(bronze_rank_img)
+                            tmp4.textContent = 'Bronze | Trainer'
+                        }
+                            else if (item.wins > 10) {
+                                setRankImage(gold_rank_img)
+                                tmp4.textContent = 'Gold | Not Bad'
+                            }
+                            else if (item.wins > 20) {
+                                setRankImage(diamond_rank_img)
+                                tmp4.textContent = 'Diamond | Wow !!!'
+                            }
+                            else if (item.wins > 30) {
+                                setRankImage(master_rank_img)
+                                tmp4.textContent = 'Master splinter | Our God !!!'
+                            }
+                            if (item.login == 'ldauga') {
+                                setRankImage(master_rank_img)
+                                tmp4.textContent = 'Master splinter | Our God !!!'
+                            } else if (item.login == 'atourret') {
+                                setRankImage(gold_rank_img)
+                                tmp4.textContent = 'GroNoob'
+                            }
+                        }
+                    }
+
                     tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == userData.user?.login ? 'darkblue' : 'none') }}>
-                        <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{}</div>
+                        <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
                         <div className='UserLeaderBoardInfo little'>{item.losses}</div>
@@ -111,22 +158,25 @@ const HomePage = (props: any) => {
                             <div className="rank">
                                 <div className='rankInfo'>
                                     <div className='imgContainer'>
-                                        <img src={rankImg} alt="" />
+                                        <img src={rankImage} />
                                     </div>
                                     <div className='rankName'>
                                         <div className='rankNameText'>Rank :</div>
-                                        <div className='rankNameText'>Grand master splinter</div>
+                                        <div className='rankNameText' id='rankNameValue'></div>
                                     </div>
                                 </div>
                                 <div className='userInfoContainer'>
                                     <div className='userInfo first'>
-
+                                        <div className='userInfoText'>Wins :</div>
+                                        <div className='userInfoText value' id='numberWinsValue'></div>
                                     </div>
                                     <div className='userInfo second'>
-
+                                        <div className='userInfoText'>Losses :</div>
+                                        <div className='userInfoText value' id='numberLossesValue'></div>
                                     </div>
                                     <div className='userInfo third'>
-
+                                        <div className='userInfoText'>Win Rate :</div>
+                                        <div className='userInfoText value' id='winRateValue'></div>
                                     </div>
                                 </div>
                             </div>
