@@ -19,7 +19,7 @@ function Login(props: { user?: any }) {
 				<button className="loginButton" onClick={onClick42Login}>
 					<img className="i42-logo" src="https://42lyon.fr/wp-content/uploads/2022/04/Artboard-1.svg" alt="" />
 				</button>
-				<input className="inviteBar" value={login} onChange={(e) => { setLogin(e.target.value) }} onKeyDown={(event) => { if (event.key === 'Enter') onClickLoginSans42() }} placeholder='Enter valid login to connect' />
+				<input className="loginBar" value={login} onChange={(e) => { setLogin(e.target.value) }} onKeyDown={(event) => { if (event.key === 'Enter') onClickLoginSans42() }} placeholder='Enter valid login to connect' />
 				<button className="loginButton" onClick={onClickLoginSans42}>
 					<img className="i42-logo" src="https://42lyon.fr/wp-content/uploads/2022/04/Artboard-1.svg" alt="" />
 				</button>

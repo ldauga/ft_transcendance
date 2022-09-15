@@ -8,7 +8,6 @@ import imageMap2 from "./map2.png";
 
 import './CSS/JoinQueue/Spectate.css'
 import './CSS/JoinQueue/Queue.css'
-import './CSS/JoinQueue/Invite.css'
 import './CSS/JoinQueue/ChooseMap.css'
 import './CSS/JoinQueue/CreateMap.css'
 import './CSS/GamePage/GamePage.css';

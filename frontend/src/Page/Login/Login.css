@@ -15,6 +15,12 @@
     border: 0;
 }
 
+.loginBar {
+    margin-top: 30%;
+    width: 50%;
+    height: 10%;
+}
+
 .i42-logo {
     margin-right: 1%;
     width: 100%;

@@ -522,6 +522,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   }
 
+  @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
+  async getAllClientConnected(client: Socket) {
+    this.server.to(client.id).emit("getAllClientConnected", arrClient);
+  }
+
   ///////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////
   /*                      POUR PONG                        */
