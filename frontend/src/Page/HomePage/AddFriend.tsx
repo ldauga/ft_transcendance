@@ -9,7 +9,7 @@ import { RootState } from "../../State";
 function AddFriend() {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.user);
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
 	const [isFriendList, setFriendList] = FriendListHook(false);
 	const [isAddFriend, setAddFriend] = AddFriendHook(true);
@@ -33,7 +33,7 @@ function AddFriend() {
 			}
 			else {
 				const newInvitationRequest = {
-					id_user1: userData.user?.id,
+					id_user1: persistantReduceur.user.user?.id,
 					id_user2: res.data.id,
 					user1_accept: true,
 					user2_accept: false,

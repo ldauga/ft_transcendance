@@ -9,7 +9,8 @@ import { RootState } from "../../State/Reducers";
 
 export default function Callback() {
 
-    const userData = useSelector((state: RootState) => state.user)
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
 
@@ -20,7 +21,7 @@ export default function Callback() {
 
     return (
         <>
-            {userData.user !== null ? <Navigate to="/HomePage" /> : <></>}
+            {persistantReduceur.user.user !== null ? <Navigate to="/HomePage" /> : <></>}
         </>
     )
 }

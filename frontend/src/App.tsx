@@ -24,7 +24,6 @@ import NewChatPage from './Page/newChat/newChat';
 
 function App() {
 
-  const userData = useSelector((state: RootState) => state.user)
   return (
 
 

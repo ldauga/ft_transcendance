@@ -70,7 +70,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.server.to(client.id).emit('friendsList', arrClient);
       }
     })
-    console.log(arrClient)
   };
 
   async afterInit(server: any) {
@@ -97,7 +96,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       user2_accept: data.user2_accept
     }
     const invitationRequestReturn = this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
-    console.log(invitationRequestReturn.forEach(item => (console.log(item))));
   }
 
   //NEW CHAT EVENTS
@@ -113,7 +111,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       text: data.text
     }
     const returnMsg = this.http.post('http://localhost:5001/messages', msg);
-    console.log(returnMsg.forEach(item => (console.log(item))));
     // const test = {
     //   id_user1: 0,
     //   score_u1: 2,
@@ -123,7 +120,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //   text: "yoooooo"
     // }
     // const match = this.http.post('http://localhost:5001/mtest', test);
-    // console.log(match.forEach(item => (console.log(item))));
 
     // const data = {
     //   id_user1: 0,
@@ -133,7 +129,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //   winner_id: 3
     // }
     // const match = this.http.post('http://localhost:5001/matchesHistory', data);
-    // console.log(match.forEach(item => (console.log(item))));
   }
 
   //OLD CHAT EVENTS
@@ -353,9 +348,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           score_u2: this.pongInfo[room[0]].players[1].score,
           winner_id: this.pongInfo[room[0]].players[0].score === 3 ? this.pongInfo[room[0]].players[0].user.id : this.pongInfo[room[0]].players[1].user.id,
         }
-        console.log('data :', data)
         const match = this.http.post('http://localhost:5001/matchesHistory', data);
-        console.log(match.forEach(item => (console.log(item))));
+        (match.forEach(item => ((item))));
         this.server.to(roomID).emit('finish', this.pongInfo[room[0]])
         this.pongInfo.splice(room[0], 1)
         // const msg = {
@@ -366,7 +360,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //   text: "ddd"
         // }
         // const returnMsg = this.http.post('http://localhost:5001/messages', msg);
-        // console.log(returnMsg.forEach(item => (console.log(item))));
         return
       }
       this.server.to(client.id).emit('render', this.pongInfo[room[0]])
@@ -467,10 +460,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     arrClient.forEach((item) => {
-      if (info.userLoginToSend == item.username) {
-
-        this.server.to(item.id).emit('invite_request_custom', { inviteSocketID: client.id, inviteUser: info.user })
-      }
+      if (info.userLoginToSend == item.username)
+        this.server.to(item.id).emit('notif', {type: "GAMEINVITE", data: { inviteUser: info.user, inviteUserID: client.id }})
     })
   }
 
@@ -515,8 +506,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.pongInfo[room[0]].players[0].connected = true
     this.pongInfo[room[0]].started = true
     this.pongInfo[room[0]].setOponnent(client.id, info.user)
-
-    console.log(this.pongInfo[room[0]])
 
     this.server.to(room[1].roomID).emit('start', "custom" + info.inviteID)
 

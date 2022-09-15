@@ -13,23 +13,18 @@ export class LocalStrategy extends PassportStrategy(Strategy,'local') {
             ignoreExpiration: false,
             secretOrKey: 'super-cat',
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
-				console.log('ici');
                 let data = request?.cookies["auth-cookie"];
                 if (!data) {
 					return null;
                 }
-				console.log(data.accessToken);
 				return data.accessToken;
             }])
         });
     }
 
     async validate(payload:any){
-		console.log('local validate()', payload);
 		const user = await this.userServices.getUserById(payload.sub);
 		const date = Date;
-		console.log(date);
-		console.log(user.refreshTokenExp);
 
 
 

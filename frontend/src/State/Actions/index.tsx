@@ -1,5 +1,5 @@
-import { clientListActionType, LogActionType, userActionType } from "../Action-Types"
-import { Client, msg, msgList } from "../type"
+import { clientListActionType, LogActionType, userActionType, notifActionType } from "../Action-Types"
+import { Client, msg, msgList, Notif } from "../type"
 
 
 
@@ -55,3 +55,16 @@ type SetUserAction = {
 }
 
 export type userAction = SetUserAction
+
+
+type SetNotifAction = {
+    type: notifActionType.SETNOTIF
+    payload: Notif;
+}
+
+type DelNotifAction = {
+    type: notifActionType.DELNOTIF
+    payload: Notif;
+}
+
+export type notifAction = SetNotifAction | DelNotifAction

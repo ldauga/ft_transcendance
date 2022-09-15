@@ -40,3 +40,12 @@ export interface User2 {
     rank: number;
     profile_pic: string;
 }
+
+export interface Notif {
+	type: NotifType,
+	data: any
+}
+
+export enum NotifType {
+    GAMEINVITE="GAMEINVITE"
+}
