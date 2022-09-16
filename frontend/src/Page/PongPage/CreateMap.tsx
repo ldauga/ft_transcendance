@@ -540,7 +540,7 @@ const CreateMap = (props: any) => {
     utilsData.socket.on('getAllClientConnected', function (clientConnected: Array<any>) {
         var tmp: any[] = []
         clientConnected.forEach((item) => {
-            if (item.username != "" && item.username != persistantReduceur.user.user?.login)
+            if (item.username != "" && item.username != persistantReduceur.userReducer.user?.login)
             tmp.push(
                 <div key={tmp.length} className="clientConnected" onClick={e => setInvitInput(e.currentTarget.textContent as string)} ><>{item.username}</></div>
             )
@@ -552,7 +552,7 @@ const CreateMap = (props: any) => {
     function inviteButtonClick() {
         console.log('lll')
         if (!checkAllCollisionsBall(room.ball)) {
-            utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.user.user, gameRoom: room, userLoginToSend: inviteInput })
+            utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
         }
     }
 

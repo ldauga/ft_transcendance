@@ -21,7 +21,7 @@ export default function Callback() {
 
     return (
         <>
-            {persistantReduceur.user.user !== null ? <Navigate to="/HomePage" /> : <></>}
+            {persistantReduceur.userReducer.user !== null ? <Navigate to="/HomePage" /> : <></>}
         </>
     )
 }

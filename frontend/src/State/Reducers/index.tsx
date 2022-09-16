@@ -13,8 +13,8 @@ const persistConfig = {
   }
   
 const tmp = combineReducers({
-  user: userReducer,
-  notif: notifReducer
+  userReducer: userReducer,
+  notifReducer: notifReducer
 })
 
 const persistantReducer = persistReducer(persistConfig, tmp)

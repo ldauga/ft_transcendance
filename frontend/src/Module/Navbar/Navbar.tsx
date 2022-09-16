@@ -5,7 +5,7 @@ import Home from './Buttons/Home';
 import './Navbar.css';
 import Logout from './Buttons/Logout';
 
-const Navbar=(props: {notif?: boolean}) => {
+const Navbar=() => {
     return (
   		<nav className="nav">
         <div className="littleDiv">
@@ -16,7 +16,7 @@ const Navbar=(props: {notif?: boolean}) => {
             <Play/>
         </div>
         <div className="littleDiv">
-          <Bell notif={props.notif} />
+          <Bell/>
         </div>
       </nav>
     );

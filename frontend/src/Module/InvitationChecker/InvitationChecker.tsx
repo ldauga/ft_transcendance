@@ -23,8 +23,8 @@ function InvitationChecker(props: { children: any }) {
 
 	useEffect(() => {
 		utilsData.socket.on('notif', function (notif: Notif) {
-			for (let index = 0; index < persistantReduceur.notif.notifArray.length; index++) {
-				if (persistantReduceur.notif.notifArray[index] == notif)
+			for (let index = 0; index < persistantReduceur.notifReducer.notifArray.length; index++) {
+				if (persistantReduceur.notifReducer.notifArray[index] == notif)
 					return;
 			}
 			setNotif(notif)
@@ -34,7 +34,7 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.on('friendsList', function (arrClient: Client[]) {
 		console.log('Friends List received, useEffect()');
 		for (var i = 0; i < arrClient.length; i++) {
-			if (arrClient[i].username.length > 0 && Number(arrClient[i].id) != persistantReduceur.user.user?.id) {
+			if (arrClient[i].username.length > 0 && Number(arrClient[i].id) != persistantReduceur.userReducer.user?.id) {
 				console.log(`add client: ${arrClient[i].username}`)
 				let newClient: Client = {
 					username: arrClient[i].username,

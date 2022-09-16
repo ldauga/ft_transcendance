@@ -23,7 +23,7 @@ const GameSwitch=() => {
         if (!checkReconnexion) {
             checkReconnexion = true
             console.log('oui')
-            utilsData.socket.emit('CHECK_RECONNEXION', {user: persistantReduceur.user.user})
+            utilsData.socket.emit('CHECK_RECONNEXION', {user: persistantReduceur.userReducer.user})
         }
 
     // })

@@ -28,11 +28,12 @@ function ConnectionChecker(props: {
     else
       axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data) })
     
-    utilsData.socket.emit('storeClientInfo', persistantReduceur.user.user)
+    if (persistantReduceur.userReducer.user)
+      utilsData.socket.emit('storeClientInfo', persistantReduceur.userReducer.user)
     test = true
   }
 
-  return persistantReduceur.user.user !== null ? <InvitationChecker children={props.component} ></InvitationChecker> : <Navigate to="/Login" />;
+  return persistantReduceur.userReducer.user !== null ? <InvitationChecker children={props.component} ></InvitationChecker> : <Navigate to="/Login" />;
 }
 
 export default ConnectionChecker;

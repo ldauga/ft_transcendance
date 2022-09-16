@@ -33,7 +33,7 @@ function AddFriend() {
 			}
 			else {
 				const newInvitationRequest = {
-					id_user1: persistantReduceur.user.user?.id,
+					id_user1: persistantReduceur.userReducer.user?.id,
 					id_user2: res.data.id,
 					user1_accept: true,
 					user2_accept: false,

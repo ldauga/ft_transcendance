@@ -50,11 +50,11 @@ const HomePage = (props: any) => {
     useEffect(() => {
 
         if (!test) {
-            axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.user.user?.id).then((res) => {
+            axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
                 let matches: any[] = []
                 res.data.forEach((item: { login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string, date: Date }) => {
                     matches.push(
-                        <div key={matches.length.toString()} className={(item.winner_login == persistantReduceur.user.user?.login ? 'game game-win' : 'game game-lose')} >
+                        <div key={matches.length.toString()} className={(item.winner_login == persistantReduceur.userReducer.user?.login ? 'game game-win' : 'game game-lose')} >
                             <div className='matchPlayers'>
                                 <div className='player'>
                                     <div className='Score'>{item.score_u1}</div>
@@ -82,7 +82,7 @@ const HomePage = (props: any) => {
                 let tmp: any[] = []
                 res.data.forEach((item: any) => {
 
-                    if (item.login == persistantReduceur.user.user?.login) {
+                    if (item.login == persistantReduceur.userReducer.user?.login) {
                         const tmp1 = document.getElementById('numberWinsValue')
                         if (tmp1)
                             tmp1.textContent = item.wins
@@ -122,7 +122,7 @@ const HomePage = (props: any) => {
                         }
                     }
 
-                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.user.user?.login ? 'darkblue' : 'none') }}>
+                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }}>
                         <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
@@ -159,7 +159,7 @@ const HomePage = (props: any) => {
 
         var ret: any[] = []
 
-        persistantReduceur.notif.notifArray.forEach((item, index) => {
+        persistantReduceur.notifReducer.notifArray.forEach((item, index) => {
             var tmp: any;
 
             switch (item.type) {
@@ -171,13 +171,12 @@ const HomePage = (props: any) => {
                             <h3 id='invitePlayer'> {item.data.inviteUser.login + " invite you to play on a custom map !"} </h3>
                         </div>
                         <div className="blocksContainerRow">
-                            <button className='inviteButton decline' value={item.data.inviteUserId} onClick={(e) => {
-                                delNotif(persistantReduceur.notif.notifArray[index])
-                                console.log('nononononono', e.currentTarget.value)
-                                utilsData.socket.emit("DECLINE_INVITATION", { sendTo: item.data.inviteUserId, user: persistantReduceur.user.user })
+                            <button className='inviteButton decline' onClick={(e) => {
+                                utilsData.socket.emit("DECLINE_INVITATION", { sendTo: persistantReduceur.notifReducer.notifArray[index].data.inviteUserID, user: persistantReduceur.userReducer.user })
+                                delNotif(persistantReduceur.notifReducer.notifArray[index])
                             }} >Decline</button>
                             <button className='inviteButton accept' onClick={() => {
-                                utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReduceur.user.user, inviteID: item.data.inviteUserId })
+                                utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReduceur.userReducer.user, inviteID: persistantReduceur.notifReducer.notifArray[index].data.inviteUserID })
                                 window.location.href = 'http://localhost:3000/pong'
                             }}>Accept</button>
                         </div>
@@ -187,7 +186,7 @@ const HomePage = (props: any) => {
             ret.push(tmp)
         })
 
-        console.log('sisisisi', persistantReduceur.notif.notifArray)
+        console.log('sisisisi', persistantReduceur.notifReducer.notifArray)
 
         return (ret)
 
@@ -196,7 +195,7 @@ const HomePage = (props: any) => {
     return (
         <div className='Font'>
             <div className="horizontal">
-                <Navbar notif={listNotif.length !== 0} />
+                <Navbar/>
                 <div className="vertical">
                     <main>
                         <div className="match-history">
@@ -244,9 +243,9 @@ const HomePage = (props: any) => {
                     <div className="info">
                         <div className="user-info">
                             <div className="user-picture">
-                                <img src={persistantReduceur.user.user?.profile_pic} />
+                                <img src={persistantReduceur.userReducer.user?.profile_pic} />
                             </div>
-                            <p className="username">{persistantReduceur.user.user?.login}</p>
+                            <p className="username">{persistantReduceur.userReducer.user?.login}</p>
                             <p className="level">lvl</p>
                         </div>
                         <div className="friends-info">
