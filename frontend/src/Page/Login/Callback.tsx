@@ -23,13 +23,13 @@ export default function Callback() {
         if (key == "Enter") axios.get('http://localhost:5001/auth/2fa/verify/' + code, { withCredentials: true }).then(res => console.log(res));
     }
 
-    if (userData.user === null)
+    if (persistantReduceur.userReducer.user === null)
         axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { console.log('item.data', item.data); setUser(item.data) })
 
 
-    if (userData.user !== null) {
+    if (persistantReduceur.userReducer.user !== null) {
 
-        if (userData.user.is2faEnabled)
+        if (persistantReduceur.userReducer.user.is2faEnabled)
 
             return (<input
                 type="text"
