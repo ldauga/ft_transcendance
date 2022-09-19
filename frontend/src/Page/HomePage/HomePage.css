@@ -414,7 +414,8 @@ body {
 }
 
 .friends-info-typo .bi-person-plus,
-.friends-info .bi-search {
+.friends-info .bi-search,
+.bi-hourglass-split {
 	font-size: 2rem;
 }
 

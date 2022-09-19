@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class InvitationRequestDto {
 	@IsNumber()
@@ -15,4 +15,9 @@ export class InvitationRequestDto {
 	@IsBoolean()
 	public user2_accept: boolean;
 
+	@IsString()
+	public sender_login: string;
+
+	@IsString()
+	public receiver_login: string;
 }

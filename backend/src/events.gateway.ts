@@ -93,9 +93,44 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       id_user1: data.id_user1,
       id_user2: data.id_user2,
       user1_accept: data.user1_accept,
-      user2_accept: data.user2_accept
+      user2_accept: data.user2_accept,
+      sender_login: data.sender_login,
+      receiver_login: data.receiver_login
+
     }
-    const invitationRequestReturn = this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
+    const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
+    console.log(invitationRequestReturn.forEach(item => (console.log('invitationRequestReturn in eventgateway'))));
+  }
+
+  @SubscribeMessage('removeInvitationRequest')
+  async removeInvitationRequest(client: Socket, data: any) {
+    this.logger.log(`${client.id} said : remove Invitation Request`);
+    const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest/' + data.id_user1 + '/' + data.id_user2);
+    console.log(invitationRequestReturn.forEach(item => (console.log('removeInvitationRequestReturn in eventgateway'))));
+    this.server.to(client.id).emit('returnRemoveInvitationRequest', true);
+  }
+
+  //FRIENDLIST EVENTS
+
+  @SubscribeMessage('addFriend')
+  async addFriend(client: Socket, data: any) {
+    this.logger.log(`${client.id} add Friend`);
+    const newFriend = {
+      id_user1: data.id_user1,
+      id_user2: data.id_user2,
+      login_user1: data.login_user1,
+      login_user2: data.login_user2
+    }
+    const addFriendReturn = await this.http.post('http://localhost:5001/friendList/', newFriend);
+    console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
+  }
+
+  @SubscribeMessage('removeFriend')
+  async removeFriend(client: Socket, data: any) {
+    this.logger.log(`${client.id} remove Friend`);
+    const removeFriendReturn = await this.http.post('http://localhost:5001/friendList/' + data.id_user1 + '/' + data.id_user2);
+    console.log(removeFriendReturn.forEach(item => (console.log('removeFriendReturn in eventgateway'))));
+    this.server.to(client.id).emit('returnRemoveFriend', true);
   }
 
   //NEW CHAT EVENTS
@@ -345,7 +380,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
               const match = this.http.post('http://localhost:5001/matchesHistory', data);
 
-              match.forEach((item) => {})
+              match.forEach((item) => { })
 
               room[1].players.forEach((item, index) => {
                 if (!item.connected) {

@@ -13,14 +13,22 @@ export class FriendListController {
     return this.service.getAllFriendList();
   }
 
-
-  //Changer en methode post
-  //Utiliser Req: Express
-  //Utiliser le UseGuard('jwt')
-  //Recuperer l'id et faire le reste
   @Get('/:id')
   public getUserFriendList(@Param('id', ParseIntPipe) id: number): Promise<FriendListEntity[]> {
     return this.service.getUserFriendList(id);
+  }
+
+  @Get('/:id1/:id2')
+  public checkFriendList(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+    return this.service.checkExistRelation(id1, id2);
+  }
+
+  @Post('/:id1/:id2')
+  public async removeFriendShip(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+    console.log('removeFriendShip Controller');
+    const removeReturn = await this.service.removeFriendShip(id1, id2);
+    console.log('removeReturn Controller', removeReturn);
+    return true;
   }
 
   @Post()
