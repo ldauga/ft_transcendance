@@ -45,7 +45,8 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.on('friendsList', function (arrClient: Client[]) {
 		for (var i = 0; i < arrClient.length; i++) {
-			if (arrClient[i].username.length > 0 && Number(arrClient[i].id) != userData.user?.id) {
+			if (arrClient[i].username != "" && Number(arrClient[i].id) != userData.user?.id) {
+				console.log(`add client: ${arrClient[i].username}`)
 				let newClient: Client = {
 					username: arrClient[i].username,
 					id: arrClient[i].id,

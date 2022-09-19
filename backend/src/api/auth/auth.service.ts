@@ -5,6 +5,9 @@ import { UserService } from '../user/user.service';
 import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
+import { GetUserDto } from '../user/dtos/getUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,10 +42,8 @@ export class AuthService {
 		try {
 			const token = this.http.post(`${this.API_authorizationURI}`,
 			`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
-			console.log('token: ', token);
 
 			this.accessToken = (await lastValueFrom(token)).data.access_token;
-			console.log('access: ', this.accessToken);
 			this.headers = { Authorization: `Bearer ${this.accessToken}` };
 
 			const { data } = await lastValueFrom(
@@ -50,16 +51,12 @@ export class AuthService {
 				  headers: this.headers,
 				}),
 			);
-			console.log("login: ", data.login);
 
 			let user = await this.userServices.getUserByLogin(data.login);
 
 			if (!user) {
-				//verifier si le user a deja un refresh token dans la db et les cookies, si oui, le refresh token est il expire ? etc
-				// throw new BadRequestException('User already exists');
 				user = await this.userServices.createUser(data);
 			}
-			console.log('User', data.login, 'created.');
 			return this.signUser(user);
 		} catch(error) {
 			this.logger.error(error);
@@ -69,22 +66,40 @@ export class AuthService {
 
 	async loginSans42(login: string)
 	{
-		console.log(login);
 		let user = await this.userServices.getUserByLogin(login);
 
 		if (!user) {
 			user = await this.userServices.createUserSans42(login);
 		}
-		console.log('User', login, 'created.');
 		return this.signUser(user);
 	}
 
-	async getCookieRefreshToken(@Req() req: Request) {
-	//	console.log('req', req);
-		const refreshToken = req.cookies;
-		if (!refreshToken)
+	async generateTwoFactorAuthenticationSecret(refreshToken: string, request: Request) {
+		const secret = authenticator.generateSecret();
+		const response = await this.userServices.getUserByRefreshToken(refreshToken);
+		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);
+		
+		const user = await this.userServices.getUserByLogin(response.login);
+		if (!user)
 			return null;
-		return refreshToken;
+		
+		await this.userServices.setTwoFactorAuthenticationSecret(secret, user.id);
+	
+		return {
+		  secret,
+		  otpAuthUrl
+		}
+	}
+
+	async generateQrCodeDataURL(otpAuthUrl: string) {
+		return toDataURL(otpAuthUrl);
+	}
+
+	isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, totpsecret: string) {
+		return authenticator.verify({
+		  token: twoFactorAuthenticationCode,
+		  secret: totpsecret,
+		});
 	}
 
 	signUser(user: UserEntity) {

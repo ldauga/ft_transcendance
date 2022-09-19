@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, ConsoleLogger, Controller, Get, Param, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Request, Response } from 'express';
@@ -9,52 +9,79 @@ export class AuthController {
 	constructor(
 		private authService: AuthService,
 		private userServices: UserService
-	) {}
+	) { }
 
 	@Get('/login')
-		async login(@Query() query, @Res({ passthrough: true }) res: Response) {
+	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
 		const accessToken = await this.authService.login(query);
-
-		const refreshToken = await this.userServices.getRefreshTokens(accessToken);
-		console.log('refresh: ', refreshToken);
+		const refreshToken = await this.userServices.getRefreshToken(accessToken);
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
-		console.log('login: ', secretData);
-
-		res.cookie('auth-cookie', secretData, {httpOnly: false});
-		//GESTION D ERREUR NECESSAIRE
-		res.status(302).redirect(`http://localhost:3000/Login/Callback`);	
+		res.cookie('auth-cookie', secretData, { httpOnly: false });
+		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
 
 	@Get('/loginSans42/:login')
-		async loginSans42(@Param('login') login: string, @Res({ passthrough: true }) res: Response) {
+	async loginSans42(@Param('login') login: string, @Res({ passthrough: true }) res: Response) {
 		const accessToken = await this.authService.loginSans42(login);
-
-		const refreshToken = await this.userServices.getRefreshTokens(accessToken);
-		console.log('refresh: ', refreshToken);
+		const refreshToken = await this.userServices.getRefreshToken(accessToken);
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
-		console.log('login: ', secretData);
-
-		res.cookie('auth-cookie', secretData, {httpOnly: false});
-		//GESTION D ERREUR NECESSAIRE
+		res.cookie('auth-cookie', secretData, { httpOnly: false });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
-	}	
+	}
 
-	@Get('/getCookieRefreshToken')
-	async getCookieRefreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-		console.log('getCookieRefreshToken');
-		const token = await this.authService.getCookieRefreshToken(req);
-		console.log(token);
-		return token;
+	@Get('2fa/generate/:refreshToken')
+	async register(@Param('refreshToken') refreshToken: string, @Res() response: Response, @Req() request: Request) {
+		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken, request);
+		return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
+	}
+
+	@Get('2fa/verify/:code')
+	async verifyCode(@Param('code') code: string, @Req() request, @Body() body) {
+		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
+		if (!user)
+			throw new BadRequestException('User not found')
+		const totpsecret = await this.userServices.getTotpSecret(user.login);
+		const isCodeValid =
+			this.authService.isTwoFactorAuthenticationCodeValid(
+				code,
+				totpsecret,
+			);
+		console.log('turn-up:', isCodeValid);
+		if (!isCodeValid) {
+			throw new UnauthorizedException('Wrong authentication code');
+		}
+		return isCodeValid;
+	}
+
+
+	@Get('2fa/turn-on/:code')
+	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request, @Body() body) {
+		console.log(code);
+		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
+		console.log(user)
+		if (!user)
+			throw new BadRequestException('User not found');
+		const totpsecret = await this.userServices.getTotpSecret(user.login);
+		const isCodeValid =
+			this.authService.isTwoFactorAuthenticationCodeValid(
+				code,
+				totpsecret,
+			);
+		console.log('turn-up:', isCodeValid);
+		if (!isCodeValid) {
+			throw new UnauthorizedException('Wrong authentication code');
+		}
+		await this.userServices.turnOnTwoFactorAuthentication(user.login);
 	}
 
 	@Get('/refresh')
-	@UseGuards(AuthGuard('jwt'))
+	@UseGuards(AuthGuard('refresh'))
 	async refresh(@Query() query, @Res({ passthrough: true }) res: Response) {
 		console.log('refresh');
 		//await this.authService.createRefreshToken(query);

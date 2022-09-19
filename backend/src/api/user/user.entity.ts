@@ -24,6 +24,9 @@ export class UserEntity {
   @Column({ type: 'varchar' })
   public profile_pic: string;
 
+  @Column({ default: false })
+  public isTwoFactorAuthenticationEnabled: boolean;
+
   @Column({ type: 'varchar', nullable: true })
   public totpsecret: string;
 
@@ -32,6 +35,9 @@ export class UserEntity {
 
   @Column({ type: 'varchar', nullable: true })
   public refreshToken: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  public signedRefreshToken: string;
 
   @Column({ nullable: true })
   public refreshTokenIAT: string;

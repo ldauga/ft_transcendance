@@ -14,6 +14,7 @@ export class UserController {
   @Get('fav-movies')
   @UseGuards(AuthGuard('jwt'))
   async movies(@Req() req){
+    console.log(req.cookies['auth-cookie'])
   	return ["Avatar", "Avengers"];
   }
 
@@ -33,20 +34,8 @@ export class UserController {
   }
 
   @Get('/userExist/:refreshToken')
-  // @UseGuards(AuthGuard('local'))
   public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
-    //if (!req.cookies['auth-cookie'])
-    //  throw new BadRequestException();
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
-  @Post()
-  public createUser(@Body() body: CreateUserDto): Promise<UserEntity> {
-	const user = this.service.createUser(body);
-	if (user)
-		return user;
-	/*else {
-		throw new BaseExceptionFilter;
-	}*/
-  }
 }

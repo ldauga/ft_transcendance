@@ -16,6 +16,7 @@ import { persistor } from './State/store';
 import TestMsg from './Page/Tests/test';
 import Chat from './Components/Chat/Chat';
 import NewChatPage from './Page/newChat/newChat';
+import QrCode from './Page/2fa/2fa';
 
 // const { 
 //   user, 
@@ -43,6 +44,8 @@ function App() {
 
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
+          <Route path='/QrCode' element={<QrCode />} />
+          
           <Route path='/NotFound' element={<NotFound />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>
