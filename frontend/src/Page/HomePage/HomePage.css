@@ -165,12 +165,12 @@ main {
 
 .rankInfo .imgContainer {
 	margin: 1%;
-	
+
 	width: 30%;
 	height: 94%;
 
 	background-color: rgba(255, 255, 255, 0.05);
-	
+
 	display: flex;
 	justify-content: center;
 }
@@ -206,7 +206,7 @@ main {
 .rank .userInfoContainer {
 	margin: 2.5%;
 	margin-top: 0;
-	
+
 	width: 95%;
 	height: 45%;
 
@@ -387,7 +387,8 @@ main {
 }
 
 .friends-info-typo .bi-person-plus,
-.friends-info .bi-search {
+.friends-info .bi-search,
+.bi-hourglass-split {
 	font-size: 2rem;
 }
 

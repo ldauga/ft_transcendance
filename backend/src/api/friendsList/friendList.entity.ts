@@ -13,4 +13,10 @@ export class FriendListEntity {
   @Index()
   public id_user2: number;
 
+  @Column({ type: 'varchar' })
+  public login_user1: string;
+
+  @Column({ type: 'varchar' })
+  public login_user2: string;
+
 }

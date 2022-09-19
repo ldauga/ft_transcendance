@@ -1,0 +1,20 @@
+.itemFriendList {
+    display: flex;
+    flex-direction: row;
+    height: 3.5rem;
+    width: auto;
+    background-color: #454342;
+    border-radius: 15px;
+    margin-top: 1vh;
+
+}
+
+.inItemFriendList {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 1vw;
+    margin-right: 0.5vw;
+}

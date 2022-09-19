@@ -19,4 +19,10 @@ export class InvitationRequestEntity {
   @Column({ default: false })
   public user2_accept: boolean;
 
+  @Column({ type: 'varchar' })
+  public sender_login: string;
+
+  @Column({ type: 'varchar' })
+  public receiver_login: string;
+
 }
