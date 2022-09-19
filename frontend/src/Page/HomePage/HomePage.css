@@ -487,13 +487,33 @@ main {
 	float: right;
 }
 
-.notifElement {
+.deleteAllNotif {
+	position: sticky;
+	bottom: 0;
+
 	margin: auto;
-	margin-top: 5%;
 
-	width: 90%;
-	height: 40%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-	border: 10px rgb(0, 0, 0, 0.8) solid;
-	background-color: rgb(0, 0, 0, 0.5);
+	width: 60%;
+	height: 10%;
+
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0.9) solid;
+
+	background-color: rgb(0, 0, 0, 0.7);
+
+	cursor: pointer;
+}
+
+.deleteAllNotif:hover {
+	transition: 0.5s;
+
+	border: 10px rgb(255, 255, 255, 0.4) solid;
+
+	background-color: rgb(255, 255, 255, 0.3);
+
+	color: black;
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../State";
-import { Client, msg, Notif } from "../../State/type";
+import { Client, msg, Notif, NotifType } from "../../State/type";
 
 import './InvitationChecker.css'
 
@@ -19,15 +19,21 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { addClient, removeClient, addMsg, setNotif } = bindActionCreators(actionCreators, dispatch);
+	const { addClient, removeClient, addMsg, setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
 
 	useEffect(() => {
 		utilsData.socket.on('notif', function (notif: Notif) {
 			for (let index = 0; index < persistantReduceur.notifReducer.notifArray.length; index++) {
 				if (persistantReduceur.notifReducer.notifArray[index] == notif)
 					return;
+				if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReduceur.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReduceur.notifReducer.notifArray[index].data.roomId) {
+					delNotif(persistantReduceur.notifReducer.notifArray[index])
+					setNotif(notif)
+					return;
+				}
 			}
-			setNotif(notif)
+
+			console.log('notifArray', persistantReduceur.notifReducer.notifArray)
 		})
 	})
 

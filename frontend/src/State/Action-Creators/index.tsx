@@ -88,11 +88,18 @@ export const setNotif = (item: any) => {
 }
 
 export const delNotif = (item: Notif) => {
-    console.log('first')
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({
             type: notifActionType.DELNOTIF,
             payload: item
+        })
+    }
+}
+
+export const delAllNotif = () => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.DELALLNOTIF,
         })
     }
 }

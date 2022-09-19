@@ -20,5 +20,6 @@ export enum userActionType {
 
 export enum notifActionType {
     SETNOTIF="SETNOTIF",
-    DELNOTIF="DELNOTIF"
+    DELNOTIF="DELNOTIF",
+    DELALLNOTIF="DELALLNOTIF"
 }

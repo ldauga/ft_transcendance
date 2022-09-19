@@ -67,4 +67,8 @@ type DelNotifAction = {
     payload: Notif;
 }
 
-export type notifAction = SetNotifAction | DelNotifAction
+type DelAllNotifAction = {
+    type: notifActionType.DELALLNOTIF
+}
+
+export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction

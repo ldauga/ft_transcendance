@@ -21,6 +21,7 @@ import master_rank_img from '../assets/master_rank.png'
 
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
+import affNotif from './affNotif';
 
 var test = false
 
@@ -29,7 +30,7 @@ const HomePage = (props: any) => {
     const utilsData = useSelector((state: RootState) => state.utils)
 
     const dispatch = useDispatch();
-    const { delNotif } = bindActionCreators(actionCreators, dispatch);
+    const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
     // console.log(persistantReduceur.user);
     const [listNotif, setListNotif] = useState(Array<any>)
@@ -155,47 +156,10 @@ const HomePage = (props: any) => {
         }
     })
 
-    function affNotif() {
-
-        var ret: any[] = []
-
-        persistantReduceur.notifReducer.notifArray.forEach((item, index) => {
-            var tmp: any;
-
-            switch (item.type) {
-
-                case NotifType.GAMEINVITE:
-                    console.log('lsfkdjvlkjvdslkjvb', item.data)
-                    tmp = (<div className='notifElement' key={ret.length}>
-                        <div className="inviteNameDiv">
-                            <h3 id='invitePlayer'> {item.data.inviteUser.login + " invite you to play on a custom map !"} </h3>
-                        </div>
-                        <div className="blocksContainerRow">
-                            <button className='inviteButton decline' onClick={(e) => {
-                                utilsData.socket.emit("DECLINE_INVITATION", { sendTo: persistantReduceur.notifReducer.notifArray[index].data.inviteUserID, user: persistantReduceur.userReducer.user })
-                                delNotif(persistantReduceur.notifReducer.notifArray[index])
-                            }} >Decline</button>
-                            <button className='inviteButton accept' onClick={() => {
-                                utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReduceur.userReducer.user, inviteID: persistantReduceur.notifReducer.notifArray[index].data.inviteUserID })
-                                window.location.href = 'http://localhost:3000/pong'
-                            }}>Accept</button>
-                        </div>
-                    </div>)
-            }
-
-            ret.push(tmp)
-        })
-
-        console.log('sisisisi', persistantReduceur.notifReducer.notifArray)
-
-        return (ret)
-
-    }
-
     return (
         <div className='Font'>
             <div className="horizontal">
-                <Navbar/>
+                <Navbar />
                 <div className="vertical">
                     <main>
                         <div className="match-history">
@@ -256,8 +220,9 @@ const HomePage = (props: any) => {
                     </div>
                     <div id="notifModal" className="notifModal">
                         <div className="notif-modal-content">
-                            <AiOutlineClose onClick={() => {var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none'}}/>
+                            <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
                             {affNotif()}
+                            {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
                         </div>
                     </div>
                 </div>

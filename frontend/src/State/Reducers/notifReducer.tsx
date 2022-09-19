@@ -11,10 +11,8 @@ export const initialState: NotifArray = {
 }
 
 export const notifReducer = (state: NotifArray = initialState, action: notifAction) => {
-	console.log('lolilol', 'action', action)
 	switch (action.type) {
 		case notifActionType.SETNOTIF: {
-			console.log('bool')
 			state.notifArray.push(action.payload)
 			return {
 				...state,
@@ -22,7 +20,6 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 			};
 		}
 		case notifActionType.DELNOTIF: {
-			console.log('bool2')
 			state.notifArray.forEach((item, index) => {
 				if (item == action.payload)
 					state.notifArray.splice(index, 1)
@@ -31,6 +28,13 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 				...state,
 				notifArray: state.notifArray
 			};
+		}
+		case notifActionType.DELALLNOTIF: {
+			state.notifArray.splice(0, state.notifArray.length)
+			return {
+				...state,
+				notifArray: state.notifArray
+			}
 		}
 		default:
 			return state;

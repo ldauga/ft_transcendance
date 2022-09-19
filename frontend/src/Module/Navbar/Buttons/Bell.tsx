@@ -15,7 +15,8 @@ const Bell = () => {
   function bellOnClick() {
     var tmp = document.getElementById('notifModal');
     if (tmp) {
-      if (tmp.style.display == 'none')
+      setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
+      if (tmp.style.display != 'block')
         tmp.style.display = 'block';
       else
         tmp.style.display = 'none'
@@ -25,7 +26,6 @@ const Bell = () => {
   if (location.pathname !== "/NotFound" && location.pathname !== '/pong')
     if (persistantReduceur.notifReducer.notifArray.length != oldNbNotif) {
       if (oldNbNotif < persistantReduceur.notifReducer.notifArray.length) {
-        setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
         return (<VscBellDot onClick={bellOnClick} />);
       }
       else {
