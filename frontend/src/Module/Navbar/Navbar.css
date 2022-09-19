@@ -6,6 +6,7 @@
     display: flex;
     align-items: center;
     height: 5vh;
+    width: 100%;
 }
 
 .littleDiv, .bigDiv {
@@ -26,10 +27,6 @@
     color: white;
 }
 
-.bi-bell{
-    font-size: calc(1.3vh + 1.3vw);
-}
-
 .bi-house{
     font-size: calc(1.5vh + 1.5vw);
 }
@@ -44,6 +41,17 @@
 }
 
 .bi:hover{
+	transition: all 0.5s;
+	color: #901644;
+}
+
+svg {
+    transition: all 0.5s;
+    font-size: calc(1.5vh + 1.5vw);
+    color: white;  
+}
+
+svg:hover{
 	transition: all 0.5s;
 	color: #901644;
 }

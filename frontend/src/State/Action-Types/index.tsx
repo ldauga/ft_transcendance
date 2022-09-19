@@ -17,3 +17,9 @@ export enum clientListActionType {
 export enum userActionType {
     SETUSER="SETUSER"
 }
+
+export enum notifActionType {
+    SETNOTIF="SETNOTIF",
+    DELNOTIF="DELNOTIF",
+    DELALLNOTIF="DELALLNOTIF"
+}

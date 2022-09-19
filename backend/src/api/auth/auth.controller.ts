@@ -83,7 +83,6 @@ export class AuthController {
 	@Get('/refresh')
 	@UseGuards(AuthGuard('refresh'))
 	async refresh(@Query() query, @Res({ passthrough: true }) res: Response) {
-		console.log('refresh');
 		//await this.authService.createRefreshToken(query);
 	}
 

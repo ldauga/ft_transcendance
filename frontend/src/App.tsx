@@ -25,7 +25,6 @@ import QrCode from './Page/2fa/2fa';
 
 function App() {
 
-  const userData = useSelector((state: RootState) => state.user)
   return (
 
 

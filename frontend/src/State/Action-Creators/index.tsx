@@ -1,7 +1,7 @@
 import { Dispatch } from "redux"
-import { clientListActionType, LogActionType, userActionType } from "../Action-Types"
-import { clientListAction, logAction, userAction } from "../Actions"
-import { Client, msg } from "../type"
+import { clientListActionType, LogActionType, userActionType, notifActionType } from "../Action-Types"
+import { clientListAction, logAction, userAction, notifAction } from "../Actions"
+import { Client, msg, Notif } from "../type"
 
 //ClientList
 export const addClient = (item: Client) => {
@@ -74,6 +74,33 @@ export const setUser = (item:{
         dispatch({
             type: userActionType.SETUSER,
             payload: item
+        })
+    }
+}
+
+//Notif
+export const setNotif = (item: any) => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.SETNOTIF,
+            payload: item
+        })
+    }
+}
+
+export const delNotif = (item: Notif) => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.DELNOTIF,
+            payload: item
+        })
+    }
+}
+
+export const delAllNotif = () => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.DELALLNOTIF,
         })
     }
 }

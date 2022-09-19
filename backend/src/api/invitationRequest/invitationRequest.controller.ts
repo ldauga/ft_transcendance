@@ -6,29 +6,39 @@ import { invitationRequestService } from "./invitationRequest.service";
 @Controller('invitationRequest')
 export class InvitationRequestController {
   @Inject(invitationRequestService)
-  private readonly service: invitationRequestService;
+  private readonly invitationRequestService: invitationRequestService;
 
   @Get()
   public getAllInvitationRequest(): Promise<InvitationRequestEntity[]> {
-    return this.service.getAllInvitationRequest();
+    return this.invitationRequestService.getAllInvitationRequest();
   }
 
+  @Get('/:id')
+  public getUserInvitationRequest(@Param('id', ParseIntPipe) id: number): Promise<InvitationRequestEntity[]> {
+    return this.invitationRequestService.getUserInvitationRequest(id);
+  }
 
-  //Changer en methode post
-  //Utiliser Req: Express
-  //Utiliser le UseGuard('jwt')
-  //Recuperer l'id et faire le reste
-  // @Get('/:id')
-  // public getUserFriendList(@Param('id', ParseIntPipe) id: number): Promise<InvitationRequestEntity[]> {
-  //   return this.service.getUserInvitationRequest(id);
-  // }
+  @Get('/:id1/:id2')
+  public async checkInvitationRequest(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+    const returnCheck = await this.invitationRequestService.checkInvitationRequest(id1, id2);
+    console.log('checkInvitationRequest Check = ');
+    console.log(returnCheck);
+    return returnCheck;
+  }
 
   @Post()
-  public createInvitationRequest(@Body() body: InvitationRequestDto): Promise<InvitationRequestEntity> {
-    console.log('body', body)
-    const match = this.service.createInvitationRequest(body);
-    if (!match)
-      return null;
-    return match;
+  public async createInvitationRequest(@Body() body: InvitationRequestDto): Promise<InvitationRequestEntity> {
+    // console.log('body', body);
+    const newInvit = await this.invitationRequestService.createInvitationRequest(body);
+    return newInvit;
+  }
+
+  @Post('/:id1/:id2')
+  public async removeInvitationRequest(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+    // console.log('body', body);
+    console.log('removeInvitationRequest Controller');
+    const removeReturn = await this.invitationRequestService.removeInvitationRequest(id1, id2);
+    console.log('removeReturn Controller', removeReturn);
+    return true;
   }
 }

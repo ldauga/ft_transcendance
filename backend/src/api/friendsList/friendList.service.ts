@@ -24,21 +24,33 @@ export class FriendListService {
 				{ id_user2: id }
 			]
 		});
-
+		// console.log('matches', matches);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;
 	}
 
+	async checkExistRelation(id1: number, id2: number): Promise<Boolean> {
+		const returnCheck = await this.FriendListRepository.findOne({
+			where: [
+				{ id_user1: id1, id_user2: id2 },
+				{ id_user1: id2, id_user2: id1 }
+			]
+		});
 
-	//Recuperer les id des joueurs
-	//Inserer les datas de base
+		if (!returnCheck)
+			return false;
+		return true;
+	}
+
 	async createFriendShip(body: any): Promise<FriendListEntity> {
 		this.logger.log(body);
 
 		const match = this.FriendListRepository.save({
 			id_user1: body.id_user1,
 			id_user2: body.id_user2,
+			login_user1: body.login_user1,
+			login_user2: body.login_user2
 		}
 		)
 		if (!match)
@@ -46,4 +58,16 @@ export class FriendListService {
 		return match;
 	}
 
+	async removeFriendShip(id1: number, id2: number): Promise<Boolean> {
+		if (!this.checkExistRelation(id1, id2))
+			return false;
+		const check = await this.FriendListRepository.findOne({
+			where: [
+				{ id_user1: id1, id_user2: id2 },
+				{ id_user1: id2, id_user2: id1 }
+			]
+		});
+		const removeReturn = this.FriendListRepository.delete(check);
+		console.log('removeReturn', removeReturn);
+	}
 }

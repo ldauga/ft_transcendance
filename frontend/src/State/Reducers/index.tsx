@@ -5,19 +5,25 @@ import { userReducer } from "./userReducer";
 import { utilsReducer } from "./utilsReducer";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
+import { notifReducer } from "./notifReducer";
 
 const persistConfig = {
     key: 'root',
     storage,
   }
   
-  const persistedReducer = persistReducer(persistConfig, userReducer)
+const tmp = combineReducers({
+  userReducer: userReducer,
+  notifReducer: notifReducer
+})
+
+const persistantReducer = persistReducer(persistConfig, tmp)
 
 const reducers = combineReducers({
     log: logReducer,
     clientList: clientListReducer,
     utils: utilsReducer,
-    user: persistedReducer
+    persistantReduceur: persistantReducer,
 });
 
 export default reducers;

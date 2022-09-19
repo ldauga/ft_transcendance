@@ -9,7 +9,8 @@ import { RootState } from "../../State/Reducers";
 
 export default function Callback() {
 
-    const userData = useSelector((state: RootState) => state.user)
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
 
