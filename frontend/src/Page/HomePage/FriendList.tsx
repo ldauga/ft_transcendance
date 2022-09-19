@@ -11,7 +11,7 @@ import './FriendList.css';
 function FriendList() {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.user);
+	const userData = useSelector((state: RootState) => state.persistantReduceur);
 
 	const [isAddFriend, setAddFriend] = AddFriendHook(false);
 	const [isInvitationRequest, setInvitationRequest] = InvitationRequestHook(false);
@@ -63,13 +63,13 @@ function FriendList() {
 	};
 
 	const getListItem = async () => {
-		await axios.get('http://localhost:5001/friendList/' + userData.user?.id).then(async (res) => {
+		await axios.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
 			console.log("get");
 			let itemList: any[] = []
 			console.log('res.data = ', res.data);
 			res.data.forEach((item: { id_user1: number, id_user2: number, login_user1: string, login_user2: string }) => {
 				let friendLogin = item.login_user1;
-				if (item.id_user1 == userData.user?.id)
+				if (item.id_user1 == userData.userReducer.user?.id)
 					friendLogin = item.login_user2;
 				itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
 					<div className="inItemFriendList">

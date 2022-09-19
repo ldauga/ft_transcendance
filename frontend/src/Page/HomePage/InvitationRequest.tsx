@@ -10,7 +10,7 @@ import './HomePage.css';
 function InvitationRequest() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.user);
+    const userData = useSelector((state: RootState) => state.persistantReduceur);
 
     const [isFriendList, setFriendList] = FriendListHook(false);
     const [isInvitationRequest, setInvitationRequest] = InvitationRequestHook(true);
@@ -29,7 +29,7 @@ function InvitationRequest() {
     };
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/invitationRequest/' + userData.user?.id).then(async (res) => {
+        await axios.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id).then(async (res) => {
             // console.log("get");
             let itemList: any[] = []
             // console.log('res.data = ', res.data);
