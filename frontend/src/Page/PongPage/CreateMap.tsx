@@ -17,7 +17,8 @@ var canvas = {
 
 
 const CreateMap = (props: any) => {
-    const userData = useSelector((state: RootState) => state.user);
+    const [connectedClient, setConnectedClient] = useState(Array<any>)
+    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
     const [room] = useState(new gameRoomClass("", "", null, "custom"));
 
@@ -249,6 +250,8 @@ const CreateMap = (props: any) => {
 
     const [nbObstacle, setNbObstacle] = useState(0)
 
+    var verif = false;
+
     useEffect(() => {
 
         setInputValue()
@@ -262,6 +265,10 @@ const CreateMap = (props: any) => {
 
         render()
 
+        if (!verif) {
+            utilsData.socket.emit("GET_ALL_CLIENT_CONNECTED")
+            verif = true
+        }
     })
 
     function setInputValue() {
@@ -457,7 +464,7 @@ const CreateMap = (props: any) => {
                 if (actualObstacleID === -666) {
                     room.ball.initial_x = room.ball.x = cursorX - holdClickDiff.diffX
                     room.ball.initial_y = room.ball.y = cursorY - holdClickDiff.diffY
-                    
+
                     if (room.ball.initial_y < room.ball.radius)
                         room.ball.initial_y = room.ball.y = room.ball.radius
                     else if (room.ball.initial_y > room.canvas.height - room.ball.radius)
@@ -530,9 +537,22 @@ const CreateMap = (props: any) => {
         props.setGameStart(true);
     });
 
+    utilsData.socket.on('getAllClientConnected', function (clientConnected: Array<any>) {
+        var tmp: any[] = []
+        clientConnected.forEach((item) => {
+            if (item.username != "" && item.username != persistantReduceur.userReducer.user?.login)
+            tmp.push(
+                <div key={tmp.length} className="clientConnected" onClick={e => setInvitInput(e.currentTarget.textContent as string)} ><>{item.username}</></div>
+            )
+        })
+        setConnectedClient(tmp)
+
+    })
+
     function inviteButtonClick() {
+        console.log('lll')
         if (!checkAllCollisionsBall(room.ball)) {
-            utilsData.socket.emit('INVITE_CUSTOM', { user: userData.user, gameRoom: room, userLoginToSend: inviteInput })
+            utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
         }
     }
 
@@ -636,9 +656,20 @@ const CreateMap = (props: any) => {
                                 }}>
                             </input>
                         </div>
+                    </div>
+                    <div className="inviteInputContainer">
+                        <div className="clientConnectedList">
+                                {!connectedClient.length ?
+                                <div className="noClientConnected">
+                                    <div className="noClientConnectedText">No client connected...</div>
+            
+                                    <button className="noClientConnectedButton" onClick={(e) => {utilsData.socket.emit("GET_ALL_CLIENT_CONNECTED")}}>Refresh</button>
+                                </div> : 
+                                connectedClient}
+                        </div>
                         <input className="inviteBar" value={inviteInput} onChange={(e) => { setInvitInput(e.target.value); setDeclineInvite([false, ""]) }} onKeyDown={(event) => { if (event.key == 'Enter') inviteButtonClick() }} placeholder='ID of client to invite' />
                         <button
-                            className="Button invite"
+                            className="invite_button"
                             id="inviteButton"
                             onClick={inviteButtonClick}></button>
                     </div>

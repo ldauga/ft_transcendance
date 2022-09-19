@@ -36,7 +36,6 @@ export class MatchesHistoryController {
 
   @Post()
   public async createMatch(@Body() body: MatchesHistoryDto): Promise<MatchesHistoryEntity> {
-    console.log('body', body)
 	  const match = await this.MatchesHistoryService.createMatch(body);
     if(!match)
       return null;

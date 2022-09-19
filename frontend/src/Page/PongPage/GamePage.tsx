@@ -228,7 +228,7 @@ const GamePage = (props: any) => {
 
     utilsData.socket.removeAllListeners();
 
-    var interval = setInterval(() => { utilsData.socket.emit('RENDER', props.roomID) }, 10);
+    var interval = setInterval(() => { if (!finishGame) utilsData.socket.emit('RENDER', props.roomID) }, 10);
 
     function render(room: gameRoomClass) {
 
@@ -270,6 +270,7 @@ const GamePage = (props: any) => {
     utilsData.socket.on('render', render);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
+        setFinishGame(true)
         var modal = document.getElementById("myModal");
         if (modal)
             modal.style.display = "block";

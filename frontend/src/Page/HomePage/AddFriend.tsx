@@ -9,7 +9,7 @@ import { RootState } from "../../State";
 function AddFriend() {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.user);
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
 	const [isFriendList, setFriendList] = FriendListHook(false);
 	const [isAddFriend, setAddFriend] = AddFriendHook(true);

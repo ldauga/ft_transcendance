@@ -1,29 +1,46 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
 import Navbar from '../../Module/Navbar/Navbar';
-import './../assets/Font.css';
 import './HomePage.css';
 import FriendList from './FriendList';
 import { AddFriendHook, FriendListHook } from './Hooks';
 import AddFriend from './AddFriend';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../State';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 
-import rankImg from '../assets/bronze_rank.png'
+import { AiOutlineClose } from 'react-icons/ai'
+
+import iron_rank_img from '../assets/iron_rank.png'
+import bronze_rank_img from '../assets/bronze_rank.png'
+import gold_rank_img from '../assets/gold_rank.png'
+import diamond_rank_img from '../assets/diamond_rank.png'
+import master_rank_img from '../assets/master_rank.png'
+
+import { bindActionCreators } from 'redux';
+import { NotifType } from '../../State/type';
+import affNotif from './affNotif';
 
 var test = false
-const matches: any[] = [];
 
 const HomePage = (props: any) => {
-    const userData = useSelector((state: RootState) => state.user)
-    // console.log(userData.user);
+    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+    const utilsData = useSelector((state: RootState) => state.utils)
+
+    const dispatch = useDispatch();
+    const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
+
+    // console.log(persistantReduceur.user);
+    const [listNotif, setListNotif] = useState(Array<any>)
+
     const [isFriendList, setFriendList] = FriendListHook(true);
     const [isAddFriend, setAddFriend] = AddFriendHook(false);
 
     const [matchesHistory, setMatchesHistory] = useState(Array<any>)
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
+
+    const [rankImage, setRankImage] = useState("")
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
@@ -33,24 +50,24 @@ const HomePage = (props: any) => {
     useEffect(() => {
 
         if (!test) {
-            axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + userData.user?.id).then((res) => {
-                console.log('testestest', res.data)
-
+            axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
                 let matches: any[] = []
                 res.data.forEach((item: { login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string, date: Date }) => {
-                    matches.push(<div key={matches.length.toString()} className={(item.winner_login == userData.user?.login ? 'game game-win' : 'game game-lose')} >
-                        <div className='matchPlayers'>
-                            <div className='player'>
-                                <div className='Score'>{item.score_u1}</div>
-                                <div className='PlayerNickname'>{item.login_user1}</div>
+                    matches.push(
+                        <div key={matches.length.toString()} className={(item.winner_login == persistantReduceur.userReducer.user?.login ? 'game game-win' : 'game game-lose')} >
+                            <div className='matchPlayers'>
+                                <div className='player'>
+                                    <div className='Score'>{item.score_u1}</div>
+                                    <div className='PlayerNickname'>{item.login_user1}</div>
+                                </div>
+                                <div className='player'>
+                                    <div className='Score'>{item.score_u2}</div>
+                                    <div className='PlayerNickname'>{item.login_user2}</div>
+                                </div>
                             </div>
-                            <div className='player'>
-                                <div className='Score'>{item.score_u2}</div>
-                                <div className='PlayerNickname'>{item.login_user2}</div>
-                            </div>
+                            <div className='matchDate'><>{dayNames[new Date(item.date).getDay()] + ' ' + new Date(item.date).getDate() + ' ' + monthNames[new Date(item.date).getMonth()] + ' ' + new Date(item.date).getHours() + ':' + new Date(item.date).getMinutes()}</></div>
                         </div>
-                        <div className='matchDate'><>{dayNames[new Date(item.date).getDay()] + ' ' + new Date(item.date).getDate() + ' ' + monthNames[new Date(item.date).getMonth()] + ' ' + new Date(item.date).getHours() + ':' + new Date(item.date).getMinutes()}</></div>
-                    </div>)
+                    )
                 })
                 console.log('matches', matches)
                 var invertMatches: any[] = []
@@ -64,8 +81,49 @@ const HomePage = (props: any) => {
             axios.get('http://localhost:5001/user').then((res) => {
                 let tmp: any[] = []
                 res.data.forEach((item: any) => {
-                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == userData.user?.login ? 'darkblue' : 'none') }}>
-                        <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{}</div>
+
+                    if (item.login == persistantReduceur.userReducer.user?.login) {
+                        const tmp1 = document.getElementById('numberWinsValue')
+                        if (tmp1)
+                            tmp1.textContent = item.wins
+                        const tmp2 = document.getElementById('numberLossesValue')
+                        if (tmp2)
+                            tmp2.textContent = item.losses
+                        const tmp3 = document.getElementById('winRateValue')
+                        if (tmp3)
+                            tmp3.textContent = Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'
+                        const tmp4 = document.getElementById('rankNameValue')
+                        if (tmp4) {
+                            setRankImage(iron_rank_img)
+                            tmp4.textContent = 'Iron | Noobies'
+                            if (item.wins > 5) {
+                                setRankImage(bronze_rank_img)
+                                tmp4.textContent = 'Bronze | Trainer'
+                            }
+                            else if (item.wins > 10) {
+                                setRankImage(gold_rank_img)
+                                tmp4.textContent = 'Gold | Not Bad'
+                            }
+                            else if (item.wins > 20) {
+                                setRankImage(diamond_rank_img)
+                                tmp4.textContent = 'Diamond | Wow !!!'
+                            }
+                            else if (item.wins > 30) {
+                                setRankImage(master_rank_img)
+                                tmp4.textContent = 'Master splinter | Our God !!!'
+                            }
+                            if (item.login == 'ldauga') {
+                                setRankImage(master_rank_img)
+                                tmp4.textContent = 'Master splinter | Our God !!!'
+                            } else if (item.login == 'atourret') {
+                                setRankImage(gold_rank_img)
+                                tmp4.textContent = 'GroNoob'
+                            }
+                        }
+                    }
+
+                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }}>
+                        <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
                         <div className='UserLeaderBoardInfo little'>{item.losses}</div>
@@ -98,11 +156,11 @@ const HomePage = (props: any) => {
     })
 
     return (
-        <div className='Font'>
+        <div className='App'>
             <div className="horizontal">
                 <Navbar />
                 <div className="vertical">
-                    <main>
+                    <div className='main'>
                         <div className="match-history">
                             <h3>Match History</h3>
                             {matchesHistory}
@@ -111,22 +169,25 @@ const HomePage = (props: any) => {
                             <div className="rank">
                                 <div className='rankInfo'>
                                     <div className='imgContainer'>
-                                        <img src={rankImg} alt="" />
+                                        <img src={rankImage} />
                                     </div>
                                     <div className='rankName'>
                                         <div className='rankNameText'>Rank :</div>
-                                        <div className='rankNameText'>Grand master splinter</div>
+                                        <div className='rankNameText' id='rankNameValue'></div>
                                     </div>
                                 </div>
                                 <div className='userInfoContainer'>
                                     <div className='userInfo first'>
-
+                                        <div className='userInfoText'>Wins :</div>
+                                        <div className='userInfoText value' id='numberWinsValue'></div>
                                     </div>
                                     <div className='userInfo second'>
-
+                                        <div className='userInfoText'>Losses :</div>
+                                        <div className='userInfoText value' id='numberLossesValue'></div>
                                     </div>
                                     <div className='userInfo third'>
-
+                                        <div className='userInfoText'>Win Rate :</div>
+                                        <div className='userInfoText value' id='winRateValue'></div>
                                     </div>
                                 </div>
                             </div>
@@ -141,13 +202,13 @@ const HomePage = (props: any) => {
                                 {leaderBoardUsers}
                             </div>
                         </div>
-                    </main>
+                    </div>
                     <div className="info">
                         <div className="user-info">
                             <div className="user-picture">
-                                <img src={userData.user?.profile_pic} />
+                                <img src={persistantReduceur.userReducer.user?.profile_pic} />
                             </div>
-                            <p className="username">{userData.user?.login}</p>
+                            <p className="username">{persistantReduceur.userReducer.user?.login}</p>
                             <p className="level">lvl</p>
                         </div>
                         <div className="friends-info">
@@ -155,6 +216,13 @@ const HomePage = (props: any) => {
                             {isAddFriend && <AddFriend />}
                         </div>
                         <div className="chat"></div>
+                    </div>
+                    <div id="notifModal" className="notifModal">
+                        <div className="notif-modal-content">
+                            <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
+                            {affNotif()}
+                            {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                        </div>
                     </div>
                 </div>
             </div>

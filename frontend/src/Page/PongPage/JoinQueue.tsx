@@ -8,7 +8,6 @@ import imageMap2 from "./map2.png";
 
 import './CSS/JoinQueue/Spectate.css'
 import './CSS/JoinQueue/Queue.css'
-import './CSS/JoinQueue/Invite.css'
 import './CSS/JoinQueue/ChooseMap.css'
 import './CSS/JoinQueue/CreateMap.css'
 import './CSS/GamePage/GamePage.css';
@@ -19,18 +18,18 @@ const JoinRoom = (props: any) => {
     const [NotFound, setNotFound] = useState(false);
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.user);
+    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
     // utilsData.socket.removeAllListeners();
 
     function joinQueue() {
         if (!props.gameMap)
             return
-        utilsData.socket.emit('JOIN_QUEUE', { user: userData.user, gameMap: props.gameMap });
+        utilsData.socket.emit('JOIN_QUEUE', { user: persistantReduceur.userReducer.user, gameMap: props.gameMap });
     }
 
     function spectate() {
-        utilsData.socket.emit('SPECTATE_CLIENT', { specID: props.specID, user: userData.user });
+        utilsData.socket.emit('SPECTATE_CLIENT', { specID: props.specID, user: persistantReduceur.userReducer.user });
     }
 
     utilsData.socket.on('clientNotFound', function () {
