@@ -1,7 +1,6 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
 import Navbar from '../../Module/Navbar/Navbar';
-import './../assets/Font.css';
 import './HomePage.css';
 import FriendList from './FriendList';
 import { AddFriendHook, FriendListHook } from './Hooks';
@@ -145,11 +144,11 @@ const HomePage = (props: any) => {
     })
 
     return (
-        <div className='Font'>
+        <div className='App'>
             <div className="horizontal">
                 <Navbar />
                 <div className="vertical">
-                    <main>
+                    <div className='main'>
                         <div className="match-history">
                             <h3>Match History</h3>
                             {matchesHistory}
@@ -191,7 +190,7 @@ const HomePage = (props: any) => {
                                 {leaderBoardUsers}
                             </div>
                         </div>
-                    </main>
+                    </div>
                     <div className="info">
                         <div className="user-info">
                             <div className="user-picture">
