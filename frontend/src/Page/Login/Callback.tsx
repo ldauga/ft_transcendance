@@ -17,10 +17,11 @@ export default function Callback() {
     //A MODIFIER ALED CA MARCHE PAS COMME ON VEUT
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
     const [code, setCode] = useState("");
+    const [good, setgood] = useState(false);
     console.log(cookies);
 
     async function turnOn2fa(key: string) {
-        if (key == "Enter") axios.get('http://localhost:5001/auth/2fa/verify/' + code, { withCredentials: true }).then(res => console.log(res));
+        if (key == "Enter") axios.get('http://localhost:5001/auth/2fa/verify/' + code, { withCredentials: true }).then((e) => setgood(true));
     }
 
     if (persistantReduceur.userReducer.user === null)
@@ -29,7 +30,7 @@ export default function Callback() {
 
     if (persistantReduceur.userReducer.user !== null) {
 
-        if (persistantReduceur.userReducer.user.is2faEnabled)
+        if (persistantReduceur.userReducer.user.is2faEnabled && !good)
 
             return (<input
                 type="text"

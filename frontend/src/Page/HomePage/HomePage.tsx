@@ -31,9 +31,6 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
-    // console.log(persistantReduceur.user);
-    const [listNotif, setListNotif] = useState(Array<any>)
-
     const [isFriendList, setFriendList] = FriendListHook(true);
     const [isAddFriend, setAddFriend] = AddFriendHook(false);
 
