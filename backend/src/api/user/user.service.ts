@@ -53,7 +53,8 @@ export class UserService {
 			wins: user.wins,
 			losses: user.losses,
 			rank: user.rank,
-			profile_pic: user.profile_pic
+			profile_pic: user.profile_pic,
+			is2faEnabled: user.isTwoFactorAuthenticationEnabled
 		}
 		return retUser;
 	}

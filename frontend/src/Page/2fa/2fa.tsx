@@ -10,7 +10,7 @@ const QrCode = (props: any) => {
     async function turnOn2fa(key: string) {
         if (key == "Enter") axios.get('http://localhost:5001/auth/2fa/turn-on/' + code, { withCredentials: true }).then(res => console.log(res));
     }
-    
+
     useEffect(() => {
         console.log(QrCode)
         if (QrCode === "")
