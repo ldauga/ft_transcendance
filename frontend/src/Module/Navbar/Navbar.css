@@ -2,7 +2,7 @@
     margin: 8px;
     background-color: #3A3935;
 
-    position: sticky;
+    /* position: sticky; */
     display: flex;
     align-items: center;
     height: 5vh;

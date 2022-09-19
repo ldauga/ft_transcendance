@@ -217,15 +217,17 @@ const HomePage = (props: any) => {
                         </div>
                         <div className="chat"></div>
                     </div>
+                </div>
+            </div>
                     <div id="notifModal" className="notifModal">
                         <div className="notif-modal-content">
                             <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                            {affNotif()}
-                            {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                            <div className='printNotif'>{affNotif()}</div>
+                            {/* <div className='bgDeleteAllNotif'> */}
+                                {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                            {/* </div> */}
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     );
 };
