@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const Bell=() => {
+import { VscBellDot } from 'react-icons/vsc'
+import { VscBell } from 'react-icons/vsc'
+import { RootState } from '../../../State';
+import { useSelector } from 'react-redux';
 
-    let location = useLocation();
+const Bell = () => {
+  const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+  const [oldNbNotif, setOldNbNotif] = useState(0)
 
-    if (location.pathname !== "/NotFound")
-      return (<a href="notif"><i className="bi bi-bell"></i></a>);
-    return <></>;
-  };
-  
+  let location = useLocation();
+
+  function bellOnClick() {
+    var tmp = document.getElementById('notifModal');
+    if (tmp) {
+      setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
+      if (tmp.style.display != 'block')
+        tmp.style.display = 'block';
+      else
+        tmp.style.display = 'none'
+    }
+  }
+
+  if (location.pathname !== "/NotFound" && location.pathname !== '/pong')
+    if (persistantReduceur.notifReducer.notifArray.length != oldNbNotif) {
+      if (oldNbNotif < persistantReduceur.notifReducer.notifArray.length) {
+        return (<VscBellDot onClick={bellOnClick} />);
+      }
+      else {
+        setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
+        return (<VscBell onClick={bellOnClick} />);
+      }
+    } else
+      return (<VscBell onClick={bellOnClick} />);
+  return <></>;
+};
+
 export default Bell;
-  

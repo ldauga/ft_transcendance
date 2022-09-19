@@ -16,12 +16,10 @@ export class AuthController {
 		const accessToken = await this.authService.login(query);
 
 		const refreshToken = await this.userServices.getRefreshTokens(accessToken);
-		console.log('refresh: ', refreshToken);
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
-		console.log('login: ', secretData);
 
 		res.cookie('auth-cookie', secretData, {httpOnly: false});
 		//GESTION D ERREUR NECESSAIRE
@@ -33,12 +31,10 @@ export class AuthController {
 		const accessToken = await this.authService.loginSans42(login);
 
 		const refreshToken = await this.userServices.getRefreshTokens(accessToken);
-		console.log('refresh: ', refreshToken);
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
-		console.log('login: ', secretData);
 
 		res.cookie('auth-cookie', secretData, {httpOnly: false});
 		//GESTION D ERREUR NECESSAIRE
@@ -47,16 +43,13 @@ export class AuthController {
 
 	@Get('/getCookieRefreshToken')
 	async getCookieRefreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-		console.log('getCookieRefreshToken');
 		const token = await this.authService.getCookieRefreshToken(req);
-		console.log(token);
 		return token;
 	}
 
 	@Get('/refresh')
 	@UseGuards(AuthGuard('jwt'))
 	async refresh(@Query() query, @Res({ passthrough: true }) res: Response) {
-		console.log('refresh');
 		//await this.authService.createRefreshToken(query);
 	}
 

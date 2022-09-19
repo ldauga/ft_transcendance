@@ -1,0 +1,79 @@
+.notifElement {
+	margin: auto;
+	margin-top: 5%;
+
+	width: 90%;
+	height: 40%;
+
+	border: 10px rgb(0, 0, 0, 0.8) solid;
+	background-color: rgb(0, 0, 0, 0.5);
+}
+
+.notifElement:hover {
+	transition: 1s;
+	background-color: rgb(255, 255, 255, 0.1);
+}
+
+.inviteNameDiv {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+
+    width: 80%;
+    height: 20%;
+
+    border: 5px black solid;
+    border-radius: 15px;
+
+    background-color: #2d2d2d;
+}
+
+.inviteButton, .disconnectButton {
+    margin: auto;
+    margin-top: 5%;
+    width: 20%;
+
+	padding: 3%;
+
+    border: 2px black solid;
+    border-radius: 100px;
+
+	display: flex;
+	justify-content: center;
+
+    font-size: smaller;
+    cursor: pointer;
+}
+
+.inviteButton:hover {
+    transition: all 0.25s;
+    background-color: aliceblue;
+}
+
+.decline, .forfeit {
+    background-color: darkred;
+}
+
+.accept, .join {
+    background-color: darkgreen;
+}
+
+.disconnectText {
+	margin: auto;
+	margin-top: 5%;
+
+	width: 80%;
+	height: 40%;
+
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0.8) solid;
+	background-color: rgb(0, 0, 0, 0.7);
+
+	display: flex;
+	align-items: center;
+}
+
+.inviteButton:hover {
+    transition: all 0.25s;
+    background-color: aliceblue;
+}

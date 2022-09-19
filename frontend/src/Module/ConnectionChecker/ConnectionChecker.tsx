@@ -14,7 +14,7 @@ function ConnectionChecker(props: {
 }): JSX.Element {
 
 
-  const userData = useSelector((state: RootState) => state.user)
+  const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
   const utilsData = useSelector((state: RootState) => state.utils)
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -28,11 +28,12 @@ function ConnectionChecker(props: {
     else
       axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data) })
     
-    utilsData.socket.emit('storeClientInfo', userData.user)
+    if (persistantReduceur.userReducer.user)
+      utilsData.socket.emit('storeClientInfo', persistantReduceur.userReducer.user)
     test = true
   }
 
-  return userData.user !== null ? <InvitationChecker children={props.component} ></InvitationChecker> : <Navigate to="/Login" />;
+  return persistantReduceur.userReducer.user !== null ? <InvitationChecker children={props.component} ></InvitationChecker> : <Navigate to="/Login" />;
 }
 
 export default ConnectionChecker;

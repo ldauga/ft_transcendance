@@ -28,6 +28,7 @@ class Player {
 	} | null
 
 	connected: boolean
+	sendNotif: boolean
 	dateDeconnection: number
 
 	width: number
@@ -63,6 +64,7 @@ class Player {
 		this.user = user
 
 		this.connected = false
+		this.sendNotif = false
 		this.dateDeconnection = 0
 
 		this.width = canvas.width / 40
