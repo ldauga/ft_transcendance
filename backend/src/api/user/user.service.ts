@@ -38,7 +38,12 @@ export class UserService {
 	}
 
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
-		const user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken.refreshToken});
+		var user: any;
+		if (signedRefreshToken.refreshToken)
+			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken.refreshToken});
+		else
+			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken});
+		
 		if (!user)
 			return null;
 		const retUser = {

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, ConsoleLogger, Controller, Get, Param, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Request, Response } from 'express';
@@ -19,36 +19,31 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
-
 		res.cookie('auth-cookie', secretData, {httpOnly: false});
-		//GESTION D ERREUR NECESSAIRE
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);	
 	}
 
 	@Get('/loginSans42/:login')
 		async loginSans42(@Param('login') login: string, @Res({ passthrough: true }) res: Response) {
 		const accessToken = await this.authService.loginSans42(login);
-
 		const refreshToken = await this.userServices.getRefreshToken(accessToken);
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
-
 		res.cookie('auth-cookie', secretData, {httpOnly: false});
-		//GESTION D ERREUR NECESSAIRE
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
 
 	@Get('2fa/generate/:refreshToken')
 	async register(@Param('refreshToken') refreshToken: string, @Res() response: Response, @Req() request: Request) {
 		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken, request);
-
 		return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
 	}
 
 	@Get('2fa/turn-on/:code')
 	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request, @Body() body) {
+		console.log(code);
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
 		console.log(user)
 		if (!user)
@@ -59,6 +54,7 @@ export class AuthController {
 		  code,
 		  totpsecret,
 		);
+		console.log('turn-up:', totpsecret);
 	  if (!isCodeValid) {
 		throw new UnauthorizedException('Wrong authentication code');
 	  }

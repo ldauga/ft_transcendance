@@ -35,8 +35,6 @@ export class UserController {
 
   @Get('/userExist/:refreshToken')
   public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
-    //if (!req.cookies['auth-cookie'])
-    //  throw new BadRequestException();
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
