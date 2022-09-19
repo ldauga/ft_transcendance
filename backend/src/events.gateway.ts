@@ -35,7 +35,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Client disconnected: ${client.id}`);
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     for (let i = 0; i < arrClient.length; i++) {
-      if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username.length > 0))
+      if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username != ""))
         this.server.to(arrClient[i].id).emit('removeFriend', arrClient[indexOfClient]);
     }
     if (indexOfClient !== -1)

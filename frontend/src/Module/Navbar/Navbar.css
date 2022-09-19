@@ -6,6 +6,7 @@
     display: flex;
     align-items: center;
     height: 5vh;
+    width: 100%;
 }
 
 .littleDiv, .bigDiv {
