@@ -6,7 +6,7 @@ function Login(props: { user?: any }) {
 	const [login, setLogin] = useState('')
 
 	function onClick42Login() {
-		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=f4c0d93db7acf37cb140cce5da2617265ab63195b7a60bcd981003b3d289a413&redirect_uri=http%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
+		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=f285bfcaa5737b6f83635b8a450e66139dddce3936e39d98a1d6ed76ceb3b6e4&redirect_uri=http%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
 	}
 
 	function onClickLoginSans42() {
