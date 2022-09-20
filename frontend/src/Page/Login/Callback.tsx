@@ -12,7 +12,7 @@ export default function Callback() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
     const dispatch = useDispatch();
-    const { setUser } = bindActionCreators(actionCreators, dispatch);
+    const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
     //A MODIFIER ALED CA MARCHE PAS COMME ON VEUT
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
@@ -25,13 +25,14 @@ export default function Callback() {
     async function turnOn2fa(key: string) {
         if (key == "Enter") 
             axios.get('http://localhost:5001/auth/2fa/verify/' + code, { withCredentials: true })
-                .then((e) => setTurnOn(true))
+                .then((e) => {setTwoFactor(true), setTurnOn(true)})
                 .catch((e) => {
                     setRes(e.response.status)
                 });
     }
 
     useEffect(() => {
+        console.log('persistantReduceur.twoFactorReducer.verif', persistantReduceur.twoFactorReducer.verif)
         if (res === 401)
             setStatus("Error, wrong code.")
         else if (res == 404)
@@ -58,7 +59,6 @@ export default function Callback() {
                     <p>{status}</p>
                 </div>
             )
-
         else
             return (<Navigate to="/HomePage" />)
     }

@@ -6,6 +6,7 @@ import { utilsReducer } from "./utilsReducer";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import { notifReducer } from "./notifReducer";
+import { twoFactorReducer } from "./2faReducer";
 
 const persistConfig = {
     key: 'root',
@@ -14,7 +15,8 @@ const persistConfig = {
   
 const tmp = combineReducers({
   userReducer: userReducer,
-  notifReducer: notifReducer
+  notifReducer: notifReducer,
+  twoFactorReducer: twoFactorReducer
 })
 
 const persistantReducer = persistReducer(persistConfig, tmp)

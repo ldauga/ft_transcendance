@@ -1,6 +1,6 @@
 import { Dispatch } from "redux"
-import { clientListActionType, LogActionType, userActionType, notifActionType } from "../Action-Types"
-import { clientListAction, logAction, userAction, notifAction } from "../Actions"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType } from "../Action-Types"
+import { clientListAction, logAction, userAction, notifAction, twoFactorAction } from "../Actions"
 import { Client, msg, Notif } from "../type"
 
 //ClientList
@@ -101,6 +101,15 @@ export const delAllNotif = () => {
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({
             type: notifActionType.DELALLNOTIF,
+        })
+    }
+}
+
+export const setTwoFactor = (item: boolean) => {
+    return (dispatch: Dispatch<twoFactorAction>) => {
+        dispatch({
+            type: twoFactorActionType.SETTWOFACTOR,
+            payload: item
         })
     }
 }

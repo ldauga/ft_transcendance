@@ -23,3 +23,7 @@ export enum notifActionType {
     DELNOTIF="DELNOTIF",
     DELALLNOTIF="DELALLNOTIF"
 }
+
+export enum twoFactorActionType {
+    SETTWOFACTOR="SETTWOFACTOR"
+}

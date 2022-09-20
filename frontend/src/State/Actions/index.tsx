@@ -1,4 +1,4 @@
-import { clientListActionType, LogActionType, userActionType, notifActionType } from "../Action-Types"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType } from "../Action-Types"
 import { Client, msg, msgList, Notif } from "../type"
 
 
@@ -73,3 +73,11 @@ type DelAllNotifAction = {
 }
 
 export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction
+
+
+type SetTwoFactor = {
+    type: twoFactorActionType.SETTWOFACTOR
+    payload: boolean
+}
+
+export type twoFactorAction = SetTwoFactor
