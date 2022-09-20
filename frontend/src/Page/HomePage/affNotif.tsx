@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../State";
+import { notifReducer } from "../../State/Reducers/notifReducer";
 import { NotifType } from "../../State/type";
 
 import './Notif.css'
@@ -24,7 +25,7 @@ export default function affNotif() {
 
 				tmp = (<div className='notifElement' key={ret.length}>
 					<div className="inviteNameDiv">
-						<h3 id='invitePlayer'> {item.data.inviteUser.login + " invite you to play on a custom map !"} </h3>
+						<h3 id='invitePlayer'> {item.data.inviteUser.login + " wants to play with you"} </h3>
 					</div>
 					<div className="blocksContainerRow">
 						<button className='inviteButton decline' onClick={(e) => {
@@ -42,16 +43,18 @@ export default function affNotif() {
 			case NotifType.DISCONNECTGAME: {
 
 				tmp = (<div className='notifElement' key={ret.length}>
-					<div className="disconnectText">{"You have disconnected a pong game"}</div>
+					<div className="inviteNameDiv">
+						<h3 id='invitePlayer'> {"You have disconnected a pong game"} </h3>
+						</div>
 					<div className="blocksContainerRow">
-					<button className='disconnectButton join' onClick={(e) => {
-							delNotif(persistantReduceur.notifReducer.notifArray[index])
-							window.location.href = 'http://localhost:3000/pong'
-						}} >Join</button>
-						<button className='disconnectButton forfeit' onClick={(e) => {
+						<button className='inviteButton decline' onClick={(e) => {
 							utilsData.socket.emit('FORFEIT', {user: persistantReduceur.userReducer.user, roomId: persistantReduceur.notifReducer.notifArray[index].data.roomId})
 							delNotif(persistantReduceur.notifReducer.notifArray[index])
 						}} >Forfeit</button>
+						<button className='inviteButton accept' onClick={(e) => {
+								delNotif(persistantReduceur.notifReducer.notifArray[index])
+								window.location.href = 'http://localhost:3000/pong'
+						}} >Join</button>
 					</div>
 				</div>)
 
@@ -60,7 +63,14 @@ export default function affNotif() {
 			case NotifType.LOOSEGAMEDISCONECT: {
 
 				tmp = (<div className='notifElement' key={ret.length}>
-
+					<div className="inviteNameDiv">
+						<h3 id='invitePlayer'>{"You gave up against " + persistantReduceur.notifReducer.notifArray[index].data.opponentLogin} </h3>
+					</div>
+					<div className="blocksContainerRow">
+					<button className='inviteButton decline' onClick={(e) => {
+							delNotif(persistantReduceur.notifReducer.notifArray[index])
+						}} >Delete</button>
+					</div>
 				</div>)
 
 				break;
