@@ -21,6 +21,7 @@ import master_rank_img from '../assets/master_rank.png'
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
+import { UserProfile } from '../../Module/UserProfile/UserProfile';
 
 var test = false
 
@@ -31,7 +32,6 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
-    // console.log(persistantReduceur.user);
     const [listNotif, setListNotif] = useState(Array<any>)
 
     const [isFriendList, setFriendList] = FriendListHook(true);
@@ -41,6 +41,7 @@ const HomePage = (props: any) => {
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
 
     const [rankImage, setRankImage] = useState("")
+    const [userProfileLogin, setUserProfileLogin] = useState("")
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
@@ -70,10 +71,7 @@ const HomePage = (props: any) => {
                     )
                 })
                 console.log('matches', matches)
-                var invertMatches: any[] = []
-                for (let index = matches.length - 1; index >= 0; index--)
-                    invertMatches.push(matches[index])
-                setMatchesHistory(invertMatches)
+                setMatchesHistory(matches.reverse())
             })
 
             test = true
@@ -122,7 +120,7 @@ const HomePage = (props: any) => {
                         }
                     }
 
-                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }}>
+                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }} onClick={(e) => (setUserProfileLogin(e.currentTarget.children[1].textContent as string))}>
                         <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
@@ -192,14 +190,16 @@ const HomePage = (props: any) => {
                                 </div>
                             </div>
                             <div className="leaderBoard">
-                                <div className='infoLeaderBoard'>
+                                { userProfileLogin == "" ? <><div className='infoLeaderBoard'>
                                     <div className='infoContent little'>Rank</div>
                                     <div className='infoContent medium'>Nickname</div>
                                     <div className='infoContent little'>Wins</div>
                                     <div className='infoContent little'>Looses</div>
                                     <div className='infoContent medium'>Win Rate</div>
                                 </div>
-                                {leaderBoardUsers}
+                                {leaderBoardUsers}</> :
+                                <UserProfile login={userProfileLogin}/> 
+                                }
                             </div>
                         </div>
                     </div>

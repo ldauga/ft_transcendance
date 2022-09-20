@@ -414,6 +414,47 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     if (room != null) {
 
+      if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
+
+        console.log('1')
+
+        const data = {
+          id_user1: room[1].players[0].user.id,
+          score_u1: room[1].players[0].score,
+          id_user2: room[1].players[1].user.id,
+          score_u2: room[1].players[1].score,
+          winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
+        }
+
+        console.log('2')
+
+        const match = this.http.post('http://localhost:5001/matchesHistory', data);
+
+        console.log('3')
+
+        match.forEach((item) => { })
+
+        console.log('4')
+
+        room[1].players.forEach((item, index) => {
+          if (!item.connected) {
+            arrClient.forEach((client) => {
+              if (client.username == item.user.login)
+                this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponent: room[1].players[index ? 0 : 1].user.login, roomId: room[1].roomID } })
+            })
+          }
+        })
+
+        console.log('5')
+        this.pongInfo.splice(room[0], 1)
+
+        console.log('6')
+        this.server.to(room[1].roomID).emit('finish', room[1])
+
+        console.log('7')
+        return;
+      }
+
       this.server.to(client.id).emit('render', this.pongInfo[room[0]])
 
     }
@@ -442,7 +483,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const match = this.http.post('http://localhost:5001/matchesHistory', data);
 
-    match.forEach((item) => {})
+    match.forEach((item) => { })
 
     this.pongInfo[room[0]].players.forEach((item, index) => {
       if (!item.connected) {
@@ -454,7 +495,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     })
 
     this.server.to(this.pongInfo[room[0]].roomID).emit('finish', this.pongInfo[room[0]])
-    
+
     this.pongInfo.splice(room[0], 1)
 
   }

@@ -23,18 +23,17 @@ const Bell = () => {
     }
   }
 
-  if (location.pathname !== "/NotFound" && location.pathname !== '/pong')
     if (persistantReduceur.notifReducer.notifArray.length != oldNbNotif) {
       if (oldNbNotif < persistantReduceur.notifReducer.notifArray.length) {
-        return (<VscBellDot onClick={bellOnClick} />);
+        return (<VscBellDot id='bell' onClick={bellOnClick} />);
       }
       else {
         setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
-        return (<VscBell onClick={bellOnClick} />);
+        return (<VscBell id='bell' onClick={bellOnClick} />);
       }
-    } else
-      return (<VscBell onClick={bellOnClick} />);
-  return <></>;
+    } else {
+      return (<VscBell id='bell' onClick={bellOnClick} />);
+    }
 };
 
 export default Bell;
