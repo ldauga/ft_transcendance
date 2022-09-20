@@ -1,0 +1,152 @@
+.statPlayerContent {
+	width: 100%;
+	height: 100%;
+}
+
+.statPlayerContent .userIdentity {
+	margin: 1%;
+	
+	width: 98%;
+	height: 68%;
+
+	background-color: rgba(255, 255, 255, 0.05);
+
+	display: flex;
+	flex-direction: row;
+}
+
+.statPlayerContent .userIdentity .userPictureNName {
+	margin: 1%;
+
+	width: 38%;
+	height: 98%;
+}
+
+.userPictureNName .userLogin {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	margin-top: 2%;
+	margin-left: 5%;
+
+	width: 80%;
+	height: 15%;
+
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.userLogin .userLoginText {
+	margin-left: 15%;
+}
+
+.userPictureNName .userNickname {
+	margin-top: 3%;
+	margin-left: 15%;
+
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	width: 80%;
+	height: 15%;
+
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.userNickname .userNicknameText {
+	margin-left: 15%;
+}
+
+.userPictureNName img {
+	width: 100%;
+}
+
+.userIdentity .statUserInfo {
+	margin: 1%;
+	height: 97%;
+	width: 58%;
+
+	background-color: red;
+}
+
+.statUserRank {
+	display: flex;
+
+	margin: 1%;
+
+	width: 98%;
+	height: 48%;
+
+	background-color: green;
+}
+
+.statUserRank .statUserImgContainer {
+
+	height: 100%;
+	width: 40%;
+
+	display: flex;
+
+	align-items: center;
+	justify-content: center;
+
+	background-color: greenyellow;
+}
+
+.statUserImgContainer img {
+	/* width: 100%; */
+	height: 100%;
+}
+
+.statUserRank .statUserRankName {
+	width: 60%;
+	height: 100%;
+
+	background-color: aqua;
+}
+
+.statUserRankName .statUserRankNameText {
+	margin-top: 10%;
+	margin-left: 25%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border-radius: 10px;
+
+	height: 20%;
+	width: 30%;
+
+	background-color: rebeccapurple;
+}
+
+.statUserRankName .statUserRankNameTextValue {
+	margin-top: 10%;
+	margin-left: 25%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border-radius: 10%;
+
+	height: 20%;
+	width: 30%;
+
+	background-color: rebeccapurple;
+}
+
+.statUserInfo .userInfoContainer {
+	margin: 1%;
+
+	width: 98%;
+	height: 49%;
+	background-color: green;
+}
+
+.userProfileMatches {
+	margin: 1%;
+	width: 98%;
+}
