@@ -21,6 +21,7 @@ import master_rank_img from '../assets/master_rank.png'
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
+import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 
 var test = false
 
@@ -31,6 +32,8 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
+    const [listNotif, setListNotif] = useState(Array<any>)
+
     const [isFriendList, setFriendList] = FriendListHook(true);
     const [isAddFriend, setAddFriend] = AddFriendHook(false);
 
@@ -38,6 +41,7 @@ const HomePage = (props: any) => {
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
 
     const [rankImage, setRankImage] = useState("")
+    const [userProfileLogin, setUserProfileLogin] = useState("")
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
@@ -67,10 +71,7 @@ const HomePage = (props: any) => {
                     )
                 })
                 console.log('matches', matches)
-                var invertMatches: any[] = []
-                for (let index = matches.length - 1; index >= 0; index--)
-                    invertMatches.push(matches[index])
-                setMatchesHistory(invertMatches)
+                setMatchesHistory(matches.reverse())
             })
 
             test = true
@@ -119,7 +120,7 @@ const HomePage = (props: any) => {
                         }
                     }
 
-                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }}>
+                    tmp.push(<div className={(item.login == persistantReduceur.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => {setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer()}}>
                         <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
@@ -166,7 +167,7 @@ const HomePage = (props: any) => {
                 <div className="vertical">
                     <div className='main'>
                         <div className='statPlayer' id='statPlayer' >
-
+                            <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin}/>
                         </div>
                         <div className="match-history" id='match-history' >
                             <h3>Match History</h3>
@@ -198,7 +199,7 @@ const HomePage = (props: any) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="leaderBoard" onClick={displayStatPlayer}>
+                            <div className="leaderBoard">
                                 <div className='infoLeaderBoard'>
                                     <div className='infoContent little'>Rank</div>
                                     <div className='infoContent medium'>Nickname</div>

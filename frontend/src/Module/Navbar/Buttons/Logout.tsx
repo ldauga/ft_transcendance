@@ -10,7 +10,7 @@ const Logout=() => {
 
     const dispatch = useDispatch();
 
-    const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
+    const { setUser, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
     
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
     
@@ -18,6 +18,8 @@ const Logout=() => {
         removeCookie("auth-cookie", {path:'/'})
 
         setUser(null)
+
+        delAllNotif()
         setTwoFactor(false)
     }
 

@@ -9,6 +9,18 @@ body {
 	margin: -8px !important;
 }
 
+@keyframes blink{
+	0% {
+	  color: white;
+	}
+	50% {
+	  color: red;
+	}
+	100% {
+		color: white;
+	  }
+  }
+
 .horizontal {
 	display: flex;
 	flex-direction: column;
@@ -130,6 +142,8 @@ body {
 	animation: apparitionStatPlayer 1s ease-out;
 	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 	z-index: 1;
+
+	overflow-y: scroll;
 }
 
 @keyframes apparitionStatPlayer {
@@ -296,6 +310,8 @@ body {
 
 .leaderBoard:hover {
 	transition: all 0.5s;
+
+
 	box-shadow: #901644 2.4px 2.4px 10px;
 }
 
@@ -332,6 +348,8 @@ body {
 }
 
 .UserLeaderBoard {
+	cursor: pointer;
+
 	margin-top: 2%;
 
 	width: 100%;
@@ -340,6 +358,16 @@ body {
 	display: flex;
 
 	background-color: rgb(0, 0, 0, 0.3);
+}
+
+.Our {
+	background-color: darkblue;
+}
+
+.UserLeaderBoard:hover {
+	transition: 0.5s;
+
+	background-color: rgb(0, 0, 0);
 }
 
 .UserLeaderBoard .UserLeaderBoardInfo {
