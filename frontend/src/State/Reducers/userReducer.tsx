@@ -9,7 +9,8 @@ export interface User {
         wins: number,
         looses: number,
         rank: number,
-        profile_pic: string
+        profile_pic: string,
+        is2faEnabled: boolean
     } | null;
 }
 

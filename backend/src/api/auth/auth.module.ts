@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategy/local.strategy';
 import { UserEntity } from '../user/user.entity';
+import { RefreshStrategy } from './strategy/refresh.strategy';
 
 @Module({
   imports: [
@@ -16,14 +17,14 @@ import { UserEntity } from '../user/user.entity';
 	  JwtModule.register({
 		  secret: 'super-cat',
 		  signOptions: {
-			  expiresIn: '10min',
+			  expiresIn: '1d',
 		  },
 	  }),
 	  HttpModule,
 	  UserModule,
 	],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, RefreshStrategy],
   exports: [AuthService]
 })
 

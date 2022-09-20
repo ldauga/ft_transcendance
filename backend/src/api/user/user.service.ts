@@ -1,4 +1,4 @@
-import { Logger, Injectable, Req } from '@nestjs/common';
+import { Logger, Injectable, Req, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
-
+	
 @Injectable()
 export class UserService {
 	constructor(
@@ -37,8 +37,37 @@ export class UserService {
 		return user;
 	}
 
-	async getUserByRefreshToken(refreshToken: any): Promise<GetUserDto> {
-		const user = await this.userRepository.findOneBy( {refreshToken: refreshToken} );
+	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
+		var user: any;
+		if (signedRefreshToken.refreshToken)
+			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken.refreshToken});
+		else
+			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken});
+		
+		if (!user)
+			return null;
+		const retUser = {
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			is2faEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
+	}
+
+	async getTotpSecret(login: string) {
+		const user = await this.userRepository.findOneBy( {login: login})
+		if (!user)
+			return null;
+		return user.totpsecret;
+	}
+
+	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
+		const user = await this.userRepository.findOneBy( { refreshToken: refreshToken} );
 		if (!user)
 			return null;
 		const retUser = {
@@ -83,10 +112,12 @@ export class UserService {
 
 	async updateRefreshToken(body: UpdateUserDto, refreshToken: any) {
 		let user = await this.getUserById(body.sub);
-		if (user) {
-			user.refreshToken = refreshToken;
-			user.refreshTokenIAT = body.iat;
-			user.refreshTokenExp = body.exp
+		const decodedRefreshToken = this.jwtService.decode(refreshToken)
+		if (user) {	
+			user.refreshToken = decodedRefreshToken['token'];
+			user.signedRefreshToken = refreshToken;
+			user.refreshTokenIAT = decodedRefreshToken['iat'];
+			user.refreshTokenExp = decodedRefreshToken['exp'];
 			this.userRepository.save(user);
 			return user;
 		}
@@ -106,19 +137,19 @@ export class UserService {
 		return null;
 	}
 
-	async getRefreshTokens(accessToken: string) {
+	async getRefreshToken(accessToken: string) {
 		try {
 			const decodedJwtAccessToken = this.jwtService.decode(accessToken);
 
-
 			const data = JSON.parse(JSON.stringify(decodedJwtAccessToken));
-			const refreshToken = randomUUID(); //hash
+			const refreshToken = randomUUID();
 
 			const user = await this.getUserById(data.sub);
 
+			if (!user)
+				return null;
 			
-			
-			var signedRefreshToken =  this.signRefreshToken(refreshToken)
+			var signedRefreshToken = this.signRefreshToken(refreshToken)
 			await this.updateRefreshToken(data, signedRefreshToken);
 
 			return signedRefreshToken;
@@ -128,10 +159,28 @@ export class UserService {
 		}
 	}
 
+	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+		const user = await this.getUserById(userId);
+		console.log(user);
+		if (!user)
+			return null;
+		user.totpsecret = secret;
+		this.userRepository.save(user);
+	}
+
+	async turnOnTwoFactorAuthentication(login: string) {
+		const user = await this.getUserByLogin(login)
+		if (!user)
+			return null;
+		user.isTwoFactorAuthenticationEnabled = true;
+		this.userRepository.save(user);
+	}
+
 	signRefreshToken(refreshToken: any) {
 		return this.jwtService.sign({
 			sub: refreshToken.sub,
-			login: refreshToken.login
+			login: refreshToken.login,
+			token: refreshToken
 		});
 	}
 }

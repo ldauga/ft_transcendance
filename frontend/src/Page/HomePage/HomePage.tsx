@@ -153,17 +153,27 @@ const HomePage = (props: any) => {
         }
     })
 
+    function displayStatPlayer() {
+        const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null;
+        if (statPlayer != null) {
+            statPlayer.style.display = "flex";
+        }
+      }
+
     return (
         <div className='App'>
             <div className="horizontal">
                 <Navbar />
                 <div className="vertical">
                     <div className='main'>
-                        <div className="match-history">
+                        <div className='statPlayer' id='statPlayer' >
+
+                        </div>
+                        <div className="match-history" id='match-history' >
                             <h3>Match History</h3>
                             {matchesHistory}
                         </div>
-                        <div className="stat">
+                        <div className="stat" id='stat' >
                             <div className="rank">
                                 <div className='rankInfo'>
                                     <div className='imgContainer'>
@@ -189,8 +199,8 @@ const HomePage = (props: any) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="leaderBoard">
-                                { userProfileLogin == "" ? <><div className='infoLeaderBoard'>
+                            <div className="leaderBoard" onClick={displayStatPlayer}>
+                                <div className='infoLeaderBoard'>
                                     <div className='infoContent little'>Rank</div>
                                     <div className='infoContent medium'>Nickname</div>
                                     <div className='infoContent little'>Wins</div>
@@ -217,15 +227,17 @@ const HomePage = (props: any) => {
                         </div>
                         <div className="chat"></div>
                     </div>
+                </div>
+            </div>
                     <div id="notifModal" className="notifModal">
                         <div className="notif-modal-content">
                             <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                            {affNotif()}
-                            {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                            <div className='printNotif'>{affNotif()}</div>
+                            {/* <div className='bgDeleteAllNotif'> */}
+                                {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                            {/* </div> */}
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     );
 };

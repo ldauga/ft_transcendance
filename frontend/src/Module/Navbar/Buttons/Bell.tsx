@@ -16,8 +16,8 @@ const Bell = () => {
     var tmp = document.getElementById('notifModal');
     if (tmp) {
       setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
-      if (tmp.style.display != 'block')
-        tmp.style.display = 'block';
+      if (tmp.style.display != 'flex')
+        tmp.style.display = 'flex';
       else
         tmp.style.display = 'none'
     }

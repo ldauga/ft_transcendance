@@ -1,31 +1,33 @@
-import { ConsoleLogger, Injectable, Req, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { UserService } from "src/api/user/user.service";
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy,'local') {
+export class RefreshStrategy extends PassportStrategy(Strategy,'refresh') {
     constructor(
-		private userServices: UserService
-	){
+        private userService: UserService
+    ){
         super({
             ignoreExpiration: false,
             secretOrKey: 'super-cat',
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
                 if (!data) {
+
 					return null;
                 }
-				return data.accessToken;
+				return data.refreshToken;
             }])
         });
     }
 
     async validate(payload:any){
-		const user = await this.userServices.getUserById(payload.sub);
+        const user = await this.userService.getUserByToken(payload.token)
         if (!user)
-            throw new UnauthorizedException('Invalid access token');        
+            throw new UnauthorizedException('Invalid refresh token');
         return payload;
     }
 }
+

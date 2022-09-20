@@ -21,7 +21,7 @@ let arrClient: Client[] = [];
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
   },
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -359,7 +359,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             if (!this.pongInfo[index].players[i].sendNotif) {
               arrClient.forEach((item) => {
                 if (item.username == this.pongInfo[index].players[i].user.login) {
-                  this.server.to(item.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: this.pongInfo[index].roomID } })
+                  this.server.to(item.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: this.pongInfo[index].roomID, opponentLogin: this.pongInfo[index].players[i ? 0 : 1].user.login } })
                   this.pongInfo[index].players[i].sendNotif = true;
                 }
               })
@@ -386,7 +386,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 if (!item.connected) {
                   arrClient.forEach((client) => {
                     if (client.username == item.user.login)
-                      this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponent: room[1].players[index ? 0 : 1].user.login, roomId: room[1].roomID } })
+                      this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: room[1].players[index ? 0 : 1].user.login, roomId: room[1].roomID } })
                   })
                 }
               })
