@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react'
 import { isPropertyAccessOrQualifiedName } from 'typescript'
 import './StatPlayer.css'
 
+import { AiOutlineClose } from 'react-icons/ai'
+
 import iron_rank_img from '../../Page/assets/iron_rank.png'
 import bronze_rank_img from '../../Page/assets/bronze_rank.png'
 import gold_rank_img from '../../Page/assets/gold_rank.png'
 import diamond_rank_img from '../../Page/assets/diamond_rank.png'
 import master_rank_img from '../../Page/assets/master_rank.png'
 
-export function StatPlayer(props: { login: string }) {
+export function StatPlayer(props: { login: string, setLogin: any}) {
 	const [profileUserId, setProfileUserId] = useState(0)
 	const [rankImage, setRankImage] = useState("")
 	const [userProfilePicture, setUserProfilePicture] = useState("")
@@ -23,36 +25,62 @@ export function StatPlayer(props: { login: string }) {
 	var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
 
 	useEffect(() => {
-		if (!profileUserId) {
+		console.log('props', props)
+		if (!profileUserId && props.login !== "") {
 			axios.get("http://localhost:5001/user/login/" + props.login).then((res) => {
 				setProfileUserId(res.data.id)
 				setUserProfilePicture(res.data.profile_pic)
 
-				setRankImage(iron_rank_img)
-				// tmp4.textContent = 'Iron | Noobies'
-				if (res.data.wins > 5) {
-					setRankImage(bronze_rank_img)
-					// tmp4.textContent = 'Bronze | Trainer'
+				const tmp1 = document.getElementById('userLoginText')
+				if (tmp1)
+					tmp1.textContent = res.data.login
+
+				const tmp2 = document.getElementById('userNicknameText')
+				if (tmp2)
+					tmp2.textContent = res.data.nickname
+
+				const tmp3 = document.getElementById('statUserRankNameValue')
+
+				if (tmp3) {
+					setRankImage(iron_rank_img)
+					tmp3.textContent = 'Iron | Noobies'
+					if (res.data.wins > 5) {
+						setRankImage(bronze_rank_img)
+						tmp3.textContent = 'Bronze | Trainer'
+					}
+					else if (res.data.wins > 10) {
+						setRankImage(gold_rank_img)
+						tmp3.textContent = 'Gold | Not Bad'
+					}
+					else if (res.data.wins > 20) {
+						setRankImage(diamond_rank_img)
+						tmp3.textContent = 'Diamond | Wow !!!'
+					}
+					else if (res.data.wins > 30) {
+						setRankImage(master_rank_img)
+						tmp3.textContent = 'Master splinter | Our God !!!'
+					}
+					if (res.data.login == 'ldauga') {
+						setRankImage(master_rank_img)
+						tmp3.textContent = 'Master splinter | Our God !!!'
+					} else if (res.data.login == 'atourret') {
+						setRankImage(gold_rank_img)
+						tmp3.textContent = 'GroNoob'
+					}
 				}
-				else if (res.data.wins > 10) {
-					setRankImage(gold_rank_img)
-					// tmp4.textContent = 'Gold | Not Bad'
-				}
-				else if (res.data.wins > 20) {
-					setRankImage(diamond_rank_img)
-					// tmp4.textContent = 'Diamond | Wow !!!'
-				}
-				else if (res.data.wins > 30) {
-					setRankImage(master_rank_img)
-					// tmp4.textContent = 'Master splinter | Our God !!!'
-				}
-				if (res.data.login == 'ldauga') {
-					setRankImage(master_rank_img)
-					// tmp4.textContent = 'Master splinter | Our God !!!'
-				} else if (res.data.login == 'atourret') {
-					setRankImage(gold_rank_img)
-					// tmp4.textContent = 'GroNoob'
-				}
+
+				const tmp4 = document.getElementById('numberWinsValue')
+				if (tmp4)
+					tmp4.textContent = res.data.wins
+
+				const tmp5 = document.getElementById('numberLossesValue')
+				if (tmp5)
+					tmp5.textContent = res.data.losses
+
+				const tmp6 = document.getElementById('winRateValue')
+				if (tmp6)
+					tmp6.textContent = Math.floor((res.data.wins / (res.data.wins + res.data.losses)) * 100).toString() + '%'
+
 			})
 		}
 		else if (!profileUserMatchHistory.length && profileUserId && !check) {
@@ -90,16 +118,21 @@ export function StatPlayer(props: { login: string }) {
 
 	return (
 		<div className="statPlayerContent">
+			<div className='closeStatePlayer'>
+				<AiOutlineClose onClick={(e) => {const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null; if (statPlayer != null) { statPlayer.style.display = "none"; props.setLogin(""); setCheck(false); setProfileUserId(0); profileUserMatchHistory.splice(0, profileUserMatchHistory.length)} }}/>
+			</div>
 			<div className="userIdentity">
 				<div className="userPictureNName">
-					<img src={userProfilePicture} />
+					<div className="userProfilePictureContainer">
+						<img src={userProfilePicture} />
+					</div>
 					<div className="userLogin">
 						<div className="userLoginText">Login :</div>
-						<div className="userLoginText">cgangaro</div>
+						<div className="userLoginText" id='userLoginText'></div>
 					</div>
 					<div className="userNickname">
 						<div className="userNicknameText">Nickname :</div>
-						<div className="userNicknameText">cgangaro</div>
+						<div className="userNicknameText" id='userNicknameText'></div>
 					</div>
 				</div>
 				<div className="statUserInfo">
@@ -112,19 +145,19 @@ export function StatPlayer(props: { login: string }) {
 							<div className='statUserRankNameTextValue' id='statUserRankNameValue'></div>
 						</div>
 					</div>
-					<div className='userInfoContainer'>
-						{/* <div className='userInfo first'>
-							<div className='userInfoText'>Wins :</div>
+					<div className='statUserInfoContainer'>
+						<div className='statUserInfoElement first'>
+							<div className='userInfoText'>Number of Wins :</div>
 							<div className='userInfoText value' id='numberWinsValue'></div>
 						</div>
-						<div className='userInfo second'>
-							<div className='userInfoText'>Losses :</div>
+						<div className='statUserInfoElement second'>
+							<div className='userInfoText'>Number of Losses :</div>
 							<div className='userInfoText value' id='numberLossesValue'></div>
 						</div>
-						<div className='userInfo third'>
+						<div className='statUserInfoElement third'>
 							<div className='userInfoText'>Win Rate :</div>
 							<div className='userInfoText value' id='winRateValue'></div>
-						</div> */}
+						</div>
 					</div>
 				</div>
 			</div>

@@ -1,3 +1,19 @@
+.closeStatePlayer {
+	position: sticky;
+	top: 1%;
+	right: 1%;
+
+	float: right;
+
+	width: 7.5vh;
+	height: 1%;
+}
+
+.closeStatePlayer svg {
+	width: 100%;
+	height: auto;
+}
+
 .statPlayerContent {
 	width: 100%;
 	height: 100%;
@@ -5,7 +21,7 @@
 
 .statPlayerContent .userIdentity {
 	margin: 1%;
-	
+
 	width: 98%;
 	height: 68%;
 
@@ -27,7 +43,7 @@
 	flex-direction: row;
 	align-items: center;
 
-	margin-top: 2%;
+	margin-top: 12%;
 	margin-left: 5%;
 
 	width: 80%;
@@ -41,7 +57,7 @@
 }
 
 .userPictureNName .userNickname {
-	margin-top: 3%;
+	margin-top: 13%;
 	margin-left: 15%;
 
 	display: flex;
@@ -58,8 +74,18 @@
 	margin-left: 15%;
 }
 
-.userPictureNName img {
+.userPictureNName .userProfilePictureContainer {
+	display: flex;
+
+	justify-content: center;
+	align-items: center;
+
 	width: 100%;
+	height: 40%;
+}
+
+.userProfilePictureContainer img {
+	height: 100%;
 }
 
 .userIdentity .statUserInfo {
@@ -67,7 +93,7 @@
 	height: 97%;
 	width: 58%;
 
-	background-color: red;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .statUserRank {
@@ -78,7 +104,6 @@
 	width: 98%;
 	height: 48%;
 
-	background-color: green;
 }
 
 .statUserRank .statUserImgContainer {
@@ -91,7 +116,7 @@
 	align-items: center;
 	justify-content: center;
 
-	background-color: greenyellow;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .statUserImgContainer img {
@@ -100,15 +125,16 @@
 }
 
 .statUserRank .statUserRankName {
-	width: 60%;
+	margin-left: 1%;
+	width: 59%;
 	height: 100%;
 
-	background-color: aqua;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .statUserRankName .statUserRankNameText {
-	margin-top: 10%;
-	margin-left: 25%;
+	margin-top: 15%;
+	margin-left: 15%;
 
 	display: flex;
 	align-items: center;
@@ -119,31 +145,78 @@
 	height: 20%;
 	width: 30%;
 
-	background-color: rebeccapurple;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .statUserRankName .statUserRankNameTextValue {
-	margin-top: 10%;
+	margin-top: 15%;
 	margin-left: 25%;
 
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	border-radius: 10%;
+	border-radius: 10px;
 
 	height: 20%;
-	width: 30%;
+	width: 70%;
 
-	background-color: rebeccapurple;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
-.statUserInfo .userInfoContainer {
+.statUserInfo .statUserInfoContainer {
+	display: flex;
+	flex-direction: column;
 	margin: 1%;
 
 	width: 98%;
 	height: 49%;
-	background-color: green;
+
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.statUserInfoContainer .statUserInfoElement {
+	margin-top: auto;
+	margin-bottom: auto;
+	
+	display: flex;
+
+	flex-direction: row;
+	align-items: center;
+
+	width: 60%;
+	height: 20%;
+
+}
+
+.statUserInfoContainer .first {
+	margin-left: 5%;
+}
+
+.statUserInfoContainer .second {
+	margin-left: 20%;
+}
+
+.statUserInfoContainer .third {
+	margin-left: 35%;
+}
+
+.statUserInfoElement .userInfoText {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	height: 100%;
+	width: 50%;
+
+	border-radius: 20px;
+
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.statUserInfoElement .value {
+	margin-left: auto;
+	width: 30%;
 }
 
 .userProfileMatches {

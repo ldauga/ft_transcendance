@@ -120,7 +120,7 @@ const HomePage = (props: any) => {
                         }
                     }
 
-                    tmp.push(<div className='UserLeaderBoard' key={tmp.length + 1} style={{ backgroundColor: (item.login == persistantReduceur.userReducer.user?.login ? 'darkblue' : 'none') }} onClick={(e) => {setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer()}}>
+                    tmp.push(<div className={(item.login == persistantReduceur.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => {setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer()}}>
                         <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
@@ -167,7 +167,7 @@ const HomePage = (props: any) => {
                 <div className="vertical">
                     <div className='main'>
                         <div className='statPlayer' id='statPlayer' >
-                            <StatPlayer login={userProfileLogin}/>
+                            <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin}/>
                         </div>
                         <div className="match-history" id='match-history' >
                             <h3>Match History</h3>
