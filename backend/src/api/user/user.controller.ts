@@ -8,6 +8,22 @@ import { GetUserDto } from './dtos/getUser.dto';
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+
+export const storage = {
+  storage: diskStorage({
+      destination: './uploads/profileimages',
+      filename: (req, file, cb) => {
+          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+          const extension: string = path.parse(file.originalname).ext;
+
+          cb(null, `${filename}${extension}`)
+      }
+  })
+}
+
 
 @Controller('user')
 export class UserController {
@@ -42,9 +58,11 @@ export class UserController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+  @UseInterceptors(FileInterceptor('file', storage))
+  public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
+    console.log(body.id)
+    console.log(file.filename);
+    return this.service.updateProfilePic(body, file.filename)
   }
 
   @Post('updateNickname')

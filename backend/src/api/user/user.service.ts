@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
+import { throws } from 'assert';
 	
 @Injectable()
 export class UserService {
@@ -148,6 +149,26 @@ export class UserService {
 		user.nickname = body.nickname;
 		this.userRepository.save(user);
 
+		const retUser: GetUserDto = {
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
+	}
+
+	async updateProfilePic(body, filename: string): Promise<GetUserDto> {
+		const user = await this.getUserById(body.id);
+		if (!user)
+			return null;
+		
+		user.profile_pic = `${process.env.BASE_URL}/${filename}`
+		this.userRepository.save(user);
 		const retUser: GetUserDto = {
 			id: user.id,
 			login: user.login,
