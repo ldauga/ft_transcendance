@@ -46,7 +46,7 @@ export class UserService {
 			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken});
 		
 		if (!user)
-			return null;
+			throw new BadRequestException('User not found');
 		const retUser = {
 			id: user.id,
 			login: user.login,
@@ -136,7 +136,6 @@ export class UserService {
 				this.userRepository.save(user);
 			return user;
 		}
-		return null;
 	}
 
 	async updateNickname(body: UpdateNicknameDto): Promise<GetUserDto> {
@@ -145,6 +144,7 @@ export class UserService {
 			return null;
 		if (user.nickname == body.nickname)
 			throw new BadRequestException('Cannot set identical nickname');
+		
 		user.nickname = body.nickname;
 		this.userRepository.save(user);
 
