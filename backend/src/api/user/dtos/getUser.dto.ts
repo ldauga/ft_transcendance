@@ -1,6 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, isNumber, IsNumber, IsString } from 'class-validator';
 
 export class GetUserDto {
+    @IsNumber()
+    @IsNotEmpty()
+    public id: number;
+
 	@IsString()
 	@IsNotEmpty()
 	public login: string;
@@ -22,6 +26,9 @@ export class GetUserDto {
     public rank: number;
 
     @IsString()
-    //@IsNotEmpty()
     public profile_pic?: string;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    public isTwoFactorAuthenticationEnabled: boolean;
 }

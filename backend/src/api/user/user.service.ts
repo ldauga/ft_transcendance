@@ -1,4 +1,4 @@
-import { Logger, Injectable, Req, UseGuards } from '@nestjs/common';
+import { Logger, Injectable, Req, UseGuards, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
+import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 	
 @Injectable()
 export class UserService {
@@ -45,7 +46,7 @@ export class UserService {
 			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken});
 		
 		if (!user)
-			return null;
+			throw new BadRequestException('User not found');
 		const retUser = {
 			id: user.id,
 			login: user.login,
@@ -54,7 +55,7 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			is2faEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
 		}
 		return retUser;
 	}
@@ -77,7 +78,8 @@ export class UserService {
 			wins: user.wins,
 			losses: user.losses,
 			rank: user.rank,
-			profile_pic: user.profile_pic
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
 		}
 		return retUser;
 	}
@@ -134,7 +136,29 @@ export class UserService {
 				this.userRepository.save(user);
 			return user;
 		}
-		return null;
+	}
+
+	async updateNickname(body: UpdateNicknameDto): Promise<GetUserDto> {
+		const user = await this.getUserById(body.id)
+		if (!user)
+			return null;
+		if (user.nickname == body.nickname)
+			throw new BadRequestException('Cannot set identical nickname');
+		
+		user.nickname = body.nickname;
+		this.userRepository.save(user);
+
+		const retUser: GetUserDto = {
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
 	}
 
 	async getRefreshToken(accessToken: string) {

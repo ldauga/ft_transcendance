@@ -8,7 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategy/local.strategy';
 import { UserEntity } from '../user/user.entity';
-import { RefreshStrategy } from './strategy/refresh.strategy';
 
 @Module({
   imports: [
@@ -24,7 +23,7 @@ import { RefreshStrategy } from './strategy/refresh.strategy';
 	  UserModule,
 	],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, RefreshStrategy],
+  providers: [AuthService, LocalStrategy],
   exports: [AuthService]
 })
 
