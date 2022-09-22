@@ -32,12 +32,14 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         if (!user)
             return null;
         const retUser: GetUserDto = {
+            id: user.id,
             login: user.login,
             nickname: user.nickname,
             wins: user.wins,
             losses: user.losses,
             rank: user.rank,
-            profile_pic: user.profile_pic
+            profile_pic: user.profile_pic,
+            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
         return retUser;
     }

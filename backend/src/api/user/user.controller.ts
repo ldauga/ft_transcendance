@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { GetUserDto } from './dtos/getUser.dto';
+import { Express } from 'express'
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 
 @Controller('user')
 export class UserController {
@@ -36,6 +39,17 @@ export class UserController {
   @Get('/userExist/:refreshToken')
   public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
     return this.service.getUserByRefreshToken(refreshToken);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+  }
+
+  @Post('updateNickname')
+  public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {
+    return this.service.updateNickname(body);
   }
 
 }
