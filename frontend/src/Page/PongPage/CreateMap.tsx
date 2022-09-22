@@ -528,7 +528,6 @@ const CreateMap = (props: any) => {
     const [declineInvite, setDeclineInvite] = useState([false, ""])
 
     utilsData.socket.on('decline_invitation', function (invitePlayer: any) {
-        console.log('tete')
         setDeclineInvite([true, invitePlayer.login])
     })
 
@@ -550,7 +549,6 @@ const CreateMap = (props: any) => {
     })
 
     function inviteButtonClick() {
-        console.log('lll')
         if (!checkAllCollisionsBall(room.ball)) {
             utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
         }

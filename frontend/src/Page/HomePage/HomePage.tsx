@@ -8,9 +8,12 @@ import AddFriend from './AddFriend';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
+import { useDropzone } from "react-dropzone";
 import ReactDOM from 'react-dom';
 
 import { AiOutlineClose } from 'react-icons/ai'
+import { RiFileWarningLine } from 'react-icons/ri'
+import { BiCog } from 'react-icons/bi'
 
 import iron_rank_img from '../assets/iron_rank.png'
 import bronze_rank_img from '../assets/bronze_rank.png'
@@ -22,6 +25,9 @@ import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
 import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
+import DropZone from './DropZone';
+
+const fileTypes = ["JPG", "PNG"];
 
 var test = false
 
@@ -43,12 +49,18 @@ const HomePage = (props: any) => {
     const [rankImage, setRankImage] = useState("")
     const [userProfileLogin, setUserProfileLogin] = useState("")
 
+    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null)
+    const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
+
+
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
 
     var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
 
     useEffect(() => {
+
+        console.log('file :', userParameterNewProfilePicture)
 
         if (!test) {
             axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
@@ -70,6 +82,15 @@ const HomePage = (props: any) => {
                         </div>
                     )
                 })
+                if (!matches.length)
+                    matches.push(<div className='noMatchHistory'>
+                        <div className="iconContainer">
+                            <RiFileWarningLine />
+                        </div>
+                        <div className="textContainer">
+                            No match history found...
+                        </div>
+                    </div>)
                 console.log('matches', matches)
                 setMatchesHistory(matches.reverse())
             })
@@ -120,7 +141,7 @@ const HomePage = (props: any) => {
                         }
                     }
 
-                    tmp.push(<div className={(item.login == persistantReduceur.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => {setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer()}}>
+                    tmp.push(<div className={(item.login == persistantReduceur.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => { setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer() }}>
                         <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
                         <div className='UserLeaderBoardInfo medium'>{item.login}</div>
                         <div className='UserLeaderBoardInfo little'>{item.wins}</div>
@@ -158,7 +179,7 @@ const HomePage = (props: any) => {
         if (statPlayer != null) {
             statPlayer.style.display = "flex";
         }
-      }
+    }
 
     return (
         <div className='App'>
@@ -167,7 +188,7 @@ const HomePage = (props: any) => {
                 <div className="vertical">
                     <div className='main'>
                         <div className='statPlayer' id='statPlayer' >
-                            <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin}/>
+                            <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin} />
                         </div>
                         <div className="match-history" id='match-history' >
                             <h3>Match History</h3>
@@ -215,27 +236,42 @@ const HomePage = (props: any) => {
                         <div className="user-info">
                             <div className="user-picture">
                                 <img src={persistantReduceur.userReducer.user?.profile_pic} />
-                            </div>
+                            </div> 
                             <p className="username">{persistantReduceur.userReducer.user?.login}</p>
                             <p className="level">lvl</p>
+                            <div className="userParameterIconContainer">
+                                <BiCog />
+                            </div>
                         </div>
-                        <div className="friends-info">
+                        {/* <div className="friends-info">
                             {isFriendList && <FriendList />}
                             {isAddFriend && <AddFriend />}
+                        </div> */}
+                        <div className="user-parameter">
+                            <div className="user-parameter-element">
+                                <div className="user-parameter-text">Change nickname :</div>
+                                <input type="text" placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
+                            </div>
+                            <div className="user-parameter-element">
+                                <div className="user-parameter-text">Change profile picture :</div>
+                                <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture}/>
+                            </div>
+                            <div className="user-parameter-element"/>
+                            <div className="save-parameter">Save</div>
                         </div>
                         <div className="chat"></div>
                     </div>
                 </div>
             </div>
-                    <div id="notifModal" className="notifModal">
-                        <div className="notif-modal-content">
-                            <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                            <div className='printNotif'>{affNotif()}</div>
-                            {/* <div className='bgDeleteAllNotif'> */}
-                                {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
-                            {/* </div> */}
-                        </div>
-                    </div>
+            <div id="notifModal" className="notifModal">
+                <div className="notif-modal-content">
+                    <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
+                    <div className='printNotif'>{affNotif()}</div>
+                    {/* <div className='bgDeleteAllNotif'> */}
+                    {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                    {/* </div> */}
+                </div>
+            </div>
         </div>
     );
 };
