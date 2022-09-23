@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -8,6 +8,19 @@ import { GetUserDto } from './dtos/getUser.dto';
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+
+/*export const storage = {
+  storage: diskStorage({
+      destination: './profilePics',
+      filename: (req, file, cb) => {
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+        return cb(null, `${randomName}${extname(file.originalname)}`)
+      }
+  })
+}*/
+
 
 @Controller('user')
 export class UserController {
@@ -41,11 +54,19 @@ export class UserController {
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+/*@Get('profilePic/:fileId')
+  getProfilePic(@Param('fileId') fileId, @Res() res) {
+    console.log(fileId)
+    return res.sendFile(fileId, { root: './profilePics'});
   }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
+    console.log(body.id)
+    console.log(file.filename);
+    return this.service.updateProfilePic(body, file.filename)
+  }*/
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {

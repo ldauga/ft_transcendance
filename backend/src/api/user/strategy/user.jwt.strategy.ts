@@ -27,6 +27,9 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     }
 
     async validate(payload:any){
+        //verifier si l'acces token est toujours valide,
+        //si ce n est pas le cas, est ce que le refresh est valide ?
+            //si c est le cas, alors generer un nouvel access 
         const user = await this.userService.getUserById(payload.sub);
 
         if (!user)
