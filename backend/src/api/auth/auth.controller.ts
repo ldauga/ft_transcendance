@@ -21,6 +21,7 @@ export class AuthController {
 		};
 		res.cookie('auth-cookie', secretData, { httpOnly: false });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
+		//Gestion d erreur si la personne refuse la connexion sur l'intra
 	}
 
 	@Get('/loginSans42/:login')
@@ -35,8 +36,12 @@ export class AuthController {
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
 
-	@Get('2fa/generate/:refreshToken')
-	async register(@Param('refreshToken') refreshToken: string, @Res() response: Response, @Req() request: Request) {
+	@Get('2fa/generate')
+	async register(@Res() response: Response, @Req() request: Request) {
+		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
+		if (!user)
+			throw new BadRequestException('User not found')
+		const refreshToken = request.cookies['auth-cookie'].refreshToken;
 		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken, request);
 		return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
 	}
@@ -52,7 +57,6 @@ export class AuthController {
 				code,
 				totpsecret,
 			);
-		console.log('turn-up:', isCodeValid);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
@@ -62,9 +66,7 @@ export class AuthController {
 
 	@Get('2fa/turn-on/:code')
 	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request, @Body() body) {
-		console.log(code);
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
-		console.log(user)
 		if (!user)
 			throw new BadRequestException('User not found');
 		const totpsecret = await this.userServices.getTotpSecret(user.login);
@@ -73,11 +75,18 @@ export class AuthController {
 				code,
 				totpsecret,
 			);
-		console.log('turn-up:', isCodeValid);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		await this.userServices.turnOnTwoFactorAuthentication(user.login);
+	}
+
+	@Get('2fa/turn-off/')
+	async turnOffTwoFactorAuthentication(@Req() request, @Body() body) {
+		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
+		if (!user)
+			throw new BadRequestException('User not found');
+		await this.userServices.turnOffTwoFactorAuthentication(user.login);
 	}
 
 	@Get('/refresh')

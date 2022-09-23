@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -9,20 +9,17 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import path = require('path');
+import { extname } from 'path';
 
-export const storage = {
+/*export const storage = {
   storage: diskStorage({
-      destination: './uploads/profileimages',
+      destination: './profilePics',
       filename: (req, file, cb) => {
-          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-          const extension: string = path.parse(file.originalname).ext;
-
-          cb(null, `${filename}${extension}`)
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+        return cb(null, `${randomName}${extname(file.originalname)}`)
       }
   })
-}
+}*/
 
 
 @Controller('user')
@@ -57,13 +54,19 @@ export class UserController {
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
+/*@Get('profilePic/:fileId')
+  getProfilePic(@Param('fileId') fileId, @Res() res) {
+    console.log(fileId)
+    return res.sendFile(fileId, { root: './profilePics'});
+  }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
     console.log(body.id)
     console.log(file.filename);
     return this.service.updateProfilePic(body, file.filename)
-  }
+  }*/
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {

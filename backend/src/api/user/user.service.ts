@@ -221,6 +221,14 @@ export class UserService {
 		this.userRepository.save(user);
 	}
 
+	async turnOffTwoFactorAuthentication(login: string) {
+		const user = await this.getUserByLogin(login)
+		if (!user)
+			return null;
+		user.isTwoFactorAuthenticationEnabled = false;
+		this.userRepository.save(user);
+	}
+
 	signRefreshToken(refreshToken: any) {
 		return this.jwtService.sign({
 			sub: refreshToken.sub,

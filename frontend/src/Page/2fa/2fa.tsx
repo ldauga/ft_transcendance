@@ -16,8 +16,9 @@ const QrCode = (props: any) => {
 
     useEffect(() => {
         console.log(res);
+        console.log(QrCode);
         if (QrCode === "")
-             axios.get('http://localhost:5001/auth/2fa/generate/' + cookies['auth-cookie'].refreshToken).then(res => (setQrCode(res.data)))
+            axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setQrCode(res.data)))
         if (res === 401)
             setStatus("Error, wrong code.")
         else if (res == 404)
