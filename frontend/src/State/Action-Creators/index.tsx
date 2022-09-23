@@ -68,7 +68,7 @@ export const setUser = (item:{
     looses: number,
     rank: number,
     profile_pic: string,
-    is2faEnabled: boolean
+    isTwoFactorAuthenticationEnabled: boolean
 } | null) => {
     return (dispatch: Dispatch<userAction>) => {
         dispatch({

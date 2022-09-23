@@ -26,6 +26,8 @@ import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
 import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
+import Login from '../Login/Login';
+import { useCookies } from 'react-cookie';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -34,9 +36,10 @@ var test = false
 const HomePage = (props: any) => {
     const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
     const utilsData = useSelector((state: RootState) => state.utils)
+    const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 
     const dispatch = useDispatch();
-    const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
+    const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
     const [listNotif, setListNotif] = useState(Array<any>)
 
@@ -49,8 +52,14 @@ const HomePage = (props: any) => {
     const [rankImage, setRankImage] = useState("")
     const [userProfileLogin, setUserProfileLogin] = useState("")
 
+    const [userParameterAff, setUserParameterAff] = useState(false);
     const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null)
     const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
+    const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
+    const [userParameter2FACode, setUserParameter2FACode] = useState("");
+    const [userParameter2FARes, setUserParameter2FARes] = useState(0);
+    const [userParameter2FAStatus, setUserParameter2FAStatus] = useState("Please enter the code above.");
+    const [userParameter2FADeactivate, setUserParameter2FADeactivate] = useState(false);
 
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
@@ -94,6 +103,17 @@ const HomePage = (props: any) => {
                 console.log('matches', matches)
                 setMatchesHistory(matches.reverse())
             })
+
+            if (!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled) {
+                if (userParameter2FAQrCode === "")
+                    axios.get('http://localhost:5001/auth/2fa/generate/' + cookies['auth-cookie'].refreshToken).then(res => (setUserParameter2FAQrCode(res.data)))
+                if (userParameter2FARes === 401)
+                    setUserParameter2FAStatus("Error, wrong code.")
+                else if (userParameter2FARes == 404)
+                    setUserParameter2FAStatus("You must enter the code.")
+                else if (userParameter2FARes == 200)
+                    setUserParameter2FAStatus("2FA activated !")
+            }
 
             test = true
         } else if (!leaderBoardUsers.length) {
@@ -174,6 +194,16 @@ const HomePage = (props: any) => {
         }
     })
 
+    function saveParameter() {
+
+        if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
+            axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+
+        axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        // if (userParameterNewProfilePicture !== null)
+        //    axios.post('http://localhost:3000/user/upload?file', ).catch()
+    }
+
     function displayStatPlayer() {
         const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null;
         if (statPlayer != null) {
@@ -236,29 +266,54 @@ const HomePage = (props: any) => {
                         <div className="user-info">
                             <div className="user-picture">
                                 <img src={persistantReduceur.userReducer.user?.profile_pic} />
-                            </div> 
+                            </div>
                             <p className="username">{persistantReduceur.userReducer.user?.login}</p>
                             <p className="level">lvl</p>
                             <div className="userParameterIconContainer">
-                                <BiCog />
+                                <BiCog onClick={e => setUserParameterAff(!userParameterAff)} />
                             </div>
                         </div>
-                        {/* <div className="friends-info">
-                            {isFriendList && <FriendList />}
-                            {isAddFriend && <AddFriend />}
-                        </div> */}
-                        <div className="user-parameter">
-                            <div className="user-parameter-element">
-                                <div className="user-parameter-text">Change nickname :</div>
-                                <input type="text" placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
-                            </div>
-                            <div className="user-parameter-element">
-                                <div className="user-parameter-text">Change profile picture :</div>
-                                <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture}/>
-                            </div>
-                            <div className="user-parameter-element"/>
-                            <div className="save-parameter">Save</div>
-                        </div>
+                        {(!userParameterAff) ?
+                            <div className="friends-info">
+                                {isFriendList && <FriendList />}
+                                {isAddFriend && <AddFriend />}
+                            </div> :
+                            <div className="user-parameter">
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-text">Change nickname :</div>
+                                    <input type="text" placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-text">Change profile picture :</div>
+                                    <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
+                                </div>
+                                <div className="user-parameter-element" />
+                                <div className="user-parameter-element" />
+                                <div className="user-parameter-element" />
+                                <div className="user-parameter-element">
+                                    {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+                                        <><div className="user-parameter-text">Set 2FA :</div>
+                                            <p>Scan the following QR Code using Google Authenticator</p>
+                                            <img src={userParameter2FAQrCode} />
+                                            <input
+                                                type="text"
+                                                value={userParameter2FACode}
+                                                onChange={(e) => setUserParameter2FACode(e.target.value)}
+                                            />
+                                            <p>{userParameter2FAStatus}</p>)
+                                        </> :
+                                        <>
+                                            <div className="user-parameter-text">Deactivate 2FA :</div>
+                                            <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
+                                        </>
+                                    }
+                                </div>
+                                <div className="user-parameter-element easter-egg">
+                                    <div className="user-parameter-text">Best trans en dance !</div>
+                                </div>
+                                <div className="user-parameter-element" />
+                                <div className="save-parameter" onClick={saveParameter}>Save</div>
+                            </div>}
                         <div className="chat"></div>
                     </div>
                 </div>

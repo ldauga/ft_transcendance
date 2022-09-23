@@ -250,7 +250,8 @@ const CreateMap = (props: any) => {
 
     const [nbObstacle, setNbObstacle] = useState(0)
 
-    var verif = false;
+    const [verif, setVerif] = useState(false)
+
 
     useEffect(() => {
 
@@ -267,7 +268,7 @@ const CreateMap = (props: any) => {
 
         if (!verif) {
             utilsData.socket.emit("GET_ALL_CLIENT_CONNECTED")
-            verif = true
+            setVerif(true)
         }
     })
 
@@ -538,6 +539,7 @@ const CreateMap = (props: any) => {
 
     utilsData.socket.on('getAllClientConnected', function (clientConnected: Array<any>) {
         var tmp: any[] = []
+        console.log('test', clientConnected)
         clientConnected.forEach((item) => {
             if (item.username != "" && item.username != persistantReduceur.userReducer.user?.login)
             tmp.push(

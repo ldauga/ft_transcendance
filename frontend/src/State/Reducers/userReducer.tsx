@@ -10,7 +10,7 @@ export interface User {
         looses: number,
         rank: number,
         profile_pic: string,
-        is2faEnabled: boolean
+        isTwoFactorAuthenticationEnabled: boolean
     } | null;
 }
 

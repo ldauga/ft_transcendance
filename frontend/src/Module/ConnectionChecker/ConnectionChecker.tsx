@@ -26,13 +26,12 @@ function ConnectionChecker(props: {
     else
       axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data) })
 
-    if (persistantReduceur.userReducer.user?.is2faEnabled)
-      utilsData.socket.emit('storeClientInfo', persistantReduceur.userReducer.user)
+    utilsData.socket.emit('storeClientInfo', persistantReduceur.userReducer.user)
     test = true
   }
 
 
-  if (persistantReduceur.userReducer.user !== null && ((persistantReduceur.userReducer.user.is2faEnabled && persistantReduceur.twoFactorReducer.verif) || !persistantReduceur.userReducer.user.is2faEnabled))
+  if (persistantReduceur.userReducer.user !== null && ((persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled && persistantReduceur.twoFactorReducer.verif) || !persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled))
   return <InvitationChecker children={props.component} ></InvitationChecker>
   else
   return <Navigate to="/Login" />
