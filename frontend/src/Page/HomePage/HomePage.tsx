@@ -279,35 +279,53 @@ const HomePage = (props: any) => {
                                 {isAddFriend && <AddFriend />}
                             </div> :
                             <div className="user-parameter">
-                                <div className="user-parameter-element"  >
-                                    <div className="user-parameter-title" onClick={e => e.currentTarget.parentElement?.classList.toggle('expanded')}>Change nickname :</div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change nickname :</div>
                                     <div className="user-parameter-content">
                                         <div className="user-parameter-content-text">Enter New nickname and click save</div>
                                         <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
-                                        <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
+                                        <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
                                     </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change profile picture :</div>
+                                    <div className="user-parameter-content">
+                                        <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
+                                        <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Toggle 2FA :</div>
+                                    <div className="user-parameter-content">
+                                        {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+                                            <>
+                                                <div className="user-parameter-content-text">Set 2FA :</div>
+                                                <p>Scan the following QR Code using Google Authenticator</p>
+                                                <img src={userParameter2FAQrCode} />
+                                                <input
+                                                    type="text"
+                                                    value={userParameter2FACode}
+                                                    onChange={(e) => setUserParameter2FACode(e.target.value)}
+                                                />
+                                                <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                            </> :
+                                            <>
+                                                <div className="user-parameter-deactivate-2FA" onClick={e => {e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Deactivate 2FA</div>
+                                            </>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change status :</div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Logout :</div>
                                 </div>
                                 {/* <div className="user-parameter-element">
                                     <div className="user-parameter-text">Change profile picture :</div>
-                                    <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
                                 </div>
                                 <div className="user-parameter-element">
-                                    {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
-                                        <><div className="user-parameter-text">Set 2FA :</div>
-                                            <p>Scan the following QR Code using Google Authenticator</p>
-                                            <img src={userParameter2FAQrCode} />
-                                            <input
-                                                type="text"
-                                                value={userParameter2FACode}
-                                                onChange={(e) => setUserParameter2FACode(e.target.value)}
-                                            />
-                                            <p>{userParameter2FAStatus}</p>
-                                        </> :
-                                        <>
-                                            <div className="user-parameter-text">Deactivate 2FA :</div>
-                                            <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
-                                        </>
-                                    }
+                                    
                                 </div> */}
                             </div>}
                         <div className="chat"></div>

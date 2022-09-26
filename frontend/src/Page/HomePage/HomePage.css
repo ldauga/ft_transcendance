@@ -538,8 +538,10 @@ body {
 }
 
 .dropzone {
-	width: 50%;
-	height: 60%;
+	cursor: pointer;
+
+	width: 40%;
+	height: 30%;
 
 	background-color: rgb(0, 0, 0, 0.3);
 
@@ -554,7 +556,6 @@ body {
 	display: flex;
 	align-items: center;
 }
-
 
 .user-parameter-title {
 	cursor: pointer;
@@ -596,6 +597,30 @@ body {
 
 	height: 10%;
 	width: 80%;
+}
+
+.user-parameter-deactivate-2FA {
+	cursor: pointer;
+
+	margin-top: 15%;
+
+	width: 60%;
+	height: 30%;
+
+	border-radius: 25px;
+	border: 5px rgb(50, 0, 0, 0.7) solid;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	background-color: rgb(255, 0, 0, 0.5);
+
+	transition: all 0.5s;
+}
+
+.user-parameter-deactivate-2FA:hover {
+	background-color: rgb(50, 0, 0, 0.5);
 }
 
 .save-parameter {
