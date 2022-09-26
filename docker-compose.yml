@@ -28,7 +28,7 @@ services:
     - "5432:5432"
     networks:
       - webapp
-
+  
   frontend:
     container_name: frontend
     depends_on:

@@ -9,18 +9,18 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { Observable, of } from 'rxjs';
 
-/*export const storage = {
+export const storage = {
   storage: diskStorage({
-      destination: './profilePics',
+      destination: './uploads/profileImages',
       filename: (req, file, cb) => {
         const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
         return cb(null, `${randomName}${extname(file.originalname)}`)
       }
   })
-}*/
-
+}
 
 @Controller('user')
 export class UserController {
@@ -53,20 +53,17 @@ export class UserController {
   public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
     return this.service.getUserByRefreshToken(refreshToken);
   }
-
-/*@Get('profilePic/:fileId')
-  getProfilePic(@Param('fileId') fileId, @Res() res) {
-    console.log(fileId)
-    return res.sendFile(fileId, { root: './profilePics'});
+  
+  @Get('profilePic/:fileId')
+  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
+    return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
-    console.log(body.id)
-    console.log(file.filename);
     return this.service.updateProfilePic(body, file.filename)
-  }*/
+  }
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {

@@ -9,7 +9,6 @@ import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
-import { throws } from 'assert';
 	
 @Injectable()
 export class UserService {
@@ -164,10 +163,11 @@ export class UserService {
 
 	async updateProfilePic(body, filename: string): Promise<GetUserDto> {
 		const user = await this.getUserById(body.id);
+		console.log(user);
 		if (!user)
 			return null;
 		
-		user.profile_pic = `${process.env.BASE_URL}/${filename}`
+		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
 		const retUser: GetUserDto = {
 			id: user.id,
