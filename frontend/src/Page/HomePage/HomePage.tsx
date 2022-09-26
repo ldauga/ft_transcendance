@@ -28,6 +28,9 @@ import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
 import Login from '../Login/Login';
 import { useCookies } from 'react-cookie';
+import InvitationRequest from './InvitationRequest';
+import Convers from './Convers';
+import Chat from './Chat';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -43,8 +46,13 @@ const HomePage = (props: any) => {
 
     const [listNotif, setListNotif] = useState(Array<any>)
 
-    const [isFriendList, setFriendList] = FriendListHook(true);
-    const [isAddFriend, setAddFriend] = AddFriendHook(false);
+    const [isFriendList, setFriendList] = useState(true);
+    const [isAddFriend, setAddFriend] = useState(false);
+    const [isInvitationRequest, setInvitationRequest] = useState(false);
+    const [isConvers, setConvers] = useState(false);
+    const [isChat, setChat] = useState(false);
+    const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "" });
+    const [oldAff, setOldAff] = useState("");
 
     const [matchesHistory, setMatchesHistory] = useState(Array<any>)
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
@@ -66,6 +74,21 @@ const HomePage = (props: any) => {
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
 
     var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
+
+    function openChat() {
+        setUserParameterAff(false);
+        if (isChat) {
+            setChat(false);
+            setFriendList(true);
+        }
+        else {
+            setAddFriend(false);
+            setFriendList(false);
+            setInvitationRequest(false);
+            setConvers(false);
+            setChat(true);
+        }
+    };
 
     useEffect(() => {
 
@@ -274,9 +297,12 @@ const HomePage = (props: any) => {
                             </div>
                         </div>
                         {(!userParameterAff) ?
-                            <div className="friends-info">
-                                {isFriendList && <FriendList />}
-                                {isAddFriend && <AddFriend />}
+                            <div className="friends-info" id='friends-info-id'>
+                                {isFriendList && <FriendList setFriendList={setFriendList} setAddFriend={setAddFriend} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
+                                {isAddFriend && <AddFriend setFriendList={setFriendList} setAddFriend={setAddFriend} />}
+                                {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
+                                {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
+                                {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
                             </div> :
                             <div className="user-parameter">
                                 <div className="user-parameter-element"  >
@@ -310,7 +336,7 @@ const HomePage = (props: any) => {
                                     }
                                 </div> */}
                             </div>}
-                        <div className="chat"></div>
+                        <button id="openChatButton" onClick={() => openChat()}>Chat</button>
                     </div>
                 </div>
             </div>

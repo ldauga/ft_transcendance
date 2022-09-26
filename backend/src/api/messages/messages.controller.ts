@@ -9,26 +9,46 @@ export class MessagesController {
   private readonly service: MessagesService;
 
   @Get()
-  public getAllMatchesHistory(): Promise<MessagesEntity[]> {
-    return this.service.getAllMatchesHistory();
+  public getAllMessages(): Promise<MessagesEntity[]> {
+    return this.service.getAllMessages();
   }
 
-
-  //Changer en methode post
-  //Utiliser Req: Express
-  //Utiliser le UseGuard('jwt')
-  //Recuperer l'id et faire le reste
   @Get('/:id')
-  public getUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<MessagesEntity[]> {
-    return this.service.getUserMatchesHistory(id);
+  public getUserMessages(@Param('id', ParseIntPipe) id: number): Promise<MessagesEntity[]> {
+    return this.service.getUserMessages(id);
+  }
+
+  @Get('/:id1/:id2')
+  public getConversMessages(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<MessagesEntity[]> {
+    return this.service.getConversMessages(id1, id2);
+  }
+
+  // @Get('/relation/:id')
+  // public getRelationMessages(@Param('id', ParseIntPipe) id: number): Promise<number> {
+  //   // return this.service.getRelationMessages(id);
+  //   return 1;
+  // }
+
+  // @Get('/id/:id')
+  // public async getRelationMessages(@Param('id', ParseIntPipe) id: number): Promise<Boolean> {
+  //   const returnCheck = await this.service.getRelationMessages(id);
+  //   if (returnCheck)
+  //     return true;
+  //   return false;
+  // }
+
+  @Get('/:id1/:id2/:id3')
+  public getUser(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number, @Param('id3', ParseIntPipe) id3: number): Promise<{ id: number, login: string }[]> {
+    const returnCheck = this.service.getRelationMessages(id1);
+    return returnCheck;
   }
 
   @Post()
-  public createMatch(@Body() body: MessagesDto): Promise<MessagesEntity> {
-    console.log('body', body)
-    const match = this.service.createMatch(body);
-    if (!match)
+  public createMessages(@Body() body: MessagesDto): Promise<MessagesEntity> {
+    console.log('body createMessages: ', body);
+    const newMessage = this.service.createMessages(body);
+    if (!newMessage)
       return null;
-    return match;
+    return newMessage;
   }
 }

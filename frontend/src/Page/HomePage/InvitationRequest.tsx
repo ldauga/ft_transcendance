@@ -7,32 +7,30 @@ import { RootState } from "../../State";
 import './InvitationRequest.css';
 import './HomePage.css';
 
-function InvitationRequest() {
+function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReduceur);
-
-    const [isFriendList, setFriendList] = FriendListHook(false);
-    const [isInvitationRequest, setInvitationRequest] = InvitationRequestHook(true);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
 
     utilsData.socket.removeListener('returnRemoveInvitationRequest');
+    utilsData.socket.removeListener('newInvitationReceived');
 
     const handleClick = () => {
         utilsData.socket.off('returnRemoveInvitationRequest');
         utilsData.socket.removeListener('returnRemoveInvitationRequest');
+        utilsData.socket.off('newInvitationReceived');
+        utilsData.socket.removeListener('newInvitationReceived');
         setItemListHistory([]);
-        setFriendList(true);
-        setInvitationRequest(false);
+        props.setFriendList(true);
+        props.setInvitationRequest(false);
     };
 
     const getListItem = async () => {
         await axios.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id).then(async (res) => {
-            // console.log("get");
             let itemList: any[] = []
-            // console.log('res.data = ', res.data);
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
                     <div className="inItem">
@@ -52,23 +50,31 @@ function InvitationRequest() {
         console.log('returnRemoveInvitationRequest = ', returnRemoveInvitation);
         if (returnRemoveInvitation == true) {
             const length = itemListHistory.length;
-            // console.log('length', length);
             let secu = 0;
             while (length == itemListHistory.length && secu < 5) {
                 setItemListHistory([]);
-                // console.log('test');
                 getListItem();
                 secu++;
             }
-            // console.log('secu', secu);
         }
         utilsData.socket.off('returnRemoveInvitationRequest');
         utilsData.socket.removeListener('returnRemoveInvitationRequest');
     })
 
+    utilsData.socket.on('newInvitationReceived', function (data: any) {
+        console.log('newInvitationReceived = ', data);
+        const length = itemListHistory.length;
+        let secu = 0;
+        while (length == itemListHistory.length && secu < 5) {
+            setItemListHistory([]);
+            getListItem();
+            secu++;
+        }
+        utilsData.socket.off('newInvitationReceived');
+        utilsData.socket.removeListener('newInvitationReceived');
+    })
+
     const acceptInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string }) => {
-        // console.log('accept invit');
-        // console.log('emit InvitationRequest');
         utilsData.socket.emit('removeInvitationRequest', item);
         const newFriend = {
             id_user1: item.id_user1,
@@ -81,8 +87,6 @@ function InvitationRequest() {
     };
 
     const declineInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string }) => {
-        // console.log('decline invit');
-        // console.log('emit InvitationRequest');
         utilsData.socket.emit('removeInvitationRequest', item);
         setUpdate(true);
     };
@@ -96,21 +100,15 @@ function InvitationRequest() {
 
     return (
         <div>
-            {isInvitationRequest && (
-
-                <div>
-                    <div className="friends-info-typo">
-                        <h3>Invitations</h3>
-                        <div className="button">
-                            <button onClick={handleClick} className="bi bi-x-lg"></button>
-                        </div>
+            <div>
+                <div className="friends-info-typo">
+                    <h3>Invitations</h3>
+                    <div className="button">
+                        <button onClick={handleClick} className="bi bi-x-lg"></button>
                     </div>
-                    {/* <ListItems /> */}
-                    {itemListHistory}
-
                 </div>
-            )}
-            {isFriendList && <FriendList />}
+                {itemListHistory}
+            </div>
         </div>
     )
 }
