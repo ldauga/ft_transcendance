@@ -1,0 +1,55 @@
+#chat {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background-color: #302E2D;
+}
+
+#chatHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: 9%;
+    background-color: #454342;
+}
+
+#chatHeader p {
+    font-size: 1.5rem;
+    width: 80%;
+}
+
+.itemListConvers {
+    width: 100%;
+}
+
+.itemConvers {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-top: 1rem;
+    width: 100%;
+    background-color: #454342;
+    height: 5rem;
+    font-size: 2.0rem;
+}
+
+.bi-x-lg {
+    background: #454342;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.bi-x-lg:hover {
+    background: #454342;
+    border: none;
+    color: red;
+    font-size: 1.5rem;
+}
+
+button:hover {
+    cursor: pointer;
+}
