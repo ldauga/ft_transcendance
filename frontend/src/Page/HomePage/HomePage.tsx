@@ -106,7 +106,7 @@ const HomePage = (props: any) => {
 
             if (!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled) {
                 if (userParameter2FAQrCode === "")
-                    axios.get('http://localhost:5001/auth/2fa/generate/' + cookies['auth-cookie'].refreshToken).then(res => (setUserParameter2FAQrCode(res.data)))
+                    axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
                 if (userParameter2FARes === 401)
                     setUserParameter2FAStatus("Error, wrong code.")
                 else if (userParameter2FARes == 404)
