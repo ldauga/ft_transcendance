@@ -1,4 +1,4 @@
-import { Logger, Injectable, Req, UseGuards, BadRequestException } from '@nestjs/common';
+import { Logger, Injectable, Req, UseGuards, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -33,6 +33,13 @@ export class UserService {
 
 	async getUserByLogin(login: string): Promise<UserEntity> {
 		const user = await this.userRepository.findOneBy( {login: login} );
+		if (!user)
+			return null;
+		return user;
+	}
+
+	async getUserByNickname(nickname: string): Promise<UserEntity> {
+		const user = await this.userRepository.findOneBy( {nickname: nickname} );
 		if (!user)
 			return null;
 		return user;
@@ -144,6 +151,8 @@ export class UserService {
 			return null;
 		if (user.nickname == body.nickname)
 			throw new BadRequestException('Cannot set identical nickname');
+		if (await this.getUserByNickname(body.nickname))
+			throw new UnauthorizedException('Nickname already used');
 		
 		user.nickname = body.nickname;
 		this.userRepository.save(user);
