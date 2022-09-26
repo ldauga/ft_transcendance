@@ -37,7 +37,7 @@ export class AuthController {
 	}
 
 	@Get('2fa/generate')
-	async register(@Res() response: Response, @Req() request: Request) {
+	async register(@Res() response: Response, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
 		if (!user)
 			throw new BadRequestException('User not found')
@@ -47,7 +47,7 @@ export class AuthController {
 	}
 
 	@Get('2fa/verify/:code')
-	async verifyCode(@Param('code') code: string, @Req() request, @Body() body) {
+	async verifyCode(@Param('code') code: string, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
 		if (!user)
 			throw new BadRequestException('User not found')
@@ -78,7 +78,7 @@ export class AuthController {
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		await this.userServices.turnOnTwoFactorAuthentication(user.login);
+		return await this.userServices.turnOnTwoFactorAuthentication(user.login);
 	}
 
 	@Get('2fa/turn-off/')

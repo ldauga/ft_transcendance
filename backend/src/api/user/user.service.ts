@@ -177,6 +177,7 @@ export class UserService {
 		
 		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
+		
 		const retUser: GetUserDto = {
 			id: user.id,
 			login: user.login,
@@ -221,20 +222,44 @@ export class UserService {
 		this.userRepository.save(user);
 	}
 
-	async turnOnTwoFactorAuthentication(login: string) {
+	async turnOnTwoFactorAuthentication(login: string): Promise<GetUserDto> {
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;
 		user.isTwoFactorAuthenticationEnabled = true;
 		this.userRepository.save(user);
+		
+		const retUser: GetUserDto = {
+            id: user.id,
+            login: user.login,
+            nickname: user.nickname,
+            wins: user.wins,
+            losses: user.losses,
+            rank: user.rank,
+            profile_pic: user.profile_pic,
+            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+        }
+        return retUser;
 	}
 
-	async turnOffTwoFactorAuthentication(login: string) {
+	async turnOffTwoFactorAuthentication(login: string): Promise<GetUserDto> {
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;
 		user.isTwoFactorAuthenticationEnabled = false;
 		this.userRepository.save(user);
+
+		const retUser: GetUserDto = {
+            id: user.id,
+            login: user.login,
+            nickname: user.nickname,
+            wins: user.wins,
+            losses: user.losses,
+            rank: user.rank,
+            profile_pic: user.profile_pic,
+            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+        }
+        return retUser;
 	}
 
 	signRefreshToken(refreshToken: any) {

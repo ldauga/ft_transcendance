@@ -4,7 +4,6 @@ import { lastValueFrom } from 'rxjs';
 import { UserService } from '../user/user.service';
 import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { GetUserDto } from '../user/dtos/getUser.dto';
@@ -93,7 +92,7 @@ export class AuthService {
 
 	async generateQrCodeDataURL(otpAuthUrl: string) {
 		return toDataURL(otpAuthUrl);
-	}
+	}	
 
 	isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, totpsecret: string) {
 		return authenticator.verify({
