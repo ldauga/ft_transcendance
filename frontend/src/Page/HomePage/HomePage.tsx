@@ -279,17 +279,18 @@ const HomePage = (props: any) => {
                                 {isAddFriend && <AddFriend />}
                             </div> :
                             <div className="user-parameter">
-                                <div className="user-parameter-element">
-                                    <div className="user-parameter-text">Change nickname :</div>
-                                    <input type="text" placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
+                                <div className="user-parameter-element"  >
+                                    <div className="user-parameter-title" onClick={e => e.currentTarget.parentElement?.classList.toggle('expanded')}>Change nickname :</div>
+                                    <div className="user-parameter-content">
+                                        <div className="user-parameter-content-text">Enter New nickname and click save</div>
+                                        <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
+                                        <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
+                                    </div>
                                 </div>
-                                <div className="user-parameter-element">
+                                {/* <div className="user-parameter-element">
                                     <div className="user-parameter-text">Change profile picture :</div>
                                     <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
                                 </div>
-                                <div className="user-parameter-element" />
-                                <div className="user-parameter-element" />
-                                <div className="user-parameter-element" />
                                 <div className="user-parameter-element">
                                     {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
                                         <><div className="user-parameter-text">Set 2FA :</div>
@@ -300,19 +301,14 @@ const HomePage = (props: any) => {
                                                 value={userParameter2FACode}
                                                 onChange={(e) => setUserParameter2FACode(e.target.value)}
                                             />
-                                            <p>{userParameter2FAStatus}</p>)
+                                            <p>{userParameter2FAStatus}</p>
                                         </> :
                                         <>
                                             <div className="user-parameter-text">Deactivate 2FA :</div>
                                             <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
                                         </>
                                     }
-                                </div>
-                                <div className="user-parameter-element easter-egg">
-                                    <div className="user-parameter-text">Best trans en dance !</div>
-                                </div>
-                                <div className="user-parameter-element" />
-                                <div className="save-parameter" onClick={saveParameter}>Save</div>
+                                </div> */}
                             </div>}
                         <div className="chat"></div>
                     </div>

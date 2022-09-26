@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -9,18 +9,21 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { Observable, of } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
 
 export const storage = {
   storage: diskStorage({
-      destination: './uploads/profileImages',
+      destination: './uploads/profileimages',
       filename: (req, file, cb) => {
-        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
-        return cb(null, `${randomName}${extname(file.originalname)}`)
+          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+          const extension: string = path.parse(file.originalname).ext;
+
+          cb(null, `${filename}${extension}`)
       }
   })
 }
+
 
 @Controller('user')
 export class UserController {
@@ -53,15 +56,12 @@ export class UserController {
   public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
     return this.service.getUserByRefreshToken(refreshToken);
   }
-  
-  @Get('profilePic/:fileId')
-  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
-    return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
-  }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
+    console.log(body.id)
+    console.log(file.filename);
     return this.service.updateProfilePic(body, file.filename)
   }
 
