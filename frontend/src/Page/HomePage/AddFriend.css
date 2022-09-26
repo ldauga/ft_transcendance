@@ -1,0 +1,13 @@
+#addFriend_header {
+    display: flex;
+    align-items: center;
+}
+
+#addFriend_header button {
+    width: 35%;
+    font-size: 3rem;
+}
+
+#addFriend_header h3 {
+    width: 65%
+}

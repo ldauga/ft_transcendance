@@ -9,30 +9,27 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
 
-/*export const storage = {
+export const storage = {
   storage: diskStorage({
-      destination: './profilePics',
+      destination: './uploads/profileimages',
       filename: (req, file, cb) => {
-        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
-        return cb(null, `${randomName}${extname(file.originalname)}`)
+          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+          const extension: string = path.parse(file.originalname).ext;
+
+          cb(null, `${filename}${extension}`)
       }
   })
-}*/
-
+}
 
 @Controller('user')
 export class UserController {
   @Inject(UserService)
   private readonly service: UserService;
-
-  @Get('fav-movies')
-  @UseGuards(AuthGuard('jwt'))
-  async movies(@Req() req){
-    console.log(req.cookies['auth-cookie'])
-  	return ["Avatar", "Avengers"];
-  }
 
   @Get()
   public getAllUsers(): Promise<UserEntity[]> {
@@ -54,19 +51,16 @@ export class UserController {
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
-/*@Get('profilePic/:fileId')
-  getProfilePic(@Param('fileId') fileId, @Res() res) {
-    console.log(fileId)
-    return res.sendFile(fileId, { root: './profilePics'});
+  @Get('profilePic/:fileId')
+  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
+    return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
-    console.log(body.id)
-    console.log(file.filename);
     return this.service.updateProfilePic(body, file.filename)
-  }*/
+  }
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {

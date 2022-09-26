@@ -11,11 +11,11 @@ export class MessagesEntity {
 
   @Column()
   @Index()
-  public login_sender: string;
+  public id_receiver: number;
 
   @Column()
   @Index()
-  public id_receiver: number;
+  public login_sender: string;
 
   @Column()
   @Index()

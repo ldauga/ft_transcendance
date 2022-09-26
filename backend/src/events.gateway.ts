@@ -100,6 +100,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
     console.log(invitationRequestReturn.forEach(item => (console.log('invitationRequestReturn in eventgateway'))));
+    console.log("arrClient: ", arrClient);
+    const _client_receiver = arrClient.find(obj => obj.username === data.receiver_login);
+    console.log("client_receiver: ", _client_receiver);
+    if (_client_receiver != null) {
+      console.log("newMsgReceived to ", _client_receiver.username);
+      this.server.to(_client_receiver.id).emit('newInvitationReceived', data);
+    }
   }
 
   @SubscribeMessage('removeInvitationRequest')
@@ -123,6 +130,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const addFriendReturn = await this.http.post('http://localhost:5001/friendList/', newFriend);
     console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
+    console.log("arrClient: ", arrClient);
+    let _client_data = arrClient.find(obj => obj.username === data.login_user2);
+    console.log("client.id = ", client.id);
+    console.log("client data id = ", _client_data.id);
+    if (client.id == _client_data.id) {
+      _client_data = arrClient.find(obj => obj.username === data.login_user1);
+    }
+    console.log("client_receiver: ", _client_data);
+    if (_client_data != null) {
+      console.log("newFriend to ", _client_data.username);
+      this.server.to(_client_data.id).emit('newFriendReceived', data);
+    }
   }
 
   @SubscribeMessage('removeFriend')
@@ -137,33 +156,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createMsg')
   async createMsg(client: Socket, data: any) {
-    this.logger.log(`${client.id} said 2: ${data.text}`);
-    const msg = {
+    this.logger.log(`${client.id} create newMsg: ${data.text}`);
+    const newMsg = {
       id_sender: data.id_sender,
-      login_sender: data.login_sender,
       id_receiver: data.id_receiver,
+      login_sender: data.login_sender,
       login_receiver: data.login_receiver,
       text: data.text
     }
-    const returnMsg = this.http.post('http://localhost:5001/messages', msg);
-    // const test = {
-    //   id_user1: 0,
-    //   score_u1: 2,
-    //   id_user2: 3,
-    //   score_u2: 3,
-    //   winner_id: 3,
-    //   text: "yoooooo"
-    // }
-    // const match = this.http.post('http://localhost:5001/mtest', test);
-
-    // const data = {
-    //   id_user1: 0,
-    //   score_u1: 2,
-    //   id_user2: 3,
-    //   score_u2: 3,
-    //   winner_id: 3
-    // }
-    // const match = this.http.post('http://localhost:5001/matchesHistory', data);
+    const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
+    console.log(returnMsg.forEach(item => (console.log('returnMsg in eventgateway'))));
+    console.log("arrClient: ", arrClient);
+    const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
+    console.log("client_receiver: ", _client_receiver);
+    if (_client_receiver != null) {
+      console.log("newMsgReceived to ", _client_receiver.username);
+      this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+    }
   }
 
   //OLD CHAT EVENTS

@@ -1,24 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import FriendList from "./FriendList";
-import { AddFriendHook, FriendListHook } from "./Hooks";
-import { User2 } from "../../State/type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../State";
+import './AddFriend.css';
 
-function AddFriend() {
+function AddFriend(props: { setFriendList: Function, setAddFriend: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReduceur);
 
-	const [isFriendList, setFriendList] = FriendListHook(false);
-	const [isAddFriend, setAddFriend] = AddFriendHook(true);
-
 	const [text, setText] = useState('');
 
 	const handleClick = () => {
-		setFriendList(true);
-		setAddFriend(false)
+		props.setFriendList(true);
+		props.setAddFriend(false)
 	};
 
 	async function buttonAddFriend() {
@@ -81,28 +76,22 @@ function AddFriend() {
 
 	return (
 		<div>
-			{isAddFriend && (
-				<div>
-					<div className="friends-info-typo">
-						<h3>Add Friend</h3>
-						<div className="button">
-							<button onClick={handleClick} className="bi bi-x-lg"></button>
-							{isFriendList && <FriendList />}
-						</div>
-					</div>
-					<div id="sendZone">
-						<input
-							value={text}
-							onChange={e => setText(e.target.value)}
-							placeholder="Enter login"
-						/>
-						<button type="button" onClick={() => buttonAddFriend()}>
-							Add Friend
-						</button>
-					</div>
+			<div>
+				<div id="addFriend_header">
+					<button onClick={handleClick} className="bi bi-arrow-left-short"></button>
+					<h3>Add Friend</h3>
 				</div>
-			)}
-			{isFriendList && <FriendList />}
+				<div id="sendZone">
+					<input
+						value={text}
+						onChange={e => setText(e.target.value)}
+						placeholder="Enter login"
+					/>
+					<button type="button" onClick={() => buttonAddFriend()}>
+						Add Friend
+					</button>
+				</div>
+			</div>
 		</div>
 	)
 }
