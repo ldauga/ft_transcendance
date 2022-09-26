@@ -526,7 +526,7 @@ body {
 	width: 45vw;
 	height: 50vh;
 	display: flex;
-	justify-content: center;
+	/* justify-content: center; */
 	/* position: relative; */
 	background: #302E2D;
 	border-radius: 5px;
@@ -542,7 +542,8 @@ body {
 	float: right; */
 	position: fixed;
 	cursor: pointer;
-	margin-left: 21vw;
+	margin-left: 42vw;
+	width: calc(1vh + 1vw);
 	/* right: 0; */
 }
 
