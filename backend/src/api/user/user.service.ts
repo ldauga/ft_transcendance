@@ -163,7 +163,6 @@ export class UserService {
 
 	async updateProfilePic(body, filename: string): Promise<GetUserDto> {
 		const user = await this.getUserById(body.id);
-		console.log(user);
 		if (!user)
 			return null;
 		

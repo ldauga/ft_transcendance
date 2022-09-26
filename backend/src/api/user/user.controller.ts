@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -11,6 +11,8 @@ import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
@@ -24,18 +26,10 @@ export const storage = {
   })
 }
 
-
 @Controller('user')
 export class UserController {
   @Inject(UserService)
   private readonly service: UserService;
-
-  @Get('fav-movies')
-  @UseGuards(AuthGuard('jwt'))
-  async movies(@Req() req){
-    console.log(req.cookies['auth-cookie'])
-  	return ["Avatar", "Avengers"];
-  }
 
   @Get()
   public getAllUsers(): Promise<UserEntity[]> {
@@ -57,11 +51,14 @@ export class UserController {
     return this.service.getUserByRefreshToken(refreshToken);
   }
 
+  @Get('profilePic/:fileId')
+  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
+    return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
+  }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
-    console.log(body.id)
-    console.log(file.filename);
     return this.service.updateProfilePic(body, file.filename)
   }
 
