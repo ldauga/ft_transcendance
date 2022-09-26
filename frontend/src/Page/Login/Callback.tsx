@@ -45,7 +45,9 @@ export default function Callback() {
 
     if (persistantReduceur.userReducer.user !== null) {
 
-        if (persistantReduceur.userReducer.user.is2faEnabled && !turnOn)
+        console.log(persistantReduceur.userReducer.user)
+
+        if (persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReduceur.twoFactorReducer.verif)
 
             return (
                 <div className="login-2fa">

@@ -604,7 +604,9 @@ class gameRoomClass {
 		else
 			this.ball.dx = random(0, 1) ? -1 : 1
 
-		// this.ball.x += this.ball.dx * 100
+
+		if (this.ball.initial_x < 0)
+			this.ball.x += this.ball.dx * 100
 
 		for (let i = 0; i < 2; i++)
 			this.players[i].resetPos(this.canvas)

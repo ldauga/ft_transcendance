@@ -9,17 +9,19 @@ body {
 	margin: -8px !important;
 }
 
-@keyframes blink{
+@keyframes blink {
 	0% {
-	  color: white;
+		color: white;
 	}
+
 	50% {
-	  color: red;
+		color: red;
 	}
+
 	100% {
 		color: white;
-	  }
-  }
+	}
+}
 
 .horizontal {
 	display: flex;
@@ -86,6 +88,48 @@ body {
 
 .game-lose {
 	background: rgba(245, 154, 142, 1);
+}
+
+.noMatchHistory {
+
+	margin: auto;
+
+	display: flex;
+
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	width: 90%;
+	height: 32vh;
+
+	border-radius: 25px;
+
+	border: 10px rgb(0, 0, 0, 0.7) dashed;
+}
+
+.noMatchHistory .iconContainer {
+
+	margin-top: 5%;
+
+	width: 12vh;
+	height: 12vh;
+}
+
+.noMatchHistory .iconContainer svg {
+	width: 100%;
+	height: 100%;
+
+	color: rgb(0, 0, 0, 0.7);
+}
+
+.noMatchHistory .textContainer {
+
+	margin: auto;
+
+	color: rgb(0, 0, 0, 0.7);
+	font-size: x-large;
+	font-family: 'lemon milk';
 }
 
 .matchPlayers {
@@ -414,6 +458,7 @@ body {
 		transform: translateY(0);
 	}
 }
+
 .user-info {
 	background: #302E2D;
 	height: 13%;
@@ -441,13 +486,107 @@ body {
 	margin-right: 10%;
 }
 
-.friends-info {
+.user-info .userParameterIconContainer {
+	margin-left: auto;
+
+	width: 10%;
+	height: 100%;
+}
+
+.userParameterIconContainer svg {
+	margin-top: 10%;
+	width: 100%;
+	height: auto;
+}
+
+.friends-info,
+.user-parameter {
 	background: #302E2D;
 	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 	height: 82%;
 	margin: 1%;
 	padding: 0;
 	transition: all 0.5s;
+}
+
+.user-parameter {
+	overflow-y: scroll;
+}
+
+.user-parameter-element {
+	margin: auto;
+	margin-top: 5%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	height: 30%;
+}
+
+.easter-egg {
+	margin-top: 1000%;
+}
+
+.dropzone {
+	width: 50%;
+	height: 60%;
+
+	background-color: rgb(0, 0, 0, 0.3);
+
+	border: 5px rgb(0, 0, 0, 0.7) dashed;
+	border-radius: 25px;
+
+	display: flex;
+	align-items: center;
+}
+
+.dropzone p {
+	display: flex;
+	align-items: center;
+}
+
+
+.user-parameter-text {
+	font-size: x-large;
+	font-family: 'lemon milk';
+}
+
+.save-parameter {
+	cursor: pointer;
+	
+	display: flex;
+
+	justify-content: center;
+	align-items: center;
+
+	position: sticky;
+	bottom: 10px;
+
+	margin: auto;
+
+	width: 30%;
+	height: 10%;
+
+	background-color: rgb(0, 100, 0, 0.7);
+	border: 5px rgb(0, 50, 0, 0.9) solid;
+	border-radius: 25px;
+
+	font-size: x-large;
+	font-family: 'lemon milk';
+}
+
+.save-parameter:hover {
+	transition: 0.25s;
+
+	background-color: rgb(0, 50, 0, 0.9);
+}
+
+.save-parameter:active {
+	transition: 0.25s;
+
+	transform: translateY(4px);
 }
 
 .friends-info button {

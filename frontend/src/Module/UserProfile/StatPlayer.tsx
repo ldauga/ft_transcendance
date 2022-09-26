@@ -11,6 +11,7 @@ import bronze_rank_img from '../../Page/assets/bronze_rank.png'
 import gold_rank_img from '../../Page/assets/gold_rank.png'
 import diamond_rank_img from '../../Page/assets/diamond_rank.png'
 import master_rank_img from '../../Page/assets/master_rank.png'
+import { RiFileWarningLine } from 'react-icons/ri'
 
 export function StatPlayer(props: { login: string, setLogin: any}) {
 	const [profileUserId, setProfileUserId] = useState(0)
@@ -69,15 +70,15 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 					}
 				}
 
-				const tmp4 = document.getElementById('numberWinsValue')
+				const tmp4 = document.getElementById('statPlayerNumberWinsValue')
 				if (tmp4)
 					tmp4.textContent = res.data.wins
 
-				const tmp5 = document.getElementById('numberLossesValue')
+				const tmp5 = document.getElementById('statPlayerNumberLossesValue')
 				if (tmp5)
 					tmp5.textContent = res.data.losses
 
-				const tmp6 = document.getElementById('winRateValue')
+				const tmp6 = document.getElementById('statPlayerWinRateValue')
 				if (tmp6)
 					tmp6.textContent = Math.floor((res.data.wins / (res.data.wins + res.data.losses)) * 100).toString() + '%'
 
@@ -107,6 +108,16 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 						</div>
 					)
 				})
+				if (!matches.length)
+					matches.push(<div className='noMatchHistory'>
+                        <div className="iconContainer">
+                            <RiFileWarningLine/>
+                        </div>
+                        <div className="textContainer">
+                            No match history found...
+                        </div>
+					</div>)
+
 				console.log('matches', matches)
 				setProfileUserMatchHistory(matches.reverse())
 
@@ -148,15 +159,15 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 					<div className='statUserInfoContainer'>
 						<div className='statUserInfoElement first'>
 							<div className='userInfoText'>Number of Wins :</div>
-							<div className='userInfoText value' id='numberWinsValue'></div>
+							<div className='userInfoText value' id='statPlayerNumberWinsValue'></div>
 						</div>
 						<div className='statUserInfoElement second'>
 							<div className='userInfoText'>Number of Losses :</div>
-							<div className='userInfoText value' id='numberLossesValue'></div>
+							<div className='userInfoText value' id='statPlayerNumberLossesValue'></div>
 						</div>
 						<div className='statUserInfoElement third'>
 							<div className='userInfoText'>Win Rate :</div>
-							<div className='userInfoText value' id='winRateValue'></div>
+							<div className='userInfoText value' id='statPlayerWinRateValue'></div>
 						</div>
 					</div>
 				</div>

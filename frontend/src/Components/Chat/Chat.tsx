@@ -17,8 +17,6 @@ function Chat() {
 
   const { addClient, removeClient, addMsg } = bindActionCreators(actionCreators, dispatch);
 
-  utilsData.socket.removeAllListeners();
-
   utilsData.socket.on('friendsList', function (arrClient: Client[]) {
     console.log('Friends List received, useEffect()');
     for (var i = 0; i < arrClient.length; i++) {

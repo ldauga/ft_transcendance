@@ -15,8 +15,6 @@ function LoginPage() {
     const [name, setName] = useState('');
     const [usernameRefused, setUsernameRefused] = useState(false);
 
-    utilsData.socket.removeAllListeners();
-
     function onChangeInput(name: string) {
         setName(name);
         setUsernameRefused(false);

@@ -20,8 +20,6 @@ const JoinRoom = (props: any) => {
     const utilsData = useSelector((state: RootState) => state.utils);
     const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
 
-    // utilsData.socket.removeAllListeners();
-
     function joinQueue() {
         if (!props.gameMap)
             return
