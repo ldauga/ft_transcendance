@@ -63,7 +63,6 @@ export class AuthController {
 		return isCodeValid;
 	}
 
-
 	@Get('2fa/turn-on/:code')
 	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request, @Body() body) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)

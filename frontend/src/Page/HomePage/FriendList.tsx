@@ -7,7 +7,7 @@ import './FriendList.css';
 function FriendList(props: { setFriendList: Function, setAddFriend: Function, setInvitationRequest: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.persistantReduceur);
+	const userData = useSelector((state: RootState) => state.persistantReducer);
 
 	const [itemListHistory, setItemListHistory] = useState(Array<any>);
 	const [update, setUpdate] = useState(false);

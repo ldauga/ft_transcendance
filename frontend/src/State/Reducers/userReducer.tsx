@@ -7,7 +7,7 @@ export interface User {
         login: string,
         nickname: string,
         wins: number,
-        looses: number,
+        losses: number,
         rank: number,
         profile_pic: string,
         isTwoFactorAuthenticationEnabled: boolean

@@ -10,7 +10,7 @@ import './HomePage.css';
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReduceur);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
@@ -29,7 +29,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     };
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id).then(async (res) => {
+        await axios.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>

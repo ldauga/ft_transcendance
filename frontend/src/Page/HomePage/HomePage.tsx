@@ -39,9 +39,10 @@ import { Dictionary } from '@reduxjs/toolkit';
 const fileTypes = ["JPG", "PNG"];
 
 var test = false
+var verif = false
 
 const HomePage = (props: any) => {
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
     const utilsData = useSelector((state: RootState) => state.utils)
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 
@@ -66,7 +67,7 @@ const HomePage = (props: any) => {
 
     const [userParameterAff, setUserParameterAff] = useState(false);
     const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | Dictionary<any>>(null)
-    const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
+    const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReducer.userReducer.user?.nickname)
     const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
     const [userParameter2FACode, setUserParameter2FACode] = useState("");
     const [userParameter2FARes, setUserParameter2FARes] = useState(0);
@@ -94,135 +95,143 @@ const HomePage = (props: any) => {
         }
     };
 
+    function refreshMatchHistory() {
+        axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then((res) => {
+            let matches: any[] = []
+            res.data.forEach((item: { login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string, date: Date }) => {
+                matches.push(
+                    <div key={matches.length.toString()} className={(item.winner_login == persistantReducer.userReducer.user?.login ? 'game game-win' : 'game game-lose')} >
+                        <div className='matchPlayers'>
+                            <div className='player'>
+                                <div className='Score'>{item.score_u1}</div>
+                                <div className='PlayerNickname'>{item.login_user1}</div>
+                            </div>
+                            <div className='player'>
+                                <div className='Score'>{item.score_u2}</div>
+                                <div className='PlayerNickname'>{item.login_user2}</div>
+                            </div>
+                        </div>
+                        <div className='matchDate'><>{dayNames[new Date(item.date).getDay()] + ' ' + new Date(item.date).getDate() + ' ' + monthNames[new Date(item.date).getMonth()] + ' ' + new Date(item.date).getHours() + ':' + new Date(item.date).getMinutes()}</></div>
+                    </div>
+                )
+            })
+            if (!matches.length)
+                matches.push(<div className='noMatchHistory'>
+                    <div className="iconContainer">
+                        <RiFileWarningLine />
+                    </div>
+                    <div className="textContainer">
+                        No match history found...
+                    </div>
+                </div>)
+            console.log('matches', matches)
+            setMatchesHistory(matches.reverse())
+        })
+    }
+
+    function refreshUserRank() {
+        const tmp1 = document.getElementById('numberWinsValue')
+        if (tmp1)
+            tmp1.textContent = persistantReducer.userReducer.user!.wins.toString()
+        const tmp2 = document.getElementById('numberLossesValue')
+        if (tmp2)
+            tmp2.textContent = persistantReducer.userReducer.user!.losses.toString()
+        const tmp3 = document.getElementById('winRateValue')
+        if (tmp3)
+            tmp3.textContent = Math.floor((persistantReducer.userReducer.user!.wins / (persistantReducer.userReducer.user!.wins + persistantReducer.userReducer.user!.losses)) * 100).toString() + '%'
+        const tmp4 = document.getElementById('rankNameValue')
+        if (tmp4) {
+            setRankImage(iron_rank_img)
+            tmp4.textContent = 'Iron | Noobies'
+            if (persistantReducer.userReducer.user!.wins > 5) {
+                setRankImage(bronze_rank_img)
+                tmp4.textContent = 'Bronze | Trainer'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 10) {
+                setRankImage(gold_rank_img)
+                tmp4.textContent = 'Gold | Not Bad'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 20) {
+                setRankImage(diamond_rank_img)
+                tmp4.textContent = 'Diamond | Wow !!!'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 30) {
+                setRankImage(master_rank_img)
+                tmp4.textContent = 'Master splinter | Our God !!!'
+            }
+            if (persistantReducer.userReducer.user!.login == 'ldauga') {
+                setRankImage(master_rank_img)
+                tmp4.textContent = 'Master splinter | Our God !!!'
+            } else if (persistantReducer.userReducer.user!.login == 'atourret') {
+                setRankImage(gold_rank_img)
+                tmp4.textContent = 'GroNoob'
+            }
+        }
+    }
+
+    function refresh2FAParameter() {
+        if (!persistantReducer.userReducer.user?.isTwoFactorAuthenticationEnabled) {
+            if (userParameter2FAQrCode === "")
+                axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
+            if (userParameter2FARes === 401)
+                setUserParameter2FAStatus("Error, wrong code.")
+            else if (userParameter2FARes == 404)
+                setUserParameter2FAStatus("You must enter the code.")
+            else if (userParameter2FARes == 200)
+                setUserParameter2FAStatus("2FA activated !")
+        }
+    }
+
+    function refreshLeaderBoard() {
+        axios.get('http://localhost:5001/user').then((res) => {
+            let tmp: any[] = []
+            res.data.forEach((item: any) => {
+
+                tmp.push(<div className={(item.login == persistantReducer.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => { setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer() }}>
+                    <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
+                    <div className='UserLeaderBoardInfo medium'>{item.login}</div>
+                    <div className='UserLeaderBoardInfo little'>{item.wins}</div>
+                    <div className='UserLeaderBoardInfo little'>{item.losses}</div>
+                    <div className='UserLeaderBoardInfo medium'>{Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'}</div>
+                </div>)
+            })
+
+            for (let index = 0; index < tmp.length; index++) {
+                if (index + 1 != tmp.length && tmp[index].props.children[2].props.children > tmp[index + 1].props.children[2].props.children) {
+                    var oui = tmp[index]
+                    tmp[index] = tmp[index + 1]
+                    tmp[index + 1] = oui
+                    index = 0
+                }
+            }
+            
+            setLeaderBoardUsers(tmp.reverse())
+        })
+    }
+
     useEffect(() => {
 
         if (!test) {
-            axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
-                let matches: any[] = []
-                res.data.forEach((item: { login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string, date: Date }) => {
-                    matches.push(
-                        <div key={matches.length.toString()} className={(item.winner_login == persistantReduceur.userReducer.user?.login ? 'game game-win' : 'game game-lose')} >
-                            <div className='matchPlayers'>
-                                <div className='player'>
-                                    <div className='Score'>{item.score_u1}</div>
-                                    <div className='PlayerNickname'>{item.login_user1}</div>
-                                </div>
-                                <div className='player'>
-                                    <div className='Score'>{item.score_u2}</div>
-                                    <div className='PlayerNickname'>{item.login_user2}</div>
-                                </div>
-                            </div>
-                            <div className='matchDate'><>{dayNames[new Date(item.date).getDay()] + ' ' + new Date(item.date).getDate() + ' ' + monthNames[new Date(item.date).getMonth()] + ' ' + new Date(item.date).getHours() + ':' + new Date(item.date).getMinutes()}</></div>
-                        </div>
-                    )
-                })
-                if (!matches.length)
-                    matches.push(<div className='noMatchHistory'>
-                        <div className="iconContainer">
-                            <RiFileWarningLine />
-                        </div>
-                        <div className="textContainer">
-                            No match history found...
-                        </div>
-                    </div>)
-                console.log('matches', matches)
-                setMatchesHistory(matches.reverse())
-            })
-
-            if (!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled) {
-                if (userParameter2FAQrCode === "")
-                    axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
-                if (userParameter2FARes === 401)
-                    setUserParameter2FAStatus("Error, wrong code.")
-                else if (userParameter2FARes == 404)
-                    setUserParameter2FAStatus("You must enter the code.")
-                else if (userParameter2FARes == 200)
-                    setUserParameter2FAStatus("2FA activated !")
-            }
-
+            refreshMatchHistory()
+            refreshUserRank()
+            refresh2FAParameter()
+            refreshLeaderBoard()
             test = true
-        } else if (!leaderBoardUsers.length) {
-            axios.get('http://localhost:5001/user').then((res) => {
-                let tmp: any[] = []
-                res.data.forEach((item: any) => {
-
-                    if (item.login == persistantReduceur.userReducer.user?.login) {
-                        const tmp1 = document.getElementById('numberWinsValue')
-                        if (tmp1)
-                            tmp1.textContent = item.wins
-                        const tmp2 = document.getElementById('numberLossesValue')
-                        if (tmp2)
-                            tmp2.textContent = item.losses
-                        const tmp3 = document.getElementById('winRateValue')
-                        if (tmp3)
-                            tmp3.textContent = Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'
-                        const tmp4 = document.getElementById('rankNameValue')
-                        if (tmp4) {
-                            setRankImage(iron_rank_img)
-                            tmp4.textContent = 'Iron | Noobies'
-                            if (item.wins > 5) {
-                                setRankImage(bronze_rank_img)
-                                tmp4.textContent = 'Bronze | Trainer'
-                            }
-                            else if (item.wins > 10) {
-                                setRankImage(gold_rank_img)
-                                tmp4.textContent = 'Gold | Not Bad'
-                            }
-                            else if (item.wins > 20) {
-                                setRankImage(diamond_rank_img)
-                                tmp4.textContent = 'Diamond | Wow !!!'
-                            }
-                            else if (item.wins > 30) {
-                                setRankImage(master_rank_img)
-                                tmp4.textContent = 'Master splinter | Our God !!!'
-                            }
-                            if (item.login == 'ldauga') {
-                                setRankImage(master_rank_img)
-                                tmp4.textContent = 'Master splinter | Our God !!!'
-                            } else if (item.login == 'atourret') {
-                                setRankImage(gold_rank_img)
-                                tmp4.textContent = 'GroNoob'
-                            }
-                        }
-                    }
-
-                    tmp.push(<div className={(item.login == persistantReduceur.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => { setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer() }}>
-                        <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
-                        <div className='UserLeaderBoardInfo medium'>{item.login}</div>
-                        <div className='UserLeaderBoardInfo little'>{item.wins}</div>
-                        <div className='UserLeaderBoardInfo little'>{item.losses}</div>
-                        <div className='UserLeaderBoardInfo medium'>{Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'}</div>
-                    </div>)
-                })
-
-                for (let index = 0; index < tmp.length; index++) {
-                    if (index + 1 != tmp.length && tmp[index].props.children[2].props.children > tmp[index + 1].props.children[2].props.children) {
-                        var oui = tmp[index]
-                        tmp[index] = tmp[index + 1]
-                        tmp[index + 1] = oui
-                        index = 0
-                    }
-                }
-
-                tmp.forEach((item, index) => {
-                    var rank = document.getElementById(item.props.children[1].props.children + 'Rank')
-                    if (rank)
-                        rank.textContent = (tmp.length - index).toString()
-                })
-
-                var invertMatches: any[] = []
-                for (let index = tmp.length - 1; index >= 0; index--)
-                    invertMatches.push(tmp[index])
-
-                setLeaderBoardUsers(invertMatches)
-            })
+        }
+        if (leaderBoardUsers.length && !verif) {
+            for (let index = 0; index < leaderBoardUsers.length; index++) {
+                var rank = document.getElementById(leaderBoardUsers[index].props.children[1].props.children + 'Rank')
+                if (rank)
+                    rank.textContent = (index + 1).toString()
+            }
+            verif = true
         }
     })
 
     function saveParameter() {
 
-        if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-            axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+        if (userParameterNewNickname != persistantReducer.userReducer.user?.nickname)
+            axios.post('http://localhost:5001/user/updateNickname', { id: persistantReducer.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
 
         if (userParameter2FACode) {
             setTwoFactor(true)
@@ -325,9 +334,9 @@ const HomePage = (props: any) => {
                     <div className="info">
                         <div className="user-info">
                             <div className="user-picture">
-                                <img src={persistantReduceur.userReducer.user?.profile_pic} />
+                                <img src={persistantReducer.userReducer.user?.profile_pic} />
                             </div>
-                            <p className="username">{persistantReduceur.userReducer.user?.login}</p>
+                            <p className="username">{persistantReducer.userReducer.user?.login}</p>
                             <p className="level">lvl</p>
                             <div className="userParameterIconContainer">
                                 <BiCog onClick={e => setUserParameterAff(!userParameterAff)} />
@@ -360,7 +369,7 @@ const HomePage = (props: any) => {
                                 <div className="user-parameter-element">
                                     <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Toggle 2FA :</div>
                                     <div className="user-parameter-content">
-                                        {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+                                        {!persistantReducer.userReducer.user?.isTwoFactorAuthenticationEnabled ?
                                             <>
                                                 <div className="user-parameter-content-text">Scan the following QR Code</div>
                                                 <img className='user-parameter-img-qr-code' src={userParameter2FAQrCode} />
@@ -406,9 +415,9 @@ const HomePage = (props: any) => {
             <div id="notifModal" className="notifModal">
                 <div className="notif-modal-content">
                     <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                    <div className='printNotif'>{affNotif()}</div>
+                    <div className='printNotif'>{affNotif({setFriendList: setFriendList, setAddFriend: setAddFriend, setInvitationRequest: setInvitationRequest, setConvers: setConvers, setChat: setChat})}</div>
                     {/* <div className='bgDeleteAllNotif'> */}
-                    {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+                    {persistantReducer.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
                     {/* </div> */}
                 </div>
             </div>

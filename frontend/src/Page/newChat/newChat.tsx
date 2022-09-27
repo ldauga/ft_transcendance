@@ -10,7 +10,7 @@ function NewChatPage() {
 
     const utilsData = useSelector((state: RootState) => state.utils)
     const clientList = useSelector((state: RootState) => state.clientList)
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
 
     const dispatch = useDispatch();
 

@@ -13,7 +13,7 @@ function ConnectionChecker(props: {
   component: any;
 }): JSX.Element {
 
-  const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+  const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
   const utilsData = useSelector((state: RootState) => state.utils)
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -26,12 +26,12 @@ function ConnectionChecker(props: {
     else
       axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data) })
 
-    utilsData.socket.emit('storeClientInfo', persistantReduceur.userReducer.user)
+    utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user)
     test = true
   }
 
 
-  if (persistantReduceur.userReducer.user !== null && ((persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled && persistantReduceur.twoFactorReducer.verif) || !persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled))
+  if (persistantReducer.userReducer.user !== null && ((persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && persistantReducer.twoFactorReducer.verif) || !persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled))
   return <InvitationChecker children={props.component} ></InvitationChecker>
   else
   return <Navigate to="/Login" />

@@ -25,7 +25,7 @@ const reducers = combineReducers({
     log: logReducer,
     clientList: clientListReducer,
     utils: utilsReducer,
-    persistantReduceur: persistantReducer,
+    persistantReducer: persistantReducer,
 });
 
 export default reducers;

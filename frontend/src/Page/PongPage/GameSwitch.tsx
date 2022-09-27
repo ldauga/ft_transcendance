@@ -15,7 +15,7 @@ const GameSwitch=() => {
     const [roomID, setRoomID] = useState("");
     const [gameMap, setGameMap] = React.useState("");
 
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const utilsData = useSelector((state: RootState) => state.utils);
 
 
@@ -23,7 +23,7 @@ const GameSwitch=() => {
         if (!checkReconnexion) {
             checkReconnexion = true
             console.log('oui')
-            utilsData.socket.emit('CHECK_RECONNEXION', {user: persistantReduceur.userReducer.user})
+            utilsData.socket.emit('CHECK_RECONNEXION', {user: persistantReducer.userReducer.user})
         }
 
     // })
