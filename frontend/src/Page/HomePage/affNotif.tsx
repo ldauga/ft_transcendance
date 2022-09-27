@@ -82,8 +82,6 @@ export default function affNotif() {
 		ret.push(tmp)
 	})
 
-	console.log('sisisisi', persistantReduceur.notifReducer.notifArray)
-
 	return (ret.reverse())
 
 }

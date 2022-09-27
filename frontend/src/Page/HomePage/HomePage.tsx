@@ -34,6 +34,7 @@ import InvitationRequest from './InvitationRequest';
 import Convers from './Convers';
 import Chat from './Chat';
 import Logout from '../../Module/Navbar/Buttons/Logout';
+import { Dictionary } from '@reduxjs/toolkit';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -64,7 +65,7 @@ const HomePage = (props: any) => {
     const [userProfileLogin, setUserProfileLogin] = useState("")
 
     const [userParameterAff, setUserParameterAff] = useState(false);
-    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null)
+    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | Dictionary<any>>(null)
     const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
     const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
     const [userParameter2FACode, setUserParameter2FACode] = useState("");
@@ -94,8 +95,6 @@ const HomePage = (props: any) => {
     };
 
     useEffect(() => {
-
-        console.log('file :', userParameterNewProfilePicture)
 
         if (!test) {
             axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
@@ -224,10 +223,38 @@ const HomePage = (props: any) => {
 
         if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
             axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+
         if (userParameter2FACode) {
             setTwoFactor(true)
             axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
         }
+
+        if (userParameterNewProfilePicture != null) {
+            const form = new FormData();
+
+            console.log('sisisisisisis :', userParameterNewProfilePicture)
+
+
+            // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
+
+
+            // Create a form and append image with additional fields
+            // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
+
+            // Send form data with axios
+            // axios.post('https://example.com', form, {
+            //     headers: {
+            //         ...form.getHeaders(),
+            //         Authentication: 'Bearer ...',
+            //     },
+            // });
+
+            // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
+
+            // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
+
+        }
+        // axios.post('http://localhost:5001/user/upload', { userParameterNewProfilePicture }).then((res) => { console.log(res) }).catch((err) => console.log(err))
 
         setUserParameter2FAQrCode("")
         setUserParameter2FACode("")
@@ -326,8 +353,8 @@ const HomePage = (props: any) => {
                                 <div className="user-parameter-element">
                                     <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change profile picture :</div>
                                     <div className="user-parameter-content">
-                                        <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
-                                        <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                        <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} userParameterNewProfilePicture={userParameterNewProfilePicture} />
+                                        <div className="save-parameter low" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
                                     </div>
                                 </div>
                                 <div className="user-parameter-element">
