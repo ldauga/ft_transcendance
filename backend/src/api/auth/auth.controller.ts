@@ -79,6 +79,7 @@ export class AuthController {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		await this.userServices.turnOnTwoFactorAuthentication(user.login);
+		return 
 	}
 
 	@Get('2fa/turn-off/')

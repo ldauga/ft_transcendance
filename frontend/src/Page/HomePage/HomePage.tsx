@@ -21,6 +21,8 @@ import gold_rank_img from '../assets/gold_rank.png'
 import diamond_rank_img from '../assets/diamond_rank.png'
 import master_rank_img from '../assets/master_rank.png'
 
+import les_BGs from '../assets/les_BGs.jpeg'
+
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
@@ -31,6 +33,7 @@ import { useCookies } from 'react-cookie';
 import InvitationRequest from './InvitationRequest';
 import Convers from './Convers';
 import Chat from './Chat';
+import Logout from '../../Module/Navbar/Buttons/Logout';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -42,7 +45,7 @@ const HomePage = (props: any) => {
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 
     const dispatch = useDispatch();
-    const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
+    const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
     const [listNotif, setListNotif] = useState(Array<any>)
 
@@ -221,8 +224,15 @@ const HomePage = (props: any) => {
 
         if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
             axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+        if (userParameter2FACode) {
+            setTwoFactor(true)
+            axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        }
 
-        axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        setUserParameter2FAQrCode("")
+        setUserParameter2FACode("")
+        setUserParameter2FARes(0)
+        setUserParameterNewProfilePicture(null)
         // if (userParameterNewProfilePicture !== null)
         //    axios.post('http://localhost:3000/user/upload?file', ).catch()
     }
@@ -325,18 +335,17 @@ const HomePage = (props: any) => {
                                     <div className="user-parameter-content">
                                         {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
                                             <>
-                                                <div className="user-parameter-content-text">Set 2FA :</div>
-                                                <p>Scan the following QR Code using Google Authenticator</p>
-                                                <img src={userParameter2FAQrCode} />
+                                                <div className="user-parameter-content-text">Scan the following QR Code</div>
+                                                <img className='user-parameter-img-qr-code' src={userParameter2FAQrCode} />
                                                 <input
                                                     type="text"
                                                     value={userParameter2FACode}
                                                     onChange={(e) => setUserParameter2FACode(e.target.value)}
                                                 />
-                                                <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                                <div className="save-parameter low" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
                                             </> :
                                             <>
-                                                <div className="user-parameter-deactivate-2FA" onClick={e => {e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Deactivate 2FA</div>
+                                                <div className="user-parameter-deactivate-2FA" onClick={e => { e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded'); axios.get('http://localhost:5001/auth/2fa/turn-off/', { withCredentials: true }) }}>Deactivate 2FA</div>
                                             </>
                                         }
                                     </div>
@@ -346,6 +355,15 @@ const HomePage = (props: any) => {
                                 </div>
                                 <div className="user-parameter-element">
                                     <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Logout :</div>
+                                    <div className="user-parameter-content">
+                                        <div className="user-parameter-deactivate-2FA" onClick={e => { removeCookie("auth-cookie", { path: '/' }); setUser(null); delAllNotif(); setTwoFactor(false) }}>Logout</div>
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element easter-egg">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Best trans en dance :</div>
+                                    <div className="user-parameter-content">
+                                        <img className='les_bg' src={les_BGs} />
+                                    </div>
                                 </div>
                                 {/* <div className="user-parameter-element">
                                     <div className="user-parameter-text">Change profile picture :</div>
