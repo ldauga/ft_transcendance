@@ -59,6 +59,7 @@ export class UserController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
+    console.log(file)
     return this.service.updateProfilePic(body, file.filename)
   }
 

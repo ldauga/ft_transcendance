@@ -21,6 +21,8 @@ import gold_rank_img from '../assets/gold_rank.png'
 import diamond_rank_img from '../assets/diamond_rank.png'
 import master_rank_img from '../assets/master_rank.png'
 
+import les_BGs from '../assets/les_BGs.jpeg'
+
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
 import affNotif from './affNotif';
@@ -31,6 +33,8 @@ import { useCookies } from 'react-cookie';
 import InvitationRequest from './InvitationRequest';
 import Convers from './Convers';
 import Chat from './Chat';
+import Logout from '../../Module/Navbar/Buttons/Logout';
+import { Dictionary } from '@reduxjs/toolkit';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -42,7 +46,7 @@ const HomePage = (props: any) => {
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 
     const dispatch = useDispatch();
-    const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
+    const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
     const [listNotif, setListNotif] = useState(Array<any>)
 
@@ -61,7 +65,7 @@ const HomePage = (props: any) => {
     const [userProfileLogin, setUserProfileLogin] = useState("")
 
     const [userParameterAff, setUserParameterAff] = useState(false);
-    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null)
+    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | Dictionary<any>>(null)
     const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
     const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
     const [userParameter2FACode, setUserParameter2FACode] = useState("");
@@ -91,8 +95,6 @@ const HomePage = (props: any) => {
     };
 
     useEffect(() => {
-
-        console.log('file :', userParameterNewProfilePicture)
 
         if (!test) {
             axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReduceur.userReducer.user?.id).then((res) => {
@@ -222,7 +224,42 @@ const HomePage = (props: any) => {
         if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
             axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
 
-        axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        if (userParameter2FACode) {
+            setTwoFactor(true)
+            axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        }
+
+        if (userParameterNewProfilePicture != null) {
+            const form = new FormData();
+
+            console.log('sisisisisisis :', userParameterNewProfilePicture)
+
+
+            // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
+
+
+            // Create a form and append image with additional fields
+            // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
+
+            // Send form data with axios
+            // axios.post('https://example.com', form, {
+            //     headers: {
+            //         ...form.getHeaders(),
+            //         Authentication: 'Bearer ...',
+            //     },
+            // });
+
+            // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
+
+            // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
+
+        }
+        // axios.post('http://localhost:5001/user/upload', { userParameterNewProfilePicture }).then((res) => { console.log(res) }).catch((err) => console.log(err))
+
+        setUserParameter2FAQrCode("")
+        setUserParameter2FACode("")
+        setUserParameter2FARes(0)
+        setUserParameterNewProfilePicture(null)
         // if (userParameterNewProfilePicture !== null)
         //    axios.post('http://localhost:3000/user/upload?file', ).catch()
     }
@@ -305,35 +342,61 @@ const HomePage = (props: any) => {
                                 {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
                             </div> :
                             <div className="user-parameter">
-                                <div className="user-parameter-element"  >
-                                    <div className="user-parameter-title" onClick={e => e.currentTarget.parentElement?.classList.toggle('expanded')}>Change nickname :</div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change nickname :</div>
                                     <div className="user-parameter-content">
                                         <div className="user-parameter-content-text">Enter New nickname and click save</div>
                                         <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
-                                        <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
+                                        <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change profile picture :</div>
+                                    <div className="user-parameter-content">
+                                        <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} userParameterNewProfilePicture={userParameterNewProfilePicture} />
+                                        <div className="save-parameter low" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Toggle 2FA :</div>
+                                    <div className="user-parameter-content">
+                                        {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+                                            <>
+                                                <div className="user-parameter-content-text">Scan the following QR Code</div>
+                                                <img className='user-parameter-img-qr-code' src={userParameter2FAQrCode} />
+                                                <input
+                                                    type="text"
+                                                    value={userParameter2FACode}
+                                                    onChange={(e) => setUserParameter2FACode(e.target.value)}
+                                                />
+                                                <div className="save-parameter low" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
+                                            </> :
+                                            <>
+                                                <div className="user-parameter-deactivate-2FA" onClick={e => { e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded'); axios.get('http://localhost:5001/auth/2fa/turn-off/', { withCredentials: true }) }}>Deactivate 2FA</div>
+                                            </>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Change status :</div>
+                                </div>
+                                <div className="user-parameter-element">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Logout :</div>
+                                    <div className="user-parameter-content">
+                                        <div className="user-parameter-deactivate-2FA" onClick={e => { removeCookie("auth-cookie", { path: '/' }); setUser(null); delAllNotif(); setTwoFactor(false) }}>Logout</div>
+                                    </div>
+                                </div>
+                                <div className="user-parameter-element easter-egg">
+                                    <div className="user-parameter-title" onClick={e => { var tmp = document.getElementsByClassName('user-parameter-element'); for (let index = 0; index < tmp.length; index++) if (tmp[index].classList.contains('expanded')) tmp[index].classList.toggle('expanded'); e.currentTarget.parentElement?.classList.toggle('expanded'); }}>Best trans en dance :</div>
+                                    <div className="user-parameter-content">
+                                        <img className='les_bg' src={les_BGs} />
                                     </div>
                                 </div>
                                 {/* <div className="user-parameter-element">
                                     <div className="user-parameter-text">Change profile picture :</div>
-                                    <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
                                 </div>
                                 <div className="user-parameter-element">
-                                    {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
-                                        <><div className="user-parameter-text">Set 2FA :</div>
-                                            <p>Scan the following QR Code using Google Authenticator</p>
-                                            <img src={userParameter2FAQrCode} />
-                                            <input
-                                                type="text"
-                                                value={userParameter2FACode}
-                                                onChange={(e) => setUserParameter2FACode(e.target.value)}
-                                            />
-                                            <p>{userParameter2FAStatus}</p>
-                                        </> :
-                                        <>
-                                            <div className="user-parameter-text">Deactivate 2FA :</div>
-                                            <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
-                                        </>
-                                    }
+                                    
                                 </div> */}
                             </div>}
                         <button id="openChatButton" onClick={() => openChat()}>Chat</button>
