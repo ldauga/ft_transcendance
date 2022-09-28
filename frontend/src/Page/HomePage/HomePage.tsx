@@ -1,5 +1,6 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
+import FormData from 'form-data'
 import Navbar from '../../Module/Navbar/Navbar';
 import './HomePage.css';
 import FriendList from './FriendList';
@@ -8,7 +9,6 @@ import AddFriend from './AddFriend';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
-import { useDropzone } from "react-dropzone";
 import ReactDOM from 'react-dom';
 
 import { AiOutlineClose } from 'react-icons/ai'
@@ -66,7 +66,7 @@ const HomePage = (props: any) => {
     const [userProfileLogin, setUserProfileLogin] = useState("")
 
     const [userParameterAff, setUserParameterAff] = useState(false);
-    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | Dictionary<any>>(null)
+    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | any>(null)
     const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReducer.userReducer.user?.nickname)
     const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
     const [userParameter2FACode, setUserParameter2FACode] = useState("");
@@ -204,7 +204,7 @@ const HomePage = (props: any) => {
                     index = 0
                 }
             }
-            
+
             setLeaderBoardUsers(tmp.reverse())
         })
     }
@@ -239,36 +239,73 @@ const HomePage = (props: any) => {
         }
 
         if (userParameterNewProfilePicture != null) {
-            const form = new FormData();
 
-            console.log('sisisisisisis :', userParameterNewProfilePicture)
-
-
-            // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
+        
 
 
-            // Create a form and append image with additional fields
-            // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
 
-            // Send form data with axios
-            // axios.post('https://example.com', form, {
-            //     headers: {
-            //         ...form.getHeaders(),
-            //         Authentication: 'Bearer ...',
-            //     },
+            // console.log('ci')
+            // const form = document.querySelector('form') || undefined
+            // console.log(form)
+
+            var formData = new FormData();
+
+            // // formData.append("somePropName", 'somePropValue');
+            formData.append("photo", userParameterNewProfilePicture);
+
+            var config = {
+                method: 'post',
+                url: 'http://localhost:5001/user/upload',
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                },
+                data : formData
+              };
+
+              axios(config).then((res) => setUser(res.data))
+            // console.log('formData', formData)
+            /*  const requestOptions = {
+                  method: 'POST',
+                  body: formData,
+              };*/
+            // const config = {
+            //     withCredentials: true,
+            //     headers: { 'content-type': 'multipart/form-data' }
+            //   }
+            // const response = axios.post('http://localhost:5001/user/upload', formData, config)
+            // .then(response => {
+            //   console.log(response);
+            // })
+            // .catch(error => {
+            //     console.log(error);
             // });
+            //  const response = fetch('http://localhost:5001/user/upload', requestOptions).then((res) => console.log(res));
+        };
+        // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
 
-            // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
 
-            // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
+        // Create a form and append image with additional fields
+        // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
 
-        }
+        // Send form data with axios
+        // axios.post('https://example.com', form, {
+        //     headers: {
+        //         ...form.getHeaders(),
+        //         Authentication: 'Bearer ...',
+        //     },
+        // });
+
+        // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
+
+        // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
+
+
         // axios.post('http://localhost:5001/user/upload', { userParameterNewProfilePicture }).then((res) => { console.log(res) }).catch((err) => console.log(err))
 
         setUserParameter2FAQrCode("")
         setUserParameter2FACode("")
         setUserParameter2FARes(0)
-        setUserParameterNewProfilePicture(null)
+        setUserParameterNewProfilePicture(undefined)
         // if (userParameterNewProfilePicture !== null)
         //    axios.post('http://localhost:3000/user/upload?file', ).catch()
     }
@@ -336,8 +373,10 @@ const HomePage = (props: any) => {
                             <div className="user-picture">
                                 <img src={persistantReducer.userReducer.user?.profile_pic} />
                             </div>
-                            <p className="username">{persistantReducer.userReducer.user?.login}</p>
-                            <p className="level">lvl</p>
+                            <div className="user-info-text-container">
+                                <div className="user-login">{'Login : ' + persistantReducer.userReducer.user!.login}</div>
+                                <div className="user-nickname">{'Nickname : ' + persistantReducer.userReducer.user!.nickname}</div>
+                            </div>
                             <div className="userParameterIconContainer">
                                 <BiCog onClick={e => setUserParameterAff(!userParameterAff)} />
                             </div>
@@ -415,7 +454,7 @@ const HomePage = (props: any) => {
             <div id="notifModal" className="notifModal">
                 <div className="notif-modal-content">
                     <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                    <div className='printNotif'>{affNotif({setFriendList: setFriendList, setAddFriend: setAddFriend, setInvitationRequest: setInvitationRequest, setConvers: setConvers, setChat: setChat})}</div>
+                    <div className='printNotif'>{affNotif({ setFriendList: setFriendList, setAddFriend: setAddFriend, setInvitationRequest: setInvitationRequest, setConvers: setConvers, setChat: setChat })}</div>
                     {/* <div className='bgDeleteAllNotif'> */}
                     {persistantReducer.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
                     {/* </div> */}

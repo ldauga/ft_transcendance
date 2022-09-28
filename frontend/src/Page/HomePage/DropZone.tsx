@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
 
 var preview: string = ""
 
@@ -33,7 +32,6 @@ export default function DropZone(props: { setUserParameterNewProfilePicture: any
 
 	}, [])
 
-	const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
 	if (props.userParameterNewProfilePicture == null)
 		return (

@@ -18,7 +18,7 @@ export const storage = {
   storage: diskStorage({
       destination: './uploads/profileimages',
       filename: (req, file, cb) => {
-          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+          const filename: string = uuidv4();
           const extension: string = path.parse(file.originalname).ext;
 
           cb(null, `${filename}${extension}`)
@@ -57,11 +57,23 @@ export class UserController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', storage))
-  public uploadFile(@Body() body, @UploadedFile() file: Express.Multer.File) {
-    console.log(file)
-    return this.service.updateProfilePic(body, file.filename)
+  @UseInterceptors(FileInterceptor('photo', storage))
+  public uploadFile(@Body() body, @UploadedFile() image: Express.Multer.File) {
+    console.log('body', body, '\nFin body')
+    console.log(image)
+    return this.service.updateProfilePic(body, image.filename)
   }
+
+  // @Post('upload')
+  // @UseInterceptors(
+  //   FileInterceptor('photo', {
+  //     dest: './uploads/profileimages',
+  //   }),
+  // )
+  // uploadSingle(@UploadedFile() file: any) {
+  //   console.log(file)
+  //   return file;
+  // }
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {
