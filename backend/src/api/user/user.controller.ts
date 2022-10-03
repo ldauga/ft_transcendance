@@ -27,6 +27,7 @@ export const storage = {
 }
 
 @Controller('user')
+// @UseGuards(AuthGuard('refresh'))
 export class UserController {
   @Inject(UserService)
   private readonly service: UserService;
