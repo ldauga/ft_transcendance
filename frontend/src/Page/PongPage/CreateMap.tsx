@@ -18,7 +18,7 @@ var canvas = {
 
 const CreateMap = (props: any) => {
     const [connectedClient, setConnectedClient] = useState(Array<any>)
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     const [room] = useState(new gameRoomClass("", "", null, "custom"));
 
@@ -541,7 +541,7 @@ const CreateMap = (props: any) => {
         var tmp: any[] = []
         console.log('test', clientConnected)
         clientConnected.forEach((item) => {
-            if (item.username != "" && item.username != persistantReduceur.userReducer.user?.login)
+            if (item.username != "" && item.username != persistantReducer.userReducer.user?.login)
             tmp.push(
                 <div key={tmp.length} className="clientConnected" onClick={e => setInvitInput(e.currentTarget.textContent as string)} ><>{item.username}</></div>
             )
@@ -552,7 +552,7 @@ const CreateMap = (props: any) => {
 
     function inviteButtonClick() {
         if (!checkAllCollisionsBall(room.ball)) {
-            utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
+            utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReducer.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
         }
     }
 

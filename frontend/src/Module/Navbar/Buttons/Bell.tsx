@@ -7,7 +7,7 @@ import { RootState } from '../../../State';
 import { useSelector } from 'react-redux';
 
 const Bell = () => {
-  const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+  const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
   const [oldNbNotif, setOldNbNotif] = useState(0)
 
   let location = useLocation();
@@ -15,7 +15,7 @@ const Bell = () => {
   function bellOnClick() {
     var tmp = document.getElementById('notifModal');
     if (tmp) {
-      setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
+      setOldNbNotif(persistantReducer.notifReducer.notifArray.length)
       if (tmp.style.display != 'flex')
         tmp.style.display = 'flex';
       else
@@ -23,12 +23,12 @@ const Bell = () => {
     }
   }
 
-    if (persistantReduceur.notifReducer.notifArray.length != oldNbNotif) {
-      if (oldNbNotif < persistantReduceur.notifReducer.notifArray.length) {
+    if (persistantReducer.notifReducer.notifArray.length != oldNbNotif) {
+      if (oldNbNotif < persistantReducer.notifReducer.notifArray.length) {
         return (<VscBellDot id='bell' onClick={bellOnClick} />);
       }
       else {
-        setOldNbNotif(persistantReduceur.notifReducer.notifArray.length)
+        setOldNbNotif(persistantReducer.notifReducer.notifArray.length)
         return (<VscBell id='bell' onClick={bellOnClick} />);
       }
     } else {

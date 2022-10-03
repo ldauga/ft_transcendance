@@ -9,7 +9,7 @@ import { RootState } from "../../State/Reducers";
 
 export default function Callback() {
 
-	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
@@ -32,7 +32,7 @@ export default function Callback() {
     }
 
     useEffect(() => {
-        console.log('persistantReduceur.twoFactorReducer.verif', persistantReduceur.twoFactorReducer.verif)
+        console.log('persistantReducer.twoFactorReducer.verif', persistantReducer.twoFactorReducer.verif)
         if (res === 401)
             setStatus("Error, wrong code.")
         else if (res == 404)
@@ -40,14 +40,14 @@ export default function Callback() {
     })
     
 
-    if (persistantReduceur.userReducer.user === null)
+    if (persistantReducer.userReducer.user === null)
         axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data); })
 
-    if (persistantReduceur.userReducer.user !== null) {
+    if (persistantReducer.userReducer.user !== null) {
 
-        console.log(persistantReduceur.userReducer.user)
+        console.log(persistantReducer.userReducer.user)
 
-        if (persistantReduceur.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReduceur.twoFactorReducer.verif)
+        if (persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReducer.twoFactorReducer.verif)
 
             return (
                 <div className="login-2fa">

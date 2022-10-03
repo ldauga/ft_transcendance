@@ -98,6 +98,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       receiver_login: data.receiver_login
 
     }
+
+    arrClient.forEach((item) => {
+      if (item.username == invitationRequest.receiver_login)
+        this.server.to(item.id).emit('notif', { type: 'PENDINGINVITATION' })
+    })
+
     const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
     console.log(invitationRequestReturn.forEach(item => (console.log('invitationRequestReturn in eventgateway'))));
     console.log("arrClient: ", arrClient);
@@ -425,8 +431,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
       if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
 
-        console.log('1')
-
         const data = {
           id_user1: room[1].players[0].user.id,
           score_u1: room[1].players[0].score,
@@ -435,15 +439,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
         }
 
-        console.log('2')
-
         const match = this.http.post('http://localhost:5001/matchesHistory', data);
 
-        console.log('3')
-
         match.forEach((item) => { })
-
-        console.log('4')
 
         room[1].players.forEach((item, index) => {
           if (!item.connected) {
@@ -454,13 +452,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           }
         })
 
-        console.log('5')
         this.pongInfo.splice(room[0], 1)
 
-        console.log('6')
         this.server.to(room[1].roomID).emit('finish', room[1])
 
-        console.log('7')
         return;
       }
 
@@ -498,7 +493,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (!item.connected) {
         arrClient.forEach((client) => {
           if (client.username == item.user.login)
-            this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponent: this.pongInfo[room[0]].players[index ? 0 : 1].user.login, roomId: this.pongInfo[room[0]].roomID } })
+            this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[room[0]].players[index ? 0 : 1].user.login, roomId: this.pongInfo[room[0]].roomID } })
         })
       }
     })

@@ -18,16 +18,16 @@ const JoinRoom = (props: any) => {
     const [NotFound, setNotFound] = useState(false);
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     function joinQueue() {
         if (!props.gameMap)
             return
-        utilsData.socket.emit('JOIN_QUEUE', { user: persistantReduceur.userReducer.user, gameMap: props.gameMap });
+        utilsData.socket.emit('JOIN_QUEUE', { user: persistantReducer.userReducer.user, gameMap: props.gameMap });
     }
 
     function spectate() {
-        utilsData.socket.emit('SPECTATE_CLIENT', { specID: props.specID, user: persistantReduceur.userReducer.user });
+        utilsData.socket.emit('SPECTATE_CLIENT', { specID: props.specID, user: persistantReducer.userReducer.user });
     }
 
     utilsData.socket.on('clientNotFound', function () {

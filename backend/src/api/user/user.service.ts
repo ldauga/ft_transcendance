@@ -170,8 +170,8 @@ export class UserService {
 		return retUser;
 	}
 
-	async updateProfilePic(body, filename: string): Promise<GetUserDto> {
-		const user = await this.getUserById(body.id);
+	async updateProfilePic(refreshToken, filename: string): Promise<GetUserDto> {
+		const user = await this.getUserByRefreshToken(refreshToken);
 		if (!user)
 			return null;
 		

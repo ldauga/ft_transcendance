@@ -7,7 +7,7 @@ import './AddFriend.css';
 function AddFriend(props: { setFriendList: Function, setAddFriend: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.persistantReduceur);
+	const userData = useSelector((state: RootState) => state.persistantReducer);
 
 	const [text, setText] = useState('');
 

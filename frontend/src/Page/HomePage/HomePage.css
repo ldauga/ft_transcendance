@@ -402,6 +402,8 @@ body {
 	display: flex;
 
 	background-color: rgb(0, 0, 0, 0.3);
+
+	transition: all 0.5s;
 }
 
 .Our {
@@ -409,7 +411,6 @@ body {
 }
 
 .UserLeaderBoard:hover {
-	transition: 0.5s;
 
 	background-color: rgb(0, 0, 0);
 }
@@ -461,10 +462,16 @@ body {
 
 .user-info {
 	background: #302E2D;
+	
 	height: 13%;
+	
 	display: flex;
+	flex-direction: row;
+
 	box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+	
 	margin: 1%;
+	
 	transition: all 0.5s;
 }
 
@@ -475,15 +482,38 @@ body {
 
 .user-info .user-picture {
 	height: 100%;
-	margin-right: 5%;
 }
 
 .user-picture img {
 	height: 100%;
 }
 
-.user-info .username {
-	margin-right: 10%;
+.user-info .user-info-text-container {
+	display: flex;
+
+	flex-direction: column;
+
+	width: 60%;
+	height: 100%;
+
+}
+
+.user-info .user-login,
+.user-info .user-nickname {
+
+	margin: auto;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	font-size: x-large;
+
+	width: 90%;
+	height: 30%;
+
+	background-color: rgb(0, 0, 0, 0.3);
+
 }
 
 .user-info .userParameterIconContainer {
@@ -538,8 +568,10 @@ body {
 }
 
 .dropzone {
-	width: 50%;
-	height: 60%;
+	cursor: pointer;
+
+	width: 40%;
+	height: 30%;
 
 	background-color: rgb(0, 0, 0, 0.3);
 
@@ -554,7 +586,6 @@ body {
 	display: flex;
 	align-items: center;
 }
-
 
 .user-parameter-title {
 	cursor: pointer;
@@ -596,6 +627,42 @@ body {
 
 	height: 10%;
 	width: 80%;
+}
+
+.user-parameter-preview-new-profile-pic {
+	height: 30%;
+}
+
+.user-parameter-preview-new-profile-pic img {
+	height: 100%;
+}
+
+.user-parameter-deactivate-2FA {
+	cursor: pointer;
+
+	margin-top: 15%;
+
+	width: 60%;
+	height: 30%;
+
+	border-radius: 25px;
+	border: 5px rgb(50, 0, 0, 0.7) solid;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	background-color: rgb(255, 0, 0, 0.5);
+
+	transition: all 0.5s;
+}
+
+.user-parameter-img-qr-code {
+	width: 50%;
+}
+
+.user-parameter-deactivate-2FA:hover {
+	background-color: rgb(50, 0, 0, 0.5);
 }
 
 .save-parameter {
@@ -759,4 +826,13 @@ body {
 
 .deleteAllNotif:hover {
 	background-color: rgba(16, 16, 16, 0.7);
+}
+
+.les_bg {
+	width: 95%;
+	height: 95%;
+}
+
+.low {
+	margin-top: 5%;
 }
