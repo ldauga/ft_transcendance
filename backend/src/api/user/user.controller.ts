@@ -58,10 +58,8 @@ export class UserController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('photo', storage))
-  public uploadFile(@Body() body, @UploadedFile() image: Express.Multer.File) {
-    console.log('body', body, '\nFin body')
-    console.log(image)
-    return this.service.updateProfilePic(body, image.filename)
+  public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
+    return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
   // @Post('upload')

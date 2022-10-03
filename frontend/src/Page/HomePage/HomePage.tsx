@@ -259,7 +259,8 @@ const HomePage = (props: any) => {
                 headers: { 
                     'Content-Type': 'multipart/form-data',
                 },
-                data : formData
+                data : formData,
+                withCredentials: true
               };
 
               axios(config).then((res) => setUser(res.data))

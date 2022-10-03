@@ -170,13 +170,11 @@ export class UserService {
 		return retUser;
 	}
 
-	async updateProfilePic(body, filename: string): Promise<GetUserDto> {
-		console.log(body)
-		const user = await this.getUserById(body.id);
+	async updateProfilePic(refreshToken, filename: string): Promise<GetUserDto> {
+		const user = await this.getUserByRefreshToken(refreshToken);
 		if (!user)
 			return null;
 		
-
 		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
 		
