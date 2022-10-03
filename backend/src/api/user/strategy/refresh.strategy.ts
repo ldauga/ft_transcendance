@@ -26,6 +26,9 @@ export class RefreshStrategy extends PassportStrategy(Strategy,'refresh') {
         const user = await this.userService.getUserByToken(payload.token)
         if (!user)
             throw new UnauthorizedException('Invalid refresh token');
+        let now = Date.now();
+        if (user.refreshTokenExp > now.toString())
+            throw new UnauthorizedException('Expired refresh token');
         return payload;
     }
 }

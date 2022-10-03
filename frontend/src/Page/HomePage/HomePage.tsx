@@ -231,7 +231,7 @@ const HomePage = (props: any) => {
     function saveParameter() {
 
         if (userParameterNewNickname != persistantReducer.userReducer.user?.nickname)
-            axios.post('http://localhost:5001/user/updateNickname', { id: persistantReducer.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+            axios.put('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }, { withCredentials: true }).then((res) => { setUser(res.data) })
 
         if (userParameter2FACode) {
             setTwoFactor(true)
