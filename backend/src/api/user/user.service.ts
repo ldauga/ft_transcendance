@@ -100,6 +100,7 @@ export class UserService {
 
 		user.nickname = body.login;
 		user.login = body.login;
+		user.rank = 800;
 		user.profile_pic = `https://cdn.intra.42.fr/users/${user.login}.jpg`;
 
 		return this.userRepository.save(user);
