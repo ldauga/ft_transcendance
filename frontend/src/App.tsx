@@ -17,11 +17,9 @@ import TestMsg from './Page/Tests/test';
 import Chat from './Components/Chat/Chat';
 import NewChatPage from './Page/newChat/newChat';
 import QrCode from './Page/2fa/2fa';
-
-// const { 
-//   user, 
-//   setUser, 
-//   isLoading } = useFindUser();
+import Profile from './Page/Profile/Profile';
+import Settings from './Page/Settings/Settings';
+import NavBar from './Module/Navbar/Navbar';
 
 function App() {
 
@@ -42,6 +40,10 @@ function App() {
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
+
+          <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
+
+          <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 
           <Route path='/QrCode' element={<QrCode />} />
           

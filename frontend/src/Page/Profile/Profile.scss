@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+.content {
+	color: white;
+	background: #2f3b52;
+	max-width: 600px;
+	margin: 0 auto;
+	margin-top: 2vw;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+
+	.css-19kzrtu {
+		padding: 0;
+	}
+
+	.rankView, .statView {
+		padding: 1vh 1vw;
+	}
+
+	.rankContent {
+		display: flex;
+		align-items: center;
+		span:first-of-type {
+			font-family: 'Robot', sans-serif;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+	}
+}
