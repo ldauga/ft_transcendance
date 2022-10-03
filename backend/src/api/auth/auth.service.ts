@@ -6,7 +6,6 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { GetUserDto } from '../user/dtos/getUser.dto';
 
 @Injectable()
 export class AuthService {

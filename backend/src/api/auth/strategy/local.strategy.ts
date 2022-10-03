@@ -14,6 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy,'local') {
             secretOrKey: 'super-cat',
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
+                console.log(Date.now());
                 if (!data) {
 					return null;
                 }

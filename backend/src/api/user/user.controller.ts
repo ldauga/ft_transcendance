@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -46,9 +46,9 @@ export class UserController {
 	return this.service.getUserByLogin(login);
   }
 
-  @Get('/userExist/:refreshToken')
-  public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
-    return this.service.getUserByRefreshToken(refreshToken);
+  @Get('/userExist')
+  public userExist(@Req() req: Request): Promise<GetUserDto> {
+    return this.service.getUserByRefreshToken(req.cookies['auth-cookie'].refreshToken);
   }
 
   @Get('profilePic/:fileId')
@@ -62,20 +62,14 @@ export class UserController {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
-  // @Post('upload')
-  // @UseInterceptors(
-  //   FileInterceptor('photo', {
-  //     dest: './uploads/profileimages',
-  //   }),
-  // )
-  // uploadSingle(@UploadedFile() file: any) {
-  //   console.log(file)
-  //   return file;
-  // }
-
-  @Post('updateNickname')
-  public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {
-    return this.service.updateNickname(body);
+  @Patch('updateNickname')
+  @UseGuards(AuthGuard('jwt'))
+  public updateNickname(@Req() req: Request, @Body() body): Promise<GetUserDto> {
+    return this.service.updateNickname(req.cookies['auth-cookie'].refreshToken, body);
   }
 
+  @Patch('updateRank')
+  public updateRank(@Req() req: Request, @Body() body): Promise<GetUserDto> {
+    return this.service.updateRank(req.cookies['auth-cookie'].refreshToken, body);
+  }
 }

@@ -7,7 +7,6 @@ import { JwtStrategy } from './strategy/user.jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshStrategy } from './strategy/refresh.strategy';
-import { TwoFAStrategy } from './strategy/twoFa.strategy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity]),
@@ -20,7 +19,7 @@ import { TwoFAStrategy } from './strategy/twoFa.strategy';
   }),
 ],
   controllers: [UserController],
-  providers: [UserService, JwtStrategy, RefreshStrategy, TwoFAStrategy],
+  providers: [UserService, JwtStrategy, RefreshStrategy],
   exports: [UserService]
 })
 export class UserModule {}
