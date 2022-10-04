@@ -230,141 +230,141 @@ const HomePage = (props: any) => {
         // }
     // })
 
-    function saveParameter() {
+    // function saveParameter() {
 
-        if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-            axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
+    //     if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
+    //         axios.post('http://localhost:5001/user/updateNickname', { id: persistantReduceur.userReducer.user?.id, nickname: userParameterNewNickname }).then((res) => { setUser(res.data) })
 
-        axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
-        // if (userParameterNewProfilePicture !== null)
-        //    axios.post('http://localhost:3000/user/upload?file', ).catch()
-    }
+    //     axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+    //     // if (userParameterNewProfilePicture !== null)
+    //     //    axios.post('http://localhost:3000/user/upload?file', ).catch()
+    // }
 
-    function displayStatPlayer() {
-        const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null;
-        if (statPlayer != null) {
-            statPlayer.style.display = "flex";
-        }
-    }
+    // function displayStatPlayer() {
+    //     const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null;
+    //     if (statPlayer != null) {
+    //         statPlayer.style.display = "flex";
+    //     }
+    // }
 
-    return (
-        <div className='App'>
-            <div className="horizontal">
-                <Navbartheo/>
-                <div className="vertical">
-                    <div className='main'>
-                        <div className='statPlayer' id='statPlayer' >
-                            <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin} />
-                        </div>
-                        <div className="match-history" id='match-history' >
-                            <h3>Match History</h3>
-                            {matchesHistory}
-                        </div>
-                        <div className="stat" id='stat' >
-                            <div className="rank">
-                                <div className='rankInfo'>
-                                    <div className='imgContainer'>
-                                        <img src={rankImage} />
-                                    </div>
-                                    <div className='rankName'>
-                                        <div className='rankNameText'>Rank :</div>
-                                        <div className='rankNameText' id='rankNameValue'></div>
-                                    </div>
-                                </div>
-                                <div className='userInfoContainer'>
-                                    <div className='userInfo first'>
-                                        <div className='userInfoText'>Wins :</div>
-                                        <div className='userInfoText value' id='numberWinsValue'></div>
-                                    </div>
-                                    <div className='userInfo second'>
-                                        <div className='userInfoText'>Losses :</div>
-                                        <div className='userInfoText value' id='numberLossesValue'></div>
-                                    </div>
-                                    <div className='userInfo third'>
-                                        <div className='userInfoText'>Win Rate :</div>
-                                        <div className='userInfoText value' id='winRateValue'></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="leaderBoard">
-                                <div className='infoLeaderBoard'>
-                                    <div className='infoContent little'>Rank</div>
-                                    <div className='infoContent medium'>Nickname</div>
-                                    <div className='infoContent little'>Wins</div>
-                                    <div className='infoContent little'>Looses</div>
-                                    <div className='infoContent medium'>Win Rate</div>
-                                </div>
-                                {leaderBoardUsers}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="info">
-                        <div className="user-info">
-                            <div className="user-picture">
-                                <img src={persistantReduceur.userReducer.user?.profile_pic} />
-                                <Avatar alt="Remy Sharp" src={persistantReduceur.userReducer.user?.profile_pic} />
-                            </div>
-                            <p className="username">{persistantReduceur.userReducer.user?.login}</p>
-                            <p className="level">lvl</p>
-                            <div className="userParameterIconContainer">
-                                <BiCog onClick={e => setUserParameterAff(!userParameterAff)} />
-                            </div>
-                        </div>
-                        {(!userParameterAff) ?
-                            <div className="friends-info" id='friends-info-id'>
-                                {isFriendList && <FriendList setFriendList={setFriendList} setAddFriend={setAddFriend} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
-                                {isAddFriend && <AddFriend setFriendList={setFriendList} setAddFriend={setAddFriend} />}
-                                {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
-                                {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
-                                {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
-                            </div> :
-                            <div className="user-parameter">
-                                <div className="user-parameter-element"  >
-                                    <div className="user-parameter-title" onClick={e => e.currentTarget.parentElement?.classList.toggle('expanded')}>Change nickname :</div>
-                                    <div className="user-parameter-content">
-                                        <div className="user-parameter-content-text">Enter New nickname and click save</div>
-                                        <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
-                                        <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
-                                    </div>
-                                </div>
-                                {/* <div className="user-parameter-element">
-                                    <div className="user-parameter-text">Change profile picture :</div>
-                                    <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
-                                </div>
-                                <div className="user-parameter-element">
-                                    {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
-                                        <><div className="user-parameter-text">Set 2FA :</div>
-                                            <p>Scan the following QR Code using Google Authenticator</p>
-                                            <img src={userParameter2FAQrCode} />
-                                            <input
-                                                type="text"
-                                                value={userParameter2FACode}
-                                                onChange={(e) => setUserParameter2FACode(e.target.value)}
-                                            />
-                                            <p>{userParameter2FAStatus}</p>
-                                        </> :
-                                        <>
-                                            <div className="user-parameter-text">Deactivate 2FA :</div>
-                                            <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
-                                        </>
-                                    }
-                                </div> */}
-                            </div>}
-                        <button id="openChatButton" onClick={() => openChat()}>Chat</button>
-                    </div>
-                </div>
-            </div>
-            <div id="notifModal" className="notifModal">
-                <div className="notif-modal-content">
-                    <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
-                    <div className='printNotif'>{affNotif()}</div>
-                    {/* <div className='bgDeleteAllNotif'> */}
-                    {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
-                    {/* </div> */}
-                </div>
-            </div>
-        </div>
-    );
+    // return (
+    //     <div className='App'>
+    //         <div className="horizontal">
+    //             <Navbartheo/>
+    //             <div className="vertical">
+    //                 <div className='main'>
+    //                     <div className='statPlayer' id='statPlayer' >
+    //                         <StatPlayer login={userProfileLogin} setLogin={setUserProfileLogin} />
+    //                     </div>
+    //                     <div className="match-history" id='match-history' >
+    //                         <h3>Match History</h3>
+    //                         {matchesHistory}
+    //                     </div>
+    //                     <div className="stat" id='stat' >
+    //                         <div className="rank">
+    //                             <div className='rankInfo'>
+    //                                 <div className='imgContainer'>
+    //                                     <img src={rankImage} />
+    //                                 </div>
+    //                                 <div className='rankName'>
+    //                                     <div className='rankNameText'>Rank :</div>
+    //                                     <div className='rankNameText' id='rankNameValue'></div>
+    //                                 </div>
+    //                             </div>
+    //                             <div className='userInfoContainer'>
+    //                                 <div className='userInfo first'>
+    //                                     <div className='userInfoText'>Wins :</div>
+    //                                     <div className='userInfoText value' id='numberWinsValue'></div>
+    //                                 </div>
+    //                                 <div className='userInfo second'>
+    //                                     <div className='userInfoText'>Losses :</div>
+    //                                     <div className='userInfoText value' id='numberLossesValue'></div>
+    //                                 </div>
+    //                                 <div className='userInfo third'>
+    //                                     <div className='userInfoText'>Win Rate :</div>
+    //                                     <div className='userInfoText value' id='winRateValue'></div>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                         <div className="leaderBoard">
+    //                             <div className='infoLeaderBoard'>
+    //                                 <div className='infoContent little'>Rank</div>
+    //                                 <div className='infoContent medium'>Nickname</div>
+    //                                 <div className='infoContent little'>Wins</div>
+    //                                 <div className='infoContent little'>Looses</div>
+    //                                 <div className='infoContent medium'>Win Rate</div>
+    //                             </div>
+    //                             {leaderBoardUsers}
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //                 <div className="info">
+    //                     <div className="user-info">
+    //                         <div className="user-picture">
+    //                             <img src={persistantReduceur.userReducer.user?.profile_pic} />
+    //                             <Avatar alt="Remy Sharp" src={persistantReduceur.userReducer.user?.profile_pic} />
+    //                         </div>
+    //                         <p className="username">{persistantReduceur.userReducer.user?.login}</p>
+    //                         <p className="level">lvl</p>
+    //                         <div className="userParameterIconContainer">
+    //                             <BiCog onClick={e => setUserParameterAff(!userParameterAff)} />
+    //                         </div>
+    //                     </div>
+    //                     {(!userParameterAff) ?
+    //                         <div className="friends-info" id='friends-info-id'>
+    //                             {isFriendList && <FriendList setFriendList={setFriendList} setAddFriend={setAddFriend} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
+    //                             {isAddFriend && <AddFriend setFriendList={setFriendList} setAddFriend={setAddFriend} />}
+    //                             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
+    //                             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
+    //                             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
+    //                         </div> :
+    //                         <div className="user-parameter">
+    //                             <div className="user-parameter-element"  >
+    //                                 <div className="user-parameter-title" onClick={e => e.currentTarget.parentElement?.classList.toggle('expanded')}>Change nickname :</div>
+    //                                 <div className="user-parameter-content">
+    //                                     <div className="user-parameter-content-text">Enter New nickname and click save</div>
+    //                                     <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
+    //                                     <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
+    //                                 </div>
+    //                             </div>
+    //                             {/* <div className="user-parameter-element">
+    //                                 <div className="user-parameter-text">Change profile picture :</div>
+    //                                 <DropZone setUserParameterNewProfilePicture={setUserParameterNewProfilePicture} />
+    //                             </div>
+    //                             <div className="user-parameter-element">
+    //                                 {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+    //                                     <><div className="user-parameter-text">Set 2FA :</div>
+    //                                         <p>Scan the following QR Code using Google Authenticator</p>
+    //                                         <img src={userParameter2FAQrCode} />
+    //                                         <input
+    //                                             type="text"
+    //                                             value={userParameter2FACode}
+    //                                             onChange={(e) => setUserParameter2FACode(e.target.value)}
+    //                                         />
+    //                                         <p>{userParameter2FAStatus}</p>
+    //                                     </> :
+    //                                     <>
+    //                                         <div className="user-parameter-text">Deactivate 2FA :</div>
+    //                                         <input type="checkbox" onChange={e => setUserParameter2FADeactivate(!userParameter2FADeactivate)}></input>
+    //                                     </>
+    //                                 }
+    //                             </div> */}
+    //                         </div>}
+    //                     <button id="openChatButton" onClick={() => openChat()}>Chat</button>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //         <div id="notifModal" className="notifModal">
+    //             <div className="notif-modal-content">
+    //                 <AiOutlineClose onClick={() => { var tmp = document.getElementById('notifModal'); if (tmp) tmp.style.display = 'none' }} />
+    //                 <div className='printNotif'>{affNotif()}</div>
+    //                 {/* <div className='bgDeleteAllNotif'> */}
+    //                 {persistantReduceur.notifReducer.notifArray.length ? <div className='deleteAllNotif' onClick={delAllNotif}>Delete all notif</div> : <></>}
+    //                 {/* </div> */}
+    //             </div>
+    //         </div>
+    //     </div>
+    // );
 };
 
 export default HomePage;

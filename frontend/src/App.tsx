@@ -20,6 +20,7 @@ import QrCode from './Page/2fa/2fa';
 import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
 import NavBar from './Module/Navbar/Navbar';
+import PongHome from './Page/Pong/PongHome';
 
 function App() {
 
@@ -38,6 +39,8 @@ function App() {
           <Route path='/HomePage' element={<ConnectionChecker component={<HomePage />} />} />
 
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
+
+          <Route path='/pongTest' element={<ConnectionChecker component={<PongHome />} />} />
 
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
