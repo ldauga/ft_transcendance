@@ -5,9 +5,12 @@
 	height: 100vh - 5vh;
 
 	svg {
+		a {
+			all: unset;
+		}
 		height: 15vh;
 		color: rgba($color: #f0e7e5, $alpha: .5);
-		transition: all .8s ease-out;
+		transition: all .3s ease-out;
 		cursor: pointer;
 		&:hover {
 			color: rgba($color: #f0e7e5, $alpha: 1);

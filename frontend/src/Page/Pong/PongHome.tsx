@@ -135,9 +135,9 @@ function PongHome(props: any) {
 			}
 			/>
 		</Box>
-		<button type='button'>Join queue</button>
+		<button className='join-queue' type='button'>Join queue</button>
 		<span>or</span>
-		<a href='#'>Create map</a>
+		<a href="/CreateMap">Create map</a>
 		</div>
 	</>
   );

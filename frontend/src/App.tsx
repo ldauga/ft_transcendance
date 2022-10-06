@@ -21,6 +21,7 @@ import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
 import NavBar from './Module/Navbar/Navbar';
 import PongHome from './Page/Pong/PongHome';
+import CreateMapTemp from './Page/Pong/CreateMap/CreateMapTemp';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
           <Route path='/pongTest' element={<ConnectionChecker component={<PongHome />} />} />
+          <Route path='/CreateMap' element={<ConnectionChecker component={<CreateMapTemp />} />} />
 
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
