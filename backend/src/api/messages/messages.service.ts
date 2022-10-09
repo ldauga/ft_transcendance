@@ -43,6 +43,17 @@ export class MessagesService {
 		return messagesReturn;
 	}
 
+	async getRoomConversMessages(id: number): Promise<MessagesEntity[]> {
+		const messagesReturn = await this.MessagesRepository.find({
+			where: [
+				{ room_id: id }
+			]
+		});
+		if (!messagesReturn)
+			return null;
+		return messagesReturn;
+	}
+
 	async getRelationMessages(id: number): Promise<any[]> {
 		const messagesReturn = await this.MessagesRepository.find({
 			where: [
@@ -81,6 +92,9 @@ export class MessagesService {
 			id_receiver: body.id_receiver,
 			login_sender: body.login_sender,
 			login_receiver: body.login_receiver,
+			userOrRoom: body.userOrRoom,
+			room_id: body.room_id,
+			room_name: body.room_name,
 			text: body.text
 		}
 		)

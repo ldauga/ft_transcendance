@@ -2,8 +2,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isJSDocTemplateTag } from 'typescript';
-import { RootState } from '../../State';
-import './Chat.css'
+import { RootState } from '../../../State';
+import './CSS/Chat.css'
 
 function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function }) {
 

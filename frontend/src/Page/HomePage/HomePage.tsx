@@ -2,9 +2,8 @@ import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
 import Navbar from '../../Module/Navbar/Navbar';
 import './HomePage.css';
-import FriendList from './FriendList';
+import FriendList from './ChatAndFriends/FriendList';
 import { AddFriendHook, FriendListHook } from './Hooks';
-import AddFriend from './AddFriend';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
@@ -28,9 +27,11 @@ import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
 import Login from '../Login/Login';
 import { useCookies } from 'react-cookie';
-import InvitationRequest from './InvitationRequest';
-import Convers from './Convers';
-import Chat from './Chat';
+import InvitationRequest from './ChatAndFriends/InvitationRequest';
+import Convers from './ChatAndFriends/Convers';
+import Chat from './ChatAndFriends/Chat';
+import Rooms from './ChatAndFriends/Rooms';
+import RoomsConvers from './ChatAndFriends/RoomsConvers';
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -47,12 +48,15 @@ const HomePage = (props: any) => {
     const [listNotif, setListNotif] = useState(Array<any>)
 
     const [isFriendList, setFriendList] = useState(true);
-    const [isAddFriend, setAddFriend] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
     const [isConvers, setConvers] = useState(false);
     const [isChat, setChat] = useState(false);
+    const [isRooms, setRooms] = useState(false);
+    const [isRoomsConvers, setRoomsConvers] = useState(false);
     const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "" });
+    const [roomsConversData, setroomsConversData] = useState({ name: "", id: 0 });
     const [oldAff, setOldAff] = useState("");
+    const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
     const [matchesHistory, setMatchesHistory] = useState(Array<any>)
     const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
@@ -82,7 +86,6 @@ const HomePage = (props: any) => {
             setFriendList(true);
         }
         else {
-            setAddFriend(false);
             setFriendList(false);
             setInvitationRequest(false);
             setConvers(false);
@@ -175,11 +178,14 @@ const HomePage = (props: any) => {
                                 tmp4.textContent = 'Master splinter | Our God !!!'
                             }
                             if (item.login == 'ldauga') {
-                                setRankImage(master_rank_img)
-                                tmp4.textContent = 'Master splinter | Our God !!!'
+                                setRankImage(iron_rank_img)
+                                tmp4.textContent = 'Suceur de nouilles'
                             } else if (item.login == 'atourret') {
                                 setRankImage(gold_rank_img)
-                                tmp4.textContent = 'GroNoob'
+                                tmp4.textContent = 'Mangeur de Glands'
+                            } else if (item.login == 'cgangaro') {
+                                setRankImage(master_rank_img)
+                                tmp4.textContent = 'Seigneur des ténèbres, destructeur de mondes, maître du néant'
                             }
                         }
                     }
@@ -298,11 +304,12 @@ const HomePage = (props: any) => {
                         </div>
                         {(!userParameterAff) ?
                             <div className="friends-info" id='friends-info-id'>
-                                {isFriendList && <FriendList setFriendList={setFriendList} setAddFriend={setAddFriend} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
-                                {isAddFriend && <AddFriend setFriendList={setFriendList} setAddFriend={setAddFriend} />}
+                                {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
                                 {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
                                 {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
                                 {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
+                                {isRooms && <Rooms setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} />}
+                                {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} />}
                             </div> :
                             <div className="user-parameter">
                                 <div className="user-parameter-element"  >
@@ -310,7 +317,7 @@ const HomePage = (props: any) => {
                                     <div className="user-parameter-content">
                                         <div className="user-parameter-content-text">Enter New nickname and click save</div>
                                         <input type="text" className='user-parameter-input-bar' maxLength={30} placeholder='Enter new nickname' value={userParameterNewNickname} onChange={e => setUserParameterNewNickname(e.target.value)} />
-                                        <div className="save-parameter" onClick={e => {saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded')}}>Save</div>
+                                        <div className="save-parameter" onClick={e => { saveParameter(); e.currentTarget.parentElement?.parentElement?.classList.toggle('expanded') }}>Save</div>
                                     </div>
                                 </div>
                                 {/* <div className="user-parameter-element">

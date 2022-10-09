@@ -1,0 +1,23 @@
+#RoomsHeader {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    height: 7.5vh;
+    background-color: #302E2D;
+}
+
+#RoomsHeader p {
+    margin-left: 1rem;
+}
+
+#RoomsHeader button {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+#leftDivHeader {
+    width: 25%;
+}
+
+#mainAffRooms {}

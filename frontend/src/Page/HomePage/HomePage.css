@@ -499,6 +499,10 @@ body {
 	height: auto;
 }
 
+#friends-info-id {
+	/* overflow: scroll; */
+}
+
 .friends-info,
 .user-parameter {
 	background: #302E2D;

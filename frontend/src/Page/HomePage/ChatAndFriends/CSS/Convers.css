@@ -5,6 +5,8 @@
 }
 
 #conversHeader {
+    position: sticky;
+    top: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -61,6 +63,9 @@
 }
 
 #sendZoneConvers {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
     display: flex;
     flex-direction: row;
     height: 6%;
