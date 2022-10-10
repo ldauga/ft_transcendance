@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../State';
-import './../assets/Font.css';
-import './Login.css';
+import './Login.scss';
 import logo from '../assets/logo_transcendence.png';
 
 function Login(props: { user?: any }) {
@@ -25,7 +24,7 @@ function Login(props: { user?: any }) {
 	}
 
 	return (
-		<div className='Font'>
+		<div className='login'>
 			<div className='container'>
 				<img className="logo_transcendence" src={logo} alt="" />
 				<button className="loginButton" onClick={onClick42Login}><span>SIGN IN WITH</span> <img src='https://stud.42lyon.fr/static/assets/images/42_logo_black.svg' className='logo42' /> <span>ACCOUNT</span></button>
