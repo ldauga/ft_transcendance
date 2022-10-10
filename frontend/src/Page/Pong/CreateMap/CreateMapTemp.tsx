@@ -31,7 +31,7 @@ const StyledAutocomplete = styled(Autocomplete)({
 
 const CreateMapTemp = (props: any) => {
 	const [connectedClient, setConnectedClient] = useState(Array<any>);
-	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur);
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const [room] = useState(new gameRoomClass("", "", null, "custom"));
 
 	function drawFont(ctx: CanvasRenderingContext2D | null) {

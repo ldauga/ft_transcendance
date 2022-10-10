@@ -38,7 +38,7 @@ export default function Callback() {
     })
     
 
-    if (persistantReduceur.userReducer.user === null)
+    if (persistantReducer.userReducer.user === null)
         axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data); })
 
     if (persistantReducer.userReducer.user !== null) {

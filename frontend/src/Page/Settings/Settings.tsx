@@ -8,7 +8,7 @@ import { actionCreators, RootState } from '../../State';
 import './Settings.scss';
 
 function Settings() {
-	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReduceur.userReducer.user?.nickname;
 	const avatar = persistantReduceur.userReducer.user?.profile_pic;
 	const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
