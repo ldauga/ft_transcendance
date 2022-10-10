@@ -35,7 +35,9 @@ import RoomsConvers from './ChatAndFriends/RoomsConvers';
 
 const fileTypes = ["JPG", "PNG"];
 
-var test = false
+var test = false;
+
+export const constWhileSecu = 10;
 
 const HomePage = (props: any) => {
     const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
@@ -45,7 +47,7 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
-    const [listNotif, setListNotif] = useState(Array<any>)
+    const [listNotif, setListNotif] = useState(Array<any>);
 
     const [isFriendList, setFriendList] = useState(true);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
@@ -58,21 +60,20 @@ const HomePage = (props: any) => {
     const [oldAff, setOldAff] = useState("");
     const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
-    const [matchesHistory, setMatchesHistory] = useState(Array<any>)
-    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
+    const [matchesHistory, setMatchesHistory] = useState(Array<any>);
+    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>);
 
-    const [rankImage, setRankImage] = useState("")
-    const [userProfileLogin, setUserProfileLogin] = useState("")
+    const [rankImage, setRankImage] = useState("");
+    const [userProfileLogin, setUserProfileLogin] = useState("");
 
     const [userParameterAff, setUserParameterAff] = useState(false);
-    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null)
+    const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState(null);
     const [userParameterNewNickname, setUserParameterNewNickname] = useState(persistantReduceur.userReducer.user?.nickname)
     const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
     const [userParameter2FACode, setUserParameter2FACode] = useState("");
     const [userParameter2FARes, setUserParameter2FARes] = useState(0);
     const [userParameter2FAStatus, setUserParameter2FAStatus] = useState("Please enter the code above.");
     const [userParameter2FADeactivate, setUserParameter2FADeactivate] = useState(false);
-
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
@@ -307,9 +308,9 @@ const HomePage = (props: any) => {
                                 {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
                                 {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
                                 {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
-                                {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
+                                {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers}/>}
                                 {isRooms && <Rooms setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} />}
-                                {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} />}
+                                {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} />}
                             </div> :
                             <div className="user-parameter">
                                 <div className="user-parameter-element"  >

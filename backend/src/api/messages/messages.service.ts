@@ -61,21 +61,33 @@ export class MessagesService {
 				{ id_receiver: id }
 			]
 		});
-		let returnArray: { id: number, login: string }[] = [];
+		let returnArray: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }[] = [];
 		messagesReturn.forEach(item => {
-			let idTmp;
-			let loginTmp;
-			if (item.id_receiver == id) {
-				idTmp = item.id_sender;
-				loginTmp = item.login_sender;
+			if (!item.userOrRoom)
+			{
+				let idTmp;
+				let loginTmp;
+				if (item.id_receiver == id) {
+					idTmp = item.id_sender;
+					loginTmp = item.login_sender;
+				}
+				else {
+					idTmp = item.id_receiver;
+					loginTmp = item.login_receiver;
+				}
+				let returnFind = returnArray.find(item => item.id == idTmp);
+				if (!returnFind) {
+					returnArray.push({ id: idTmp, login: loginTmp, userOrRoom: false, room_id: 0, room_name: "" });
+				}
 			}
-			else {
-				idTmp = item.id_receiver;
-				loginTmp = item.login_receiver;
-			}
-			let returnFind = returnArray.find(item => item.id == idTmp);
-			if (!returnFind) {
-				returnArray.push({ id: idTmp, login: loginTmp });
+			else
+			{
+				let roomIdTmp = item.room_id;
+				let roomNameTmp = item.room_name;
+				let returnFind = returnArray.find(item => item.room_id == roomIdTmp);
+				if (!returnFind) {
+					returnArray.push({ id: 0, login: "", userOrRoom: true, room_id: roomIdTmp, room_name: roomNameTmp });
+				}
 			}
 		});
 		console.log("returnArray : ", returnArray);

@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/Rooms.css'
 import '../HomePage.css'
 import CreateRooms from './CreateRooms';
+import { constWhileSecu } from '../HomePage';
 
 function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function }) {
 
@@ -35,6 +36,23 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
         props.setRoomsConvers(true);
     };
 
+    utilsData.socket.removeAllListeners('newRoomCreated');
+
+    utilsData.socket.on('newRoomCreated', function (newRoomCreated: boolean) {
+        console.log('newRoomCreated = ', newRoomCreated);
+        if (newRoomCreated == true) {
+            const length = itemListHistory.length;
+            let secu = 0;
+            while (length == itemListHistory.length && secu < constWhileSecu) {
+                setItemListHistory([]);
+                getListItem();
+                secu++;
+            }
+        }
+        utilsData.socket.off('newRoomCreated');
+        utilsData.socket.removeListener('newRoomCreated');
+    })
+
     const getListItem = async () => {
         await axios.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];
@@ -59,7 +77,7 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
     }, [props]);
 
     return (
-        <div>
+        <div id="roomsAff">
             <div id="RoomsHeader" className="friends-info-typo">
                 {/* <div id="leftDivHeader"></div> */}
                 <button onClick={exit} className="bi bi-arrow-left"></button>

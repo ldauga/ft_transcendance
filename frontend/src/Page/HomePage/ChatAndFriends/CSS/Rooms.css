@@ -1,9 +1,15 @@
+#roomsAff {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
 #RoomsHeader {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    height: 7.5vh;
+    height: 9%;
     background-color: #302E2D;
 }
 
@@ -20,4 +26,7 @@
     width: 25%;
 }
 
-#mainAffRooms {}
+#mainAffRooms {
+    overflow: scroll;
+    height: 91%;
+}

@@ -11,8 +11,9 @@ import CreateRooms from './CreateRooms';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
+import { constWhileSecu } from '../HomePage';
 
-function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string }) {
+function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReduceur);
@@ -55,7 +56,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         console.log('newMsgReceived = ', data);
         const length = itemListHistory.length;
         let secu = 0;
-        while (length == itemListHistory.length && secu < 5) {
+        while (length == itemListHistory.length && secu < constWhileSecu) {
             setItemListHistory([]);
             getListItem();
             secu++;
@@ -68,8 +69,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         props.setRoomsConvers(false);
         if (props.oldAffRoomConvers == "Rooms")
             props.setRooms(true);
-        else
-            props.setRooms(true);
+        else if (props.oldAffRoomConvers == "Chat")
+            props.setChat(true);
     };
 
     const removeParticipant = (item: { login: string, id: number }) => {
@@ -188,9 +189,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             }
             utilsData.socket.emit('createMsg', newMsg);
             setMessageText("");
-            for (let i = 0; i < 9; i++) {
-                getListItem();
-            }
+            // for (let i = 0; i < 9; i++) {
+            //     getListItem();
+            // }
         };
 
         return (

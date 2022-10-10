@@ -46,7 +46,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     }
 
     function RightItem(item: { login: string, id: number }) {
-        if (props.isAdmin)
+        if (props.isAdmin && item.login != userData.userReducer.user?.login)
             return (
                 <div className="inItemFriendList_right">
                     <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button>
