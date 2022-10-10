@@ -1,9 +1,14 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
+<<<<<<< HEAD
 import './Homepage.scss';
 import FriendList from './FriendList';
+=======
+import Navbar from '../../Module/Navbar/Navbar';
+import './HomePage.css';
+import FriendList from './ChatAndFriends/FriendList';
+>>>>>>> cam_chat
 import { AddFriendHook, FriendListHook } from './Hooks';
-import AddFriend from './AddFriend';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
@@ -28,6 +33,7 @@ import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
 import Login from '../Login/Login';
 import { useCookies } from 'react-cookie';
+<<<<<<< HEAD
 import InvitationRequest from './InvitationRequest';
 import Convers from './Convers';
 import Chat from './Chat';
@@ -38,6 +44,19 @@ const fileTypes = ["JPG", "PNG"];
 
 var test = false
 var verif = false
+=======
+import InvitationRequest from './ChatAndFriends/InvitationRequest';
+import Convers from './ChatAndFriends/Convers';
+import Chat from './ChatAndFriends/Chat';
+import Rooms from './ChatAndFriends/Rooms';
+import RoomsConvers from './ChatAndFriends/RoomsConvers';
+
+const fileTypes = ["JPG", "PNG"];
+
+var test = false;
+
+export const constWhileSecu = 10;
+>>>>>>> cam_chat
 
 const HomePage = (props: any) => {
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -47,21 +66,24 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
-    const [listNotif, setListNotif] = useState(Array<any>)
+    const [listNotif, setListNotif] = useState(Array<any>);
 
     const [isFriendList, setFriendList] = useState(true);
-    const [isAddFriend, setAddFriend] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
     const [isConvers, setConvers] = useState(false);
     const [isChat, setChat] = useState(false);
+    const [isRooms, setRooms] = useState(false);
+    const [isRoomsConvers, setRoomsConvers] = useState(false);
     const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "" });
+    const [roomsConversData, setroomsConversData] = useState({ name: "", id: 0 });
     const [oldAff, setOldAff] = useState("");
+    const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
-    const [matchesHistory, setMatchesHistory] = useState(Array<any>)
-    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
+    const [matchesHistory, setMatchesHistory] = useState(Array<any>);
+    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>);
 
-    const [rankImage, setRankImage] = useState("")
-    const [userProfileLogin, setUserProfileLogin] = useState("")
+    const [rankImage, setRankImage] = useState("");
+    const [userProfileLogin, setUserProfileLogin] = useState("");
 
     const [userParameterAff, setUserParameterAff] = useState(false);
     const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | any>(null)
@@ -71,7 +93,6 @@ const HomePage = (props: any) => {
     const [userParameter2FARes, setUserParameter2FARes] = useState(0);
     const [userParameter2FAStatus, setUserParameter2FAStatus] = useState("Please enter the code above.");
     const [userParameter2FADeactivate, setUserParameter2FADeactivate] = useState(false);
-
 
     var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
         "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]

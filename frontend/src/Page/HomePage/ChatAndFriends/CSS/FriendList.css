@@ -68,7 +68,11 @@
 }
 
 #header {
+    position: sticky;
+    top: 0;
     display: flex;
+    background-color: #302E2D;
+    height: 7.5vh;
 }
 
 #header h3 {
@@ -85,3 +89,5 @@
 }
 
 #headerButtons button {}
+
+#ListItemFriendList {}
