@@ -28,7 +28,7 @@ function Settings() {
 	const handleClose = () => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axios.patch('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }, { withCredentials: true }).then((res) => { setUser(res.data) })
+			axios.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname, id: persistantReduceur.userReducer.user?.id }, { withCredentials: true }).then((res) => { setUser(res.data) })
 
 		if (userParameter2FACode) {
 			setTwoFactor(true)

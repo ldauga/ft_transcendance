@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import SwipeableViews from 'react-swipeable-views';
+// import SwipeableViews from 'react-swipeable-views';
 import NavBar from '../../Module/Navbar/Navbar';
 import './PongHome.scss';
 import map1 from './../PongPage/map1.png'
@@ -94,7 +94,7 @@ function PongHome(props: any) {
 			>
 			<Typography>{images[activeStep].label}</Typography>
 			</Paper>
-			<SwipeableViews
+			{/* <SwipeableViews
 			axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
 			index={activeStep}
 			onChangeIndex={handleStepChange}
@@ -104,7 +104,7 @@ function PongHome(props: any) {
 				<img src={map2} />
 				<img src={map1} />
 				<img src={map2} />
-			</SwipeableViews>
+			</SwipeableViews> */}
 			<MobileStepper
 			steps={maxSteps}
 			position="static"

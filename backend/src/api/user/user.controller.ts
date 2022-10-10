@@ -46,9 +46,9 @@ export class UserController {
 	return this.service.getUserByLogin(login);
   }
 
-  @Get('/userExist/:refreshToken')
-  public userExist(@Param('refreshToken') refreshToken: string): Promise<GetUserDto> {
-    return this.service.getUserByRefreshToken(refreshToken);
+  @Get('/userExist')
+  public userExist(@Req() req: Request): Promise<GetUserDto> {
+    return this.service.getUserByRefreshToken(req.cookies['auth-cookie'].refreshToken);
   }
 
   @Get('profilePic/:fileId')
@@ -64,6 +64,7 @@ export class UserController {
 
   @Post('updateNickname')
   public updateNickname(@Body() body: UpdateNicknameDto): Promise<GetUserDto> {
+    console.log('test')
     return this.service.updateNickname(body);
   }
 

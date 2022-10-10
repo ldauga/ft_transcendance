@@ -41,7 +41,7 @@ export default function Callback() {
     
 
     if (persistantReduceur.userReducer.user === null)
-        axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data); })
+        axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data); })
 
     if (persistantReduceur.userReducer.user !== null) {
 
