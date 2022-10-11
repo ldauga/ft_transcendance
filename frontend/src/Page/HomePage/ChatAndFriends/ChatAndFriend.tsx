@@ -9,10 +9,10 @@ import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
 
-function ChatAndFriend() {
+function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean }) {
 
-	const utilsData = useSelector((state: RootState) => state.utils);
-	const userData = useSelector((state: RootState) => state.persistantReducer);
+    const utilsData = useSelector((state: RootState) => state.utils);
+    const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [isFriendList, setFriendList] = useState(true);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
@@ -25,16 +25,37 @@ function ChatAndFriend() {
     const [oldAff, setOldAff] = useState("");
     const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
-	return (
-		<div>
+    const closeAll = () => {
+        setFriendList(false);
+        setInvitationRequest(false);
+        setConvers(false);
+        setChat(false);
+        setRooms(false);
+        setRoomsConvers(false);
+        setConversCorrespondantData({ id: 0, login: "" });
+        setroomsConversData({ name: "", id: 0 });
+        setOldAff("");
+        setOldAffRoomConvers("");
+    }
+
+    useEffect(() => {
+        closeAll();
+        if (props.isNavChat)
+            setChat(true);
+        else if (props.isNavFriendList)
+            setFriendList(true);
+    }, [props]);
+
+    return (
+        <div>
             {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
-            {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers}/>}
+            {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} />}
             {isRooms && <Rooms setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} />}
             {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} />}
-		</div>
-	)
+        </div>
+    )
 }
 
 export default ChatAndFriend;

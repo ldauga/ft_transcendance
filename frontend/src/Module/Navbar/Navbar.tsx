@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import Chat from '../../Components/Chat/Chat';
+import ChatAndFriend from '../../Page/HomePage/ChatAndFriends/ChatAndFriend';
 import { actionCreators, RootState } from '../../State';
 import Friends from '../Friends/Friends';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
@@ -21,23 +22,26 @@ function NavBar() {
 	const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
-	
+
+	const [isChat, setChat] = useState(false);
+	const [isFriendList, setFriendList] = useState(false);
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	
+
 	const logout = () => {
-		removeCookie("auth-cookie", {path:'/'});
-		
+		removeCookie("auth-cookie", { path: '/' });
+
 		setUser(null);
-		
+
 		delAllNotif();
 		setTwoFactor(false);
 	}
-	
+
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReduceur.userReducer.user?.nickname;
 	const avatar = persistantReduceur.userReducer.user?.profile_pic;
@@ -49,7 +53,14 @@ function NavBar() {
 				<div className='right'>
 					<button onClick={() => {
 						setOpenPopUp(!open);
-						setContent('friends');	
+						if (isChat) {
+							setChat(false);
+							setFriendList(true);
+						}
+						else if (isFriendList)
+							setFriendList(false);
+						else
+							setFriendList(true);
 					}}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 							<path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clipRule="evenodd" />
@@ -58,7 +69,15 @@ function NavBar() {
 					</button>
 					<button onClick={() => {
 						setOpenPopUp(!open);
-						setContent('chat');
+						if (isChat) {
+							setChat(false);
+						}
+						else if (isFriendList) {
+							setChat(false);
+							setFriendList(true);
+						}
+						else
+							setChat(true);
 					}}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 							<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
@@ -66,7 +85,15 @@ function NavBar() {
 					</button>
 					<button onClick={() => {
 						setOpenPopUp(!open);
-						setContent('chat');
+						if (isChat) {
+							setChat(false);
+						}
+						else if (isFriendList) {
+							setChat(false);
+							setFriendList(true);
+						}
+						else
+							setChat(true);
 					}}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 							<path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z" />
@@ -87,30 +114,30 @@ function NavBar() {
 						onClose={handleClose}
 						onClick={handleClose}
 						PaperProps={{
-						elevation: 0,
-						sx: {
-							overflow: 'visible',
-							filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-							mt: 1.5,
-							'& .MuiAvatar-root': {
-							width: 32,
-							height: 32,
-							ml: -0.5,
-							mr: 1,
+							elevation: 0,
+							sx: {
+								overflow: 'visible',
+								filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+								mt: 1.5,
+								'& .MuiAvatar-root': {
+									width: 32,
+									height: 32,
+									ml: -0.5,
+									mr: 1,
+								},
+								'&:before': {
+									content: '""',
+									display: 'block',
+									position: 'absolute',
+									top: 0,
+									right: 14,
+									width: 10,
+									height: 10,
+									bgcolor: 'background.paper',
+									transform: 'translateY(-50%) rotate(45deg)',
+									zIndex: 0,
+								},
 							},
-							'&:before': {
-							content: '""',
-							display: 'block',
-							position: 'absolute',
-							top: 0,
-							right: 14,
-							width: 10,
-							height: 10,
-							bgcolor: 'background.paper',
-							transform: 'translateY(-50%) rotate(45deg)',
-							zIndex: 0,
-							},
-						},
 						}}
 						transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 						anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -138,11 +165,10 @@ function NavBar() {
 				</div>
 			</nav>
 			<PopupContainer open={openPopup} setClose={() => setOpenPopUp(false)}>
-				{content === 'chat' && <Chat/>}
-				{content === 'friends' && <Friends/>}
+				<ChatAndFriend isNavChat={isChat} isNavFriendList={isFriendList} />
 			</PopupContainer>
 		</div>
-  );
+	);
 }
 
 export default NavBar;
