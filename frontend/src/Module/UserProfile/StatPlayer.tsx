@@ -34,11 +34,11 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 
 				const tmp1 = document.getElementById('userLoginText')
 				if (tmp1)
-					tmp1.textContent = res.data.login
+					tmp1.textContent = res.data.nickname
 
 				const tmp2 = document.getElementById('userNicknameText')
 				if (tmp2)
-					tmp2.textContent = res.data.nickname
+					tmp2.textContent = res.data.rank
 
 				const tmp3 = document.getElementById('statUserRankNameValue')
 
@@ -138,11 +138,11 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 						<img src={userProfilePicture} />
 					</div>
 					<div className="userLogin">
-						<div className="userLoginText">Login :</div>
+						<div className="userLoginText">Nickname :</div>
 						<div className="userLoginText" id='userLoginText'></div>
 					</div>
 					<div className="userNickname">
-						<div className="userNicknameText">Nickname :</div>
+						<div className="userNicknameText">Elo :</div>
 						<div className="userNicknameText" id='userNicknameText'></div>
 					</div>
 				</div>

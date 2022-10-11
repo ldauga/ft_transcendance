@@ -14,13 +14,11 @@ export default function Callback() {
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
-    //A MODIFIER ALED CA MARCHE PAS COMME ON VEUT
     const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
     const [code, setCode] = useState("");
     const [turnOn, setTurnOn] = useState(false);
     const [res, setRes] = useState(0);
     const [status, setStatus] = useState("");
-    //console.log(cookies);
 
     async function turnOn2fa(key: string) {
         if (key == "Enter") 
@@ -41,7 +39,7 @@ export default function Callback() {
     
 
     if (persistantReducer.userReducer.user === null)
-        axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data); })
+        axios.get("http://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data); })
 
     if (persistantReducer.userReducer.user !== null) {
 

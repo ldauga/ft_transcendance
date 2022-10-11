@@ -431,6 +431,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
       if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
 
+        this.pongInfo[room[0]].players.forEach((player, index, playersArr) => {
+          var K = ((player.user.rank < 1000) ? 80 : ((player.user.rank < 1500) ? 50 : ((player.user.rank < 2000) ? 30 : 20)))
+
+          var winChance = (1 / (1 + (10 * ((playersArr[(index ? 0 : 1)].user.rank - player.user.rank) / 400))))
+
+          var newElo = player.user.rank + (K * (player.score == 3 ? 1 : 0 - winChance))
+
+          console.log('K :', K, 'winChance :', winChance, 'newElo :', newElo)
+
+        })
+
         const data = {
           id_user1: room[1].players[0].user.id,
           score_u1: room[1].players[0].score,

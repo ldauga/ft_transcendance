@@ -74,11 +74,11 @@ export class UserService {
 		return user.totpsecret;
 	}
 
-	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
+	async getUserByToken(refreshToken: any) {
 		const user = await this.userRepository.findOneBy( { refreshToken: refreshToken} );
 		if (!user)
 			return null;
-		const retUser = {
+		/*const retUser = {
 			id: user.id,
 			login: user.login,
 			nickname: user.nickname,
@@ -88,7 +88,8 @@ export class UserService {
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
 		}
-		return retUser;
+		return retUser;*/
+		return user;
 	}
 
 	async createUser(body: CreateUserDto): Promise<UserEntity> {
@@ -100,6 +101,7 @@ export class UserService {
 
 		user.nickname = body.login;
 		user.login = body.login;
+		user.rank = 800;
 		user.profile_pic = `https://cdn.intra.42.fr/users/${user.login}.jpg`;
 
 		return this.userRepository.save(user);
@@ -145,8 +147,8 @@ export class UserService {
 		}
 	}
 
-	async updateNickname(body: UpdateNicknameDto): Promise<GetUserDto> {
-		const user = await this.getUserById(body.id)
+	async updateNickname(refreshToken: string, body): Promise<GetUserDto> {
+		const user = await this.getUserByRefreshToken(refreshToken)
 		if (!user)
 			return null;
 		if (user.nickname == body.nickname)
@@ -155,6 +157,27 @@ export class UserService {
 			throw new UnauthorizedException('Nickname already used');
 		
 		user.nickname = body.nickname;
+		this.userRepository.save(user);
+
+		const retUser: GetUserDto = {
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
+	}
+
+	async updateRank(refreshToken: string, body): Promise<GetUserDto> {
+		const user = await this.getUserByRefreshToken(refreshToken)
+		if (!user)
+			return null;
+		
+		user.rank = body.rank;
 		this.userRepository.save(user);
 
 		const retUser: GetUserDto = {

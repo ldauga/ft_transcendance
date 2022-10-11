@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
                 let data = request?.cookies["auth-cookie"];
                 console.log('jwt cookies', data);
                 if (!data) {
-
 					return null;
                 }
 				return data.accessToken;
@@ -26,12 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         });
     }
 
-    async validate(payload:any){
-        //verifier si l'acces token est toujours valide,
-        //si ce n est pas le cas, est ce que le refresh est valide ?
-            //si c est le cas, alors generer un nouvel access 
+    async validate(payload:any) {
         const user = await this.userService.getUserById(payload.sub);
-
+        console.log(Date.now());
         if (!user)
             return null;
         const retUser: GetUserDto = {

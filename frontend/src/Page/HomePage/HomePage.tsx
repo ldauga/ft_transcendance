@@ -77,7 +77,244 @@ const HomePage = (props: any) => {
 
     var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
 
-    
+    function openChat() {
+        setUserParameterAff(false);
+        if (isChat) {
+            setChat(false);
+            setFriendList(true);
+        }
+        else {
+            setAddFriend(false);
+            setFriendList(false);
+            setInvitationRequest(false);
+            setConvers(false);
+            setChat(true);
+        }
+    };
+
+    function refreshMatchHistory() {
+        axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then((res) => {
+            let matches: any[] = []
+            res.data.forEach((item: { login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string, date: Date }) => {
+                matches.push(
+                    <div key={matches.length.toString()} className={(item.winner_login == persistantReducer.userReducer.user?.login ? 'game game-win' : 'game game-lose')} >
+                        <div className='matchPlayers'>
+                            <div className='player'>
+                                <div className='Score'>{item.score_u1}</div>
+                                <div className='PlayerNickname'>{item.login_user1}</div>
+                            </div>
+                            <div className='player'>
+                                <div className='Score'>{item.score_u2}</div>
+                                <div className='PlayerNickname'>{item.login_user2}</div>
+                            </div>
+                        </div>
+                        <div className='matchDate'><>{dayNames[new Date(item.date).getDay()] + ' ' + new Date(item.date).getDate() + ' ' + monthNames[new Date(item.date).getMonth()] + ' ' + new Date(item.date).getHours() + ':' + new Date(item.date).getMinutes()}</></div>
+                    </div>
+                )
+            })
+            if (!matches.length)
+                matches.push(<div className='noMatchHistory'>
+                    <div className="iconContainer">
+                        <RiFileWarningLine />
+                    </div>
+                    <div className="textContainer">
+                        No match history found...
+                    </div>
+                </div>)
+            console.log('matches', matches)
+            setMatchesHistory(matches.reverse())
+        })
+    }
+
+    function refreshUserRank() {
+        const tmp1 = document.getElementById('numberWinsValue')
+        if (tmp1)
+            tmp1.textContent = persistantReducer.userReducer.user!.wins.toString()
+        const tmp2 = document.getElementById('numberLossesValue')
+        if (tmp2)
+            tmp2.textContent = persistantReducer.userReducer.user!.losses.toString()
+        const tmp3 = document.getElementById('winRateValue')
+        if (tmp3)
+            tmp3.textContent = Math.floor((persistantReducer.userReducer.user!.wins / (persistantReducer.userReducer.user!.wins + persistantReducer.userReducer.user!.losses)) * 100).toString() + '%'
+        const tmp4 = document.getElementById('rankNameValue')
+        if (tmp4) {
+            setRankImage(iron_rank_img)
+            tmp4.textContent = 'Iron | Noobies'
+            if (persistantReducer.userReducer.user!.wins > 5) {
+                setRankImage(bronze_rank_img)
+                tmp4.textContent = 'Bronze | Trainer'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 10) {
+                setRankImage(gold_rank_img)
+                tmp4.textContent = 'Gold | Not Bad'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 20) {
+                setRankImage(diamond_rank_img)
+                tmp4.textContent = 'Diamond | Wow !!!'
+            }
+            else if (persistantReducer.userReducer.user!.wins > 30) {
+                setRankImage(master_rank_img)
+                tmp4.textContent = 'Master splinter | Our God !!!'
+            }
+            if (persistantReducer.userReducer.user!.login == 'ldauga') {
+                setRankImage(master_rank_img)
+                tmp4.textContent = 'Master splinter | Our God !!!'
+            } else if (persistantReducer.userReducer.user!.login == 'atourret') {
+                setRankImage(gold_rank_img)
+                tmp4.textContent = 'GroNoob'
+            }
+        }
+    }
+
+    function refresh2FAParameter() {
+        if (!persistantReducer.userReducer.user?.isTwoFactorAuthenticationEnabled) {
+            if (userParameter2FAQrCode === "")
+                axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
+            if (userParameter2FARes === 401)
+                setUserParameter2FAStatus("Error, wrong code.")
+            else if (userParameter2FARes == 404)
+                setUserParameter2FAStatus("You must enter the code.")
+            else if (userParameter2FARes == 200)
+                setUserParameter2FAStatus("2FA activated !")
+        }
+    }
+
+    function refreshLeaderBoard() {
+        axios.get('http://localhost:5001/user').then((res) => {
+            let tmp: any[] = []
+            res.data.forEach((item: any) => {
+
+                tmp.push(<div className={(item.login == persistantReducer.userReducer.user?.login ? 'UserLeaderBoard Our' : 'UserLeaderBoard')} key={tmp.length + 1} onClick={(e) => { setUserProfileLogin(e.currentTarget.children[1].textContent as string); displayStatPlayer() }}>
+                    <div className='UserLeaderBoardInfo little' id={item.login + 'Rank'}>{ }</div>
+                    <div className='UserLeaderBoardInfo medium'>{item.login}</div>
+                    <div className='UserLeaderBoardInfo little'>{item.wins}</div>
+                    <div className='UserLeaderBoardInfo little'>{item.losses}</div>
+                    <div className='UserLeaderBoardInfo medium'>{Math.floor((item.wins / (item.wins + item.losses)) * 100).toString() + '%'}</div>
+                </div>)
+            })
+
+            for (let index = 0; index < tmp.length; index++) {
+                if (index + 1 != tmp.length && tmp[index].props.children[2].props.children > tmp[index + 1].props.children[2].props.children) {
+                    var oui = tmp[index]
+                    tmp[index] = tmp[index + 1]
+                    tmp[index + 1] = oui
+                    index = 0
+                }
+            }
+
+            setLeaderBoardUsers(tmp.reverse())
+        })
+    }
+
+    useEffect(() => {
+
+        if (!test) {
+            refreshMatchHistory()
+            refreshUserRank()
+            refresh2FAParameter()
+            refreshLeaderBoard()
+            test = true
+        }
+        if (leaderBoardUsers.length && !verif) {
+            for (let index = 0; index < leaderBoardUsers.length; index++) {
+                var rank = document.getElementById(leaderBoardUsers[index].props.children[1].props.children + 'Rank')
+                if (rank)
+                    rank.textContent = (index + 1).toString()
+            }
+            verif = true
+        }
+    })
+
+    function saveParameter() {
+
+        if (userParameterNewNickname != persistantReducer.userReducer.user?.nickname)
+            axios.patch('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }, { withCredentials: true }).then((res) => { setUser(res.data) })
+
+        if (userParameter2FACode) {
+            setTwoFactor(true)
+            axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => setUserParameter2FARes(res.status)).catch((e) => setUserParameter2FARes(e.response.status));
+        }
+
+        if (userParameterNewProfilePicture != null) {
+
+        
+
+
+
+            // console.log('ci')
+            // const form = document.querySelector('form') || undefined
+            // console.log(form)
+
+            var formData = new FormData();
+
+            // // formData.append("somePropName", 'somePropValue');
+            formData.append("photo", userParameterNewProfilePicture);
+
+            var config = {
+                method: 'post',
+                url: 'http://localhost:5001/user/upload',
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                },
+                data : formData,
+                withCredentials: true
+              };
+
+              axios(config).then((res) => setUser(res.data))
+            // console.log('formData', formData)
+            /*  const requestOptions = {
+                  method: 'POST',
+                  body: formData,
+              };*/
+            // const config = {
+            //     withCredentials: true,
+            //     headers: { 'content-type': 'multipart/form-data' }
+            //   }
+            // const response = axios.post('http://localhost:5001/user/upload', formData, config)
+            // .then(response => {
+            //   console.log(response);
+            // })
+            // .catch(error => {
+            //     console.log(error);
+            // });
+            //  const response = fetch('http://localhost:5001/user/upload', requestOptions).then((res) => console.log(res));
+        };
+        // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
+
+
+        // Create a form and append image with additional fields
+        // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
+
+        // Send form data with axios
+        // axios.post('https://example.com', form, {
+        //     headers: {
+        //         ...form.getHeaders(),
+        //         Authentication: 'Bearer ...',
+        //     },
+        // });
+
+        // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
+
+        // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
+
+
+        // axios.post('http://localhost:5001/user/upload', { userParameterNewProfilePicture }).then((res) => { console.log(res) }).catch((err) => console.log(err))
+
+        setUserParameter2FAQrCode("")
+        setUserParameter2FACode("")
+        setUserParameter2FARes(0)
+        setUserParameterNewProfilePicture(undefined)
+        // if (userParameterNewProfilePicture !== null)
+        //    axios.post('http://localhost:3000/user/upload?file', ).catch()
+    }
+
+    function displayStatPlayer() {
+        const statPlayer = document.getElementById("statPlayer") as HTMLDivElement | null;
+        if (statPlayer != null) {
+            statPlayer.style.display = "flex";
+        }
+    }
+
     return (
         <>
             <NavBar/>
