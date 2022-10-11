@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     ){
         super({
             ignoreExpiration: false,
-            secretOrKey: 'super-cat',
+            secretOrKey: process.env.SECRET,
             passthrough: true,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
@@ -27,7 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
 
     async validate(payload:any) {
         const user = await this.userService.getUserById(payload.sub);
-        console.log(Date.now());
         if (!user)
             return null;
         const retUser: GetUserDto = {
@@ -40,6 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             profile_pic: user.profile_pic,
             isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
+        console.log('jwt validate',retUser);
         return retUser;
     }
 }

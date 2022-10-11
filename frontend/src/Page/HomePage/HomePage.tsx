@@ -231,7 +231,7 @@ const HomePage = (props: any) => {
     function saveParameter() {
 
         if (userParameterNewNickname != persistantReducer.userReducer.user?.nickname)
-            axios.put('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }, { withCredentials: true }).then((res) => { setUser(res.data) })
+            axios.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }, { withCredentials: true }).then((res) => { setUser(res.data) })
 
         if (userParameter2FACode) {
             setTwoFactor(true)
@@ -239,18 +239,7 @@ const HomePage = (props: any) => {
         }
 
         if (userParameterNewProfilePicture != null) {
-
-        
-
-
-
-            // console.log('ci')
-            // const form = document.querySelector('form') || undefined
-            // console.log(form)
-
             var formData = new FormData();
-
-            // // formData.append("somePropName", 'somePropValue');
             formData.append("photo", userParameterNewProfilePicture);
 
             var config = {
@@ -264,51 +253,12 @@ const HomePage = (props: any) => {
               };
 
               axios(config).then((res) => setUser(res.data))
-            // console.log('formData', formData)
-            /*  const requestOptions = {
-                  method: 'POST',
-                  body: formData,
-              };*/
-            // const config = {
-            //     withCredentials: true,
-            //     headers: { 'content-type': 'multipart/form-data' }
-            //   }
-            // const response = axios.post('http://localhost:5001/user/upload', formData, config)
-            // .then(response => {
-            //   console.log(response);
-            // })
-            // .catch(error => {
-            //     console.log(error);
-            // });
-            //  const response = fetch('http://localhost:5001/user/upload', requestOptions).then((res) => console.log(res));
         };
-        // form.append('newProfilePic', userParameterNewProfilePicture.buffer, file.originalname);
-
-
-        // Create a form and append image with additional fields
-        // form.append('newProfile', userParameterNewProfilePicture, userParameterNewProfilePicture.name);
-
-        // Send form data with axios
-        // axios.post('https://example.com', form, {
-        //     headers: {
-        //         ...form.getHeaders(),
-        //         Authentication: 'Bearer ...',
-        //     },
-        // });
-
-        // form.append('newProfilePicture', userParameterNewProfilePicture.size.toString, userParameterNewProfilePicture.name);
-
-        // axios.post('http://localhost:5001/user/upload?file', userParameterNewProfilePicture).catch()
-
-
-        // axios.post('http://localhost:5001/user/upload', { userParameterNewProfilePicture }).then((res) => { console.log(res) }).catch((err) => console.log(err))
 
         setUserParameter2FAQrCode("")
         setUserParameter2FACode("")
         setUserParameter2FARes(0)
         setUserParameterNewProfilePicture(undefined)
-        // if (userParameterNewProfilePicture !== null)
-        //    axios.post('http://localhost:3000/user/upload?file', ).catch()
     }
 
     function displayStatPlayer() {

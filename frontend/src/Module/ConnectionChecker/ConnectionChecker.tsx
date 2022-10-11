@@ -24,7 +24,7 @@ function ConnectionChecker(props: {
     if (!cookies["auth-cookie"])
       setUser(null)
     else
-      axios.get("http://localhost:5001/user/userExist/" + cookies["auth-cookie"].refreshToken).then((item) => { setUser(item.data) })
+      axios.get("http://localhost:5001/user/userExist/" , { withCredentials: true }).then((item) => { setUser(item.data) })
 
     utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user)
     test = true

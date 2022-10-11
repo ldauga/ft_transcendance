@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
-import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 	
 @Injectable()
 export class UserService {
@@ -78,17 +77,6 @@ export class UserService {
 		const user = await this.userRepository.findOneBy( { refreshToken: refreshToken} );
 		if (!user)
 			return null;
-		/*const retUser = {
-			id: user.id,
-			login: user.login,
-			nickname: user.nickname,
-			wins: user.wins,
-			losses: user.losses,
-			rank: user.rank,
-			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-		}
-		return retUser;*/
 		return user;
 	}
 
@@ -156,27 +144,6 @@ export class UserService {
 			throw new UnauthorizedException('Nickname already used');
 		
 		user.nickname = body.nickname;
-		this.userRepository.save(user);
-
-		const retUser: GetUserDto = {
-			id: user.id,
-			login: user.login,
-			nickname: user.nickname,
-			wins: user.wins,
-			losses: user.losses,
-			rank: user.rank,
-			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-		}
-		return retUser;
-	}
-
-	async updateRank(refreshToken: string, body): Promise<GetUserDto> {
-		const user = await this.getUserByRefreshToken(refreshToken)
-		if (!user)
-			return null;
-		
-		user.rank = body.rank;
 		this.userRepository.save(user);
 
 		const retUser: GetUserDto = {

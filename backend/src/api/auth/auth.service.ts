@@ -6,6 +6,7 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -74,6 +75,12 @@ export class AuthService {
 
 	async generateTwoFactorAuthenticationSecret(refreshToken: string, request: Request) {
 		const secret = authenticator.generateSecret();
+		// const saltRounds = 10;
+		// const hash = bcrypt.hash(secret, saltRounds, function(err, hash) {
+		// 	console.log(hash)
+		// });
+		// console.log(bcrypt.compare(secret, hash));
+	
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);
 		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);
 		
@@ -91,13 +98,21 @@ export class AuthService {
 
 	async generateQrCodeDataURL(otpAuthUrl: string) {
 		return toDataURL(otpAuthUrl);
-	}	
+	}
 
 	isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, totpsecret: string) {
 		return authenticator.verify({
 		  token: twoFactorAuthenticationCode,
 		  secret: totpsecret,
 		});
+	}
+
+	async createAccessTokenFromRefresh(request) {
+		const decodedRefreshToken = this.jwtService.decode(request?.cookies["auth-cookie"].refreshToken)
+		const user = await this.userServices.getUserByToken(decodedRefreshToken['token']);
+		if (!user)
+			return null;
+		return this.signUser(user)
 	}
 
 	signUser(user: UserEntity) {

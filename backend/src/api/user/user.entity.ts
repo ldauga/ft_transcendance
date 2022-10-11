@@ -30,9 +30,6 @@ export class UserEntity {
   @Column({ type: 'varchar', nullable: true })
   public totpsecret: string;
 
-  @Column({ type: 'int', nullable: true })
-  public uid: number;
-
   @Column({ type: 'varchar', nullable: true })
   public refreshToken: string;
 

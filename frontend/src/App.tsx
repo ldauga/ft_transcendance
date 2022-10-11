@@ -8,7 +8,6 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import ConnectionChecker from './Module/ConnectionChecker/ConnectionChecker';
 import GameSwitch from './Page/PongPage/GameSwitch';
 import axios from 'axios';
-import useFindUser from './findUser';
 import { useSelector } from 'react-redux';
 import { RootState } from './State';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -17,11 +16,6 @@ import TestMsg from './Page/Tests/test';
 import Chat from './Components/Chat/Chat';
 import NewChatPage from './Page/newChat/newChat';
 import QrCode from './Page/2fa/2fa';
-
-// const { 
-//   user, 
-//   setUser, 
-//   isLoading } = useFindUser();
 
 function App() {
 

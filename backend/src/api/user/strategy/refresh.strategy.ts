@@ -11,7 +11,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy,'refresh') {
     ){
         super({
             ignoreExpiration: false,
-            secretOrKey: 'super-cat',
+            secretOrKey: process.env.SECRET,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
                 if (!data) {
@@ -27,7 +27,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy,'refresh') {
         if (!user)
             throw new UnauthorizedException('Invalid refresh token');
         let now = Date.now();
-        if (user.refreshTokenExp > now.toString())
+        if (user.refreshTokenExp < now.toString())
             throw new UnauthorizedException('Expired refresh token');
         return payload;
     }

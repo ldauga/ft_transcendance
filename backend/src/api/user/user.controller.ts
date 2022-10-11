@@ -32,44 +32,45 @@ export class UserController {
   private readonly service: UserService;
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllUsers(): Promise<UserEntity[]> {
     return this.service.getAllUsers();
   }
 
   @Get('/id/:id')
+  @UseGuards(AuthGuard('jwt'))
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
-	return this.service.getUserById(id);
+	  return this.service.getUserById(id);
   }
 
   @Get('/login/:login')
+  @UseGuards(AuthGuard('jwt'))
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
-	return this.service.getUserByLogin(login);
+	  return this.service.getUserByLogin(login);
   }
 
   @Get('/userExist')
+  @UseGuards(AuthGuard('jwt'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
     return this.service.getUserByRefreshToken(req.cookies['auth-cookie'].refreshToken);
   }
 
   @Get('profilePic/:fileId')
+  @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
     return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 
   @Post('upload')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', storage))
   public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
-  @Patch('updateNickname')
+  @Post('updateNickname')
   @UseGuards(AuthGuard('jwt'))
   public updateNickname(@Req() req: Request, @Body() body): Promise<GetUserDto> {
     return this.service.updateNickname(req.cookies['auth-cookie'].refreshToken, body);
-  }
-
-  @Patch('updateRank')
-  public updateRank(@Req() req: Request, @Body() body): Promise<GetUserDto> {
-    return this.service.updateRank(req.cookies['auth-cookie'].refreshToken, body);
   }
 }
