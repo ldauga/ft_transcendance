@@ -16,7 +16,7 @@ import { constWhileSecu } from '../HomePage';
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReduceur);
+    const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [isCreateInvitation, setCreateInvitation] = useState(false);
 

@@ -30,6 +30,8 @@ import Login from '../Login/Login';
 import { useCookies } from 'react-cookie';
 import NavBar from '../../Module/Navbar/Navbar';
 
+export const constWhileSecu = 10;
+
 const fileTypes = ["JPG", "PNG"];
 
 var test = false

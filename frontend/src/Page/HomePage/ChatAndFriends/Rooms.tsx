@@ -10,7 +10,7 @@ import { constWhileSecu } from '../HomePage';
 function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReduceur);
+    const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [isCreateGroup, setCreateGroup] = useState(false);
 

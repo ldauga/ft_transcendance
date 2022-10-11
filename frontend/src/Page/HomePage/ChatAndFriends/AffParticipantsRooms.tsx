@@ -8,7 +8,7 @@ import '../HomePage.css'
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReduceur);
+    const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 

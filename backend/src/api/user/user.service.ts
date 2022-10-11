@@ -39,7 +39,7 @@ export class UserService {
 	}
 
 	async getUserByNickname(nickname: string): Promise<UserEntity> {
-		const user = await this.userRepository.findOneBy( {nickname: nickname} );
+		const user = await this.userRepository.findOneBy({ nickname: nickname });
 		if (!user)
 			return null;
 		return user;
@@ -74,13 +74,8 @@ export class UserService {
 		return user.totpsecret;
 	}
 
-<<<<<<< HEAD
-	async getUserByToken(refreshToken: any) {
-		const user = await this.userRepository.findOneBy( { refreshToken: refreshToken} );
-=======
 	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
 		const user = await this.userRepository.findOneBy({ refreshToken: refreshToken });
->>>>>>> cam_chat
 		if (!user)
 			return null;
 		/*const retUser = {
@@ -158,13 +153,9 @@ export class UserService {
 			return null;
 		if (user.nickname == body.nickname)
 			throw new BadRequestException('Cannot set identical nickname');
-<<<<<<< HEAD
 		if (await this.getUserByNickname(body.nickname))
 			throw new UnauthorizedException('Nickname already used');
-		
-=======
 
->>>>>>> cam_chat
 		user.nickname = body.nickname;
 		this.userRepository.save(user);
 
@@ -185,7 +176,7 @@ export class UserService {
 		const user = await this.getUserByRefreshToken(refreshToken)
 		if (!user)
 			return null;
-		
+
 		user.rank = body.rank;
 		this.userRepository.save(user);
 
@@ -209,7 +200,7 @@ export class UserService {
 
 		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
-		
+
 		const retUser: GetUserDto = {
 			id: user.id,
 			login: user.login,
@@ -260,18 +251,18 @@ export class UserService {
 			return null;
 		user.isTwoFactorAuthenticationEnabled = true;
 		this.userRepository.save(user);
-		
+
 		const retUser: GetUserDto = {
-            id: user.id,
-            login: user.login,
-            nickname: user.nickname,
-            wins: user.wins,
-            losses: user.losses,
-            rank: user.rank,
-            profile_pic: user.profile_pic,
-            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-        }
-        return retUser;
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
 	}
 
 	async turnOffTwoFactorAuthentication(login: string): Promise<GetUserDto> {
@@ -282,16 +273,16 @@ export class UserService {
 		this.userRepository.save(user);
 
 		const retUser: GetUserDto = {
-            id: user.id,
-            login: user.login,
-            nickname: user.nickname,
-            wins: user.wins,
-            losses: user.losses,
-            rank: user.rank,
-            profile_pic: user.profile_pic,
-            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-        }
-        return retUser;
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
 	}
 
 	signRefreshToken(refreshToken: any) {
