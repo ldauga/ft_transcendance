@@ -41,9 +41,6 @@ function App() {
 
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
-          <Route path='/pongTest' element={<ConnectionChecker component={<PongHome />} />} />
-          <Route path='/CreateMap' element={<ConnectionChecker component={<CreateMapTemp />} />} />
-
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />

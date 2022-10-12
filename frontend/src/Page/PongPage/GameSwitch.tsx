@@ -4,6 +4,8 @@ import GamePage from './GamePage';
 import CreateMap from './CreateMap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
+import PongHome from '../Pong/PongHome';
+import CreateMapTemp from '../Pong/CreateMap/CreateMapTemp';
 
 let checkReconnexion = false
 
@@ -34,14 +36,14 @@ const GameSwitch=() => {
         )
     if (createMap)
         return (
-            <CreateMap
+            <CreateMapTemp
                 setGameStart={setGameStart}
                 setRoomID={setRoomID}
             />
         )
     else
         return (
-            <JoinRoom
+            <PongHome
                 gameStart={gameStart}
                 setGameStart={setGameStart}
                 setRoomID={setRoomID}
@@ -51,7 +53,18 @@ const GameSwitch=() => {
                 setGameMap={setGameMap}
                 createMap={createMap}
                 setCreateMap={setCreateMap}
-                />
+            />
+            // <JoinRoom
+            //     gameStart={gameStart}
+            //     setGameStart={setGameStart}
+            //     setRoomID={setRoomID}
+            //     specID={specID}
+            //     setSpecID={setSpecID}
+            //     gameMap={gameMap}
+            //     setGameMap={setGameMap}
+            //     createMap={createMap}
+            //     setCreateMap={setCreateMap}
+            //     />
         )
 }
 

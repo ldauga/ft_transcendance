@@ -304,6 +304,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       gameMap: string
     }) {
 
+      console.log('ouioui')
     this.server.to(client.id).emit('joined')
 
     for (let roomId = 0; ; roomId++) {
