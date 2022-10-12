@@ -26,6 +26,13 @@ export class InvitationRequestController {
     return returnCheck;
   }
 
+  @Get('/checkInvitationRequestForRooms/:id/:roomName')
+  public async checkInvitationRequestForRooms(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<Boolean> {
+    const returnCheck = await this.invitationRequestService.checkInvitationRequestForRooms(id, roomName);
+    console.log('checkInvitationRequestForRooms Check = ', returnCheck);
+    return returnCheck;
+  }
+
   @Post()
   public async createInvitationRequest(@Body() body: InvitationRequestDto): Promise<InvitationRequestEntity> {
     // console.log('body', body);

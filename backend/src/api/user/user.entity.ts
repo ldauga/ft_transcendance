@@ -18,7 +18,7 @@ export class UserEntity {
   @Column({ default: 0 })
   public losses: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 800 })
   public rank: number;
 
   @Column({ type: 'varchar' })

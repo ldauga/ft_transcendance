@@ -1,0 +1,82 @@
+.create-map {
+	margin-top: 3vh;
+	display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+	.canvas {
+		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+		canvas {
+			width: 39vw;
+		}
+	}
+	
+	.edit{
+		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+		width: 39vw;
+		background: #2f3b52;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: -3px;
+
+		.button {
+			display: flex;
+			gap: 50px;
+			margin-top: 1vh;
+
+			Button:nth-child(1){
+				background: #edd2cb;
+				color: black;
+				&:hover {
+					background: #c8aea8;
+				}
+			}
+			
+			Button:nth-child(2) {
+				background: #361d32;
+				&:hover {
+					background: #2a1626;
+				}
+			}
+		}
+
+		.MuiFormControl-root {
+			svg {
+				color: white;
+			}
+		}
+		.MuiFormLabel-root {
+			color: rgba($color: #fff, $alpha: .3);
+		}
+		.MuiAutocomplete-inputRoot {
+			color: white;
+			width: 168px;
+			.MuiOutlinedInput-notchedOutline {
+				border-color: rgba($color: #fff, $alpha: .3);
+				&:hover {
+					border-color: #fff;
+				}
+				&.Mui-focused {
+					border-color: #fff;
+				}
+			}
+		}
+		.css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+			color: #fff;
+		}
+
+		.invite-friend {
+			display: flex;
+			margin-top: 1.5vh;
+			margin-bottom: 1vh;
+			Button.play {
+				background: #f1e8e6;
+				color: black;
+				&:hover {
+					background: #e2cfcb;
+				}
+			}
+		}
+	}
+}

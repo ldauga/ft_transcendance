@@ -20,4 +20,14 @@ export class InvitationRequestDto {
 
 	@IsString()
 	public receiver_login: string;
+
+	@IsBoolean()
+	public userOrRoom: boolean;
+
+	@IsNumber()
+	@IsNotEmpty()
+	public room_id: number;
+
+	@IsString()
+	public room_name: string;
 }

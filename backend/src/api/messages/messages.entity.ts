@@ -21,6 +21,17 @@ export class MessagesEntity {
   @Index()
   public login_receiver: string;
 
+  @Column({ default: false })
+  public userOrRoom: boolean;
+
+  @Column()
+  @Index()
+  public room_id: number;
+
+  @Column()
+  @Index()
+  public room_name: string;
+
   @Column()
   public text: string;
 

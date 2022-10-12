@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class MessagesDto {
 	@IsNumber()
@@ -14,6 +14,15 @@ export class MessagesDto {
 
 	@IsString()
 	public login_receiver: string;
+
+	@IsBoolean()
+	public userOrRoom: boolean;
+
+	@IsNumber()
+	public room_id: number;
+
+	@IsString()
+	public room_name: string;
 
 	@IsString()
 	public text: string;

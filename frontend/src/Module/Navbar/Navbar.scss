@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+
+nav {
+	background: #2f3b52;
+	padding: 0 1vw;
+	height: 5vh;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color:#f1e8e6;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+	animation: navApparition .8s ease-out;
+
+	a {
+		all: unset;
+		cursor: pointer;
+		font-family: 'Shadows Into Light', cursive;
+		font-size: 3vh;
+	}
+
+	svg, div {
+		height: 3vh;
+	}
+
+	.right {
+		display: flex;
+		gap: 10px;
+	}
+
+	.avatar {
+		--avatar-size: 3vh;
+		height: var(--avatar-size);
+		width: var(--avatar-size);
+		// border: 4px solid green;
+		// padding: 6px;
+		border-radius: 50%;
+		position: relative;
+		object-fit: cover;
+	}
+
+	.profile {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		gap: .3vw;
+		text-transform: uppercase;
+	}
+}
+
+@keyframes navApparition {
+	from {
+		opacity: 0;
+		transform: translateY(-200px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+		
+	}
+}

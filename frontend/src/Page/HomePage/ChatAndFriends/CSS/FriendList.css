@@ -1,0 +1,81 @@
+.itemFriendList {
+    display: flex;
+    flex-direction: row;
+    height: 6.5vh;
+    width: auto;
+    /* background-color: #454342; */
+    border-radius: 15px;
+    margin-top: 1vh;
+
+}
+
+.inItemFriendList {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0.25vw;
+    margin-right: 0.25vw;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.inItemFriendList:hover {
+    transition: all 0.5s;
+    box-shadow: #34476b 2px 2px 5px;
+    border: #34476b 0.1px solid;
+    margin-left: 0.25vw;
+    margin-right: 0.25vw;
+    padding-left: 0.44rem;
+    padding-right: 0.44rem;
+}
+
+.inItemFriendList img {
+    width: 3vw;
+    height: 5vh;
+    border-radius: 50%;
+}
+
+.inItemFriendList_left {
+    display: flex;
+    align-items: center;
+    width: 50%;
+}
+
+.inItemFriendList_left p {
+    padding-left: 1rem;
+    font-size: 1.5rem;
+    color: #34476b;
+}
+
+.inItemFriendList_right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 50%;
+}
+
+.inItemFriendList_right button {
+    font-size: 1.5rem;
+    padding-left: 1.2rem;
+    color: #34476b;
+    background-color: none;
+}
+
+.inItemFriendList_right button:hover {
+    font-size: 1.5rem;
+    background-color: none;
+}
+
+.openChat {
+    display: flex;
+    flex-direction: row;
+    height: 10rem;
+    width: auto;
+    background-color: red;
+}
+
+#ListItemFriendList {
+    height: 100%;
+}

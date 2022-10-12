@@ -19,12 +19,7 @@ function ConnectionChecker(props: {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   if (!test) {
-    const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
-
-    if (!cookies["auth-cookie"])
-      setUser(null)
-    else
-      axios.get("http://localhost:5001/user/userExist/" , { withCredentials: true }).then((item) => { setUser(item.data) })
+    axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data) })
 
     utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user)
     test = true

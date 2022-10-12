@@ -89,7 +89,7 @@ export class AuthController {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
 		if (!user)
 			throw new BadRequestException('User not found');
-		await this.userServices.turnOffTwoFactorAuthentication(user.login);
+		return await this.userServices.turnOffTwoFactorAuthentication(user.login);
 	}
 
 	@Get('/refresh')

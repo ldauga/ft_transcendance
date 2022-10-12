@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+.matchHistory {
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	h1 {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+	}
+	.cards {
+		height: 300px;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		-ms-overflow-style: none;
+    	scrollbar-width: none;
+		overflow-y: scroll;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.card {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			margin: 0 1vw;
+			width: 57%;
+			h3 {
+				text-transform: uppercase;
+				letter-spacing: 3px;
+				font-size: 28px;
+				margin: 0;
+			}
+			.score {
+				width: 50%;
+			}
+		}
+
+		.win {
+			margin: 0 auto;
+			background: #7ACFB0;
+			width: 90%;
+		}
+		.defeat {
+			margin: 0 auto;
+			background: #A3232B;
+			width: 90%;
+		}
+	}
+}
