@@ -73,7 +73,7 @@ export class UserService {
 		return user.totpsecret;
 	}
 
-	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
+	async getUserByToken(refreshToken: any): Promise<UserEntity> {
 		const user = await this.userRepository.findOneBy({ refreshToken: refreshToken });
 		if (!user)
 			return null;
