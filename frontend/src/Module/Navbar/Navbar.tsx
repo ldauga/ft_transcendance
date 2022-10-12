@@ -33,7 +33,7 @@ function NavBar() {
 		setTwoFactor(false);
 	}
 	
-	const persistantReduceur = useSelector((state: RootState) => state.persistantReduceur)
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReduceur.userReducer.user?.nickname;
 	const avatar = persistantReduceur.userReducer.user?.profile_pic;
 
