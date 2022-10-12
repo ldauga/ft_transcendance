@@ -28,7 +28,7 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 	useEffect(() => {
 		console.log('props', props)
 		if (!profileUserId && props.login !== "") {
-			axios.get("http://localhost:5001/user/login/" + props.login).then((res) => {
+			axios.get("http://localhost:5001/user/login/" + props.login, { withCredentials: true }).then((res) => {
 				setProfileUserId(res.data.id)
 				setUserProfilePicture(res.data.profile_pic)
 

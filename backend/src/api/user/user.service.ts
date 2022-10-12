@@ -204,7 +204,6 @@ export class UserService {
 
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 		const user = await this.getUserById(userId);
-		console.log(user);
 		if (!user)
 			return null;
 		user.totpsecret = secret;
@@ -212,6 +211,8 @@ export class UserService {
 	}
 
 	async turnOnTwoFactorAuthentication(login: string): Promise<GetUserDto> {
+
+		console.log('here')
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;

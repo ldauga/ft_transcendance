@@ -16,7 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             passthrough: true,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
-                console.log('jwt cookies', data);
                 if (!data) {
 					return null;
                 }
@@ -39,7 +38,6 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             profile_pic: user.profile_pic,
             isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
-        console.log('jwt validate',retUser);
         return retUser;
     }
 }

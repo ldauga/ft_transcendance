@@ -97,7 +97,6 @@ export class AuthController {
 	async refresh(@Req() request, @Res({ passthrough: true }) res: Response) {
 		const accessToken = await this.authService.createAccessTokenFromRefresh(request);
 		let refreshToken = request?.cookies["auth-cookie"].refreshToken
-		console.log(accessToken);
 		const secretData = {
 			accessToken,
 			refreshToken

@@ -183,7 +183,7 @@ const HomePage = (props: any) => {
     }
 
     function refreshLeaderBoard() {
-        axios.get('http://localhost:5001/user').then((res) => {
+        axios.get('http://localhost:5001/user', { withCredentials: true }).then((res) => {
             let tmp: any[] = []
             res.data.forEach((item: any) => {
 

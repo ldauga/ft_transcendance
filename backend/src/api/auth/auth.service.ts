@@ -6,7 +6,7 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -76,10 +76,10 @@ export class AuthService {
 	async generateTwoFactorAuthenticationSecret(refreshToken: string, request: Request) {
 		const secret = authenticator.generateSecret();
 		// const saltRounds = 10;
-		// const hash = bcrypt.hash(secret, saltRounds, function(err, hash) {
-		// 	console.log(hash)
-		// });
-		// console.log(bcrypt.compare(secret, hash));
+		// const hash = await bcrypt.hash(secret, saltRounds);
+		// console.log(hash);
+		// const isMatch = await bcrypt.compare(secret, hash);
+		// console.log(isMatch);
 	
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);
 		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);

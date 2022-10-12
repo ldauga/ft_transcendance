@@ -19,7 +19,7 @@ function AddFriend(props: { setFriendList: Function, setAddFriend: Function }) {
 	async function buttonAddFriend() {
 		let test = false;
 		console.log('addFriend');
-		await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+		await axios.get('http://localhost:5001/user/login/' + text, { withCredentials: true }).then(async (res) => {
 			setText("");
 			console.log("axios.get");
 			console.log(res.data);
