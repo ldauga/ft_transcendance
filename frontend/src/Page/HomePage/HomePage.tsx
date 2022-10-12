@@ -31,7 +31,6 @@ import { useCookies } from 'react-cookie';
 import InvitationRequest from './InvitationRequest';
 import Convers from './Convers';
 import Chat from './Chat';
-import Navbar from '../../Module/Navbar/Navbar';
 import NavBar from '../../Module/Navbar/Navbar';
 
 const fileTypes = ["JPG", "PNG"];

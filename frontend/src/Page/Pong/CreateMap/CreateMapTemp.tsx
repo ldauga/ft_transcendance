@@ -181,7 +181,7 @@ const CreateMapTemp = (props: any) => {
 			ctx.fillStyle = 'blue';
 			ctx.shadowColor = 'blue';
 
-			ctx.fillRect(room.players[1].x, room.players[1].y, room.players[1].width, room.players[1].height);
+			ctx.fillRect(((room.canvas.width / 8) * 7 - room.players[1].width / 2), room.players[1].y, room.players[1].width, room.players[1].height);
 
 			ctx.shadowBlur = 0;
 		}
