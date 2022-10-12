@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/InvitationRequest.css';
+import './CSS/ChatAndFriends.css';
 import './../HomePage.css';
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
@@ -135,16 +136,17 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     });
 
     return (
-        <div>
-            <div>
-                <div className="friends-info-typo">
-                    <h3>Invitations</h3>
-                    <div className="button">
-                        <button onClick={handleClick} className="bi bi-x-lg"></button>
-                    </div>
+        <div className="mainAffGene">
+            <div className="mainHeader">
+                <div className="mainHeaderLeft mainHeaderSide">
+                    <button onClick={handleClick}><i className="bi bi-arrow-left"></i></button>
                 </div>
-                {itemListHistory}
+                <h3>Pending Invitation</h3>
+                <div className="mainHeaderRight mainHeaderSide">
+
+                </div>
             </div>
+            {itemListHistory}
         </div>
     )
 }

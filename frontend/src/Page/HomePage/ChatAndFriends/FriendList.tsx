@@ -5,7 +5,7 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -16,6 +16,11 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
 	props.setOldAff("FriendList");
+
+	const handleClickClose = () => {
+		props.closeFriendList();
+		props.setFriendList(false);
+	};
 
 	const handleClickAddFriend = () => {
 		if (newAddFriend)
@@ -128,10 +133,13 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	});
 
 	return (
-		<div>
-			<div id="header">
+		<div className="mainAffGene">
+			<div id="header" className="mainHeader">
+				<div className="mainHeaderLeft mainHeaderSide">
+					<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
+				</div>
 				<h3>Friends</h3>
-				<div id="headerButtons">
+				<div className="mainHeaderRight mainHeaderSide">
 					<button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
 					<button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
 					<button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>

@@ -2,9 +2,7 @@
     display: flex;
     flex-direction: row;
     height: 3.5rem;
-    width: auto;
-    background-color: #454342;
-    border-radius: 15px;
+    width: 100%;
     margin-top: 1vh;
 }
 
@@ -14,23 +12,23 @@
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    margin-left: 1vw;
+    margin-left: 0.5vw;
     margin-right: 0.5vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    background-color: #34476b;
+    border-radius: 15px;
 }
 
-.bi-check-lg {
-    font-size: 1.5rem;
+.inItem .bi-x-lg {
+    margin-left: 0.5vw;
 }
 
-.bi-check-lg:hover {
-    color: green;
+.inItem .bi-check-lg {
+    font-size: 2.2rem;
 }
 
-.bi-check-lg::before {
-    font-size: 1.5rem;
-}
-
-.bi-x-lg {
+/* .bi-x-lg {
     font-size: 1.2rem;
 }
 
@@ -41,4 +39,4 @@
 
 .bi-x-lg::before {
     font-size: 1.2rem;
-}
+} */

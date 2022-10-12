@@ -138,7 +138,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
-    }, [itemListHistory, isConversRooms])
+    }, [itemListHistory, isConversRooms, isCreateInvitation])
 
     useEffect(() => {
         checkIfOwner();
@@ -149,10 +149,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     function Header() {
         if (isAdmin == true)
             return (
-                <div id='roomsConversHeader'>
-                    <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    <p>{props.roomsConversData.name}</p>
-                    <div id='roomsConversHeaderButton'>
+                <div id="header" className="mainHeader">
+                    <div className="mainHeaderLeft mainHeaderSide">
+                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
+                    </div>
+                    <h3>{props.roomsConversData.name}</h3>
+                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                         {/* <button onClick={removeRoom} className="bi bi-plus-lg"></button> */}
@@ -161,13 +163,32 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             );
         else
             return (
-                <div id='roomsConversHeader'>
-                    <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    <p>{props.roomsConversData.name}</p>
-                    <div id='roomsConversHeaderButton'>
+                <div id="header" className="mainHeader">
+                    <div className="mainHeaderLeft mainHeaderSide">
+                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
+                    </div>
+                    <h3>{props.roomsConversData.name}</h3>
+                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
                     </div>
+                </div>
+            );
+    };
+
+    function AffConvers() {
+        if (isCreateInvitation == true)
+            return (
+                <div id="affConversSmall" ref={bottom}>
+                    {itemListHistory}
+                    <div ref={messagesEndRef} />
+                </div>
+            );
+        else
+            return (
+                <div id="affConversBig" ref={bottom}>
+                    {itemListHistory}
+                    <div ref={messagesEndRef} />
                 </div>
             );
     };
@@ -177,6 +198,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const [messageText, setMessageText] = useState('');
 
         function sendMessage() {
+            if (messageText.length <= 0)
+                return;
             const newMsg = {
                 id_sender: userData.userReducer.user?.id,
                 id_receiver: 0,
@@ -198,11 +221,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             <div id="roomsConvers">
                 <Header />
                 {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
-                <div id="affConvers" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-                <div id="sendZoneConvers">
+                <AffConvers />
+                <div className="sendZoneConvers">
                     <input
                         value={messageText}
                         onChange={e => setMessageText(e.target.value)}

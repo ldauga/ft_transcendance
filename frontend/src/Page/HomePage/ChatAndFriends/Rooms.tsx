@@ -78,11 +78,14 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
 
     return (
         <div id="roomsAff">
-            <div id="RoomsHeader" className="friends-info-typo">
-                {/* <div id="leftDivHeader"></div> */}
-                <button onClick={exit} className="bi bi-arrow-left"></button>
-                <h3>GROUPS</h3>
-                <button onClick={affCreateGroup} className="bi bi-plus-lg"></button>
+            <div id="header" className="mainHeader">
+                <div className="mainHeaderLeft mainHeaderSide">
+                    <button onClick={exit} className="bi bi-arrow-left"></button>
+                </div>
+                <h3>Groups</h3>
+                <div id="roomsHeaderRight" className="mainHeaderRight mainHeaderSide">
+                    <button onClick={affCreateGroup} className="bi bi-plus-lg"></button>
+                </div>
             </div>
             {isCreateGroup && <CreateRooms />}
             <div id="mainAffRooms">

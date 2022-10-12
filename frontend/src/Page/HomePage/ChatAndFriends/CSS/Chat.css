@@ -1,24 +1,3 @@
-#chat {
-    display: block;
-    height: 100%;
-    width: 100%;
-    background-color: #302E2D;
-}
-
-#chatHeader {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    height: 9%;
-    background-color: #454342;
-}
-
-#chatHeader p {
-    font-size: 1.5rem;
-    width: 80%;
-}
-
 .itemListConvers {
     width: 100%;
 }
@@ -30,26 +9,37 @@
     justify-content: center;
     border-radius: 10px;
     margin-top: 1rem;
-    width: 100%;
-    background-color: #454342;
+    width: auto;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    background-color: #34476b;
     height: 5rem;
     font-size: 2.0rem;
 }
 
-.bi-x-lg {
+.itemConvers:hover {
+    cursor: pointer;
+}
+
+#affConversItemChat {
+    overflow: scroll;
+    height: 92%;
+}
+
+/* .bi-x-lg {
     background: #454342;
     border: none;
     color: white;
     font-size: 1.5rem;
-}
+} */
 
-.bi-x-lg:hover {
+/* .bi-x-lg:hover {
     background: #454342;
     border: none;
     color: red;
     font-size: 1.5rem;
-}
+} */
 
-button:hover {
+/* button:hover {
     cursor: pointer;
-}
+} */

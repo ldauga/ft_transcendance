@@ -69,10 +69,11 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
     };
 
     return (
-        <div id="CreateInvitationRoomsContainer">
+        <div className="addFriendContainer">
             <input
                 value={text}
                 onChange={e => setText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') createInvitation() }}
                 placeholder="Enter name"
             />
             <button type="button" onClick={() => createInvitation()}>

@@ -73,7 +73,7 @@ function AddFriend() {
     }
 
     return (
-        <div id="addFriendContainer">
+        <div className="addFriendContainer">
             <input
                 value={text}
                 onChange={e => setText(e.target.value)}

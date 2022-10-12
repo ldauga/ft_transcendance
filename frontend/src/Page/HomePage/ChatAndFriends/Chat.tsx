@@ -5,7 +5,7 @@ import { isJSDocTemplateTag } from 'typescript';
 import { RootState } from '../../../State';
 import './CSS/Chat.css'
 
-function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function }) {
+function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -16,8 +16,8 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
     props.setOldAffRoomConvers("Chat");
 
     const closeChat = () => {
+        props.closeChat();
         props.setChat(false);
-        props.setFriendList(true);
     };
 
     utilsData.socket.removeListener('newMsgReceived');
@@ -32,15 +32,13 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
     })
 
     const openConvers = (item: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
-        if (!item.userOrRoom)
-        {
+        if (!item.userOrRoom) {
             props.setConversCorrespondantData({ id: item.id, login: item.login });
             props.setChat(false);
             props.setConvers(true);
         }
-        else
-        {
-            props.setroomsConversData({name: item.room_name, id: item.room_id});
+        else {
+            props.setroomsConversData({ name: item.room_name, id: item.room_id });
             props.setChat(false);
             props.setRoomsConvers(true);
         }
@@ -51,16 +49,14 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
             res.data.forEach((item: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
-                if (!item.userOrRoom)
-                {
+                if (!item.userOrRoom) {
                     itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                         <div className="itemConvers" onClick={() => openConvers(item)}>
                             <p>{item.login}</p>
                         </div>
                     </div>)
                 }
-                else
-                {
+                else {
                     itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                         <div className="itemConvers" onClick={() => openConvers(item)}>
                             <p>{item.room_name}</p>
@@ -77,12 +73,16 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
     }, [props]);
 
     return (
-        <div id="chat">
-            <div id='chatHeader'>
-                <p>Messages</p>
-                <button onClick={closeChat} className="bi bi-x-lg"></button>
+        <div className="mainAffGene">
+            <div id="header" className="mainHeader">
+                <div className="mainHeaderLeft mainHeaderSide">
+                    <button onClick={closeChat} className="bi bi-x-lg"></button>
+                </div>
+                <h3>Messages</h3>
+                <div className="mainHeaderRight mainHeaderSide">
+                </div>
             </div>
-            <div>
+            <div id="affConversItemChat">
                 {itemListHistory}
             </div>
         </div>

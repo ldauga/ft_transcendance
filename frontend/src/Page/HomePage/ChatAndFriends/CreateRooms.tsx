@@ -54,6 +54,7 @@ function CreateRooms() {
                 value={text}
                 onChange={e => setText(e.target.value)}
                 placeholder="Enter name"
+                onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
             />
             <button type="button" onClick={() => createGroup()}>
                 Create Group

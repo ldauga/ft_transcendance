@@ -87,11 +87,15 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     });
 
     return (
-        <div id="AffParticipantsContainer">
-            <div id="roomsConversHeader">
-                <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                <p>{props.roomsConversData.name}</p>
-                <div id="roomsConversHeaderLeft"></div>
+        <div className="mainAffGene">
+            <div id="header" className="mainHeader">
+                <div className="mainHeaderLeft mainHeaderSide">
+                    <button onClick={closeConvers} className="bi bi-arrow-left"></button>
+                </div>
+                <h3>{props.roomsConversData.name}</h3>
+                <div className="mainHeaderRight mainHeaderSide">
+
+                </div>
             </div>
             {itemListHistory}
         </div>

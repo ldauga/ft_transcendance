@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Convers.css'
@@ -12,6 +12,8 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
     const [messageText, setMessageText] = useState('');
+
+    const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     const closeConvers = () => {
         props.setConvers(false);
@@ -70,21 +72,29 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     }
 
     useEffect(() => {
-        console.log("useEffect Convers");
-        console.log("conversName = ", props.conversCorrespondantData);
+        messagesEndRef.current?.scrollIntoView();
+    }, [itemListHistory])
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView();
         getListItem();
     }, [props]);
 
     return (
-        <div id="convers">
-            <div id='conversHeader'>
-                <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
-                <p>{props.conversCorrespondantData.login}</p>
+        <div className="mainAffGene">
+            <div id="header" className="mainHeader">
+                <div className="mainHeaderLeft mainHeaderSide">
+                    <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
+                </div>
+                <h3>{props.conversCorrespondantData.login}</h3>
+                <div className="mainHeaderRight mainHeaderSide">
+                </div>
             </div>
             <div id="affConvers">
                 {itemListHistory}
+                <div ref={messagesEndRef} />
             </div>
-            <div id="sendZoneConvers">
+            <div className="sendZoneConvers">
                 <input
                     value={messageText}
                     onChange={e => setMessageText(e.target.value)}

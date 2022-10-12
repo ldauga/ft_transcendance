@@ -4,29 +4,44 @@
     width: 100%;
 }
 
-#RoomsHeader {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    height: 9%;
-    background-color: #302E2D;
-}
-
-#RoomsHeader p {
-    margin-left: 1rem;
-}
-
-#RoomsHeader button {
-    font-size: 2rem;
-    margin-right: 1rem;
-}
-
-#leftDivHeader {
-    width: 25%;
-}
-
 #mainAffRooms {
     overflow: scroll;
     height: 91%;
+}
+
+#roomsHeaderRight {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#CreateGroupContainer {
+    position: sticky;
+    top: 7.5vh;
+    height: 6%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: #34476b;
+}
+
+#CreateGroupContainer input {
+    height: 2rem;
+    width: 15rem;
+    border-radius: 15px;
+    padding-left: 0.5rem;
+}
+
+#CreateGroupContainer button {
+    width: auto;
+    height: 2rem;
+    text-align: center;
+    border-radius: 15px;
+    background-color: white;
+    margin-right: 0.5rem;
+    margin-left: 1rem;
+    color: #34476b;
+    font-size: 1.3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }

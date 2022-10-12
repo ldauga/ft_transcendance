@@ -328,6 +328,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
     console.log(returnMsg.forEach(item => (console.log('returnMsg in eventgateway'))));
+    console.log("after post creqteMsg");
     if (!data.userOrRoom) {
       const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
       if (_client_receiver != null) {

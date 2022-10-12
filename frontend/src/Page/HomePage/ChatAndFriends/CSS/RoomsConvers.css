@@ -4,47 +4,21 @@
     width: 100%;
 }
 
-#roomsConversHeader {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 9%;
-    justify-content: space-between;
-    background-color: #454342;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-
-#roomsConversHeader p {
-    color: white;
-    font-size: 2rem;
-    width: 90%;
-    text-align: center;
-}
-
-#roomsConversHeader p {
-    max-width: 40%;
-    overflow: hidden;
-}
-
-#roomsConversHeader button {
-    font-size: 2rem;
-    margin-right: 1rem;
-}
-
-#roomsConversHeaderButton button {
-    font-size: 2rem;
-    margin-right: 1rem;
-}
-
-#roomsConversHeaderButton {
-    display: flex;
-}
-
-#roomsConversHeaderLeft {
-    width: 20%;
-}
-
-#affConvers {
+#affConversBig {
     overflow: scroll;
+    height: 85%;
+}
+
+#affConversSmall {
+    overflow: scroll;
+    height: 79%;
+}
+
+#RoomsConversHeaderRight {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#RoomsConversHeaderRight .bi-plus-lg {
+    margin-left: 1rem;
 }
