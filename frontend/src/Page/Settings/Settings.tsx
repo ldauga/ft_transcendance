@@ -34,7 +34,7 @@ function Settings() {
 	const handleClose = (param: any) => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axios.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname, id: persistantReduceur.userReducer.user?.id }, { withCredentials: true }).then((res) => { setUser(res.data) })
+			axios.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}, { withCredentials: true }).then((res) => { setUser(res.data) })
 
 		if (userParameterNewProfilePicture != null) {
 
@@ -84,7 +84,7 @@ function Settings() {
 										fullWidth
 										variant="standard"
 										onChange={e => setUserParameterNewNickname(e.target.value)}
-										onKeyDown={e => { console.log(e.key); if (e.key == 'Enter') handleClose(setOpenEditZoneNickname) }}
+										onKeyDown={e => {if (e.key == 'Enter')handleClose(setOpenEditZoneNickname)}}
 									/>
 								</DialogContent>
 								<DialogActions>

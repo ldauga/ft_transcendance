@@ -62,13 +62,12 @@ export class UserController {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
-  @Patch('updateNickname')
-  @UseGuards(AuthGuard('jwt'))
+  @Post('updateNickname')
   public updateNickname(@Req() req: Request, @Body() body): Promise<GetUserDto> {
     return this.service.updateNickname(req.cookies['auth-cookie'].refreshToken, body);
   }
 
-  @Patch('updateRank')
+  @Post('updateRank')
   public updateRank(@Req() req: Request, @Body() body): Promise<GetUserDto> {
     return this.service.updateRank(req.cookies['auth-cookie'].refreshToken, body);
   }
