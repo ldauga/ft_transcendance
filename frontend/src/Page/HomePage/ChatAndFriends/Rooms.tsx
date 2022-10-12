@@ -71,7 +71,11 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
 
     useEffect(() => {
         if (!update) {
-            getListItem();
+            const oldLength = itemListHistory.length;
+            for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
+                console.log("Rooms useEffect getListItem i: ", i);
+                getListItem();
+            }
         }
         setUpdate(true);
     }, [props]);

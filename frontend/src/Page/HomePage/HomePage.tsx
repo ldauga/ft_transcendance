@@ -9,10 +9,6 @@ import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 
-import { AiOutlineClose } from 'react-icons/ai'
-import { RiFileWarningLine } from 'react-icons/ri'
-import { BiCog } from 'react-icons/bi'
-
 import iron_rank_img from '../assets/iron_rank.png'
 import bronze_rank_img from '../assets/bronze_rank.png'
 import gold_rank_img from '../assets/gold_rank.png'
