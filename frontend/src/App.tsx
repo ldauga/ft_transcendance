@@ -22,6 +22,7 @@ import Settings from './Page/Settings/Settings';
 import NavBar from './Module/Navbar/Navbar';
 import PongHome from './Page/Pong/PongHome';
 import CreateMapTemp from './Page/Pong/CreateMapTemp';
+import { StatPlayer } from './Module/UserProfile/StatPlayer';
 
 function App() {
 
@@ -44,12 +45,12 @@ function App() {
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
-          <Route path='/Profile/*' element={<ConnectionChecker component={<></>} />} />
+          <Route path='/Profile/*' element={<ConnectionChecker component={<StatPlayer />} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 
           <Route path='/QrCode' element={<QrCode />} />
-          
+
           <Route path='/NotFound' element={<NotFound />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>

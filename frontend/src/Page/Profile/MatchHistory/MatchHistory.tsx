@@ -60,7 +60,7 @@ function MatchHistory() {
 											{row.nickname_user1}
 											</h2>
 										<h2>
-											VS
+											{' VS '}
 											</h2>
 										<h2 className='player' onClick={() =>{history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname_user2)}}>
 											{row.nickname_user2}
