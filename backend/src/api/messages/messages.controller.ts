@@ -23,6 +23,16 @@ export class MessagesController {
     return this.service.getConversMessages(id1, id2);
   }
 
+  @Get('/room/:room_id')
+  public getRoomConversMessages(@Param('room_id', ParseIntPipe) id: number): Promise<MessagesEntity[]> {
+    return this.service.getRoomConversMessages(id);
+  }
+
+  @Get('/:id1/:id2/room')
+  public getTestConversMessages(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<MessagesEntity[]> {
+    return this.service.getRoomConversMessages(id1);
+  }
+
   // @Get('/relation/:id')
   // public getRelationMessages(@Param('id', ParseIntPipe) id: number): Promise<number> {
   //   // return this.service.getRelationMessages(id);

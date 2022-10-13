@@ -1,35 +1,40 @@
 .popupContainer {
 	position: fixed;
+	display: flex;
+	flex-direction: column;
 	bottom: 0px;
 	right: 0px;
-	min-width: 100px;
-	height: 100vh - 5vh;
+	min-width: 25vw;
+	height: 96%;
+	padding-bottom: 0;
 	// padding: 20px 10px;
 }
 
-.content {
-	max-height: 70vh;
-	overflow-y: scroll;
+#contentPopUpContainer {
+	height: 100%;
+	width: 100%;
+	padding-bottom: 0;
+	// overflow-y: scroll;
 }
 
-.closeButton {
-	width: 20px;
-	height: 20px;
-	padding: 0px;
-	margin: 0px;
-	background-color: white;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	position: absolute;
-	top: 15px;
-	right: 15px;
-	background-image: radial-gradient(black, transparent);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
+// .closeButton {
+// 	width: 20px;
+// 	height: 20px;
+// 	padding: 0px;
+// 	margin: 0px;
+// 	background-color: white;
+// 	border: none;
+// 	outline: none;
+// 	cursor: pointer;
+// 	position: absolute;
+// 	top: 15px;
+// 	right: 15px;
+// 	background-image: radial-gradient(black, transparent);
+// 	border-radius: 50%;
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: center;
+// }
 
 .content::-webkit-scrollbar {
 	width: 5px;

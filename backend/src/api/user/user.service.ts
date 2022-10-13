@@ -9,14 +9,14 @@ import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
 import { UpdateNicknameDto } from './dtos/updateNickname.dto';
-	
+
 @Injectable()
 export class UserService {
 	constructor(
 		@InjectRepository(UserEntity)
 		private readonly userRepository: Repository<UserEntity>,
 		private jwtService: JwtService
-	) {}
+	) { }
 
 	private logger: Logger = new Logger('UserService');
 
@@ -25,21 +25,21 @@ export class UserService {
 	}
 
 	async getUserById(id: number): Promise<UserEntity> {
-		const user = await this.userRepository.findOneBy( {id: id} );
+		const user = await this.userRepository.findOneBy({ id: id });
 		if (!user)
 			return null;
 		return user;
 	}
 
 	async getUserByLogin(login: string): Promise<UserEntity> {
-		const user = await this.userRepository.findOneBy( {login: login} );
+		const user = await this.userRepository.findOneBy({ login: login });
 		if (!user)
 			return null;
 		return user;
 	}
 
 	async getUserByNickname(nickname: string): Promise<UserEntity> {
-		const user = await this.userRepository.findOneBy( {nickname: nickname} );
+		const user = await this.userRepository.findOneBy({ nickname: nickname });
 		if (!user)
 			return null;
 		return user;
@@ -48,10 +48,10 @@ export class UserService {
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
 		var user: any;
 		if (signedRefreshToken.refreshToken)
-			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken.refreshToken});
+			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken.refreshToken });
 		else
-			user = await this.userRepository.findOneBy( {signedRefreshToken: signedRefreshToken});
-		
+			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken });
+
 		if (!user)
 			throw new BadRequestException('User not found');
 		const retUser = {
@@ -68,14 +68,14 @@ export class UserService {
 	}
 
 	async getTotpSecret(login: string) {
-		const user = await this.userRepository.findOneBy( {login: login})
+		const user = await this.userRepository.findOneBy({ login: login })
 		if (!user)
 			return null;
 		return user.totpsecret;
 	}
 
-	async getUserByToken(refreshToken: any) {
-		const user = await this.userRepository.findOneBy( { refreshToken: refreshToken} );
+	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
+		const user = await this.userRepository.findOneBy({ refreshToken: refreshToken });
 		if (!user)
 			return null;
 		/*const retUser = {
@@ -93,7 +93,7 @@ export class UserService {
 	}
 
 	async createUser(body: CreateUserDto): Promise<UserEntity> {
-		const response = await this.userRepository.findOneBy( {login: body.login} );
+		const response = await this.userRepository.findOneBy({ login: body.login });
 		if (response)
 			return null;
 
@@ -108,7 +108,7 @@ export class UserService {
 	}
 
 	async createUserSans42(login: string): Promise<UserEntity> {
-		const response = await this.userRepository.findOneBy( {login: login} );
+		const response = await this.userRepository.findOneBy({ login: login });
 		if (response)
 			return null;
 
@@ -124,7 +124,7 @@ export class UserService {
 	async updateRefreshToken(body: UpdateUserDto, refreshToken: any) {
 		let user = await this.getUserById(body.sub);
 		const decodedRefreshToken = this.jwtService.decode(refreshToken)
-		if (user) {	
+		if (user) {
 			user.refreshToken = decodedRefreshToken['token'];
 			user.signedRefreshToken = refreshToken;
 			user.refreshTokenIAT = decodedRefreshToken['iat'];
@@ -142,7 +142,7 @@ export class UserService {
 				user.wins++;
 			else
 				user.losses++;
-				this.userRepository.save(user);
+			this.userRepository.save(user);
 			return user;
 		}
 	}
@@ -155,7 +155,7 @@ export class UserService {
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(body.nickname))
 			throw new UnauthorizedException('Nickname already used');
-		
+
 		user.nickname = body.nickname;
 		this.userRepository.save(user);
 
@@ -176,7 +176,7 @@ export class UserService {
 		const user = await this.getUserByRefreshToken(refreshToken)
 		if (!user)
 			return null;
-		
+
 		user.rank = body.rank;
 		this.userRepository.save(user);
 
@@ -197,10 +197,10 @@ export class UserService {
 		const user = await this.getUserByRefreshToken(refreshToken);
 		if (!user)
 			return null;
-		
+
 		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
-		
+
 		const retUser: GetUserDto = {
 			id: user.id,
 			login: user.login,
@@ -225,7 +225,7 @@ export class UserService {
 
 			if (!user)
 				return null;
-			
+
 			var signedRefreshToken = this.signRefreshToken(refreshToken)
 			await this.updateRefreshToken(data, signedRefreshToken);
 
@@ -238,7 +238,7 @@ export class UserService {
 
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 		const user = await this.getUserById(userId);
-		console.log(user);
+		// console.log(user);
 		if (!user)
 			return null;
 		user.totpsecret = secret;
@@ -251,18 +251,18 @@ export class UserService {
 			return null;
 		user.isTwoFactorAuthenticationEnabled = true;
 		this.userRepository.save(user);
-		
+
 		const retUser: GetUserDto = {
-            id: user.id,
-            login: user.login,
-            nickname: user.nickname,
-            wins: user.wins,
-            losses: user.losses,
-            rank: user.rank,
-            profile_pic: user.profile_pic,
-            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-        }
-        return retUser;
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
 	}
 
 	async turnOffTwoFactorAuthentication(login: string): Promise<GetUserDto> {
@@ -273,16 +273,16 @@ export class UserService {
 		this.userRepository.save(user);
 
 		const retUser: GetUserDto = {
-            id: user.id,
-            login: user.login,
-            nickname: user.nickname,
-            wins: user.wins,
-            losses: user.losses,
-            rank: user.rank,
-            profile_pic: user.profile_pic,
-            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-        }
-        return retUser;
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+		}
+		return retUser;
 	}
 
 	signRefreshToken(refreshToken: any) {

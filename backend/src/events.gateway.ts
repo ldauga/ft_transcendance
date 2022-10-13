@@ -11,17 +11,37 @@ import { Logger } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { HttpService } from '@nestjs/axios';
 import { gameRoomClass } from './GameRoomClass';
+import { isIdentifierOrPrivateIdentifier } from 'typescript';
+import { Observable } from 'rxjs';
+import { AxiosResponse, AxiosRequestConfig } from "axios";
+import axios from 'axios';
 
 interface Client {
   id: string;
   username: string;
+  socket: Socket;
+}
+
+interface Participant {
+  username: string;
+  room_name: string;
+}
+
+interface Room {
+  id: number;
+  name: string;
+  users: Client[];
 }
 
 let arrClient: Client[] = [];
 
+let arrRoom: Room[] = [];
+
+let arrParticipants: Participant[] = [];
+
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: '*',
   },
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -34,10 +54,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   handleDisconnect(client: any) {
     this.logger.log(`Client disconnected: ${client.id}`);
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
-    for (let i = 0; i < arrClient.length; i++) {
-      if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username != ""))
-        this.server.to(arrClient[i].id).emit('removeFriend', arrClient[indexOfClient]);
-    }
+    // for (let i = 0; i < arrClient.length; i++) {
+    //   if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username != ""))
+    //     this.server.to(arrClient[i].id).emit('removeFriend', arrClient[indexOfClient]);
+    // }
     if (indexOfClient !== -1)
       arrClient.splice(indexOfClient, 1);
 
@@ -58,22 +78,67 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const newClient: Client = {
       id: client.id,
       username: "",
+      socket: null
     };
     arrClient.push(newClient);
   }
 
   @SubscribeMessage('storeClientInfo')
   async storeClientInfo(client: Socket, user: { login: string }) {
-    arrClient.forEach((item) => {
+    console.log("storeClientInfo");
+    await arrClient.forEach((item) => {
       if (item.id == client.id) {
         item.username = user.login;
-        this.server.to(client.id).emit('friendsList', arrClient);
+        item.socket = client;
+        let i = 0;
+        while (i < arrParticipants.length) {
+          const participantReturn = arrParticipants.find(obj => obj.username == user.login);
+          if (participantReturn) {
+            arrRoom.find(obj => obj.name == participantReturn.room_name).users.push(item);
+            const index = arrParticipants.indexOf(participantReturn);
+            if (index >= 0)
+              arrParticipants.splice(index, 1);
+          }
+          else
+            i++;
+        }
+        console.log("test");
+        //this.server.to(client.id).emit('friendsList', arrClient);
       }
     })
+    // console.log("arrParticipant.lenght = ", arrParticipants.length);
+    // console.log("arrRoom: ", arrRoom);
   };
 
   async afterInit(server: any) {
     this.logger.log('Init');
+    const getAllRoomsReturn = await this.http.get('http://localhost:5001/rooms');
+    await getAllRoomsReturn.forEach(async item => {
+      const a: { id: number, name: string }[] = item.data;
+      let i = 0;
+      while (i < a.length) {
+        let newRoom: Room = {
+          id: a[i].id,
+          name: a[i].name,
+          users: []
+        }
+        arrRoom.push(newRoom);
+        i++;
+      }
+    });
+    const getAllParticipantsReturn = await this.http.get('http://localhost:5001/participants');
+    await getAllParticipantsReturn.forEach(item => {
+      const a: { login: string, room_name: string }[] = item.data;
+      let i = 0;
+      while (i < a.length) {
+        let newParticipant: Participant = {
+          username: a[i].login,
+          room_name: a[i].room_name
+        }
+        arrParticipants.push(newParticipant);
+        i++;
+      }
+    });
   }
 
   @SubscribeMessage('msgConnection')
@@ -88,14 +153,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createInvitationRequest')
   async createInvitationRequest(client: Socket, data: any) {
-    this.logger.log(`${client.id} said 2: create Invitation Request`);
+    this.logger.log(`${client.id} said: create Invitation Request`);
     const invitationRequest = {
       id_user1: data.id_user1,
       id_user2: data.id_user2,
       user1_accept: data.user1_accept,
       user2_accept: data.user2_accept,
       sender_login: data.sender_login,
-      receiver_login: data.receiver_login
+      receiver_login: data.receiver_login,
+      userOrRoom: data.userOrRoom,
+      room_id: data.room_id,
+      room_name: data.room_name
 
     }
 
@@ -106,9 +174,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
     console.log(invitationRequestReturn.forEach(item => (console.log('invitationRequestReturn in eventgateway'))));
-    console.log("arrClient: ", arrClient);
     const _client_receiver = arrClient.find(obj => obj.username === data.receiver_login);
-    console.log("client_receiver: ", _client_receiver);
     if (_client_receiver != null) {
       console.log("newMsgReceived to ", _client_receiver.username);
       this.server.to(_client_receiver.id).emit('newInvitationReceived', data);
@@ -136,14 +202,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const addFriendReturn = await this.http.post('http://localhost:5001/friendList/', newFriend);
     console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
-    console.log("arrClient: ", arrClient);
     let _client_data = arrClient.find(obj => obj.username === data.login_user2);
-    console.log("client.id = ", client.id);
-    console.log("client data id = ", _client_data.id);
     if (client.id == _client_data.id) {
       _client_data = arrClient.find(obj => obj.username === data.login_user1);
     }
-    console.log("client_receiver: ", _client_data);
     if (_client_data != null) {
       console.log("newFriend to ", _client_data.username);
       this.server.to(_client_data.id).emit('newFriendReceived', data);
@@ -158,6 +220,97 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.server.to(client.id).emit('returnRemoveFriend', true);
   }
 
+  //ROOMS EVENTS
+
+  @SubscribeMessage('createChatRooms')
+  async createChatRooms(client: Socket, data: any) {
+    this.logger.log(`${client.id} create Rooms`);
+    const newRooms = {
+      name: data.name,
+      description: data.description,
+      password: data.password,
+      identifiant: data.identifiant,
+      owner_id: data.owner_id
+    }
+    const roomReturn = await this.http.post('http://localhost:5001/rooms', newRooms);
+    roomReturn.forEach(async item => {
+      console.log('chat room created');
+      const newParticipant = {
+        user_id: data.owner_id,
+        user_login: data.owner_login,
+        room_id: item.data.id,
+        room_name: data.name
+      }
+      const tmp_room_id = item.data.id;
+      const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
+      console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
+      console.log('participant created');
+      console.log('arrClient: ', arrClient);
+      console.log('data: ', data);
+      const _client = arrClient.find(obj => obj.username === data.owner_login);
+      console.log('_client: ', _client);
+      if (_client != null) {
+        const newRoom = {
+          id: tmp_room_id,
+          name: data.name,
+          users: []
+        }
+        newRoom.users.push(_client);
+        arrRoom.push(newRoom);
+        console.log('arrRoom: ', arrRoom);
+        this.server.to(client.id).emit('newRoomCreated', true);
+      }
+    });
+  }
+
+  @SubscribeMessage('removeRoom')
+  async removeRoom(client: Socket, data: any) {
+    this.logger.log(`${client.id} remove Room`);
+    const removeRoomReturn = await this.http.post('http://localhost:5001/rooms/' + data.id + '/' + data.room_name);
+    console.log(removeRoomReturn.forEach(item => (console.log('removeRoomReturn in eventgateway'))));
+    // this.server.to(client.id).emit('removeRoomReturn', true);
+  }
+
+  //PARTICIPANTS EVENTS
+
+  @SubscribeMessage('createParticipant')
+  async createParticipant(client: Socket, data: any) {
+    this.logger.log(`${client.id} create Participant`);
+    const newParticipant = {
+      user_id: data.user_id,
+      user_login: data.user_login,
+      room_id: data.room_id,
+      room_name: data.room_name
+    }
+    const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
+    console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
+    console.log('arrClient: ', arrClient);
+    const _client = arrClient.find(obj => obj.username === data.user_login);
+    console.log('_client: ', _client);
+    if (_client != null) {
+      console.log(_client.username, " join ", data.room_name);
+      console.log('arrRoom: ', arrRoom);
+      const a = arrRoom.find(obj => obj.name == data.room_name);
+      console.log('a: ', a);
+      a.users.push(_client);
+      console.log('arrRoom: ', arrRoom);
+    }
+  }
+
+  @SubscribeMessage('removeParticipant')
+  async removeParticipant(client: Socket, data: any) {
+    this.logger.log(`${client.id} remove Participant`);
+    const removeParticipantReturn = await this.http.post('http://localhost:5001/participants/' + data.login + '/' + data.room_name);
+    console.log(removeParticipantReturn.forEach(item => (console.log('removeParticipantReturn in eventgateway'))));
+    this.server.to(client.id).emit('removeParticipantReturn', true);
+    const _client = arrClient.find(obj => obj.username === data.user_login);
+    if (_client != null) {
+      console.log(_client.username, " join ", data.room_name);
+      const index = arrRoom.find(obj => obj.name == data.name).users.indexOf(_client);
+      arrRoom.find(obj => obj.name == data.name).users.slice(index);
+    }
+  }
+
   //NEW CHAT EVENTS
 
   @SubscribeMessage('createMsg')
@@ -168,16 +321,33 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       id_receiver: data.id_receiver,
       login_sender: data.login_sender,
       login_receiver: data.login_receiver,
+      userOrRoom: data.userOrRoom,
+      room_id: data.room_id,
+      room_name: data.room_name,
       text: data.text
     }
     const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
     console.log(returnMsg.forEach(item => (console.log('returnMsg in eventgateway'))));
-    console.log("arrClient: ", arrClient);
-    const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
-    console.log("client_receiver: ", _client_receiver);
-    if (_client_receiver != null) {
-      console.log("newMsgReceived to ", _client_receiver.username);
-      this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+    console.log("after post creqteMsg");
+    if (!data.userOrRoom) {
+      const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
+      if (_client_receiver != null) {
+        console.log("newMsgReceived to ", _client_receiver.username);
+        this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+      }
+    }
+    else {
+      console.log("arrRoom ", arrRoom);
+      const room = arrRoom.find(obj => obj.name == data.room_name);
+      let i = 0;
+      console.log("room ", room);
+      console.log("room.users ", room.users);
+      console.log("room.users.length: ", room.users.length);
+      while (i < room.users.length) {
+        console.log('new Msg to ', room.users[i].username);
+        this.server.to(room.users[i].id).emit('newMsgReceived', data);
+        i++;
+      }
     }
   }
 

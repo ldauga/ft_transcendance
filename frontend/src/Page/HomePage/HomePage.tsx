@@ -1,17 +1,13 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
-import './Homepage.scss';
-import FriendList from './FriendList';
+import Navbar from '../../Module/Navbar/Navbar';
+import './HomePage.css';
+import FriendList from './ChatAndFriends/FriendList';
 import { AddFriendHook, FriendListHook } from './Hooks';
-import AddFriend from './AddFriend';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../State';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
-
-import { AiOutlineClose } from 'react-icons/ai'
-import { RiFileWarningLine } from 'react-icons/ri'
-import { BiCog } from 'react-icons/bi'
 
 import iron_rank_img from '../assets/iron_rank.png'
 import bronze_rank_img from '../assets/bronze_rank.png'
@@ -28,10 +24,9 @@ import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
 import Login from '../Login/Login';
 import { useCookies } from 'react-cookie';
-import InvitationRequest from './InvitationRequest';
-import Convers from './Convers';
-import Chat from './Chat';
 import NavBar from '../../Module/Navbar/Navbar';
+
+export const constWhileSecu = 10;
 
 const fileTypes = ["JPG", "PNG"];
 
@@ -46,21 +41,24 @@ const HomePage = (props: any) => {
     const dispatch = useDispatch();
     const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
-    const [listNotif, setListNotif] = useState(Array<any>)
+    const [listNotif, setListNotif] = useState(Array<any>);
 
     const [isFriendList, setFriendList] = useState(true);
-    const [isAddFriend, setAddFriend] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
     const [isConvers, setConvers] = useState(false);
     const [isChat, setChat] = useState(false);
+    const [isRooms, setRooms] = useState(false);
+    const [isRoomsConvers, setRoomsConvers] = useState(false);
     const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "" });
+    const [roomsConversData, setroomsConversData] = useState({ name: "", id: 0 });
     const [oldAff, setOldAff] = useState("");
+    const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
-    const [matchesHistory, setMatchesHistory] = useState(Array<any>)
-    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>)
+    const [matchesHistory, setMatchesHistory] = useState(Array<any>);
+    const [leaderBoardUsers, setLeaderBoardUsers] = useState(Array<any>);
 
-    const [rankImage, setRankImage] = useState("")
-    const [userProfileLogin, setUserProfileLogin] = useState("")
+    const [rankImage, setRankImage] = useState("");
+    const [userProfileLogin, setUserProfileLogin] = useState("");
 
     const [userParameterAff, setUserParameterAff] = useState(false);
     const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | any>(null)

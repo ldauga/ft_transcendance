@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../State";
-import './FriendList.css';
+import { RootState } from "../../../State";
+import './CSS/FriendList.css';
+import AddFriend from "./AddFriend";
 
-function FriendList(props: { setFriendList: Function, setAddFriend: Function, setInvitationRequest: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -12,11 +13,20 @@ function FriendList(props: { setFriendList: Function, setAddFriend: Function, se
 	const [itemListHistory, setItemListHistory] = useState(Array<any>);
 	const [update, setUpdate] = useState(false);
 
+	const [newAddFriend, setNewAddFriend] = useState(false);
+
 	props.setOldAff("FriendList");
 
-	const handleClickAddFriend = () => {
+	const handleClickClose = () => {
+		props.closeFriendList();
 		props.setFriendList(false);
-		props.setAddFriend(true);
+	};
+
+	const handleClickAddFriend = () => {
+		if (newAddFriend)
+			setNewAddFriend(false);
+		else
+			setNewAddFriend(true);
 	};
 
 	const handleClickInvitationRequest = () => {
@@ -24,8 +34,9 @@ function FriendList(props: { setFriendList: Function, setAddFriend: Function, se
 		props.setInvitationRequest(true);
 	};
 
-	const handleClickSearch = () => {
-
+	const handleClickRooms = () => {
+		props.setFriendList(false);
+		props.setRooms(true);
 	};
 
 	utilsData.socket.removeAllListeners('returnRemoveFriend');
@@ -108,7 +119,7 @@ function FriendList(props: { setFriendList: Function, setAddFriend: Function, se
 
 	function ItemsFriendList() {
 		return (
-			<div>
+			<div id="ListItemFriendList">
 				{itemListHistory}
 			</div>
 		);
@@ -122,20 +133,20 @@ function FriendList(props: { setFriendList: Function, setAddFriend: Function, se
 	});
 
 	return (
-		<div>
-			<div>
-				<div id="header">
-					<h3>Friends</h3>
-					<div id="headerButtons">
-						<button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
-						<button onClick={handleClickSearch}><i className="bi bi-search"></i></button>
-						<button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
-					</div>
+		<div className="mainAffGene">
+			<div id="header" className="mainHeader">
+				<div className="mainHeaderLeft mainHeaderSide">
+					<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
 				</div>
-				<div>
-					<ItemsFriendList />
+				<h3>Friends</h3>
+				<div className="mainHeaderRight mainHeaderSide">
+					<button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
+					<button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+					<button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
 				</div>
 			</div>
+			{newAddFriend && <AddFriend />}
+			<ItemsFriendList />
 		</div>
 	)
 }

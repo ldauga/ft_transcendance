@@ -43,6 +43,17 @@ export class invitationRequestService {
 		return true;
 	}
 
+	async checkInvitationRequestForRooms(id: number, roomName: string): Promise<Boolean> {
+		const check = await this.InvitationRequestRepository.findOne({
+			where: [
+				{ id_user2: id, room_name: roomName }
+			]
+		});
+		if (check == null)
+			return false;
+		return true;
+	}
+
 	async createInvitationRequest(body: any): Promise<InvitationRequestEntity> {
 		const returnInvitationRequest = this.InvitationRequestRepository.save({
 			id_user1: body.id_user1,
@@ -50,7 +61,10 @@ export class invitationRequestService {
 			user1_accept: body.user1_accept,
 			user2_accept: body.user2_accept,
 			sender_login: body.sender_login,
-			receiver_login: body.receiver_login
+			receiver_login: body.receiver_login,
+			userOrRoom: body.userOrRoom,
+			room_id: body.room_id,
+			room_name: body.room_name
 		}
 		)
 		if (!returnInvitationRequest)

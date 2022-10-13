@@ -25,4 +25,14 @@ export class InvitationRequestEntity {
   @Column({ type: 'varchar' })
   public receiver_login: string;
 
+  @Column({ default: false })
+  public userOrRoom: boolean;
+
+  @Column()
+  @Index()
+  public room_id: number;
+
+  @Column({ type: 'varchar' })
+  public room_name: string;
+
 }
