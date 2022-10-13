@@ -267,8 +267,26 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeRoom(client: Socket, data: any) {
     this.logger.log(`${client.id} remove Room`);
     const removeRoomReturn = await this.http.post('http://localhost:5001/rooms/' + data.id + '/' + data.room_name);
-    console.log(removeRoomReturn.forEach(item => (console.log('removeRoomReturn in eventgateway'))));
-    // this.server.to(client.id).emit('removeRoomReturn', true);
+    console.log(removeRoomReturn.forEach(async item => {
+      // console.log("test");
+      const _room = arrRoom.find(obj => obj.name == data.room_name);
+      if (_room != null) {
+        console.log(_room.name, " has been deleted");
+        let i = 0;
+        while (i < _room.users.length) {
+          const removeParticipantReturn = await this.http.post('http://localhost:5001/participants/' + _room.users[i].username + '/' + _room.name);
+          console.log(removeParticipantReturn.forEach(item => ("delete members")));
+          i++;
+        }
+        i = 0;
+        while (i < _room.users.length) {
+          this.server.to(_room.users[i].id).emit('roomHasBeenDeleted', true);
+          i++;
+        }
+        const index = arrRoom.indexOf(_room);
+        arrRoom.slice(index);
+      }
+    }));
   }
 
   //PARTICIPANTS EVENTS
@@ -301,14 +319,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeParticipant(client: Socket, data: any) {
     this.logger.log(`${client.id} remove Participant`);
     const removeParticipantReturn = await this.http.post('http://localhost:5001/participants/' + data.login + '/' + data.room_name);
-    console.log(removeParticipantReturn.forEach(item => (console.log('removeParticipantReturn in eventgateway'))));
-    this.server.to(client.id).emit('removeParticipantReturn', true);
-    const _client = arrClient.find(obj => obj.username === data.user_login);
-    if (_client != null) {
-      console.log(_client.username, " join ", data.room_name);
-      const index = arrRoom.find(obj => obj.name == data.name).users.indexOf(_client);
-      arrRoom.find(obj => obj.name == data.name).users.slice(index);
-    }
+    console.log(removeParticipantReturn.forEach(item => {
+      // console.log("test");
+      this.server.to(client.id).emit('removeParticipantReturn', true);
+      const _client = arrClient.find(obj => obj.username == data.login);
+      if (_client != null) {
+        console.log(_client.username, " quit ", data.room_name);
+        this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
+        const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
+        arrRoom.find(obj => obj.name == data.room_name).users.slice(index);
+        const room = arrRoom.find(obj => obj.name == data.room_name);
+        let i = 0;
+        while (i < room.users.length) {
+          this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
+          i++;
+        }
+      }
+    }));
   }
 
   //NEW CHAT EVENTS

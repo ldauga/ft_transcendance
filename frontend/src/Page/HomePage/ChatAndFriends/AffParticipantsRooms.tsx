@@ -5,7 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import '../HomePage.css'
 
-function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function }) {
+function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -14,24 +14,31 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const [update, setUpdate] = useState(false);
 
-    utilsData.socket.removeAllListeners('removeParticipantReturn');
+    utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
-    utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturn: boolean) {
-        console.log('removeParticipantReturn = ', removeParticipantReturn);
-        if (removeParticipantReturn == true) {
-            const length = itemListHistory.length;
-            let secu = 0;
-            while (length == itemListHistory.length && secu < 5) {
-                setItemListHistory([]);
-                getListItem();
-                secu++;
-            }
+    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: boolean) {
+        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
+        if (roomHasBeenDeletedReturn == true) {
+            console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
+            props.closeConvers();
         }
-        utilsData.socket.off('removeParticipantReturn');
-        utilsData.socket.removeListener('removeParticipantReturn');
+        utilsData.socket.off('roomHasBeenDeleted');
+        utilsData.socket.removeListener('roomHasBeenDeleted');
     })
 
-    const closeConvers = () => {
+    utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
+
+    utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
+        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
+        if (kickedOutOfTheGroupReturn == true) {
+            console.log("You were kicked out of the ", props.roomsConversData.name, " group");//NOTIF à ajouter
+            props.closeConvers();
+        }
+        utilsData.socket.off('kickedOutOfTheGroup');
+        utilsData.socket.removeListener('kickedOutOfTheGroup');
+    })
+
+    const closeAffParticipantsRooms = () => {
         props.setAffParticipantsRooms(false);
         props.setConversRooms(true);
     }
@@ -90,7 +97,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
                 <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeConvers} className="bi bi-arrow-left"></button>
+                    <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
                 </div>
                 <h3>{props.roomsConversData.name}</h3>
                 <div className="mainHeaderRight mainHeaderSide">

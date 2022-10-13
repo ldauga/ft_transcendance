@@ -5,7 +5,7 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setGoToCloseFriendList: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -18,8 +18,8 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	props.setOldAff("FriendList");
 
 	const handleClickClose = () => {
-		props.closeFriendList();
-		props.setFriendList(false);
+		// props.setGoToCloseFriendList(true);
+		// props.setFriendList(false);
 	};
 
 	const handleClickAddFriend = () => {
