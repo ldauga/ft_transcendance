@@ -34,7 +34,7 @@ export class RoomsController {
     return newRoom;
   }
 
-  @Post('/:login/:roomName')
+  @Post('/:id/:roomName')
   public async removeRoom(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<Boolean> {
     console.log('removeRoom Controller');
     const removeReturn = await this.service.removeRoom(id, roomName);

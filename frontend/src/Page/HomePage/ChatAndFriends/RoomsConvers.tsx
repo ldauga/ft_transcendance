@@ -30,21 +30,28 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     // const scrollToBottom = useScrollToBottom();
 
-    utilsData.socket.removeAllListeners('removeRoomReturn');
+    utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
-    utilsData.socket.on('removeRoomReturn', function (removeParticipantReturn: boolean) {
-        console.log('removeRoomReturn = ', removeParticipantReturn);
-        if (removeParticipantReturn == true) {
-            // const length = itemListHistory.length;
-            // let secu = 0;
-            // while (length == itemListHistory.length && secu < 5) {
-            //     setItemListHistory([]);
-            //     getListItem();
-            //     secu++;
-            // }
+    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: boolean) {
+        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
+        if (roomHasBeenDeletedReturn == true) {
+            console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
+            closeConvers();
         }
-        utilsData.socket.off('removeRoomReturn');
-        utilsData.socket.removeListener('removeRoomReturn');
+        utilsData.socket.off('roomHasBeenDeleted');
+        utilsData.socket.removeListener('roomHasBeenDeleted');
+    })
+
+    utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
+
+    utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
+        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
+        if (kickedOutOfTheGroupReturn == true) {
+            console.log("You were kicked out of the ", props.roomsConversData.name, " group");//NOTIF à ajouter
+            closeConvers();
+        }
+        utilsData.socket.off('kickedOutOfTheGroup');
+        utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
 
     utilsData.socket.removeAllListeners('newMsgReceived');
@@ -70,19 +77,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             props.setChat(true);
     };
 
-    const removeParticipant = (item: { login: string, id: number }) => {
+    const quitConvers = () => {
         const participantToRemove = {
-            login: item.login,
+            login: userData.userReducer.user?.login,
             room_name: props.roomsConversData.name
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
         setUpdate(false);
-    }
-
-    const quitConvers = () => {
-        let loginTmp = userData.userReducer.user?.login;
-        let idTmp = userData.userReducer.user?.id;
-        removeParticipant({ login: loginTmp !== undefined ? loginTmp : '', id: idTmp !== undefined ? idTmp : 0 });
         closeConvers();
     };
 
@@ -154,7 +155,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
-                        {/* <button onClick={removeRoom} className="bi bi-plus-lg"></button> */}
+                        <button onClick={removeRoom} className="bi bi-x-lg"></button>
                     </div>
                 </div>
             );
@@ -209,9 +210,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             }
             utilsData.socket.emit('createMsg', newMsg);
             setMessageText("");
-            // for (let i = 0; i < 9; i++) {
-            //     getListItem();
-            // }
         };
 
         return (
@@ -237,7 +235,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     return (
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} />}
         </div>
     );
 };

@@ -44,7 +44,6 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
             const length = itemListHistory.length;
             let secu = 0;
             while (length == itemListHistory.length && secu < constWhileSecu) {
-                setItemListHistory([]);
                 getListItem();
                 secu++;
             }
@@ -72,8 +71,9 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
     useEffect(() => {
         if (!update) {
             const oldLength = itemListHistory.length;
+            console.log("oldLength: ", oldLength, ", itemListHistory.length: ", itemListHistory.length);
             for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
-                console.log("Rooms useEffect getListItem i: ", i);
+                console.log("Rooms useEffect getListItem i: ", i, ", oldLength: ", oldLength, ", itemListHistory.length: ", itemListHistory.length);
                 getListItem();
             }
         }

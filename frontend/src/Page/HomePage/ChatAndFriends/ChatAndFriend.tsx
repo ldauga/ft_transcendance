@@ -26,6 +26,8 @@ function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, cl
     const [oldAff, setOldAff] = useState("");
     const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
 
+    const [goToCloseFriendList, setGoToCloseFriendList] = useState(false);
+
     const closeAll = () => {
         setFriendList(false);
         setInvitationRequest(false);
@@ -40,6 +42,7 @@ function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, cl
     }
 
     useEffect(() => {
+        console.log("first useEffect");
         closeAll();
         if (props.isNavChat)
             setChat(true);
@@ -47,9 +50,17 @@ function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, cl
             setFriendList(true);
     }, [props]);
 
+    useEffect(() => {
+        console.log("second useEffect");
+        if (goToCloseFriendList) {
+            setGoToCloseFriendList(false);
+            props.closeFriendList();
+        }
+    });
+
     return (
         <div id="mainAffChatAndFriend">
-            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} />}
+            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setGoToCloseFriendList={setGoToCloseFriendList} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
