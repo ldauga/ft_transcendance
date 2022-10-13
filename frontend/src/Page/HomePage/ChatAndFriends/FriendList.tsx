@@ -5,7 +5,7 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setGoToCloseFriendList: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -15,11 +15,9 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
-	props.setOldAff("FriendList");
-
 	const handleClickClose = () => {
-		// props.setGoToCloseFriendList(true);
-		// props.setFriendList(false);
+		props.closeFriendList();
+		props.setFriendList(false);
 	};
 
 	const handleClickAddFriend = () => {
@@ -126,11 +124,10 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	useEffect(() => {
-		if (!update) {
-			getListItem();
-			setUpdate(true);
-		}
-	});
+		console.log("friendlist useEffect()");
+		getListItem();
+		props.setOldAff("FriendList");
+	}, [props]);
 
 	return (
 		<div className="mainAffGene">

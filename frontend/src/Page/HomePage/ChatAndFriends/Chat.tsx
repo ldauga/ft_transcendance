@@ -12,9 +12,6 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
-    props.setOldAff("Chat");
-    props.setOldAffRoomConvers("Chat");
-
     const closeChat = () => {
         props.closeChat();
         props.setChat(false);
@@ -70,6 +67,8 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     useEffect(() => {
         getListItem();
+        props.setOldAff("Chat");
+        props.setOldAffRoomConvers("Chat");
     }, [props]);
 
     return (

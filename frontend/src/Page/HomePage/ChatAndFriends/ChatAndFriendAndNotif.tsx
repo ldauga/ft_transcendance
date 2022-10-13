@@ -13,9 +13,6 @@ import AffNotif from "./AffNotif";
 
 function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function }) {
 
-    const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReducer);
-
     const [isFriendList, setFriendList] = useState(true);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
     const [isConvers, setConvers] = useState(false);
@@ -43,7 +40,6 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
     }
 
     useEffect(() => {
-        console.log("first useEffect");
         closeAll();
         if (props.isNavChat)
             setChat(true);
@@ -51,18 +47,10 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
             setFriendList(true);
     }, [props]);
 
-    useEffect(() => {
-        console.log("second useEffect");
-        if (goToCloseFriendList) {
-            setGoToCloseFriendList(false);
-            props.closeFriendList();
-        }
-    });
-
     return (
         <div id="mainAffChatAndFriend">
-            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setGoToCloseFriendList={setGoToCloseFriendList} />}
-            {props.isNotif && <AffNotif setOpenPopUp={props.setOpenPopUp} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} />}
+            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} />}
+            {/* {props.isNotif && <AffNotif setOpenPopUp={props.setOpenPopUp} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} />} */}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
