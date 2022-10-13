@@ -1,10 +1,10 @@
 import { Autocomplete, Button, ButtonGroup, styled, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Navbar from "../../../Module/Navbar/Navbar";
-import { RootState } from "../../../State";
-import { Ball, gameRoomClass, Obstacle } from "../../PongPage/gameRoomClass";
-import './CreateMapTemp.scss';
+import Navbar from "../../Module/Navbar/Navbar";
+import { RootState } from "../../State";
+import { Ball, gameRoomClass, Obstacle } from "./gameRoomClass";
+import './CSS/CreateMap/CreateMapTemp.scss';
 
 var canvas = {
     "width": 800,

@@ -15,7 +15,7 @@ function MatchHistory() {
 
 	const [rows, setRows] = useState<any[]>([])
 
-	axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data))
+	axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
 
 	// {rows.map((row) => (
 	// 	<tr key={row.nickname}>
@@ -56,13 +56,13 @@ function MatchHistory() {
 								<div className='score'>
 									<h3>{row.winner_nickname == persistantReducer.userReducer.user?.nickname ? 'Victory' : 'Defeat'}</h3>
 									<div className="opponent">
-										<h2 className='player' onClick={() => {document.location.href = 'http://localhost:3000/Profile/' + row.nickname_user1; window.location.replace('http://localhost:3000/Profile/' + row.nickname_user1)}}>
+										<h2 className='player' onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname_user1)}}>
 											{row.nickname_user1}
 											</h2>
 										<h2>
 											VS
 											</h2>
-										<h2 className='player' onClick={() =>{document.location.href = 'http://localhost:3000/Profile/' + row.nickname_user2; window.location.replace('http://localhost:3000/Profile/' + row.nickname_user2)}}>
+										<h2 className='player' onClick={() =>{history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname_user2)}}>
 											{row.nickname_user2}
 											</h2>
 									</div>

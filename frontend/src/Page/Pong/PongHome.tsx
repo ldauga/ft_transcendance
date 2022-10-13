@@ -9,8 +9,8 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import NavBar from '../../Module/Navbar/Navbar';
 import './PongHome.scss';
-import map1 from './../PongPage/map1.png'
-import map2 from './../PongPage/map2.png'
+import map1 from './../assets/map1.png'
+import map2 from './../assets/map1.png'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 
@@ -24,7 +24,7 @@ const images = [
 	{
 		label: 'map2',
 		imgPath:
-			{ map1 },
+			{ map2 },
 	},
 	{
 		label: 'map3',
@@ -34,7 +34,7 @@ const images = [
 	{
 		label: 'map4',
 		imgPath:
-			{ map1 },
+			{ map2 },
 	},
 ];
 

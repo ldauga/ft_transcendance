@@ -58,7 +58,7 @@ function Leaderboard() {
 				<table>
 					<tbody>
 						{rows.map((row) => (
-							<tr key={row.nickname}>
+							<tr className='element' onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname)}} key={row.nickname}>
 								<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
 								<td><img src={
 									row.login == 'ldauga' ? master_rank_img :

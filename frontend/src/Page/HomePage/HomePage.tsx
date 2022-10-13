@@ -19,7 +19,6 @@ import les_BGs from '../assets/les_BGs.jpeg'
 
 import { bindActionCreators } from 'redux';
 import { NotifType } from '../../State/type';
-import affNotif from './affNotif';
 import { StatPlayer } from '../../Module/UserProfile/StatPlayer';
 import DropZone from './DropZone';
 import Login from '../Login/Login';

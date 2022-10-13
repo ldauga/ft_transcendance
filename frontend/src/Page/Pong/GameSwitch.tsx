@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import JoinRoom from './JoinQueue';
 import GamePage from './GamePage';
-import CreateMap from './CreateMap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
-import PongHome from '../Pong/PongHome';
-import CreateMapTemp from '../Pong/CreateMap/CreateMapTemp';
+import PongHome from './PongHome';
+import CreateMapTemp from './CreateMapTemp';
 
 let checkReconnexion = false
 

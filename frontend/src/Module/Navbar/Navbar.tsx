@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import Chat from '../../Components/Chat/Chat';
-import ChatAndFriend from '../../Page/HomePage/ChatAndFriends/ChatAndFriend';
+import ChatAndFriendAndNotif from '../../Page/HomePage/ChatAndFriends/ChatAndFriendAndNotif';
 import { actionCreators, RootState } from '../../State';
 import Friends from '../Friends/Friends';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
@@ -25,6 +25,7 @@ function NavBar() {
 
 	const [isChat, setChat] = useState(false);
 	const [isFriendList, setFriendList] = useState(false);
+	const [isNotif, setNotif] = useState(false);
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -63,6 +64,7 @@ function NavBar() {
 				<div className='right'>
 					<button onClick={() => { //friendList
 						setOpenPopUp(!open);
+						setNotif(false)
 						if (isChat) {
 							setChat(false);
 							setFriendList(true);
@@ -80,17 +82,15 @@ function NavBar() {
 						</svg>
 					</button>
 					<button onClick={() => { //notifs
-						setOpenPopUp(!open);
-						// if (isChat) {
-						// 	setChat(false);
-						// 	setOpenPopUp(false);
-						// }
-						// else if (isFriendList) {
-						// 	setChat(false);
-						// 	setFriendList(true);
-						// }
-						// else
-						// 	setChat(true);
+						if (isNotif) {
+							setNotif(false)
+							setOpenPopUp(false)
+						} else {
+							setOpenPopUp(true);
+							setNotif(true)
+							setChat(false);
+							setFriendList(false);
+						}
 					}}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 							<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
@@ -98,6 +98,7 @@ function NavBar() {
 					</button>
 					<button onClick={() => { //chat
 						setOpenPopUp(!open);
+						setNotif(false)
 						if (isChat) {
 							setOpenPopUp(false);
 							setChat(false);
@@ -179,7 +180,7 @@ function NavBar() {
 				</div>
 			</nav>
 			<PopupContainer open={openPopup} setClose={() => setOpenPopUp(false)}>
-				<ChatAndFriend isNavChat={isChat} isNavFriendList={isFriendList} closeFriendList={closeFriendList} closeChat={closeChat} />
+				<ChatAndFriendAndNotif setOpenPopUp={setOpenPopUp} isNotif={isNotif} isNavChat={isChat} isNavFriendList={isFriendList} closeFriendList={closeFriendList} closeChat={closeChat} />
 			</PopupContainer>
 		</div>
 	);
