@@ -23,9 +23,7 @@ function Leaderboard() {
 		if (!rows.length) {
 			axios.get('http://localhost:5001/user').then(res => {
 
-				
 				let tmp = res.data
-				console.log('sisisis', tmp)
 				
 				for (let index = 0; index < tmp.length; index++) {
 					if (index + 1 < tmp.length) {
@@ -37,9 +35,7 @@ function Leaderboard() {
 						}
 					}
 				}
-				console.log('sisisis', tmp)
 				setRows(tmp)
-
 			})
 		}
 

@@ -71,10 +71,6 @@ const HomePage = (props: any) => {
     const [userParameter2FAStatus, setUserParameter2FAStatus] = useState("Please enter the code above.");
     const [userParameter2FADeactivate, setUserParameter2FADeactivate] = useState(false);
 
-    var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
-        "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
-
-    var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
 
     
     return (

@@ -30,7 +30,7 @@ export class MatchesHistoryController {
   }
 
   @Get('parsedMatchesHistory/:id')
-  public async getParsedUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<{login_user1: string, score_u1: number, login_user2: string, score_u2: number, winner_login: string}[]> {
+  public async getParsedUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<{nickname_user1: string, score_u1: number, nickname_user2: string, score_u2: number, winner_login: string, date: number}[]> {
     return this.MatchesHistoryService.getParsedUserMatchesHistory(id);
   }
 

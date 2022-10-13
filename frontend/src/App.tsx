@@ -44,6 +44,7 @@ function App() {
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
+          <Route path='/Profile/*' element={<ConnectionChecker component={<></>} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 
