@@ -8,8 +8,7 @@ import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
-import './CSS/ChatAndFriends.css'
-import AffNotif from "./AffNotif";
+import './CSS/ChatAndFriends.scss'
 
 function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function }) {
 
