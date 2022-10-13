@@ -2,35 +2,46 @@ import { Avatar } from '@mui/material';
 import './Leaderboard.scss';
 import unranked from './../../../Assets/rank/unranked.png'
 
-function createData (
-	imgSrc: string,
-	username: string,
-	rank: string,
-	mmr: number
-){
-	return {imgSrc, username, rank, mmr};
-}
+import iron_rank_img from '../../../Assets/rank/iron_rank.png'
+import bronze_rank_img from '../../../Assets/rank/bronze_rank.png'
+import gold_rank_img from '../../../Assets/rank/gold_rank.png'
+import diamond_rank_img from '../../../Assets/rank/diamond_rank.png'
+import master_rank_img from '../../../Assets/rank/master_rank.png'
 
-const rows = [
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'Wazack', 'Gold', 1600),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'ldauga', 'Silver', 600),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'cgangaro', 'Bronze', 400),
-	createData("https://images.unsplash.com/photo-1550314124-301ca0b773ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2215&q=80", 'atourret', 'Bronze', 200)
-]
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../State';
+import { useEffect, useState } from 'react';
+
 
 function Leaderboard() {
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
+
+	const [rows, setRows] = useState<any[]>([])
+
+	useEffect(() => {
+		if (!rows.length) {
+			axios.get('http://localhost:5001/user').then(res => {
+
+				let tmp = res.data
+				
+				for (let index = 0; index < tmp.length; index++) {
+					if (index + 1 < tmp.length) {
+						if (tmp[index].wins < tmp[index + 1].wins || (tmp[index].wins == tmp[index + 1].wins && tmp[index].losses < tmp[index + 1].losses)) {
+							let swap = tmp[index]
+							tmp[index] = tmp[index + 1]
+							tmp[index + 1] = swap
+							index = -1;
+						}
+					}
+				}
+				setRows(tmp)
+			})
+		}
+
+		console.log('oui', rows)
+	})
+
 	return (
 		<div className='leaderboard'>
 			<table>
@@ -38,7 +49,8 @@ function Leaderboard() {
 					<tr>
 						<th>Username</th>
 						<th>Rank</th>
-						<th>MMR</th>
+						<th>Wins</th>
+						<th>Losses</th>
 					</tr>
 				</thead>
 			</table>
@@ -46,10 +58,19 @@ function Leaderboard() {
 				<table>
 					<tbody>
 						{rows.map((row) => (
-							<tr key={row.username}>
-								<td><img src={row.imgSrc}/> <span>{row.username}</span></td>
-								<td><img src={unranked}/> <span>{row.rank}</span></td>
-								<td>{row.mmr}</td>
+							<tr className='element' onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname)}} key={row.nickname}>
+								<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
+								<td><img src={
+									row.login == 'ldauga' ? master_rank_img :
+										!row.wins ? unranked :
+											row.wins < 5 ? iron_rank_img :
+												row.wins < 10 ? bronze_rank_img :
+													row.wins < 20 ? gold_rank_img :
+														row.wins < 50 ? diamond_rank_img :
+															master_rank_img
+								} /></td>
+								<td>{row.wins}</td>
+								<td>{row.losses}</td>
 							</tr>
 						))}
 					</tbody>

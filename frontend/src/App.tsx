@@ -6,7 +6,7 @@ import Login from './Page/Login/Login';
 import Callback from './Page/Login/Callback';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import ConnectionChecker from './Module/ConnectionChecker/ConnectionChecker';
-import GameSwitch from './Page/PongPage/GameSwitch';
+import GameSwitch from './Page/Pong/GameSwitch';
 import axios from 'axios';
 import useFindUser from './findUser';
 import { useSelector } from 'react-redux';
@@ -21,7 +21,7 @@ import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
 import NavBar from './Module/Navbar/Navbar';
 import PongHome from './Page/Pong/PongHome';
-import CreateMapTemp from './Page/Pong/CreateMap/CreateMapTemp';
+import CreateMapTemp from './Page/Pong/CreateMapTemp';
 
 function App() {
 
@@ -41,12 +41,10 @@ function App() {
 
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
-          <Route path='/pongTest' element={<ConnectionChecker component={<PongHome />} />} />
-          <Route path='/CreateMap' element={<ConnectionChecker component={<CreateMapTemp />} />} />
-
           <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
 
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
+          <Route path='/Profile/*' element={<ConnectionChecker component={<></>} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 

@@ -184,7 +184,7 @@ const GamePage = (props: any) => {
 
     function drawSpectator(room: gameRoomClass) {
 
-        room.spectate.forEach((item) => {
+        room.spectate.forEach((item: any) => {
             var canvas: HTMLCanvasElement | null
             if (item.pannel)
                 canvas = document.getElementById('spectate1') as HTMLCanvasElement

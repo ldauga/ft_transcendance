@@ -9,8 +9,9 @@ import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
 import './CSS/ChatAndFriends.css'
+import AffNotif from "./AffNotif";
 
-function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function }) {
+function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -61,6 +62,7 @@ function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, cl
     return (
         <div id="mainAffChatAndFriend">
             {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setGoToCloseFriendList={setGoToCloseFriendList} />}
+            {props.isNotif && <AffNotif setOpenPopUp={props.setOpenPopUp} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
@@ -70,4 +72,4 @@ function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, cl
     )
 }
 
-export default ChatAndFriend;
+export default ChatAndFriendAndNotif;

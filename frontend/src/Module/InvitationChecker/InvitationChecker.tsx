@@ -55,7 +55,6 @@ function InvitationChecker(props: { children: any }) {
 				}
 			}
 			setNotif(notif)
-
 			console.log('notifArray', persistantReducer.notifReducer.notifArray)
 		})
 	})
