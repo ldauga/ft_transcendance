@@ -8,7 +8,7 @@ import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
-import './CSS/ChatAndFriends.css'
+import './CSS/ChatAndFriends.scss'
 
 function ChatAndFriend(props: { isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function }) {
 

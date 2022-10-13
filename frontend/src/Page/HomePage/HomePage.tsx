@@ -1,7 +1,7 @@
 import { rmSync } from 'fs';
 import React, { Component, useEffect, useState } from 'react';
 import Navbar from '../../Module/Navbar/Navbar';
-import './HomePage.css';
+import './Homepage.scss';
 import FriendList from './ChatAndFriends/FriendList';
 import { AddFriendHook, FriendListHook } from './Hooks';
 import { useDispatch, useSelector } from 'react-redux';
