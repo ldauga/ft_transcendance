@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
+import BanRoomParticipant from './BanRoomParticipant';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -14,6 +15,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
     const [update, setUpdate] = useState(false);
+
+    const [banRoomParticipant, setBanRoomParticipant] = useState(false);
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
@@ -69,6 +72,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
+
+    const handleClickBanRoomParticipant = () => {
+        if (banRoomParticipant)
+            setBanRoomParticipant(false);
+        else
+            setBanRoomParticipant(true);
+    }
 
     const closeAffParticipantsRooms = () => {
         props.setAffParticipantsRooms(false);
@@ -142,9 +152,10 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 </div>
                 <h3>{props.roomsConversData.name}</h3>
                 <div className="mainHeaderRight mainHeaderSide">
-
+                    <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
                 </div>
             </div>
+            {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
             {itemListHistory}
         </div>
     );
