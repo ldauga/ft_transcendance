@@ -8,14 +8,10 @@ import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
-<<<<<<< HEAD
 import './CSS/ChatAndFriends.css'
 import AffNotif from "./AffNotif";
 import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
-=======
-import './CSS/ChatAndFriends.scss'
->>>>>>> 59dfe1e3149d296fb1dd449cbb58b192a2a2219e
 
 function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function }) {
 

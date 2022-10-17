@@ -5,10 +5,8 @@ import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import Chat from '../../Components/Chat/Chat';
 import ChatAndFriendAndNotif from '../../Page/HomePage/ChatAndFriends/ChatAndFriendAndNotif';
 import { actionCreators, RootState } from '../../State';
-import Friends from '../Friends/Friends';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
 

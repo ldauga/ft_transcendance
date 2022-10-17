@@ -8,12 +8,22 @@
 		a {
 			all: unset;
 		}
+
 		height: 15vh;
 		color: rgba($color: #f0e7e5, $alpha: .5);
 		transition: all .3s ease-out;
 		cursor: pointer;
+
 		&:hover {
 			color: rgba($color: #f0e7e5, $alpha: 1);
 		}
-	}	  
+	}
+}
+
+h3 {
+	color: white;
+}
+
+p {
+	color: white;
 }

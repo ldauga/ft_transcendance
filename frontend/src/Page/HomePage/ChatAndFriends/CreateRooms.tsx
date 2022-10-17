@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.css'
-import '../HomePage.css'
+import '../Homepage.scss'
 import { CheckBox } from '@mui/icons-material';
 import { Checkbox } from '@mui/material';
 
