@@ -8,7 +8,7 @@ import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
 import RoomsConvers from "./RoomsConvers";
-import './CSS/ChatAndFriends.css'
+import './CSS/ChatAndFriends.scss'
 import AffNotif from "./AffNotif";
 import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
