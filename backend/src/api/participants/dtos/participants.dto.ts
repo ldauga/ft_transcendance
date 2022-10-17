@@ -17,4 +17,7 @@ export class ParticipantsDto {
 	@IsNotEmpty()
 	public room_name: string;
 
+	@IsBoolean()
+	public admin: boolean;
+
 }

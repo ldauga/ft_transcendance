@@ -35,9 +35,30 @@ export class ParticipantsController {
     return returnCheck;
   }
 
+  @Get('/checkAdmin/:login/:name')
+  public async checkIfAdmin(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
+    const returnCheck = await this.service.checkAdmin(login, name);
+    console.log('checkAdmin Check = ', returnCheck);
+    return returnCheck;
+  }
+
+  @Get('/checkIfAdminOrParticipant/:login/:name')
+  public async checkIfAdminOrParticipant(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
+    const returnCheck = await this.service.checkIfAdminOrParticipant(login, name);
+    console.log('checkIfAdminOrParticipant Check = ', returnCheck);
+    return returnCheck;
+  }
+
+  @Post('/admin')
+  public async createAdmin(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
+    console.log('body', body);
+    const newParticipant = await this.service.createAdmin(body);
+    return newParticipant;
+  }
+
   @Post()
   public async createParticipant(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
-    // console.log('body', body);
+    console.log('body', body);
     const newParticipant = await this.service.createParticipant(body);
     return newParticipant;
   }

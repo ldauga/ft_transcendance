@@ -240,16 +240,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         user_id: data.owner_id,
         user_login: data.owner_login,
         room_id: item.data.id,
-        room_name: data.name
+        room_name: data.name,
+        admin: true
       }
+      console.log("newParticipant: ", newParticipant);
       const tmp_room_id = item.data.id;
       const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
       console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
       console.log('participant created');
-      console.log('arrClient: ', arrClient);
-      console.log('data: ', data);
+      // console.log('arrClient: ', arrClient);
+      // console.log('data: ', data);
       const _client = arrClient.find(obj => obj.username === data.owner_login);
-      console.log('_client: ', _client);
+      // console.log('_client: ', _client);
       const newRoom = {
         id: tmp_room_id,
         name: data.name,
@@ -310,7 +312,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               user_id: data.user_id,
               user_login: data.user_login,
               room_id: data.room_id,
-              room_name: data.room_name
+              room_name: data.room_name,
+              admin: false
             }
             const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
             console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
@@ -347,7 +350,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       user_id: data.user_id,
       user_login: data.user_login,
       room_id: data.room_id,
-      room_name: data.room_name
+      room_name: data.room_name,
+      admin: false
     }
     const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
     console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
@@ -392,6 +396,45 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
       }
     }));
+  }
+
+  @SubscribeMessage('createAdmin')
+  async createAdmin(client: Socket, data: any) {
+    let verif = false;
+    const checkIfOwner = await this.http.get('http://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    await checkIfOwner.forEach(async item => {
+      if (item.data == true)
+        verif = true;
+    });
+    const checkIfAdmin = await this.http.get('http://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
+    await checkIfAdmin.forEach(async item => {
+      if (item.data == true)
+        verif = true;
+    });
+    const checkParticipant = await this.http.get('http://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
+    await checkParticipant.forEach(async item => {
+      this.logger.log(`${item.data} data`);
+      console.log("verif : ", verif);
+      if (item.data == true && verif == true) {
+        this.logger.log(`${client.id} create Admin: `, data.login_admin);
+        const newParticipant = {
+          user_id: data.id_admin,
+          user_login: data.login_admin,
+          room_id: data.room_id,
+          room_name: data.room_name,
+          admin: true
+        };
+        const participantReturn = await this.http.post('http://localhost:5001/participants/admin', newParticipant);
+        console.log(participantReturn.forEach(item => (console.log('participantReturn in eventgateway'))));
+        const a = arrRoom.find(obj => obj.name == data.room_name);
+        console.log("room: ", a);
+        let i = 0;
+        while (i < a.users.length) {
+          this.server.to(a.users[i].id).emit('newParticipant', true);
+          i++;
+        }
+      }
+    });
   }
 
   //NEW CHAT EVENTS

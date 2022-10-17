@@ -20,6 +20,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
     const [isAdmin, setAdmin] = useState(false);
+    const [isOwner, setOwner] = useState(false);
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
@@ -110,10 +111,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const checkIfOwner = async () => {
         await axios.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
-            if (res.data == true)
+            if (res.data == true) {
                 setAdmin(true);
-            else
+                setOwner(true);
+            }
+            else {
                 setAdmin(false);
+                setOwner(false);
+            }
         })
     };
 
@@ -144,7 +149,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [props, isConversRooms]);
 
     function Header() {
-        if (isAdmin == true)
+        if (isOwner == true)
             return (
                 <div id="header" className="mainHeader">
                     <div className="mainHeaderLeft mainHeaderSide">
@@ -234,7 +239,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     return (
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
         </div>
     );
 };
