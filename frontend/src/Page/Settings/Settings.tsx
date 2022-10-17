@@ -1,6 +1,8 @@
+import { DriveFolderUpload } from '@mui/icons-material';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, TextField } from '@mui/material';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import PinInput from 'react-pin-input';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavBar from '../../Module/Navbar/Navbar';
@@ -15,6 +17,7 @@ function Settings() {
 	const [userParameter2FACode, setUserParameter2FACode] = useState("");
 	const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
 	const [userParameter2FARes, setUserParameter2FARes] = useState(0);
+	const [fullPinCode, setFullPinCode] = useState(0);
 	const dispatch = useDispatch();
 	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 	const [userParameterNewProfilePicture, setUserParameterNewProfilePicture] = useState<null | any>(null)
@@ -54,7 +57,7 @@ function Settings() {
 			axios(config).then((res) => setUser(res.data))
 		}
 
-		console.log(userParameter2FARes)
+		// console.log(userParameter2FARes)
 
 		setUserParameter2FAQrCode("")
 		setUserParameter2FACode("")
@@ -63,6 +66,31 @@ function Settings() {
 
 		param(false);
 	};
+
+	const sendGetRequest = (value: string) => {
+	axios.get('http://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
+		.then(res => {
+			setTwoFactor(true);
+			setUserParameter2FACode('');
+			setUser(res.data);
+			setUserParameter2FARes(res.status);
+		})
+		.catch(err => {
+			setUserParameter2FARes(err.response.status);
+		});
+	}
+
+	useEffect(() => {
+		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
+		if (fullPinCode && userParameter2FARes === 401) {
+			if (wrongCode)
+				wrongCode.style.display = 'block';
+			} else {
+			if (wrongCode)
+				wrongCode.style.display = 'none';
+		}
+	  }, [userParameter2FARes]);
+
 	return (
 		<>
 			<NavBar />
@@ -96,29 +124,34 @@ function Settings() {
 					<Divider />
 					<div className='avatar'>
 						<h3>Avatar :</h3>
-						<img src={avatar} alt='avatar' />
-						<button onClick={() => { handleClickOpen(setOpenEditZoneProfilePicture) }}>Edit</button>
-						<Dialog open={openEditZoneProfilePicture} onClose={() => { setOpenEditZoneProfilePicture(false) }}>
-							{
-								userParameterNewProfilePicture == null || userParameterNewProfilePicture == undefined ?
-									(<>
-										<DialogTitle>Select an image</DialogTitle>
-										<DialogContent>
-											<input type="file" accept=".jpeg,.jpg,.png" onChange={e => { setUserParameterNewProfilePicture(e.target.files?.item(0)) }} />
-										</DialogContent>
-									</>) :
-									(<>
-										<DialogTitle>Your new Profile Picture</DialogTitle>
-										<DialogContent>
-											<img src={URL.createObjectURL(userParameterNewProfilePicture as File)} />
-										</DialogContent>
-										<DialogActions>
-											<Button onClick={e => { setUserParameterNewProfilePicture(undefined) }}>Change image</Button>
-											<Button onClick={e => { handleClose(setOpenEditZoneProfilePicture) }}>Save</Button>
-										</DialogActions>
-									</>)
-							}
-						</Dialog>
+						<div className='edit'>
+							<img src={avatar} alt='avatar' />
+							<button onClick={() => { handleClickOpen(setOpenEditZoneProfilePicture) }}>Edit</button>
+							<Dialog open={openEditZoneProfilePicture} onClose={() => { setOpenEditZoneProfilePicture(false) }}>
+								{
+									userParameterNewProfilePicture == null || userParameterNewProfilePicture == undefined ?
+										(<>
+											<DialogTitle>Select an image</DialogTitle>
+											<DialogContent>
+											<label htmlFor="file-upload" className="custom-file-upload">
+												<DriveFolderUpload /> Change Image
+											</label>
+												<input id='file-upload' type="file" accept=".jpeg,.jpg,.png" onChange={e => { setUserParameterNewProfilePicture(e.target.files?.item(0)) }} />
+											</DialogContent>
+										</>) :
+										(<>
+											<DialogTitle>Your new Profile Picture</DialogTitle>
+											<DialogContent>
+												<img className='new-pofile-picture' src={URL.createObjectURL(userParameterNewProfilePicture as File)} />
+											</DialogContent>
+											<DialogActions>
+												<Button onClick={e => { setUserParameterNewProfilePicture(undefined) }}>Change image</Button>
+												<Button onClick={e => { handleClose(setOpenEditZoneProfilePicture) }}>Save</Button>
+											</DialogActions>
+										</>)
+								}
+							</Dialog>
+						</div>
 					</div>
 					<Divider />
 					<div className='twoFA'>
@@ -129,20 +162,27 @@ function Settings() {
 									<button onClick={() => { handleClickOpen(setOpenEditZone2fa) }}>Activate</button>
 									<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
 										<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
-										<DialogContent>
+										<DialogContent className='two-fa'>
 											<img src={userParameter2FAQrCode} />
-											<input placeholder={!userParameter2FARes ? 'Enter code' : userParameter2FARes == 200 ? 'Your 2FA is activated' : 'Wrong code'} type="text" autoFocus value={userParameter2FACode} onChange={e => { setUserParameter2FACode(e.target.value); setUserParameter2FARes(0) }} />
-											<button onClick={() => { axios.get('http://localhost:5001/auth/2fa/turn-on/' + userParameter2FACode, { withCredentials: true }).then(res => { setUserParameter2FARes(res.status); setTwoFactor(true); setUserParameter2FACode(''); setUser(res.data) }).catch((e) => setUserParameter2FARes(e.response.status)); setUserParameter2FACode('') }} >Try code</button>
+											<PinInput 
+												length={6}
+												focus
+												onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }} 
+												type="numeric"
+												inputFocusStyle={{borderColor: '#f55951'}}
+												inputMode="number"
+												style={{padding: '10px'}}
+												onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
+												autoSelect={true}
+											/>
+											<p className='wrong-code' style={{display: 'none'}}>Wrong Code</p>
 										</DialogContent>
-										<DialogActions>
-											<Button onClick={e => { handleClose(setOpenEditZone2fa) }}>Save</Button>
-										</DialogActions>
 									</Dialog>
 								</div></> :
-							<><h3>Deactivate 2FA :</h3>
+							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axios.get('http://localhost:5001/auth/2fa/turn-off/', { withCredentials: true }).then(res => {console.log(res); setUser(res.data)}) }}>Deactivate</button>
+									<button onClick={() => { axios.get('http://localhost:5001/auth/2fa/turn-off/', { withCredentials: true }).then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
 								</div>
 							</>
 						}
