@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/InvitationRequest.css';
-import './CSS/ChatAndFriends.css';
+import './CSS/ChatAndFriends.scss';
 import './../HomePage.css';
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
