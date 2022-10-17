@@ -7,8 +7,9 @@ import { FriendListModule } from './friendsList/friendList.module';
 import { InvitationRequestModule } from './invitationRequest/invitationRequest.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { PartcipantsModule } from './participants/participants.module';
+import { BlackListModule } from './blackList/blackList.module';
 
 @Module({
-  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, FriendListModule, InvitationRequestModule, RoomsModule, PartcipantsModule],
+  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, FriendListModule, InvitationRequestModule, RoomsModule, PartcipantsModule, BlackListModule],
 })
 export class ApiModule { }

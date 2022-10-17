@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.css'
 import '../HomePage.css'
+import { CheckBox } from '@mui/icons-material';
+import { Checkbox } from '@mui/material';
 
 function CreateRooms() {
 
@@ -11,6 +13,8 @@ function CreateRooms() {
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [text, setText] = useState('');
+    const [password, setPassword] = useState('');
+    const [publicOrPrivate, setPublicOrPrivate] = useState(false);
 
     const createGroup = async () => {
         if (text.length <= 0 || text.length > 20)
@@ -30,32 +34,41 @@ function CreateRooms() {
             const newRoom = {
                 name: text,
                 description: "",
-                password: "",
+                password: password,
                 identifiant: 1,
                 owner_id: userData.userReducer.user?.id,
-                owner_login: userData.userReducer.user?.login
+                owner_login: userData.userReducer.user?.login,
+                publicOrPrivate: publicOrPrivate
             }
             utilsData.socket.emit('createChatRooms', newRoom);
             setText("");
-            // const newParticipant = {
-            //     user_id: data.user_id,
-            //     user_login: data.user_login,
-            //     room_id: data.room_id,
-            //     room_name: data.room_name
-            // }
-            // utilsData.socket.emit('participants', newRoom);
+            setPassword("");
         }
-
     };
 
     return (
         <div id="CreateGroupContainer">
+            <h3>Create a group</h3>
             <input
                 value={text}
                 onChange={e => setText(e.target.value)}
                 placeholder="Enter name"
-                onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
+            // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
             />
+            <div id="PublicOrPrivateContainer">
+                <input
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    disabled={!publicOrPrivate}
+                // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
+                />
+                <p>Private</p>
+                <Checkbox
+                    value={publicOrPrivate}
+                    onChange={e => setPublicOrPrivate(!publicOrPrivate)}
+                />
+            </div>
             <button type="button" onClick={() => createGroup()}>
                 Create Group
             </button>

@@ -14,29 +14,36 @@ export class RoomsService {
 
 	private logger: Logger = new Logger('Rooms');
 
-	public async getAllRooms(): Promise<{ id: number, name: string }[]> {
-		let arrReturn: { id: number, name: string }[] = [];
+	public async getAllRooms(): Promise<{ id: number, name: string, publicOrPrivate: boolean }[]> {
+		let arrReturn: { id: number, name: string, publicOrPrivate: boolean }[] = [];
 		const returnAll = await this.RoomsRepository.find();
 		returnAll.forEach(element => {
 			const newRoom = {
 				id: element.id,
-				name: element.name
+				name: element.name,
+				publicOrPrivate: element.publicOrPrivate
 			};
 			arrReturn.push(newRoom);
 		});
 		return arrReturn;
 	}
 
-	public async getAllRooms2(): Promise<string[]> {
-		let arrReturn: string[] = [];
-		const returnAll = await this.RoomsRepository.find();
-		returnAll.forEach(element => {
-			const newRoom = {
-				id: element.id,
-				name: element.name
-			}
+	async checkIfCanJoin(user_id: number, user_login: string, room_id: number, room_name: string, password: string): Promise<String> {
+		const check = await this.RoomsRepository.findOne({
+			where: [
+				{ id: room_id, name: room_name }
+			]
 		});
-		return arrReturn;
+		if (check == null)
+			return ("room not found");
+		if (check.publicOrPrivate) {
+			console.log("check.password: ", check.password, ", passwordInput: ", password);
+			if (check.password.localeCompare(password) == 0)
+				return ("ok");
+			else
+				return ("wrong password");
+		}
+		return ("ok");
 	}
 
 	async checkRoom(nameToCheck: string): Promise<Boolean> {
@@ -67,7 +74,8 @@ export class RoomsService {
 			description: body.description,
 			password: body.password,
 			identifiant: body.identifiant,
-			owner_id: body.owner_id
+			owner_id: body.owner_id,
+			publicOrPrivate: body.publicOrPrivate
 		})
 		if (!returnRoom)
 			return null;

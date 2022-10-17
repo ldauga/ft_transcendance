@@ -9,10 +9,10 @@ import { notifReducer } from "./notifReducer";
 import { twoFactorReducer } from "./2faReducer";
 
 const persistConfig = {
-    key: 'root',
-    storage,
-  }
-  
+  key: 'root',
+  storage,
+}
+
 const tmp = combineReducers({
   userReducer: userReducer,
   notifReducer: notifReducer,
@@ -22,10 +22,10 @@ const tmp = combineReducers({
 const persistantReducer = persistReducer(persistConfig, tmp)
 
 const reducers = combineReducers({
-    log: logReducer,
-    clientList: clientListReducer,
-    utils: utilsReducer,
-    persistantReducer: persistantReducer,
+  log: logReducer,
+  clientList: clientListReducer,
+  utils: utilsReducer,
+  persistantReducer: persistantReducer
 });
 
 export default reducers;

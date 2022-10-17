@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import '../HomePage.css'
+import { constWhileSecu } from '../HomePage';
 
-function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function }) {
+function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -20,7 +21,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
         if (roomHasBeenDeletedReturn == true) {
             console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
-            props.closeConvers();
+            closeConvers();
         }
         utilsData.socket.off('roomHasBeenDeleted');
         utilsData.socket.removeListener('roomHasBeenDeleted');
@@ -32,15 +33,55 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
         if (kickedOutOfTheGroupReturn == true) {
             console.log("You were kicked out of the ", props.roomsConversData.name, " group");//NOTIF à ajouter
-            props.closeConvers();
+            closeConvers();
         }
         utilsData.socket.off('kickedOutOfTheGroup');
         utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
 
+    utilsData.socket.removeAllListeners('newParticipant');
+
+    utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
+        console.log('newParticipant = ', newParticipantReturn);
+        if (newParticipantReturn == true) {
+            console.log("New participant in ", props.roomsConversData.name);//NOTIF à ajouter
+            const length = itemListHistory.length;
+            let secu = 0;
+            while (length == itemListHistory.length && secu < constWhileSecu) {
+                getListItem();
+                secu++;
+            }
+        }
+        utilsData.socket.off('newParticipant');
+        utilsData.socket.removeListener('newParticipant');
+    })
+
+    utilsData.socket.removeAllListeners('removeParticipantReturn');
+
+    utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
+        console.log('removeParticipantReturn = ', roomHasBeenDeletedReturn);
+        const length = itemListHistory.length;
+        let secu = 0;
+        while (length == itemListHistory.length && secu < constWhileSecu) {
+            getListItem();
+            secu++;
+        }
+        utilsData.socket.off('removeParticipantReturn');
+        utilsData.socket.removeListener('removeParticipantReturn');
+    })
+
     const closeAffParticipantsRooms = () => {
         props.setAffParticipantsRooms(false);
         props.setConversRooms(true);
+    }
+
+    const closeConvers = () => {
+        props.setAffParticipantsRooms(false);
+        props.setConversRooms(false);
+        if (props.oldAffRoomConvers == "chat")
+            props.setChat(true);
+        else
+            props.setRooms(true);
     }
 
     const removeParticipant = (item: { login: string, id: number }) => {
