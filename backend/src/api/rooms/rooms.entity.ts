@@ -22,4 +22,7 @@ export class RoomsEntity {
   @Index()
   public owner_id: number;
 
+  @Column({ default: false })
+  public publicOrPrivate: boolean;
+
 }

@@ -5,12 +5,12 @@ import { actionCreators, RootState } from "../../../State";
 import { notifReducer } from "../../../State/Reducers/notifReducer";
 import { NotifType } from "../../../State/type";
 
-import './CSS/Notif.css'
+import './CSS/AffNotif.css'
 
-const AffNotif = (props: any) => {
+const AffNotif = (props: { setNotif: Function, setFriendList: Function, setInvitationRequest: Function, setConvers: Function, setChat: Function, closeNotif: Function, openFriendList: Function, setGoToOpenInvitationRequest: Function }) => {
 
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-	const utilsData = useSelector((state: RootState) => state.utils)
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+	const utilsData = useSelector((state: RootState) => state.utils);
 
 	const dispatch = useDispatch();
 	const { delNotif } = bindActionCreators(actionCreators, dispatch);
@@ -18,22 +18,33 @@ const AffNotif = (props: any) => {
 	const [verif, setVerif] = useState(false)
 	const [notifArr, setNotifArr] = useState<any[]>([])
 
-	useEffect(() => {
-		if (!verif) {
-			setVerif(true)
+	const close = () => {
+		props.closeNotif();
+		props.setNotif(false);
+	}
 
-			var ret: any[] = []
+	const goToInvitationRequest = (index: number) => {
+		console.log("click");
+		close();
+		props.setGoToOpenInvitationRequest(true);
+		props.openFriendList();
+		delNotif(persistantReducer.notifReducer.notifArray[index])
+	}
 
-			persistantReducer.notifReducer.notifArray.forEach((item, index) => {
-				var tmp: any;
+	const listItems = () => {
+		var ret: any[] = []
 
-				switch (item.type) {
+		persistantReducer.notifReducer.notifArray.forEach((item, index) => {
+			var tmp: any;
 
-					case NotifType.GAMEINVITE: {
+			switch (item.type) {
 
-						tmp = (<div className='notifElement' key={ret.length}>
-							<div className="inviteNameDiv">
-								<h3 id='invitePlayer'> {item.data.inviteUser.login + " wants to play with you"} </h3>
+				case NotifType.GAMEINVITE: {
+
+					tmp = (<div className='notifContainer' key={ret.length}>
+						<div>
+							<div className="notifHeader">
+								<h3> {item.data.inviteUser.login + " wants to play with you"} </h3>
 							</div>
 							<div className="blocksContainerRow">
 								<button className='inviteButton decline' onClick={(e) => {
@@ -45,33 +56,35 @@ const AffNotif = (props: any) => {
 									window.location.href = 'http://localhost:3000/pong'
 								}}>Accept</button>
 							</div>
-						</div>)
-						break;
-					}
-					case NotifType.DISCONNECTGAME: {
+						</div>
+					</div>)
+					break;
+				}
+				case NotifType.DISCONNECTGAME: {
 
-						tmp = (<div className='notifElement' key={ret.length}>
-							<div className="inviteNameDiv">
-								<h3 id='invitePlayer'> {"You have disconnected a pong game"} </h3>
-							</div>
-							<div className="blocksContainerRow">
-								<button className='inviteButton decline' onClick={(e) => {
-									utilsData.socket.emit('FORFEIT', { user: persistantReducer.userReducer.user, roomId: persistantReducer.notifReducer.notifArray[index].data.roomId })
-									delNotif(persistantReducer.notifReducer.notifArray[index])
-								}} >Forfeit</button>
-								<button className='inviteButton accept' onClick={(e) => {
-									delNotif(persistantReducer.notifReducer.notifArray[index])
-									window.location.href = 'http://localhost:3000/pong'
-								}} >Join</button>
-							</div>
-						</div>)
+					tmp = (<div className='notifElement' key={ret.length}>
+						<div className="inviteNameDiv">
+							<h3 id='invitePlayer'> {"You have disconnected a pong game"} </h3>
+						</div>
+						<div className="blocksContainerRow">
+							<button className='inviteButton decline' onClick={(e) => {
+								utilsData.socket.emit('FORFEIT', { user: persistantReducer.userReducer.user, roomId: persistantReducer.notifReducer.notifArray[index].data.roomId })
+								delNotif(persistantReducer.notifReducer.notifArray[index])
+							}} >Forfeit</button>
+							<button className='inviteButton accept' onClick={(e) => {
+								delNotif(persistantReducer.notifReducer.notifArray[index])
+								window.location.href = 'http://localhost:3000/pong'
+							}} >Join</button>
+						</div>
+					</div>)
 
-						break;
-					}
-					case NotifType.LOOSEGAMEDISCONECT: {
+					break;
+				}
+				case NotifType.LOOSEGAMEDISCONECT: {
 
-						tmp = (<div className='notifElement' key={ret.length}>
-							<div className="inviteNameDiv">
+					tmp = (<div className='notifContainer' key={ret.length}>
+						<div className="notifElement">
+							<div className="notifHeader">
 								<h3 id='invitePlayer'>{"You gave up against " + persistantReducer.notifReducer.notifArray[index].data.opponentLogin} </h3>
 							</div>
 							<div className="blocksContainerRow">
@@ -79,56 +92,64 @@ const AffNotif = (props: any) => {
 									delNotif(persistantReducer.notifReducer.notifArray[index])
 								}} >Delete</button>
 							</div>
-						</div>)
+						</div>
+					</div>)
 
-						break;
+					break;
 
-					}
-					case NotifType.PENDINGINVITATION: {
-
-						tmp = (<div className='notifElement' key={ret.length}>
-							<div className="inviteNameDiv">
-								<h3 id='invitePlayer'>Check your invitation request</h3>
-							</div>
-							<div className="blocksContainerRow">
-								<button className='inviteButton accept' onClick={(e) => {
-									var tmp = document.getElementById('notifModal');
-									if (tmp)
-										tmp.style.display = 'none'
-									props.setFriendList(false)
-									props.setInvitationRequest(true)
-									props.setConvers(false)
-									props.setChat(false)
-									delNotif(persistantReducer.notifReducer.notifArray[index])
-								}} >More details</button>
-								<button className='inviteButton decline' onClick={(e) => {
-									delNotif(persistantReducer.notifReducer.notifArray[index])
-								}} >Ignore</button>
-							</div>
-						</div>)
-
-						break;
-					}
-					default: { }
 				}
+				case NotifType.PENDINGINVITATION: {
 
-				ret.push(tmp)
-			})
+					tmp = (<div className='notifContainer' key={ret.length}>
+						<div className="notifElement">
+							<div className="notifTopContainer">
+								<button className="bi bi-x" onClick={(e) => {
+									delNotif(persistantReducer.notifReducer.notifArray[index])
+								}} />
+							</div>
+							<div className="notifHeader">
+								<h3>Check your invitation request</h3>
+							</div>
+							<div className="notifMain">
+								<button className='inviteButton accept' onClick={(e) => {
+									// var tmp = document.getElementById('notifModal');
+									// if (tmp)
+									// 	tmp.style.display = 'none'
+									goToInvitationRequest(index);
+								}} >More details</button>
+							</div>
+						</div>
+					</div>)
 
-			setNotifArr(ret.reverse())
-		}
-	})
+					break;
+				}
+				default: { }
+			}
+			ret.push(tmp)
+		})
+		setNotifArr(ret.reverse())
+	}
+
+	useEffect(() => {
+		listItems();
+	}, [persistantReducer])
+
+	useEffect(() => {
+	}, [props]);
 
 	return (
 		<div className="mainAffGene">
 			<div id="header" className="mainHeader">
 				<div className="mainHeaderLeft mainHeaderSide">
-					<button onClick={props.setOpenPopUp(false)}><i className="bi bi-x"></i></button>
+					<button onClick={close}><i className="bi bi-x"></i></button>
 				</div>
 				<h3>Notif</h3>
 				<div className="mainHeaderRight mainHeaderSide">
-					{notifArr}
+
 				</div>
+			</div>
+			<div id="ListItemNotif">
+				{notifArr}
 			</div>
 		</div>
 	)

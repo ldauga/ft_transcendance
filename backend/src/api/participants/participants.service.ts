@@ -70,6 +70,7 @@ export class ParticipantsService {
 		});
 		const removeReturn = this.ParticipantsRepository.delete(check);
 		console.log('removeParticipantReturn', removeReturn);
+		return true;
 	}
 
 	public async getAllUsersForOneRoom(name: string): Promise<{ login: string, id: number }[]> {

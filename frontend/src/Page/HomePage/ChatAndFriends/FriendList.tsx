@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
+import BanUser from "./BanUser";
 
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
 
@@ -15,6 +16,8 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
+	const [banUser, setBanUser] = useState(false);
+
 	const handleClickClose = () => {
 		props.closeFriendList();
 		props.setFriendList(false);
@@ -25,6 +28,13 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 			setNewAddFriend(false);
 		else
 			setNewAddFriend(true);
+	};
+
+	const handleClickBanUser = () => {
+		if (banUser)
+			setBanUser(false);
+		else
+			setBanUser(true);
 	};
 
 	const handleClickInvitationRequest = () => {
@@ -138,12 +148,14 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				</div>
 				<h3>Friends</h3>
 				<div className="mainHeaderRight mainHeaderSide">
+					<button onClick={handleClickBanUser}><i className="bi bi-person-x-fill"></i></button>
 					<button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
 					<button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
 					<button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
 				</div>
 			</div>
 			{newAddFriend && <AddFriend />}
+			{banUser && <BanUser />}
 			<ItemsFriendList />
 		</div>
 	)

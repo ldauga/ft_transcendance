@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/InvitationRequest.css';
 import './CSS/ChatAndFriends.scss';
-import './../HomePage.css';
+import './../Homepage.scss';
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 

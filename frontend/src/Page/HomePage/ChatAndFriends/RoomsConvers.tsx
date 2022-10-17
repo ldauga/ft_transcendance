@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import './CSS/Convers.css'
-import '../HomePage.css'
+import '../Homepage.scss'
 import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
@@ -32,10 +32,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
-    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: boolean) {
+    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
         console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
-        if (roomHasBeenDeletedReturn == true) {
-            console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
+        if (roomHasBeenDeletedReturn == props.roomsConversData.name) {//NOTIF à ajouter
             closeConvers();
         }
         utilsData.socket.off('roomHasBeenDeleted');
@@ -235,7 +234,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     return (
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
         </div>
     );
 };

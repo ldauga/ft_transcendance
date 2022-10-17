@@ -1,16 +1,15 @@
 import Navbar from '../../Module/Navbar/Navbar';
-import './../assets/Font.css';
 import './NotFound.scss';
 
 const NotFound = () => {
 
     return (
         <div className='Font'>
-            <Navbar/>
+            <Navbar />
             <h1>Error 404</h1>
             <h2>Page Not Found</h2>
         </div>
     );
-  };
+};
 
-  export default NotFound;
+export default NotFound;
