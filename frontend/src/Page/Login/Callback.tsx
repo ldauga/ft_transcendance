@@ -1,11 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import PinInput from "react-pin-input";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../../State";
 import { RootState } from "../../State/Reducers";
+import './Callback.scss';
+import logo from '../assets/logo_transcendence.png';
 
 export default function Callback() {
 
@@ -13,30 +16,29 @@ export default function Callback() {
 
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
-
-    const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
-    const [code, setCode] = useState("");
     const [turnOn, setTurnOn] = useState(false);
     const [res, setRes] = useState(0);
-    const [status, setStatus] = useState("");
+    const [fullPinCode, setFullPinCode] = useState(false);
 
-    async function turnOn2fa(key: string) {
-        if (key == "Enter") 
-            axios.get('http://localhost:5001/auth/2fa/verify/' + code, { withCredentials: true })
-                .then((e) => {setTwoFactor(true), setTurnOn(true)})
-                .catch((e) => {
-                    setRes(e.response.status)
-                });
+    function turnOn2fa(value: string) {
+        console.log('code: ' + value);
+        axios.get('http://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
+            .then((e) => {setTwoFactor(true), setTurnOn(true)})
+            .catch((e) => {
+                setRes(e.response.status)
+            });
     }
 
     useEffect(() => {
-        console.log('persistantReducer.twoFactorReducer.verif', persistantReducer.twoFactorReducer.verif)
-        if (res === 401)
-            setStatus("Error, wrong code.")
-        else if (res == 404)
-            setStatus("You must enter the code.")
-    })
-    
+		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
+		if (fullPinCode && res === 401) {
+			if (wrongCode)
+				wrongCode.style.visibility = 'visible';
+			} else {
+			if (wrongCode)
+				wrongCode.style.visibility = 'hidden';
+		}
+	  });
 
     if (persistantReducer.userReducer.user === null)
         axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data); })
@@ -49,14 +51,21 @@ export default function Callback() {
 
             return (
                 <div className="login-2fa">
-                    <p>Enter your Google Authenticator code:</p>
-                    <input
-                        type="text"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        onKeyDown={(e) => { turnOn2fa(e.key) }}
-                    />
-                    <p>{status}</p>
+                    <img className="logo_transcendence" src={logo} alt="" />
+                    <div className="bg">
+                        <h1>Google Authenticator Code</h1>
+                        <PinInput 
+                            length={6}
+                            focus
+                            type="numeric"
+                            inputMode="number"
+                            style={{padding: '10px'}}
+                            onChange={() => setFullPinCode(false)}
+                            onComplete={(value, index) => {turnOn2fa(value); setFullPinCode(true)}}
+                            autoSelect={true}
+                        />
+                        <p className='wrong-code' style={{visibility: 'hidden'}}>Wrong Code</p>
+                    </div>
                 </div>
             )
         else

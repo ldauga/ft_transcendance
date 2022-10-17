@@ -23,7 +23,6 @@
 	img {
 			height: 255px;
 			display: 'block';
-			maxWidth: 400px;
 			overflow: 'hidden';
 			width: '100%';
 	}
@@ -43,9 +42,12 @@
 		}
 	}
 
-	a{
+	button.create-map{
+		all: unset;
 		color: white;
 		font-size: .8vh;
 		opacity: .7;
+		cursor: pointer;
+		text-decoration: underline;
 	}
 }
