@@ -18,4 +18,7 @@ export class RoomsDto {
 	@IsNotEmpty()
 	public owner_id: number;
 
+	@IsBoolean()
+	public publicOrPrivate: boolean;
+
 }

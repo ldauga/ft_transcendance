@@ -9,13 +9,20 @@ export class RoomsController {
   private readonly service: RoomsService;
 
   @Get()
-  public getAllRooms(): Promise<{ id: number, name: string }[]> {
+  public getAllRooms(): Promise<{ id: number, name: string, publicOrPrivate: boolean }[]> {
     return this.service.getAllRooms();
   }
 
   @Get('/check/:name')
   public async checkRoom(@Param('name') name: string): Promise<Boolean> {
     const returnCheck = await this.service.checkRoom(name);
+    console.log('checkRoom Check = ', returnCheck);
+    return returnCheck;
+  }
+
+  @Get('/:user_id/:user_login/:room_id/:room_name/:password/')
+  public async checkIfCanJoin(@Param('user_id', ParseIntPipe) user_id: number, @Param('user_login') user_login: string, @Param('room_id', ParseIntPipe) room_id: number, @Param('room_name') room_name: string, @Param('password') password: string): Promise<String> {
+    const returnCheck = await this.service.checkIfCanJoin(user_id, user_login, room_id, room_name, password);
     console.log('checkRoom Check = ', returnCheck);
     return returnCheck;
   }
@@ -34,7 +41,7 @@ export class RoomsController {
     return newRoom;
   }
 
-  @Post('/:login/:roomName')
+  @Post('/:id/:roomName')
   public async removeRoom(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<Boolean> {
     console.log('removeRoom Controller');
     const removeReturn = await this.service.removeRoom(id, roomName);

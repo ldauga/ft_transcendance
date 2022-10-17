@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
 
 .matchHistory {
-	text-align: center;
 	font-family: 'Roboto', sans-serif;
 	h1 {
+		text-align: center;
 		text-transform: uppercase;
+		font-weight: 700;
 		letter-spacing: 2px;
 	}
 	.cards {
@@ -23,24 +24,66 @@
 
 		.card {
 			display: flex;
-			align-items: flex-end;
-			justify-content: space-between;
-			margin: 0 1vw;
-			width: 57%;
+			flex-direction: column;
+			text-align: center;
+			// align-items: flex-end;
+			// justify-content: space-between;
+			// margin: 0 1vw;
+			// width: 57%;
 			h3 {
 				text-transform: uppercase;
-				letter-spacing: 3px;
+				font-weight: 500;
+				letter-spacing: 1px;
 				font-size: 28px;
 				margin: 0;
+				margin-top: 10px;
+				margin-bottom: 17px;
 			}
-			.score {
-				width: 50%;
+			
+			.opponent {
+				font-weight: 400;
+				font-size: 21px;
+				margin-bottom: 10px;
+				span:first-child {
+					margin-right: 3px;
+				}
+				span:last-child {
+					margin-left: 3px;
+				}
 			}
+			// .score {
+			// 	width: 50%;
+			// }
+			// .opponent {
+			// 	margin-inline: auto;
+			// 	display: flex;
+
+			// 	flex-direction: row;
+
+			// 	.player {
+			// 		transition: all 1s;
+					
+			// 		cursor: pointer;
+			// 	}
+
+			// 	.player:hover {
+			// 		color: black;
+			// 	}
+
+			// 	.player:active {
+			// 		transform: translateY(5px);
+			// 	}
+
+			// 	h2 {
+			// 		margin-inline: auto;
+			// 	}
+			// }
 		}
 
 		.win {
 			margin: 0 auto;
-			background: #7ACFB0;
+			background: rgb(122,207,176);
+			background: linear-gradient(190deg, rgba(122,207,176,1) 37%, rgba(28,177,123,1) 100%);
 			width: 90%;
 		}
 		.defeat {

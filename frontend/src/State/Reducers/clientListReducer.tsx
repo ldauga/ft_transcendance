@@ -1,13 +1,12 @@
-import { validateInput } from "../../Utils/logUtils";
 import { clientListActionType } from "../Action-Types";
 import { clientListAction } from "../Actions";
 import { ClientList } from "../type";
 
 export const initialState: ClientList = {
-    count: 0,
-    active: "",
-    list: []
-  };
+  count: 0,
+  active: "",
+  list: []
+};
 
 export const clientListReducer = (state: ClientList = initialState, action: clientListAction) => {
   switch (action.type) {
@@ -27,25 +26,22 @@ export const clientListReducer = (state: ClientList = initialState, action: clie
       if (state.active == action.payload.username)
         _temp_active = "";
       return {
-          ...state,
-          count: state.count - 1,
-          active: _temp_active,
-          list: state.list.filter(item => item.id !== action.payload.id)
-        };
+        ...state,
+        count: state.count - 1,
+        active: _temp_active,
+        list: state.list.filter(item => item.id !== action.payload.id)
+      };
     }
     case clientListActionType.ADDMSG: {
       let index = -1;
       let newState = state;
-      if (action.payload.sender == "Me")
-      {
+      if (action.payload.sender == "Me") {
         index = state.list.findIndex(item => item.username === action.payload.recipient);
       }
-      else
-      {
+      else {
         index = state.list.findIndex(item => item.username === action.payload.sender);
       }
-      if (index >= 0)
-      {
+      if (index >= 0) {
         newState.list[index].convers.msg = [...newState.list[index].convers.msg, action.payload];
         return {
           ...state,

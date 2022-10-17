@@ -32,7 +32,7 @@ function InvitationChecker(props: { children: any }) {
 						return
 				}
 
-				setNotif({type: NotifType.PENDINGINVITATION})
+				setNotif({ type: NotifType.PENDINGINVITATION })
 
 			}
 		})
@@ -55,24 +55,8 @@ function InvitationChecker(props: { children: any }) {
 				}
 			}
 			setNotif(notif)
-
 			console.log('notifArray', persistantReducer.notifReducer.notifArray)
 		})
-	})
-
-	utilsData.socket.on('friendsList', function (arrClient: Client[]) {
-		console.log('Friends List received, useEffect()');
-		for (var i = 0; i < arrClient.length; i++) {
-			if (arrClient[i].username != "" && Number(arrClient[i].id) != persistantReducer.userReducer.user?.id) {
-				console.log(`add client: ${arrClient[i].username}`)
-				let newClient: Client = {
-					username: arrClient[i].username,
-					id: arrClient[i].id,
-					convers: { count: 0, msg: [] }
-				}
-				addClient(newClient);
-			}
-		}
 	})
 
 	return (

@@ -5,15 +5,12 @@ import { isJSDocTemplateTag } from 'typescript';
 import { RootState } from '../../../State';
 import './CSS/Chat.css'
 
-function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
+function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
-
-    props.setOldAff("Chat");
-    props.setOldAffRoomConvers("Chat");
 
     const closeChat = () => {
         props.closeChat();
@@ -70,6 +67,8 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
 
     useEffect(() => {
         getListItem();
+        props.setOldAff("Chat");
+        props.setOldAffRoomConvers("Chat");
     }, [props]);
 
     return (
@@ -89,4 +88,4 @@ function ChatMsg(props: { setFriendList: Function, setChat: Function, setConvers
     );
 };
 
-export default ChatMsg;
+export default Chat;

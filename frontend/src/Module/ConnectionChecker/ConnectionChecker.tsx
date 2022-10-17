@@ -19,25 +19,17 @@ function ConnectionChecker(props: {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   if (!test) {
-    axios.get("http://localhost:5001/user/userExist/", {withCredentials: true})
-      .then((item) => { setUser(item.data) })
-      .catch((error) => {
-        if (error.response.data['statusCode'] == 401)
-        {
-          setUser(null);
-          console.log('Please make sure to login, cannot read RefreshToken.')
-        }
-   })
+    axios.get("http://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) })
 
-    utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user)
+    utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '')
     test = true
   }
 
 
   if (persistantReducer.userReducer.user !== null && ((persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && persistantReducer.twoFactorReducer.verif) || !persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled))
-  return <InvitationChecker children={props.component} ></InvitationChecker>
+    return <InvitationChecker children={props.component} ></InvitationChecker>
   else
-  return <Navigate to="/Login" />
+    return <Navigate to="/Login" />
 }
 
 export default ConnectionChecker;

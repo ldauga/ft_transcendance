@@ -1,26 +1,15 @@
 import HomePage from './Page/HomePage/HomePage';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NotFound from './Page/NotFound/NotFound';
-import ChatPage from './Page/Chat/ChatPage';
 import Login from './Page/Login/Login';
 import Callback from './Page/Login/Callback';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import ConnectionChecker from './Module/ConnectionChecker/ConnectionChecker';
-import GameSwitch from './Page/PongPage/GameSwitch';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { RootState } from './State';
+import GameSwitch from './Page/Pong/GameSwitch';
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './State/store';
-import TestMsg from './Page/Tests/test';
-import Chat from './Components/Chat/Chat';
-import NewChatPage from './Page/newChat/newChat';
-import QrCode from './Page/2fa/2fa';
 import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
-import NavBar from './Module/Navbar/Navbar';
-import PongHome from './Page/Pong/PongHome';
-import CreateMapTemp from './Page/Pong/CreateMap/CreateMapTemp';
 
 function App() {
 
@@ -40,17 +29,11 @@ function App() {
 
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
-          <Route path='/pongTest' element={<ConnectionChecker component={<PongHome />} />} />
-          <Route path='/CreateMap' element={<ConnectionChecker component={<CreateMapTemp />} />} />
-
-          <Route path='/Chat' element={<ConnectionChecker component={<NewChatPage />} />} />
-
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
+          <Route path='/Profile/*' element={<ConnectionChecker component={<></>} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 
-          <Route path='/QrCode' element={<QrCode />} />
-          
           <Route path='/NotFound' element={<NotFound />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>

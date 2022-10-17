@@ -37,6 +37,15 @@
 			position: relative;
 			object-fit: cover;
 		}
+
+		.element {
+			cursor: pointer;
+
+			transition: all 1s;
+		}
+		.element:hover {
+			background-color: #242d40;
+		}
 	}
 
 	::-webkit-scrollbar {

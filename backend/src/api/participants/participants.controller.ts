@@ -44,7 +44,7 @@ export class ParticipantsController {
 
   @Post('/:login/:roomName')
   public async removeParticipant(@Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
-    console.log('removeParticipant Controller');
+    console.log('removeParticipant Controller login: ', login, ", roomName: ", roomName);
     const removeReturn = await this.service.removeParticipant(login, roomName);
     console.log('removeRParticipanteturn Controller', removeReturn);
     return true;
