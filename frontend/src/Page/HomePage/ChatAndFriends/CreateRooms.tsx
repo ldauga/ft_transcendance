@@ -3,9 +3,16 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.css'
+<<<<<<< HEAD
 import '../Homepage.scss'
+=======
+<<<<<<< HEAD
+import '../HomePage.css'
+>>>>>>> 2f07f1d9137c3646726dbcb87486284b26c1c186
 import { CheckBox } from '@mui/icons-material';
 import { Checkbox } from '@mui/material';
+=======
+>>>>>>> front
 
 function CreateRooms() {
 

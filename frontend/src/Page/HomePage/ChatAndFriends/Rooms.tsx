@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.css'
+<<<<<<< HEAD
 import '../Homepage.scss'
+=======
+>>>>>>> 2f07f1d9137c3646726dbcb87486284b26c1c186
 import CreateRooms from './CreateRooms';
 import { constWhileSecu } from '../HomePage';
 
