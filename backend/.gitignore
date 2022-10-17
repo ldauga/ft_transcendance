@@ -38,4 +38,4 @@ lerna-debug.log*
 /src/common/envs/development.env
 
 # Profile Pictures
-/uploads/profileimages/*
+/uploads/profileImages/*

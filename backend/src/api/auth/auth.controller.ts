@@ -92,11 +92,11 @@ export class AuthController {
 		return await this.userServices.turnOffTwoFactorAuthentication(user.login);
 	}
 
-	@Get('/refresh')
+	@Get('/refresh/')
 	@UseGuards(AuthGuard('refresh'))
 	async refresh(@Req() request, @Res({ passthrough: true }) res: Response) {
 		const accessToken = await this.authService.createAccessTokenFromRefresh(request);
-		let refreshToken = request?.cookies["auth-cookie"].refreshToken
+		let refreshToken = request?.cookies["auth-cookie"].refreshToken;
 		const secretData = {
 			accessToken,
 			refreshToken

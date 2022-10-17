@@ -10,11 +10,10 @@ import { RootState } from "../../State/Reducers";
 export default function Callback() {
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
-
+    const [cookie, setCookie] = useCookies(['auth-cookie']);
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
-    const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
     const [code, setCode] = useState("");
     const [turnOn, setTurnOn] = useState(false);
     const [res, setRes] = useState(0);
@@ -38,8 +37,10 @@ export default function Callback() {
     })
     
 
-    if (persistantReducer.userReducer.user === null)
+    if (persistantReducer.userReducer.user === null) {
         axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data); })
+        console.log(cookie)
+    }
 
     if (persistantReducer.userReducer.user !== null) {
 

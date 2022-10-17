@@ -19,7 +19,15 @@ function ConnectionChecker(props: {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   if (!test) {
-    axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data) })
+    axios.get("http://localhost:5001/user/userExist/", {withCredentials: true})
+      .then((item) => { setUser(item.data) })
+      .catch((error) => {
+        if (error.response.data['statusCode'] == 401)
+        {
+          setUser(null);
+          console.log('Please make sure to login, cannot read RefreshToken.')
+        }
+   })
 
     utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user)
     test = true

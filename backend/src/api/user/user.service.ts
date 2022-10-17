@@ -1,4 +1,4 @@
-import { Logger, Injectable, Req, UseGuards, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Logger, Injectable, Req, UseGuards, BadRequestException, UnauthorizedException, ConsoleLogger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -24,6 +24,8 @@ export class UserService {
 	}
 
 	async getUserById(id: number): Promise<UserEntity> {
+		if (id == undefined)
+			return null;
 		const user = await this.userRepository.findOneBy({ id: id });
 		if (!user)
 			return null;
@@ -45,10 +47,13 @@ export class UserService {
 	}
 
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
+		console.log('signedRefreshToken', signedRefreshToken)
+		if (signedRefreshToken === undefined)
+			throw new UnauthorizedException('Token not found.');
 		var user: any;
 		if (signedRefreshToken.refreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken.refreshToken });
-		else
+		else if (signedRefreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken });
 
 		if (!user)

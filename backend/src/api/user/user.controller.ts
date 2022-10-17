@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch, UnauthorizedException } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -16,7 +16,7 @@ import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
-      destination: './uploads/profileimages',
+      destination: './uploads/profileImages',
       filename: (req, file, cb) => {
           const filename: string = uuidv4();
           const extension: string = path.parse(file.originalname).ext;
@@ -44,7 +44,7 @@ export class UserController {
   }
 
   @Get('/login/:login')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt')) //A FAIRE FONCTIONNER AVEC "buttonAddFriend()" dans AddFriend.tsx
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
 	  return this.service.getUserByLogin(login);
   }
@@ -52,7 +52,10 @@ export class UserController {
   @Get('/userExist')
   @UseGuards(AuthGuard('jwt'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
-    return this.service.getUserByRefreshToken(req.cookies['auth-cookie'].refreshToken);
+    const refreshToken = req.cookies['auth-cookie']?.refreshToken;
+    if (refreshToken == undefined)
+      throw new UnauthorizedException('Missing refreshToken.')
+    return this.service.getUserByRefreshToken(refreshToken);
   }
 
   @Get('profilePic/:fileId')
