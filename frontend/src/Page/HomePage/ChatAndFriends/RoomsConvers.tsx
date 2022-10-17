@@ -4,10 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import './CSS/Convers.css'
-<<<<<<< HEAD
 import '../Homepage.scss'
-=======
->>>>>>> 2f07f1d9137c3646726dbcb87486284b26c1c186
 import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
