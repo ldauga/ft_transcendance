@@ -7,32 +7,32 @@ import { Ball, gameRoomClass, Obstacle } from "./gameRoomClass";
 import './CSS/CreateMap/CreateMapTemp.scss';
 
 var canvas = {
-    "width": 800,
-    "height": 600
+	"width": 800,
+	"height": 600
 }
 
 const StyledAutocomplete = styled(Autocomplete)({
 	"& .MuiAutocomplete-inputRoot": {
-	  color: "white",
-	  "& .MuiOutlinedInput-notchedOutline": {
-		borderColor: "white"
-	  },
-	  "&:hover .MuiOutlinedInput-notchedOutline": {
-		borderColor: "white"
-	  },
-	  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-		borderColor: "white"
-	  },
-	  "&.Mui-focused .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root": {
-		color: "white"
-	  }
+		color: "white",
+		"& .MuiOutlinedInput-notchedOutline": {
+			borderColor: "white"
+		},
+		"&:hover .MuiOutlinedInput-notchedOutline": {
+			borderColor: "white"
+		},
+		"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+			borderColor: "white"
+		},
+		"&.Mui-focused .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root": {
+			color: "white"
+		}
 	}
-  });
+});
 
 const CreateMapTemp = (props: any) => {
-	const [connectedClient, setConnectedClient] = useState(Array<any>);
+	const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
-	const [room] = useState(new gameRoomClass("", "", null, "custom"));
+	const [room] = useState(new gameRoomClass("a", "b", null, "custom"));
 
 	function drawFont(ctx: CanvasRenderingContext2D | null) {
 		if (ctx !== null) {
@@ -197,19 +197,10 @@ const CreateMapTemp = (props: any) => {
 			ctx.fillStyle = 'green';
 			ctx.shadowColor = 'green';
 
-			room.map.obstacles.forEach((item) => {
-				if (checkCollisionsBall(room.ball, item)) {
-					ctx.fillStyle = 'red';
-					ctx.shadowColor = 'red';
-
-					var button = document.getElementById('inviteButton')
-					if (button) {
-						button.style.backgroundColor = 'red'
-						button.textContent = 'Move ball first'
-					}
-
-				}
-			})
+			if (checkAllCollisionsBall(room.ball)) {
+				ctx.fillStyle = '#330000';
+				ctx.shadowColor = '#330000';
+			}
 
 			ctx.arc(room.ball.x, room.ball.y, room.ball.radius, 0, Math.PI * 2);
 
@@ -221,12 +212,6 @@ const CreateMapTemp = (props: any) => {
 	}
 
 	function render() {
-		var button = document.getElementById('inviteButton')
-		if (button) {
-			button.style.backgroundColor = 'blue'
-			button.textContent = (declineInvite[0] ? declineInvite[1] + " declines your invitation" : "Invite player")
-		}
-
 		var canvas = document.getElementById('canvas') as HTMLCanvasElement
 		if (canvas !== null) {
 			var ctx = canvas.getContext('2d')
@@ -254,9 +239,6 @@ const CreateMapTemp = (props: any) => {
 
 	const [nbObstacle, setNbObstacle] = useState(0)
 
-	const [verif, setVerif] = useState(false)
-
-
 	useEffect(() => {
 
 		setInputValue()
@@ -269,11 +251,6 @@ const CreateMapTemp = (props: any) => {
 		}
 
 		render()
-
-		if (!verif) {
-			utilsData.socket.emit("GET_ALL_CLIENT_CONNECTED")
-			setVerif(true)
-		}
 	})
 
 	function setInputValue() {
@@ -367,20 +344,6 @@ const CreateMapTemp = (props: any) => {
 		}
 	}
 
-	function checkCollisionsBall(ball: Ball, obstacle: Obstacle) {
-		var otop = obstacle.y
-		var obottom = obstacle.y + obstacle.height
-		var oleft = obstacle.x
-		var oright = obstacle.x + obstacle.width
-
-		var btop = ball.y - ball.radius
-		var bbottom = ball.y + ball.radius
-		var bleft = ball.x - ball.radius
-		var bright = ball.x + ball.radius
-
-		return oleft < bright && otop < bbottom && oright > bleft && obottom > btop
-	}
-
 	function checkAllCollisionsBall(ball: Ball) {
 		var btop = ball.y - ball.radius
 		var bbottom = ball.y + ball.radius
@@ -399,6 +362,17 @@ const CreateMapTemp = (props: any) => {
 			if (oleft < bright && otop < bbottom && oright > bleft && obottom > btop)
 				ret = true
 		})
+
+		room.players.forEach((player) => {
+			var otop = player.y
+			var obottom = player.y + player.height
+			var oleft = player.x
+			var oright = player.x + player.width
+
+			if (oleft < bright && otop < bbottom && oright > bleft && obottom > btop)
+				ret = true
+		})
+
 		return ret
 	}
 
@@ -490,75 +464,74 @@ const CreateMapTemp = (props: any) => {
 	});
 
 	utilsData.socket.on('getAllClientConnected', function (clientConnected: Array<any>) {
-		var tmp: any[] = []
-		console.log('test', clientConnected)
-		clientConnected.forEach((item) => {
-			if (item.username != "" && item.username != persistantReduceur.userReducer.user?.login)
-			tmp.push(
-				<div key={tmp.length} className="clientConnected" onClick={e => setInvitInput(e.currentTarget.textContent as string)} ><>{item.username}</></div>
-			)
+		const tmp: any[] = []
+
+		clientConnected.forEach(client => {
+			if (client.username != persistantReduceur.userReducer.user?.nickname)
+				tmp.push(client)
 		})
+
 		setConnectedClient(tmp)
 
 	})
 
-	function inviteButtonClick() {
+	function inviteButtonClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		if (!checkAllCollisionsBall(room.ball)) {
 			utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
 		}
 	}
 
 	function handleCanvasMouseDown(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
-        var canvas = document.getElementById('canvas') as HTMLCanvasElement
-        if (canvas != null) {
-            var bound = canvas.getBoundingClientRect()
-            let cursorX = (event.clientX - bound.left) / (bound.right - bound.left) * canvas.width
-            let cursorY = (event.clientY - bound.top) / (bound.bottom - bound.top) * canvas.height
+		var canvas = document.getElementById('canvas') as HTMLCanvasElement
+		if (canvas != null) {
+			var bound = canvas.getBoundingClientRect()
+			let cursorX = (event.clientX - bound.left) / (bound.right - bound.left) * canvas.width
+			let cursorY = (event.clientY - bound.top) / (bound.bottom - bound.top) * canvas.height
 
-            if (Math.abs(Math.sqrt(Math.pow((cursorX - room.ball.x), 2) + Math.pow((cursorY - room.ball.y), 2))) < room.ball.radius) {
-                setHoldClick(true)
-                setlastObstacleID(actualObstacleID)
-                setActualObstacleID(-666)
-                holdClickDiff.diffX = cursorX - room.ball.x
-                holdClickDiff.diffY = cursorY - room.ball.y
-                return;
-            }
+			if (Math.abs(Math.sqrt(Math.pow((cursorX - room.ball.x), 2) + Math.pow((cursorY - room.ball.y), 2))) < room.ball.radius) {
+				setHoldClick(true)
+				setlastObstacleID(actualObstacleID)
+				setActualObstacleID(-666)
+				holdClickDiff.diffX = cursorX - room.ball.x
+				holdClickDiff.diffY = cursorY - room.ball.y
+				return;
+			}
 
-            for (let index = 0; index < room.map.obstacles.length; index++) {
-                if (checkCollisionsActualObstacle(cursorX, cursorY)) {
-                    checkHoldClickExpandCollision(cursorX, cursorY)
-                    setHoldClick(true)
-                    for (let i = 0; i < room.map.obstacles.length; i++)
-                        if (actualObstacleID == room.map.obstacles[i].id) {
-                            holdClickDiff.diffX = cursorX - room.map.obstacles[i].x
-                            holdClickDiff.diffY = cursorY - room.map.obstacles[i].y
-                        }
-                    return
-                }
-                else if (checkHoldClickExpandCollision(cursorX, cursorY)) {
-                    setHoldClick(true)
+			for (let index = 0; index < room.map.obstacles.length; index++) {
+				if (checkCollisionsActualObstacle(cursorX, cursorY)) {
+					checkHoldClickExpandCollision(cursorX, cursorY)
+					setHoldClick(true)
+					for (let i = 0; i < room.map.obstacles.length; i++)
+						if (actualObstacleID == room.map.obstacles[i].id) {
+							holdClickDiff.diffX = cursorX - room.map.obstacles[i].x
+							holdClickDiff.diffY = cursorY - room.map.obstacles[i].y
+						}
+					return
+				}
+				else if (checkHoldClickExpandCollision(cursorX, cursorY)) {
+					setHoldClick(true)
 
-                    holdClickDiff.diffX = cursorX - room.map.obstacles[index].x
-                    holdClickDiff.diffY = cursorY - room.map.obstacles[index].y
-                    return
-                }
-                else if (checkCollisionsObstacle(room.map.obstacles[index], cursorX, cursorY)) {
-                    if (actualObstacleID != room.map.obstacles[index].id) {
-                        setlastObstacleID(actualObstacleID)
-                        setActualObstacleID(room.map.obstacles[index].id)
-                    }
-                    else (checkHoldClickExpandCollision(cursorX, cursorY))
+					holdClickDiff.diffX = cursorX - room.map.obstacles[index].x
+					holdClickDiff.diffY = cursorY - room.map.obstacles[index].y
+					return
+				}
+				else if (checkCollisionsObstacle(room.map.obstacles[index], cursorX, cursorY)) {
+					if (actualObstacleID != room.map.obstacles[index].id) {
+						setlastObstacleID(actualObstacleID)
+						setActualObstacleID(room.map.obstacles[index].id)
+					}
+					else (checkHoldClickExpandCollision(cursorX, cursorY))
 
-                    setHoldClick(true)
-                    holdClickDiff.diffX = cursorX - room.map.obstacles[index].x
-                    holdClickDiff.diffY = cursorY - room.map.obstacles[index].y
-                    return
-                }
-            }
-            setlastObstacleID(actualObstacleID)
-            setActualObstacleID(-1)
-        }
-    }
+					setHoldClick(true)
+					holdClickDiff.diffX = cursorX - room.map.obstacles[index].x
+					holdClickDiff.diffY = cursorY - room.map.obstacles[index].y
+					return
+				}
+			}
+			setlastObstacleID(actualObstacleID)
+			setActualObstacleID(-1)
+		}
+	}
 
 	return (
 		<>
@@ -594,10 +567,16 @@ const CreateMapTemp = (props: any) => {
 					</div>
 					<div className="invite-friend">
 						<Autocomplete
-							options={friends.map((option) => option.nickname)}
-							renderInput={(params) => <TextField {...params} label="Invite friend"/>}
+							onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
+							onChange={(e) => {setInvitInput(e.currentTarget.innerHTML)}}
+							options={connectedClient.map((option) => option.username)}
+							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
-						<Button className="play" variant="contained">Play</Button>
+						{
+							!checkAllCollisionsBall(room.ball) ?
+								<Button className="play" variant="contained" onClick={inviteButtonClick}>Play</Button> :
+								<Button className="canNotPlay" variant="contained"><i className="bi bi-exclamation-octagon-fill"></i></Button>
+						}
 					</div>
 				</div>
 			</div>
@@ -605,10 +584,4 @@ const CreateMapTemp = (props: any) => {
 	)
 }
 
-const friends =[
-	{id: 1, nickname:'Wazack'},
-	{id: 2, nickname:'ldauga'},
-	{id: 3, nickname:'atourret'},
-	{id: 4, nickname:'cgangaro'},
-]
 export default CreateMapTemp;

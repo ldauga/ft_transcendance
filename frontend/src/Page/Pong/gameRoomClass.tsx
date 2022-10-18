@@ -78,9 +78,12 @@ class Player {
 		this.expansion = false
 		this.reduce = false
 
-		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
-
+		this.x = canvas.width / 8 - this.width / 2
+		if (id == '') {
+			this.x = (canvas.width / 8 * 7) - this.width / 2
+		}
+		
 		this.speed = 1
 
 		this.score = 0
