@@ -2,16 +2,19 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/RoomsConvers.css'
+import './CSS/AffParticipantsRooms.css'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import BanRoomParticipant from './BanRoomParticipant';
 import AddAdmin from './AddAdmin';
+import CreateInvitationRooms from './CreateInvitationRooms';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const [isCreateInvitation, setCreateInvitation] = useState(false);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
@@ -96,6 +99,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.removeListener('removeParticipantReturn');
     })
 
+    const addInvitationRequest = () => {
+        if (isCreateInvitation)
+            setCreateInvitation(false);
+        else
+            setCreateInvitation(true);
+    };
+
     const handleClickBanRoomParticipant = () => {
         if (banRoomParticipant)
             setBanRoomParticipant(false);
@@ -154,6 +164,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 <div className="mainHeaderRight mainHeaderSide">
                     <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
+                    <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                 </div>
             );
         else
@@ -193,6 +204,21 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         }
     });
 
+    function AffList() {
+        if (isCreateInvitation == true)
+            return (
+                <div id="affSmall">
+                    {itemListHistory}
+                </div>
+            );
+        else
+            return (
+                <div id="affBig">
+                    {itemListHistory}
+                </div>
+            );
+    };
+
     return (
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
@@ -204,7 +230,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             </div>
             {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
             {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
-            {itemListHistory}
+            {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
+            <AffList />
         </div>
     );
 };

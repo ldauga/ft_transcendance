@@ -69,5 +69,6 @@ export class FriendListService {
 		});
 		const removeReturn = this.FriendListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		return true;
 	}
 }

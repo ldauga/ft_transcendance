@@ -282,6 +282,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           console.log(removeParticipantReturn.forEach(item => ("delete members")));
           i++;
         }
+        const toRemoveMsg = {
+          room_id: _room.id,
+          room_name: _room.name
+        }
+        const removeAllRoomMessagesReturn = await this.http.post('http://localhost:5001/messages/removeAllRoomMessages/', toRemoveMsg);
+        console.log(removeAllRoomMessagesReturn.forEach(item => ("delete members")));
         i = 0;
         while (i < arrClient.length) {
           this.server.to(arrClient[i].id).emit('roomHasBeenDeleted', _room.name);
