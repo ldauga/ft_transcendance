@@ -48,13 +48,62 @@ export class ParticipantsService {
 		return true;
 	}
 
+	async checkAdmin(login: string, roomName: string): Promise<Boolean> {
+		const check = await this.ParticipantsRepository.findOne({
+			where: [
+				{ user_login: login, room_name: roomName }
+			]
+		});
+		if (check == null)
+			return false;
+		if (check.admin)
+			return true;
+		else
+			return false;
+	}
+
+	async checkIfAdminOrParticipant(login: string, roomName: string): Promise<Boolean> {
+		const check = await this.ParticipantsRepository.findOne({
+			where: [
+				{ user_login: login, room_name: roomName }
+			]
+		});
+		if (check == null)
+			return false;
+		if (check.admin)
+			return false;
+		else
+			return true;
+	}
+
+	async createAdmin(body: any): Promise<ParticipantsEntity> {
+		const returnRemoveParticipant = this.removeParticipant(body.user_login, body.room_name);
+		console.log("returnRemoveParticipant service: ", returnRemoveParticipant);
+		if (!returnRemoveParticipant)
+			return null;
+		const newParticipant = {
+			user_id: body.user_id,
+			user_login: body.user_login,
+			room_id: body.room_id,
+			room_name: body.room_name,
+			admin: true
+		};
+		const returnParticipant = this.createParticipant(newParticipant);
+		console.log("returnParticipant service: ", returnParticipant);
+		if (!returnParticipant)
+			return null;
+		return returnParticipant;
+	}
+
 	async createParticipant(body: any): Promise<ParticipantsEntity> {
 		const returnParticipant = this.ParticipantsRepository.save({
 			user_id: body.user_id,
 			user_login: body.user_login,
 			room_id: body.room_id,
-			room_name: body.room_name
+			room_name: body.room_name,
+			admin: body.admin
 		})
+		console.log("returnParticipant service: ", returnParticipant);
 		if (!returnParticipant)
 			return null;
 		return returnParticipant;

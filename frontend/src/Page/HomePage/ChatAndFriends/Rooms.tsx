@@ -72,6 +72,22 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
         utilsData.socket.removeListener('roomHasBeenDeleted');
     })
 
+    utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
+
+    utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
+        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
+        if (kickedOutOfTheGroupReturn == true) {
+            const length = itemListHistory.length;
+            let secu = 0;
+            while (length == itemListHistory.length && secu < constWhileSecu) {
+                getListItem();
+                secu++;
+            }
+        }
+        utilsData.socket.off('kickedOutOfTheGroup');
+        utilsData.socket.removeListener('kickedOutOfTheGroup');
+    })
+
     const getListItem = async () => {
         await axios.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];

@@ -61,4 +61,13 @@ export class MessagesController {
       return null;
     return newMessage;
   }
+
+  @Post('/removeAllRoomMessages/')
+  public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<Boolean> {
+    console.log('body removeAllRoomMessages: ', body);
+    const newMessage = this.service.removeAllRoomMessages(body.room_id, body.room_name);
+    if (!newMessage)
+      return null;
+    return newMessage;
+  }
 }

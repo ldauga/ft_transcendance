@@ -19,4 +19,7 @@ export class ParticipantsEntity {
   @Column({ type: 'varchar' })
   public room_name: string;
 
+  @Column({ default: false })
+  public admin: boolean;
+
 }
