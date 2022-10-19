@@ -1,7 +1,7 @@
 import { Avatar } from '@mui/material';
 import './Leaderboard.scss';
-import unranked from './../../../Assets/rank/unranked.png'
 
+import unranked from './../../../Assets/rank/unranked.png'
 import iron_rank_img from '../../../Assets/rank/iron_rank.png'
 import bronze_rank_img from '../../../Assets/rank/bronze_rank.png'
 import gold_rank_img from '../../../Assets/rank/gold_rank.png'

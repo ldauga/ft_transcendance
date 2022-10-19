@@ -15,14 +15,11 @@ function InvitationChecker(props: { children: any }) {
 	const utilsData = useSelector((state: RootState) => state.utils)
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
 
-	const [inviteSocketID, setInviteSocketID] = useState("")
-
 	const logData = useSelector((state: RootState) => state.log)
-	const clientList = useSelector((state: RootState) => state.clientList)
 
 	const dispatch = useDispatch();
 
-	const { addClient, removeClient, addMsg, setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
 		axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
@@ -58,6 +55,11 @@ function InvitationChecker(props: { children: any }) {
 			setNotif(notif)
 			console.log('notifArray', persistantReducer.notifReducer.notifArray)
 		})
+	})
+
+	utilsData.socket.on('start_spectate', function (arrClient: Client[]) {
+		history.pushState({}, '', window.URL.toString())
+		window.location.replace('http://localhost:3000/Pong')
 	})
 
 	return (

@@ -10,6 +10,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './State/store';
 import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
+import { StatPlayer } from './Module/UserProfile/StatPlayer';
 
 function App() {
 
@@ -30,7 +31,7 @@ function App() {
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
 
           <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
-          <Route path='/Profile/*' element={<ConnectionChecker component={<></>} />} />
+          <Route path='/Profile/*' element={<ConnectionChecker component={<StatPlayer />} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 

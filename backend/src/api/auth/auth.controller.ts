@@ -13,6 +13,10 @@ export class AuthController {
 
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
+		if (query.error == "access_denied") {
+			res.status(401).redirect(`http://localhost:3000/`);
+			return ;
+		}
 		const accessToken = await this.authService.login(query);
 		const refreshToken = await this.userServices.getRefreshToken(accessToken);
 		const secretData = {

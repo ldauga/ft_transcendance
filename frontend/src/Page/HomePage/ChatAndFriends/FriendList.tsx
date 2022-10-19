@@ -116,6 +116,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 							<p>{friendLogin}</p>
 						</div>
 						<div className="inItemFriendList_right">
+							<button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', {user: userData.userReducer.user, specID: friendLogin}) }} className="bi bi-eye"></button>
 							<button onClick={() => openChat(item)} className="bi bi-chat"></button>
 							<button onClick={() => removeFriend(item)} className="bi bi-x-lg"></button>
 						</div>

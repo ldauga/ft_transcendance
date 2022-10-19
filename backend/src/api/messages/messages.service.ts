@@ -63,8 +63,7 @@ export class MessagesService {
 		});
 		let returnArray: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }[] = [];
 		messagesReturn.forEach(item => {
-			if (!item.userOrRoom)
-			{
+			if (!item.userOrRoom) {
 				let idTmp;
 				let loginTmp;
 				if (item.id_receiver == id) {
@@ -80,8 +79,7 @@ export class MessagesService {
 					returnArray.push({ id: idTmp, login: loginTmp, userOrRoom: false, room_id: 0, room_name: "" });
 				}
 			}
-			else
-			{
+			else {
 				let roomIdTmp = item.room_id;
 				let roomNameTmp = item.room_name;
 				let returnFind = returnArray.find(item => item.room_id == roomIdTmp);
@@ -113,5 +111,28 @@ export class MessagesService {
 		if (!newMessage)
 			return null;
 		return newMessage;
+	}
+
+	async removeAllRoomMessages(room_id: number, room_name: string): Promise<Boolean> {
+		console.log("removeAllRoomMessages room: ", room_name);
+		if (room_id == 0)
+			return false;
+		const secu = 20000;
+		let messageReturn = await this.MessagesRepository.findOne({
+			where: [
+				{ room_id: room_id },
+				{ room_name: room_name }
+			]
+		});
+		while (secu >= 0 && messageReturn) {
+			const removeReturn = this.MessagesRepository.delete(messageReturn);
+			messageReturn = await this.MessagesRepository.findOne({
+				where: [
+					{ room_id: room_id },
+					{ room_name: room_name }
+				]
+			});
+		}
+		console.log(20000 - secu, " messages deleted");
 	}
 }

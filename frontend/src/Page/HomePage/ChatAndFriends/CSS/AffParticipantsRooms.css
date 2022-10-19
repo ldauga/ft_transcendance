@@ -1,0 +1,9 @@
+#affBig {
+    overflow: scroll;
+    height: 85%;
+}
+
+#affSmall {
+    overflow: scroll;
+    height: 79%;
+}

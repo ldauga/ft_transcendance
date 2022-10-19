@@ -46,7 +46,14 @@ export class UserController {
   @Get('/login/:login')
   @UseGuards(AuthGuard('jwt')) //A FAIRE FONCTIONNER AVEC "buttonAddFriend()" dans AddFriend.tsx
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
-	  return this.service.getUserByLogin(login);
+    console.log('Login')
+    return this.service.getUserByLogin(login);
+  }
+
+  @Get('/nickname/:nickname')
+  public getUserByNickname(@Param('nickname') nickname: string): Promise<UserEntity> {
+    console.log('Nickname')
+	  return this.service.getUserByNickname(nickname);
   }
 
   @Get('/userExist')

@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
 
 nav {
-	background: #2f3b52;
-	padding: 0 1vw;
-	height: 5vh;
+	background: #FDFEFE;
+	// padding: 0 1vw;
+	height: 50px;
+	min-width: 100vw;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	color:#f1e8e6;
+	color: #2e384e;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-	animation: navApparition .8s ease-out;
 
 	button {
 		all: unset;
@@ -17,22 +17,23 @@ nav {
 
 	a {
 		all: unset;
+		margin-left: 10px;
 		cursor: pointer;
 		font-family: 'Shadows Into Light', cursive;
-		font-size: 3vh;
+		font-size: 16px;
 	}
 
 	svg, div {
-		height: 3vh;
+		height: 31px;
 	}
 
 	.right {
 		display: flex;
-		gap: 10px;
+		gap: 5px;
 	}
 
 	.avatar {
-		--avatar-size: 3vh;
+		--avatar-size: 31px;
 		height: var(--avatar-size);
 		width: var(--avatar-size);
 		// border: 4px solid green;
@@ -46,19 +47,56 @@ nav {
 		display: flex;
 		align-items: center;
 		cursor: pointer;
-		gap: .3vw;
+		margin-right: 10px;
 		text-transform: uppercase;
+		span {
+			display: none;
+		}
+	}
+	@media screen and (min-width: 425px) {
+		a {
+			font-size: 20px;
+		}
+		.profile {
+			span {
+				font-size: 10px;
+				display: block;
+			}
+		}
+	}
+	
+	@media screen and (min-width: 768px) {
+		a {
+			font-size: 29px;
+		}
+		.profile {
+			span {
+				font-size: 13px;
+			}
+		}
+	}
+	
+	@media screen and (min-width: 1024px) {
+		height: 62px;
+		a {
+			font-size: 34px;
+		}
+		.right {
+			gap: 10px;
+		}
+		svg, div {
+			height: 39px;
+		}
+		.avatar {
+			--avatar-size: 45px;
+			height: var(--avatar-size);
+			width: var(--avatar-size);
+		}
+		.profile {
+			span {
+				font-size: 15px;
+			}
+		}
 	}
 }
 
-@keyframes navApparition {
-	from {
-		opacity: 0;
-		transform: translateY(-200px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-		
-	}
-}

@@ -16,11 +16,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [isCreateInvitation, setCreateInvitation] = useState(false);
-
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
     const [isAdmin, setAdmin] = useState(false);
+    const [isOwner, setOwner] = useState(false);
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
@@ -96,13 +95,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         closeConvers();
     }
 
-    const addInvitationRequest = () => {
-        if (isCreateInvitation)
-            setCreateInvitation(false);
-        else
-            setCreateInvitation(true);
-    };
-
     const affParticipants = () => {
         setConversRooms(false);
         setAffParticipantsRooms(true);
@@ -111,10 +103,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const checkIfOwner = async () => {
         await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
-            if (res.data == true)
+            if (res.data == true) {
                 setAdmin(true);
-            else
+                setOwner(true);
+            }
+            else {
                 setAdmin(false);
+                setOwner(false);
+            }
         })
     };
 
@@ -136,7 +132,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
-    }, [itemListHistory, isConversRooms, isCreateInvitation])
+    }, [itemListHistory, isConversRooms])
 
     useEffect(() => {
         checkIfOwner();
@@ -145,7 +141,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [props, isConversRooms]);
 
     function Header() {
-        if (isAdmin == true)
+        if (isOwner == true)
             return (
                 <div id="header" className="mainHeader">
                     <div className="mainHeaderLeft mainHeaderSide">
@@ -154,8 +150,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <h3>{props.roomsConversData.name}</h3>
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                         <button onClick={removeRoom} className="bi bi-x-lg"></button>
+                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
                     </div>
                 </div>
             );
@@ -170,23 +166,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
                     </div>
-                </div>
-            );
-    };
-
-    function AffConvers() {
-        if (isCreateInvitation == true)
-            return (
-                <div id="affConversSmall" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-            );
-        else
-            return (
-                <div id="affConversBig" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
                 </div>
             );
     };
@@ -215,8 +194,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         return (
             <div id="roomsConvers">
                 <Header />
-                {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
-                <AffConvers />
+                <div id="affConversBig" ref={bottom}>
+                    {itemListHistory}
+                    <div ref={messagesEndRef} />
+                </div>
                 <div className="sendZoneConvers">
                     <input
                         value={messageText}
@@ -235,7 +216,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     return (
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} isAdmin={isAdmin} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
         </div>
     );
 };

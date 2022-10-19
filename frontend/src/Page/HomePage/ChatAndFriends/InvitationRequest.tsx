@@ -28,7 +28,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
         props.setInvitationRequest(false);
     };
 
-    function Item(props: { item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string } }) {
+    function Item(props: { item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean } }) {
         if (props.item.userOrRoom)//room
         {
             return (
@@ -58,7 +58,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     const getListItem = async () => {
         await axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
-            res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
+            res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
                     <Item item={item} />
                 </div>)
@@ -95,13 +95,14 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
         utilsData.socket.removeListener('newInvitationReceived');
     })
 
-    const acceptRoomInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
+    const acceptRoomInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
         utilsData.socket.emit('removeInvitationRequest', item);
         const newParticipant = {
             user_id: item.id_user2,
             user_login: item.receiver_login,
             room_id: item.room_id,
-            room_name: item.room_name
+            room_name: item.room_name,
+            admin: item.admin
         }
         utilsData.socket.emit('createParticipant', newParticipant);
         setUpdate(true);
