@@ -3,14 +3,9 @@
 }
 
 .pongBoard {
-    border: 0.8vw #1B1B1B solid;
+    border: 10px rgb(48, 56, 76) solid;
 
     width: 40%;
-
-    background-color: #1A1A1A;
-
-    box-shadow: 5px 5px 50px blue,
-                -5px -5px 50px rgb(255, 0, 0);
 }
 
 .spectate {

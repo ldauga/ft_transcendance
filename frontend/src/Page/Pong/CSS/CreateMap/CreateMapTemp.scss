@@ -77,6 +77,13 @@
 					background: #e2cfcb;
 				}
 			}
+			Button.canNotPlay {
+				background: #e80909;
+				color: black;
+				&:hover {
+					background: #c40909;
+				}
+			}
 		}
 	}
 }

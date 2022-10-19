@@ -111,7 +111,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
 					<div className="inItemFriendList">
 						<div className="inItemFriendList_left">
-							<img src={profile_pic}></img>
+							<img onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + friendLogin)}} src={profile_pic}></img>
 							<p>{friendLogin}</p>
 						</div>
 						<div className="inItemFriendList_right">

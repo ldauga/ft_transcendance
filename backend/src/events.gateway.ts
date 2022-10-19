@@ -22,7 +22,6 @@ import { isInt16Array } from 'util/types';
 interface Client {
   id: string;
   username: string;
-  socket: Socket;
 }
 
 interface Participant {
@@ -124,8 +123,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Client connected: ${client.id}`);
     const newClient: Client = {
       id: client.id,
-      username: "",
-      socket: null
+      username: ""
     };
     arrClient.push(newClient);
   }
@@ -136,7 +134,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     await arrClient.forEach((item) => {
       if (item.id == client.id) {
         item.username = user.login;
-        item.socket = client;
         let i = 0;
         while (i < arrParticipants.length) {
           const participantReturn = arrParticipants.find(obj => obj.username == user.login);
@@ -817,6 +814,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('LEAVE_QUEUE')
+  async leaveQueue(
+    client: Socket,
+    info: {
+      user: {
+        id: number,
+        login: string,
+        nickname: string,
+        wins: number,
+        looses: number,
+        rank: number,
+        profile_pic: string
+      },
+    }) {
+      const room = this.getRoomByClientLogin(info.user.login)
+
+      if (room != null) {
+        this.pongInfo.splice(room[0], 1)
+
+        this.server.to(client.id).emit('leave_queue')
+
+      }
+    }
+
   @SubscribeMessage('SPECTATE_CLIENT')
   async spectateClient(client: Socket,
     info: {
@@ -1151,6 +1172,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
+	console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
     this.server.to(client.id).emit("getAllClientConnected", arrClient);
   }
 

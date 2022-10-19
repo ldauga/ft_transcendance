@@ -19,6 +19,13 @@
         background-color: #f5f8ff;
     }
 
+	.mainAffGeneNotif {
+        height: 100%;
+		transition: all 1s;
+        background-color: #f5f8ff;
+		overflow-y: scroll;
+    }
+    
     .bi-x-lg:hover {
         color: red;
     }
