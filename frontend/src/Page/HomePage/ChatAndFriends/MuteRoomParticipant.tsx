@@ -36,26 +36,26 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
             else {
                 let a = 1;
                 let b = 1;
-                await axios.get('http://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axios.get('http://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
                     if (res.data == true) {
-                        console.log("ban already exist");
+                        console.log("mute already exist");
                     }
                     else {
                         a = 2;
-                        console.log('ban not exist');
+                        console.log('mute not exist');
                     }
                 })
                 if (a == 2) {
                     console.log('test == true');
                     console.log(receiver_login_tmp);
-                    const newBan = {
+                    const newMuted = {
                         id_sender: userData.userReducer.user?.id,
-                        id_banned: res.data.id,
+                        id_muted: res.data.id,
                         login_sender: userData.userReducer.user?.login,
-                        login_banned: res.data.login,
+                        login_muted: res.data.login,
                         userOrRoom: true,
                         receiver_login: "",
                         room_id: props.roomsConversData.id,
@@ -65,7 +65,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
                         alwaysOrNot: false,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
-                    utilsData.socket.emit('createRoomBan', newBan);
+                    utilsData.socket.emit('createRoomMute', newMuted);
                 }
                 return;
             }

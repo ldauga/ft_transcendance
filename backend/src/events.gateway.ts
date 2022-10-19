@@ -106,14 +106,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
           if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
             this.pongInfo.splice(room[0], 1)
-            return ;
+            return;
           }
         }
     }
     room = this.getRoomBySpectateID(client.id)
     if (room != null) {
       let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
-      if (tmp != -1)  this.pongInfo[room[0]].spectate
+      if (tmp != -1) this.pongInfo[room[0]].spectate
 
 
     }
@@ -655,6 +655,39 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const returnBan = http.post('http://localhost:5001/blackList/', newBan);
     console.log(returnBan.forEach(item => (console.log('returnBan in eventgateway'))));
+  }
+
+  //MUTELIST EVENTS
+
+  @SubscribeMessage('createRoomMute')
+  async createRoomMute(client: Socket, data: any) {
+    let verif = false;
+    const checkParticipant = await http.get('http://localhost:5001/participants/check/' + data.login_muted + '/' + data.room_name);
+    await checkParticipant.forEach(async item => {
+      this.logger.log(`${item.data} data`);
+      if (item.data == true) {
+        verif = true;
+      }
+    });
+    if (verif) {
+      this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
+      const newMute = {
+        id_sender: data.id_sender,
+        id_muted: data.id_muted,
+        login_sender: data.login_sender,
+        login_muted: data.login_muted,
+        userOrRoom: data.userOrRoom,
+        receiver_login: data.receiver_login,
+        room_id: data.room_id,
+        room_name: data.room_name,
+        cause: data.cause,
+        date: time,
+        alwaysOrNot: data.alwaysOrNot,
+        timer: data.timer
+      }
+      const returnMute = http.post('http://localhost:5001/muteList/', newMute);
+      console.log(returnMute.forEach(item => (console.log('returnMute in eventgateway'))));
+    }
   }
 
   //OLD CHAT EVENTS
