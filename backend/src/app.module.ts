@@ -6,7 +6,7 @@ import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getEnvPath } from './common/helper/env.helper';
-import { EventsGateway } from './events.gateway';
+import { CronService, EventsGateway } from './events.gateway';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 //import { AppLoggerMiddleware } from './app.middleware';
 
@@ -20,7 +20,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 		ScheduleModule.forRoot(),
 	],
 	controllers: [AppController],
-	providers: [AppService, EventsGateway],
+	providers: [AppService, EventsGateway, CronService],
 })
 export class AppModule {
 }

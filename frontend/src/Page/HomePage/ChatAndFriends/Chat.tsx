@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { isJSDocTemplateTag } from 'typescript';
 import { RootState } from '../../../State';
 import './CSS/Chat.css'
+import SendChatMsg from './SendChatMsg';
 
 function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
 
@@ -11,6 +12,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [isSendChatMsg, setSendChatMsg] = useState(false);
 
     const closeChat = () => {
         props.closeChat();
@@ -40,6 +42,13 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             props.setRoomsConvers(true);
         }
     };
+
+    const openSendChatMsg = () => {
+        if (isSendChatMsg)
+            setSendChatMsg(false);
+        else
+            setSendChatMsg(true);
+    }
 
     const getListItem = async () => {
         await axios.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
@@ -71,6 +80,22 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         props.setOldAffRoomConvers("Chat");
     }, [props]);
 
+    function AffConversChatItem() {
+        if (isSendChatMsg)
+            return (
+                <div id="affConversItemChatSmall">
+                    {itemListHistory}
+                </div>
+            );
+        else
+            return (
+                <div id="affConversItemChatBig">
+                    {itemListHistory}
+                </div>
+            );
+
+    };
+
     return (
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
@@ -79,11 +104,11 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 </div>
                 <h3>Messages</h3>
                 <div className="mainHeaderRight mainHeaderSide">
+                    <button onClick={openSendChatMsg} className="bi bi-send-fill"></button>
                 </div>
             </div>
-            <div id="affConversItemChat">
-                {itemListHistory}
-            </div>
+            {isSendChatMsg && <SendChatMsg />}
+            <AffConversChatItem />
         </div>
     );
 };

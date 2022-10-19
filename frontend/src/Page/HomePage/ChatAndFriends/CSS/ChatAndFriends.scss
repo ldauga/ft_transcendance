@@ -1,5 +1,7 @@
-#mainAffChatAndFriend, .mainAffGene {
+.mainAffChatAndFriend,
+.mainAffGene {
     height: 100%;
+
     button {
         font-size: 2rem;
         background: none;
@@ -7,24 +9,24 @@
         border: 0;
         color: white;
     }
-    
+
     button:hover {
         cursor: pointer;
     }
-    
+
     .mainAffGene {
         height: 100%;
         background-color: #f5f8ff;
     }
-    
+
     .bi-x-lg:hover {
         color: red;
     }
-    
+
     .bi-check-lg:hover {
         color: green;
     }
-    
+
     .sendZoneConvers {
         position: -webkit-sticky;
         position: sticky;
@@ -38,13 +40,13 @@
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
-    
+
     .sendZoneConvers input {
         width: 75%;
         height: 3rem;
         border-radius: 15px;
     }
-    
+
     .sendZoneConvers button {
         width: 20%;
         text-align: center;
@@ -53,7 +55,7 @@
         color: #34476b;
         height: 3rem;
     }
-    
+
     .addFriendContainer {
         height: 6%;
         width: 100%;
@@ -62,14 +64,14 @@
         justify-content: flex-end;
         background-color: #34476b;
     }
-    
+
     .addFriendContainer input {
         height: 2rem;
         width: 15rem;
         border-radius: 15px;
         padding-left: 0.5rem;
     }
-    
+
     .addFriendContainer button {
         width: auto;
         height: 2rem;
@@ -83,19 +85,19 @@
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
-    
+
     .itemListConversContainerMe {
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
     }
-    
+
     .itemListConversContainerCorrespondant {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
     }
-    
+
     .converItemList {
         height: auto;
         width: auto;
@@ -113,25 +115,25 @@
         margin-top: 0.15rem;
         margin-bottom: 0.15rem;
     }
-    
+
     .converItemListMe {
         color: white;
         background-color: #34476b;
     }
-    
+
     .converItemListCorrespondant {
         color: white;
         background-color: #3e66ac;
     }
-    
+
     /* .bi-check-lg::before {
         font-size: 1.5rem;
     } */
-    
+
     /* HEADER GENERAL */
-    
+
     /* HTML TYPE: */
-    
+
     /* <div className="mainHeader">
         <div className="mainHeaderLeft mainHeaderSide">
             <button onClick={handleClickClose}><i className="bi bi-x"></i></button>
@@ -143,7 +145,7 @@
             <button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
         </div>
     </div> */
-    
+
     .mainHeader {
         width: auto;
         height: 8%;
@@ -156,16 +158,16 @@
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
-    
+
     .mainHeaderSide {
         width: 30%;
         display: flex;
     }
-    
+
     .mainHeaderRight {
         justify-content: space-between;
     }
-    
+
     .mainHeader h3 {
         width: 60%;
         text-align: center;

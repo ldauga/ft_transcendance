@@ -13,8 +13,21 @@ export class BlackListService {
 
 	private logger: Logger = new Logger('BlackList');
 
-	public getAllBan(): Promise<BlackListEntity[]> {
-		return this.BlackListRepository.find();
+	public async getAllBanTimer(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
+		let arrReturn: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = [];
+		const returnAll = await this.BlackListRepository.find();
+		returnAll.forEach(element => {
+			const newBan = {
+				login_banned: element.login_banned,
+				userOrRoom: element.userOrRoom,
+				id_sender: element.id_sender,
+				room_id: element.room_id,
+				date: element.date,
+				timer: element.timer
+			};
+			arrReturn.push(newBan);
+		});
+		return arrReturn;
 	}
 
 	async checkUserBan(login: string, login_receiver: string): Promise<Boolean> {
@@ -50,7 +63,10 @@ export class BlackListService {
 			receiver_login: body.receiver_login,
 			room_id: body.room_id,
 			room_name: body.room_name,
-			cause: body.cause
+			cause: body.cause,
+			date: body.date,
+			alwaysOrNot: body.alwaysOrNot,
+			timer: body.timer
 		}
 		)
 		if (!returnBan)

@@ -21,9 +21,14 @@
     cursor: pointer;
 }
 
-#affConversItemChat {
+#affConversItemChatBig {
     overflow: scroll;
     height: 92%;
+}
+
+#affConversItemChatSmall {
+    overflow: scroll;
+    height: 77%;
 }
 
 /* .bi-x-lg {

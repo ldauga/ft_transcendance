@@ -60,7 +60,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
     }, [props]);
 
     return (
-        <div id="mainAffChatAndFriend">
+        <div className="mainAffChatAndFriend">
             {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} />}
             {isNotif && <AffNotif setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}

@@ -9,8 +9,8 @@ export class BlackListController {
   private readonly BlackListService: BlackListService;
 
   @Get()
-  public getAllBan(): Promise<BlackListEntity[]> {
-    return this.BlackListService.getAllBan();
+  public getAllBan(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
+    return this.BlackListService.getAllBanTimer();
   }
 
   @Get('/checkUserBan/:login/:loginReceiver')

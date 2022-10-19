@@ -25,4 +25,7 @@ export class RoomsEntity {
   @Column({ default: false })
   public publicOrPrivate: boolean;
 
+  @Column({ default: false })
+  public passwordOrNot: boolean;
+
 }

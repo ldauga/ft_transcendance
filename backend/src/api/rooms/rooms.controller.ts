@@ -34,6 +34,14 @@ export class RoomsController {
     return returnCheck;
   }
 
+  @Post('/changePassword/')
+  public async changePassword(@Body() body: { room_name: string, passwordOrNot: boolean, password: string }): Promise<Boolean> {
+    console.log('changePassword Controller');
+    const changeReturn = await this.service.changePassword(body.room_name, body.passwordOrNot, body.password);
+    console.log('changePassword Controller', changeReturn);
+    return changeReturn;
+  }
+
   @Post()
   public async createRoom(@Body() body: RoomsDto): Promise<RoomsEntity> {
     // console.log('body', body);

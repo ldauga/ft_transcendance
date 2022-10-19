@@ -3,12 +3,14 @@ import { createRef, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
+import './CSS/Rooms.css'
 import './CSS/Convers.css'
 import '../Homepage.scss'
 import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
 import { constWhileSecu } from '../HomePage';
+import ChangeRoomPassword from './ChangeRoomPassword';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -22,6 +24,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
+    const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
 
     const bottom = useRef<null | HTMLDivElement>(null);
 
@@ -67,6 +70,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.removeListener('newMsgReceived');
     })
 
+    const handleClickChangePassword = () => {
+        if (isChangeRoomPassword)
+            setChangeRoomPassword(false);
+        else
+            setChangeRoomPassword(true);
+    }
+
     const closeConvers = () => {
         props.setRoomsConvers(false);
         if (props.oldAffRoomConvers == "Rooms")
@@ -99,6 +109,26 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         setAffParticipantsRooms(true);
     };
 
+    const checkIfAdmin = async () => {
+        let ifAdmin = false;
+        await axios.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+            console.log("check ifOwner = ", res.data);
+            if (res.data == true) {
+                setAdmin(true);
+                ifAdmin = true;
+            }
+        })
+        await axios.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+            console.log("check ifAdmin = ", res.data);
+            if (res.data == true) {
+                setAdmin(true);
+                ifAdmin = true;
+            }
+        })
+        console.log("return: ", ifAdmin);
+        return ifAdmin;
+    };
+
     const checkIfOwner = async () => {
         await axios.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
@@ -114,6 +144,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const getListItem = async () => {
+        const admin = await checkIfAdmin();
+        console.log("getListItem admin: ", admin);
         await axios.get('http://localhost:5001/messages/' + props.roomsConversData.id + '/' + props.roomsConversData.id + '/room').then(async (res) => {
             console.log("get List Item Room Conversation");
             let itemList: any[] = []
@@ -140,7 +172,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [props, isConversRooms]);
 
     function Header() {
-        if (isOwner == true)
+        if (isOwner)
             return (
                 <div id="header" className="mainHeader">
                     <div className="mainHeaderLeft mainHeaderSide">
@@ -151,6 +183,22 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={removeRoom} className="bi bi-x-lg"></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
+                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button>
+                    </div>
+                </div>
+            );
+        else if (isAdmin)
+            return (
+                <div id="header" className="mainHeader">
+                    <div className="mainHeaderLeft mainHeaderSide">
+                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
+                    </div>
+                    <h3>{props.roomsConversData.name}</h3>
+                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
+                        <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
+                        <button onClick={removeRoom} className="bi bi-x-lg"></button>
+                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
+                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button>
                     </div>
                 </div>
             );
@@ -193,10 +241,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         return (
             <div id="roomsConvers">
                 <Header />
-                <div id="affConversBig" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
+                {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
+                <AffConvers />
                 <div className="sendZoneConvers">
                     <input
                         value={messageText}
@@ -210,6 +256,23 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                 </div>
             </div>
         );
+    };
+
+    function AffConvers() {
+        if (!isChangeRoomPassword)
+            return (
+                <div id="affConversBig" ref={bottom}>
+                    {itemListHistory}
+                    <div ref={messagesEndRef} />
+                </div>
+            );
+        else
+            return (
+                <div id="affConversSmall" ref={bottom}>
+                    {itemListHistory}
+                    <div ref={messagesEndRef} />
+                </div>
+            );
     };
 
     return (

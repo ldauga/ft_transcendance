@@ -29,7 +29,8 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
             user_login: userData.userReducer.user?.login,
             room_id: item.id,
             room_name: item.name,
-            password: password
+            password: password,
+            publicOrPrivate: item.publicOrPrivate
         }
         utilsData.socket.emit('joinChatRoom', checkIfCanJoinRoom);
     };
@@ -112,15 +113,15 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
         await axios.get('http://localhost:5001/rooms/').then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
-            const nameTmp: { id: number, name: string, publicOrPrivate: boolean }[] = res.data;
+            const nameTmp: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = res.data;
             nameTmp.forEach(item => {
                 console.log("test: ", myRooms.find(obj => obj.id == item.id));
-                if (!myRooms.find(obj => obj.id == item.id)) {
-                    if (item.publicOrPrivate) {
+                if (!myRooms.find(obj => obj.id == item.id) && !item.publicOrPrivate) {
+                    if (item.passwordOrNot) {
                         itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
                             <div className="roomsInItem">
                                 <div className='roomListInItem1'>
-                                    <p>Private</p>
+                                    <i className="bi bi-lock-fill"></i>
                                 </div>
                                 <p className='roomsItemRoomName'>{item.name}</p>
                                 <div className='roomListInItem2'>
@@ -136,7 +137,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
                         itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
                             <div className="roomsInItem">
                                 <div className='roomListInItem1'>
-                                    <p>Public</p>
                                 </div>
                                 <p className='roomsItemRoomName'>{item.name}</p>
                                 <div className='roomListInItem2'>

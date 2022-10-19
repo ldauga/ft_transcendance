@@ -86,7 +86,8 @@ export class ParticipantsService {
 			user_login: body.user_login,
 			room_id: body.room_id,
 			room_name: body.room_name,
-			admin: true
+			admin: true,
+			publicOrPrivate: body.publicOrPrivate
 		};
 		const returnParticipant = this.createParticipant(newParticipant);
 		console.log("returnParticipant service: ", returnParticipant);
@@ -101,7 +102,8 @@ export class ParticipantsService {
 			user_login: body.user_login,
 			room_id: body.room_id,
 			room_name: body.room_name,
-			admin: body.admin
+			admin: body.admin,
+			publicOrPrivate: body.publicOrPrivate
 		})
 		console.log("returnParticipant service: ", returnParticipant);
 		if (!returnParticipant)
