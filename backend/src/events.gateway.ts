@@ -88,7 +88,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   private logger: Logger = new Logger('AppGateway');
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     // for (let i = 0; i < arrClient.length; i++) {
@@ -104,10 +104,20 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (this.pongInfo[room[0]].players[i].id == client.id) {
           this.pongInfo[room[0]].players[i].connected = false
           this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
+          if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
+            this.pongInfo.splice(room[0], 1)
+            return ;
+          }
         }
-      if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected)
-        this.pongInfo.splice(room[0], 1)
     }
+    room = this.getRoomBySpectateID(client.id)
+    if (room != null) {
+      let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
+      if (tmp != -1)  this.pongInfo[room[0]].spectate
+
+
+    }
+
   }
 
   handleConnection(client: any, ...args: any[]) {
@@ -669,7 +679,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
-
   @SubscribeMessage('usernameRegistered')
   async usernameRegistered(client: Socket, data: string) {
     const _client_temp = arrClient.find(obj => obj.id === client.id);
@@ -726,6 +735,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     return null
   }
 
+  getRoomBySpectateID(SpectateLogin: string): [number, gameRoomClass] | null {
+    for (let i = 0; i < this.pongInfo.length; i++)
+      for (let j = 0; j < this.pongInfo[i].spectate.length; j++)
+        if (this.pongInfo[i].spectate[j].id == SpectateLogin)
+          return [i, this.pongInfo[i]]
+    return null
+  }
+
   @SubscribeMessage('CHECK_RECONNEXION')
   checkReconnexion(
     client: Socket,
@@ -750,9 +767,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.server.to(client.id).emit('start', item.roomID)
         }
       })
+      item.spectate.forEach((spectator) => {
+        if (spectator.user.login == info.user.login) {
+          this.joinRoom(client, item.roomID)
+          spectator.id = client.id
+          spectator.user = info.user
+          this.server.to(client.id).emit('start', item.roomID)
+        }
+      })
     })
   }
-
 
   @SubscribeMessage('JOIN_QUEUE')
   async joinQueue(
@@ -770,7 +794,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       gameMap: string
     }) {
 
-    console.log('ouioui')
     this.server.to(client.id).emit('joined')
 
     for (let roomId = 0; ; roomId++) {
@@ -828,7 +851,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.logger.log(`pannel: ${this.pongInfo[room[0]].spectate[i].pannel} x: ${this.pongInfo[room[0]].spectate[i].x} | y: ${this.pongInfo[room[0]].spectate[i].y}`)
     }
 
-    this.server.to(client.id).emit('start', room[1].roomID);
+    this.server.to(client.id).emit('start_spectate', client.id);
   }
 
   @Interval(3)

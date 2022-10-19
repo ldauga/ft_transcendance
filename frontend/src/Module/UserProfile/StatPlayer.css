@@ -1,29 +1,15 @@
-.closeStatePlayer {
-	position: sticky;
-	top: 1%;
-	right: 1%;
-
-	float: right;
-
-	width: 7.5vh;
-	height: 1%;
-}
-
-.closeStatePlayer svg {
-	width: 100%;
-	height: auto;
-}
-
 .statPlayerContent {
 	width: 100%;
-	height: 100%;
+	height: calc(95vh + 8px);
+
+	overflow-y: scroll;
 }
 
 .statPlayerContent .userIdentity {
-	margin: 1%;
-
+	margin-top: 1%;
+	margin-inline: auto;
 	width: 98%;
-	height: 68%;
+	height: 80%;
 
 	background-color: rgba(255, 255, 255, 0.05);
 
@@ -79,6 +65,7 @@
 
 	justify-content: center;
 	align-items: center;
+
 
 	width: 100%;
 	height: 40%;
