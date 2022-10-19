@@ -522,17 +522,32 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createMsg')
   async createMsg(client: Socket, data: any) {
     this.logger.log(`${client.id} want create newMsg: ${data.text}`);
-    let verif = false;
+    let verifBan = false;
+    let verifMute = false;
     if (!data.userOrRoom) {
       const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
       await checkIfBanned.forEach(async item => {
         console.log("item.data: ", item.data);
-        if (!item.data)
-          verif = true;
+        if (item.data)
+          verifBan = true;
       });
     }
-    console.log("verif: ", verif);
-    if ((!data.userOrRoom && verif) || data.userOrRoom) {
+    else {
+      const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      await checkIfBanned.forEach(async item => {
+        console.log("item.data: ", item.data);
+        if (item.data)
+          verifBan = true;
+      });
+      const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      await checkIfMuted.forEach(async item => {
+        console.log("item.data: ", item.data);
+        if (item.data)
+          verifMute = true;
+      });
+    }
+    console.log("verifBan: ", verifBan);
+    if (!verifBan && !verifMute) {
       this.logger.log(`${client.id} create newMsg: ${data.text}`);
       const newMsg = {
         id_sender: data.id_sender,
