@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
+import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/AddFriend.css';
 
 function AddFriend() {
@@ -14,7 +15,7 @@ function AddFriend() {
     async function buttonAddFriend() {
         let test = false;
         console.log('addFriend');
-        await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -27,7 +28,7 @@ function AddFriend() {
             else {
                 let a = 1;
                 let b = 1;
-                await axios.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -39,7 +40,7 @@ function AddFriend() {
                         console.log('invitationRequest not exist');
                     }
                 })
-                await axios.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                     console.log('check friendList');
                     console.log(res.data);
                     console.log(res);

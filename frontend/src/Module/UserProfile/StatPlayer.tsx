@@ -12,6 +12,7 @@ import gold_rank_img from '../../Page/assets/gold_rank.png'
 import diamond_rank_img from '../../Page/assets/diamond_rank.png'
 import master_rank_img from '../../Page/assets/master_rank.png'
 import { RiFileWarningLine } from 'react-icons/ri'
+import axiosConfig from '../../Utils/axiosConfig'
 
 export function StatPlayer(props: { login: string, setLogin: any}) {
 	const [profileUserId, setProfileUserId] = useState(0)
@@ -28,7 +29,7 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 	useEffect(() => {
 		console.log('props', props)
 		if (!profileUserId && props.login !== "") {
-			axios.get("http://localhost:5001/user/login/" + props.login, { withCredentials: true }).then((res) => {
+			axiosConfig.get("http://localhost:5001/user/login/" + props.login, { withCredentials: true }).then((res) => {
 				setProfileUserId(res.data.id)
 				setUserProfilePicture(res.data.profile_pic)
 
@@ -87,7 +88,7 @@ export function StatPlayer(props: { login: string, setLogin: any}) {
 		else if (!profileUserMatchHistory.length && profileUserId && !check) {
 
 			setCheck(true);
-			axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + profileUserId).then((res) => {
+			axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + profileUserId).then((res) => {
 				console.log('dos', res.data)
 
 				let matches: any[] = []

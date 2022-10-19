@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isJSDocTemplateTag } from 'typescript';
 import { RootState } from '../../../State';
+import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Chat.css'
 
 function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
@@ -42,7 +43,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     };
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
             res.data.forEach((item: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
+import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Convers.css'
 
 function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string }) {
@@ -55,7 +56,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     })
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
             // console.log('res.data = ', res.data);

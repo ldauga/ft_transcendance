@@ -5,7 +5,7 @@ import { JwtStrategy } from "../user/strategy/user.jwt.strategy";
 import { UserModule } from "../user/user.module";
 import { InvitationRequestController } from "./invitationRequest.controller";
 import { InvitationRequestEntity } from "./invitationRequest.entity";
-import { invitationRequestService } from "./invitationRequest.service";
+import { InvitationRequestService } from "./invitationRequest.service";
 
 @Module({
     imports: [
@@ -14,7 +14,7 @@ import { invitationRequestService } from "./invitationRequest.service";
         UserModule,
     ],
     controllers: [InvitationRequestController],
-    providers: [JwtStrategy, invitationRequestService],
-    exports: [invitationRequestService]
+    providers: [JwtStrategy, InvitationRequestService],
+    exports: [InvitationRequestService]
 })
 export class InvitationRequestModule { }

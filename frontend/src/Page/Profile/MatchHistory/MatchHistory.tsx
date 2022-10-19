@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
+import axiosConfig from '../../../Utils/axiosConfig';
 import './MatchHistory.scss';
 
 var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
@@ -20,7 +21,8 @@ function MatchHistory() {
 
 	useEffect(() => {
 		if (!verif) {
-			axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
+			let res = axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
+			console.log('ici', res)
 			setVerif(true);
 		}
 	})

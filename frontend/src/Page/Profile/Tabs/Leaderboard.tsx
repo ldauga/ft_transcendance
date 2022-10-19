@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import { useEffect, useState } from 'react';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 
 function Leaderboard() {
@@ -21,7 +22,7 @@ function Leaderboard() {
 
 	useEffect(() => {
 		if (!rows.length) {
-			axios.get('http://localhost:5001/user').then(res => {
+			axiosConfig.get('http://localhost:5001/user').then(res => {
 
 				let tmp = res.data
 				

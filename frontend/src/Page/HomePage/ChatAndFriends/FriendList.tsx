@@ -5,6 +5,7 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
 import BanUser from "./BanUser";
+import axiosConfig from "../../../Utils/axiosConfig";
 
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
 
@@ -98,7 +99,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	const getListItem = async () => {
-		await axios.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
+		await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
 			console.log("get");
 			let itemList: any[] = []
 			console.log('res.data = ', res.data);

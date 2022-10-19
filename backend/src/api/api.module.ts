@@ -8,8 +8,11 @@ import { InvitationRequestModule } from './invitationRequest/invitationRequest.m
 import { RoomsModule } from './rooms/rooms.module';
 import { PartcipantsModule } from './participants/participants.module';
 import { BlackListModule } from './blackList/blackList.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
-  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, FriendListModule, InvitationRequestModule, RoomsModule, PartcipantsModule, BlackListModule],
+  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, 
+    FriendListModule, InvitationRequestModule, RoomsModule, 
+    PartcipantsModule, BlackListModule, EventsModule],
 })
 export class ApiModule { }

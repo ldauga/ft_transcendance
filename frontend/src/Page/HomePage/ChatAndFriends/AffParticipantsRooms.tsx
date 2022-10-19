@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, isAdmin: boolean, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -108,7 +109,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     };
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             let itemList: any[] = []
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number }) => {

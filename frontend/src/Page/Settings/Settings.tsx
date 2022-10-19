@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavBar from '../../Module/Navbar/Navbar';
 import { actionCreators, RootState } from '../../State';
+import axiosConfig from '../../Utils/axiosConfig';
 import './Settings.scss';
 
 function Settings() {
@@ -30,14 +31,14 @@ function Settings() {
 		param(true);
 
 		if (param == setOpenEditZone2fa) {
-			axios.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
+			axiosConfig.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
 		}
 	};
 
 	const handleClose = (param: any) => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axios.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}, { withCredentials: true }).then((res) => { setUser(res.data) })
+			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}, { withCredentials: true }).then((res) => { setUser(res.data) })
 
 		if (userParameterNewProfilePicture != null) {
 

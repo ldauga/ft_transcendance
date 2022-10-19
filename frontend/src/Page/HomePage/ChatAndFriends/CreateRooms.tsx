@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/Rooms.css'
 import '../Homepage.scss'
 import { Checkbox } from '@mui/material';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function CreateRooms() {
 
@@ -19,7 +20,7 @@ function CreateRooms() {
         if (text.length <= 0 || text.length > 20)
             return; //gestion d'erreur
         let a = 1;
-        await axios.get('http://localhost:5001/rooms/check/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/check/' + text).then(async (res) => {
             if (res.data == true) {
                 console.log("room already exist");
             }

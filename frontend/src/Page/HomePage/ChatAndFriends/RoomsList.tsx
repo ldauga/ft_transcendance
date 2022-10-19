@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/RoomsList.css'
 import { constWhileSecu } from '../HomePage';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
 
@@ -101,7 +102,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
 
     const getListItem = async () => {
         let myRooms: { name: string, id: number }[];
-        await axios.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             console.log('res.data MyRooms = ', res.data);
             myRooms = res.data;
             console.log('nameTmp MyRooms = ', myRooms);
@@ -109,7 +110,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
             console.log("itemListMyRooms 1 : ", itemListMyRooms);
         })
         console.log("itemListMyRooms 2 : ", itemListMyRooms);
-        await axios.get('http://localhost:5001/rooms/').then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/').then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
             const nameTmp: { id: number, name: string, publicOrPrivate: boolean }[] = res.data;

@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { InvitationRequestDto } from "./dtos/invitationRequest.dto";
 import { InvitationRequestEntity } from "./invitationRequest.entity";
-import { invitationRequestService } from "./invitationRequest.service";
+import { InvitationRequestService } from "./invitationRequest.service";
 
 @Controller('invitationRequest')
 export class InvitationRequestController {
-  @Inject(invitationRequestService)
-  private readonly invitationRequestService: invitationRequestService;
+  @Inject(InvitationRequestService)
+  private readonly invitationRequestService: InvitationRequestService;
 
   @Get()
   public getAllInvitationRequest(): Promise<InvitationRequestEntity[]> {

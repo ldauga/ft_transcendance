@@ -5,7 +5,7 @@ import { InvitationRequestDto } from "./dtos/invitationRequest.dto";
 import { InvitationRequestEntity } from "./invitationRequest.entity";
 
 @Injectable()
-export class invitationRequestService {
+export class InvitationRequestService {
 	constructor(
 		@InjectRepository(InvitationRequestEntity)
 		private readonly InvitationRequestRepository: Repository<InvitationRequestEntity>,
@@ -81,6 +81,7 @@ export class invitationRequestService {
 		});
 		const removeReturn = this.InvitationRequestRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		return removeReturn;
 	}
 
 }

@@ -16,7 +16,7 @@ import { UserEntity } from '../user/user.entity';
 	  JwtModule.register({
 		  secret: 'super-cat',
 		  signOptions: {
-			  expiresIn: '1min',
+			  expiresIn: '15min',
 		  },
 	  }),
 	  HttpModule,

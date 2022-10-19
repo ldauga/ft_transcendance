@@ -5,6 +5,7 @@ import { RootState } from "../../../State";
 import './CSS/InvitationRequest.css';
 import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
+import axiosConfig from "../../../Utils/axiosConfig";
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
@@ -55,7 +56,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     }
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
