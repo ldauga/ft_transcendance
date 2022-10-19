@@ -6,7 +6,7 @@ import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getEnvPath } from './common/helper/env.helper';
-import { CronService, EventsGateway } from './events.gateway';
+import { CronService, EventsGateway } from './api/events/events.gateway';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { FriendListModule } from './api/friendsList/friendList.module';
 import { InvitationRequestModule } from './api/invitationRequest/invitationRequest.module';
