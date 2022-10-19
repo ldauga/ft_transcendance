@@ -30,4 +30,5 @@ export class InvitationRequestDto {
 
 	@IsString()
 	public room_name: string;
+
 }

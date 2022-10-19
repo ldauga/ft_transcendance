@@ -64,7 +64,8 @@ export class InvitationRequestService {
 			receiver_login: body.receiver_login,
 			userOrRoom: body.userOrRoom,
 			room_id: body.room_id,
-			room_name: body.room_name
+			room_name: body.room_name,
+			publicOrPrivate: body.publicOrPrivate
 		}
 		)
 		if (!returnInvitationRequest)

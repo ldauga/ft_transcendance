@@ -32,5 +32,15 @@ export class BlackListEntity {
   @Column({ type: 'varchar' })
   public cause: string;
 
+  @Column()
+  @Index()
+  public date: number;
+
+  @Column({ default: true })
+  public alwaysOrNot: boolean;
+
+  @Column()
+  @Index()
+  public timer: number;
 
 }

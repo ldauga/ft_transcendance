@@ -27,4 +27,14 @@ export class BlackListDto {
 
 	@IsString()
 	public cause: string;
+
+	@IsNumber()
+	@IsNotEmpty()
+	public date: number;
+
+	@IsBoolean()
+	public alwaysOrNot: boolean;
+
+	@IsNumber()
+	public timer: number;
 }

@@ -21,4 +21,7 @@ export class RoomsDto {
 	@IsBoolean()
 	public publicOrPrivate: boolean;
 
+	@IsBoolean()
+	public passwordOrNot: boolean;
+
 }

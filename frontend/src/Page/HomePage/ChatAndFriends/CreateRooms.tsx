@@ -15,6 +15,7 @@ function CreateRooms() {
     const [text, setText] = useState('');
     const [password, setPassword] = useState('');
     const [publicOrPrivate, setPublicOrPrivate] = useState(false);
+    const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     const createGroup = async () => {
         if (text.length <= 0 || text.length > 20)
@@ -38,7 +39,8 @@ function CreateRooms() {
                 identifiant: 1,
                 owner_id: userData.userReducer.user?.id,
                 owner_login: userData.userReducer.user?.login,
-                publicOrPrivate: publicOrPrivate
+                publicOrPrivate: publicOrPrivate,
+                passwordOrNot: passwordOrNot
             }
             utilsData.socket.emit('createChatRooms', newRoom);
             setText("");
@@ -55,14 +57,22 @@ function CreateRooms() {
                 placeholder="Enter name"
             // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
             />
-            <div id="PublicOrPrivateContainer">
+            <div id="PasswordOrNotContainer">
+                <p>Password</p>
+                <Checkbox
+                    value={passwordOrNot}
+                    onChange={e => setPasswordOrNot(!passwordOrNot)}
+                />
                 <input
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Enter password"
-                    disabled={!publicOrPrivate}
+                    disabled={!passwordOrNot}
+                    id="PasswordOrNotContainerInput"
                 // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
                 />
+            </div>
+            <div id="PrivateOrNotContainer">
                 <p>Private</p>
                 <Checkbox
                     value={publicOrPrivate}
