@@ -78,12 +78,9 @@ class Player {
 		this.expansion = false
 		this.reduce = false
 
-		this.y = canvas.height / 2 - this.height / 2
 		this.x = canvas.width / 8 - this.width / 2
-		if (id == '') {
-			this.x = (canvas.width / 8 * 7) - this.width / 2
-		}
-		
+		this.y = canvas.height / 2 - this.height / 2
+
 		this.speed = 1
 
 		this.score = 0
@@ -286,13 +283,11 @@ class Map {
 		}
 		if (gameMap == 'map1')
 			this.mapColor = 'black'
-		else if (gameMap == 'map2')
-			this.mapColor = '#19022b'
-		else if (gameMap == 'map3') {
+		else if (gameMap == 'map2'){
 			this.mapColor = 'black'
 			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, MOTION, 0.4))
 		}
-		else if (gameMap == 'map4') {
+		else if (gameMap == 'map3') {
 			this.mapColor = 'black'
 			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, EXPAND, 1))
 		}

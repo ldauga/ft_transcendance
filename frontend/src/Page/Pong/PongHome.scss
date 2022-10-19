@@ -43,11 +43,51 @@
 	}
 
 	button.create-map{
-		all: unset;
-		color: white;
-		font-size: .8vh;
-		opacity: .7;
+		margin-top: 1vh;
+		background: #88e592;
+		border: none;
+		color: black;
+		padding: 1vh 1vw;
 		cursor: pointer;
-		text-decoration: underline;
+		border-radius: 5px;
+		font-family: 'Roboto';
+		transition: all .3s ease-out;
+		&:hover {
+			background: #73c47b;
+		}
 	}
+}
+
+.loadingScreen {
+
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	.circularProgress {
+		margin-top: 30vh;
+	}
+
+	span {
+		margin-top: 5vh;
+		font-family: 'Roboto';
+	}
+
+	button.leave-queue {
+		margin-top: 15vh;
+		background: #e8927f;
+		border: none;
+		color: black;
+		padding: 1vh 1vw;
+		cursor: pointer;
+		border-radius: 5px;
+		font-family: 'Roboto';
+		transition: all .3s ease-out;
+		&:hover {
+			background: #ce8170;
+		}
+	}
+
+
+
 }

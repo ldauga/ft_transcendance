@@ -37,7 +37,7 @@ const CreateMapTemp = (props: any) => {
 	function drawFont(ctx: CanvasRenderingContext2D | null) {
 		if (ctx !== null) {
 
-			ctx.fillStyle = room.map.mapColor;
+			ctx.fillStyle = 'rgb(245, 246, 247)';
 
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -50,7 +50,7 @@ const CreateMapTemp = (props: any) => {
 			ctx.beginPath();
 
 			ctx.lineWidth = 3;
-			ctx.strokeStyle = '#3A3935';
+			ctx.strokeStyle = 'rgb(48, 56, 76)';
 			ctx.setLineDash([canvas.height / 30, canvas.height / 120]);
 
 			ctx.moveTo(canvas.width / 2, 0);
@@ -68,7 +68,7 @@ const CreateMapTemp = (props: any) => {
 			ctx.beginPath();
 
 			ctx.lineWidth = 1;
-			ctx.strokeStyle = '#3A3935';
+			ctx.strokeStyle = 'rgb(48, 56, 76)';
 
 			ctx.moveTo(canvas.width / 8, 0);
 			ctx.lineTo(canvas.width / 8, canvas.height);
@@ -90,7 +90,7 @@ const CreateMapTemp = (props: any) => {
 				const element = room.map.obstacles[index];
 
 				if (actualObstacleID != element.id) {
-					ctx.fillStyle = element.color;
+					ctx.fillStyle = 'rgb(48, 56, 76)';
 
 					ctx.fillRect(element.x, element.y, element.width, element.height);
 				}
@@ -110,44 +110,44 @@ const CreateMapTemp = (props: any) => {
 
 					ctx.fillRect(element.x, element.y, element.width, element.height);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x + element.width / 2 - 5, element.y - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x + element.width / 2 - 5, element.y - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x + element.width / 2 - 4, element.y - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x + element.width / 2 - 5, element.y + element.height - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x + element.width / 2 - 5, element.y + element.height - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x + element.width / 2 - 4, element.y + element.height - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x + element.width - 5, element.y + element.height / 2 - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x + element.width - 5, element.y + element.height / 2 - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x + element.width - 4, element.y + element.height / 2 - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x - 5, element.y + element.height / 2 - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x - 5, element.y + element.height / 2 - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x - 4, element.y + element.height / 2 - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x - 5, element.y - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x - 5, element.y - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x - 4, element.y - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x + element.width - 5, element.y + element.height - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x + element.width - 5, element.y + element.height - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x + element.width - 4, element.y + element.height - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x + element.width - 5, element.y - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x + element.width - 5, element.y - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x + element.width - 4, element.y - 4, 8, 8);
 
-					ctx.fillStyle = 'white';
-					ctx.fillRect(element.x - 5, element.y + element.height - 5, 10, 10);
 					ctx.fillStyle = 'black';
+					ctx.fillRect(element.x - 5, element.y + element.height - 5, 10, 10);
+					ctx.fillStyle = 'white';
 					ctx.fillRect(element.x - 4, element.y + element.height - 4, 8, 8);
 
 				}
@@ -161,10 +161,10 @@ const CreateMapTemp = (props: any) => {
 			ctx.textAlign = 'center';
 			ctx.font = '50px Arial';
 
-			ctx.fillStyle = 'red'
+			ctx.fillStyle = 'black'
 			ctx.fillText(room.players[0].score.toString(), canvas.width / 4 + canvas.width / 16, canvas.height / 10);
 
-			ctx.fillStyle = 'blue'
+			ctx.fillStyle = 'black'
 			ctx.fillText(room.players[1].score.toString(), (canvas.width / 4 * 3) - canvas.width / 16, canvas.height / 10);
 
 		}
@@ -172,14 +172,11 @@ const CreateMapTemp = (props: any) => {
 
 	function drawPlayers(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
 		if (ctx !== null) {
-			ctx.fillStyle = 'red';
-			ctx.shadowBlur = 20;
-			ctx.shadowColor = 'red';
+			ctx.fillStyle = 'rgb(48, 56, 76)';
 
 			ctx.fillRect(room.players[0].x, room.players[0].y, room.players[0].width, room.players[0].height);
 
-			ctx.fillStyle = 'blue';
-			ctx.shadowColor = 'blue';
+			ctx.fillStyle = 'rgb(48, 56, 76)';
 
 			ctx.fillRect(((room.canvas.width / 8) * 7 - room.players[1].width / 2), room.players[1].y, room.players[1].width, room.players[1].height);
 
@@ -192,14 +189,10 @@ const CreateMapTemp = (props: any) => {
 
 			ctx.beginPath();
 
-			ctx.shadowBlur = 20;
-
-			ctx.fillStyle = 'green';
-			ctx.shadowColor = 'green';
+			ctx.fillStyle = 'rgb(48, 56, 76)';;
 
 			if (checkAllCollisionsBall(room.ball)) {
 				ctx.fillStyle = '#330000';
-				ctx.shadowColor = '#330000';
 			}
 
 			ctx.arc(room.ball.x, room.ball.y, room.ball.radius, 0, Math.PI * 2);
@@ -245,7 +238,7 @@ const CreateMapTemp = (props: any) => {
 
 		for (let index = 0; index < room.map.obstacles.length; index++) {
 			if (lastObstacleID == room.map.obstacles[index].id)
-				room.map.obstacles[index].color = 'gray'
+				room.map.obstacles[index].color = 'rgb(48, 56, 76)'
 			if (actualObstacleID == room.map.obstacles[index].id)
 				room.map.obstacles[index].color = '#003300'
 		}

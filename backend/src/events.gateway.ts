@@ -731,6 +731,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('LEAVE_QUEUE')
+  async leaveQueue(
+    client: Socket,
+    info: {
+      user: {
+        id: number,
+        login: string,
+        nickname: string,
+        wins: number,
+        looses: number,
+        rank: number,
+        profile_pic: string
+      },
+    }) {
+      const room = this.getRoomByClientLogin(info.user.login)
+
+      if (room != null) {
+        this.pongInfo.splice(room[0], 1)
+
+        this.server.to(client.id).emit('leave_queue')
+
+      }
+    }
+
   @SubscribeMessage('SPECTATE_CLIENT')
   async spectateClient(client: Socket,
     info: {
