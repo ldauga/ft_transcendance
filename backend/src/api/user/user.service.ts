@@ -47,7 +47,7 @@ export class UserService {
 	}
 
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
-		console.log('signedRefreshToken', signedRefreshToken)
+		//console.log('signedRefreshToken', signedRefreshToken)
 		if (signedRefreshToken === undefined)
 			throw new UnauthorizedException('Token not found.');
 		var user: any;

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
+import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/SendChatMsg.css'
 
 function SendChatMsg() {
@@ -15,7 +16,7 @@ function SendChatMsg() {
     async function sendMsg() {
         let test = false;
         console.log('sendMsg');
-        await axios.get('http://localhost:5001/user/login/' + login).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + login).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);

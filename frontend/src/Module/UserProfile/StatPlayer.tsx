@@ -40,7 +40,7 @@ export function StatPlayer() {
 		if (!profileUserId) {
 			if (!verifLogin) {
 				setVerifLogin(true);
-				axios.get("http://localhost:5001/user/login/" + login).then((res) => {
+				axiosConfig.get("http://localhost:5001/user/login/" + login).then((res) => {
 					if (res.data == '') return;
 					setVerifNick(true)
 					setProfileUser(res.data)
@@ -100,7 +100,7 @@ export function StatPlayer() {
 			}
 			else if (!verifNick) {
 				setVerifNick(true);
-				axios.get("http://localhost:5001/user/nickname/" + login).then((res) => {
+				axiosConfig.get("http://localhost:5001/user/nickname/" + login).then((res) => {
 					if (res.data == '') return ;
 					setProfileUser(res.data)
 					setProfileUserId(res.data.id)

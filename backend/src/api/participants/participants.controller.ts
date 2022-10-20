@@ -42,6 +42,7 @@ export class ParticipantsController {
   }
 
   @Get('/checkAdmin/:login/:name')
+  @UseGuards(AuthGuard('jwt'))
   public async checkIfAdmin(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
     const returnCheck = await this.service.checkAdmin(login, name);
     console.log('checkAdmin Check = ', returnCheck);
@@ -49,6 +50,7 @@ export class ParticipantsController {
   }
 
   @Get('/checkIfAdminOrParticipant/:login/:name')
+  @UseGuards(AuthGuard('jwt'))
   public async checkIfAdminOrParticipant(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
     const returnCheck = await this.service.checkIfAdminOrParticipant(login, name);
     console.log('checkIfAdminOrParticipant Check = ', returnCheck);
@@ -56,6 +58,7 @@ export class ParticipantsController {
   }
 
   @Post('/admin')
+  @UseGuards(AuthGuard('jwt'))
   public async createAdmin(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
     console.log('body', body);
     const newParticipant = await this.service.createAdmin(body);
@@ -63,6 +66,7 @@ export class ParticipantsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   public async createParticipant(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
     console.log('body', body);
     const newParticipant = await this.service.createParticipant(body);
@@ -70,6 +74,7 @@ export class ParticipantsController {
   }
 
   @Post('/:login/:roomName')
+  @UseGuards(AuthGuard('jwt'))
   public async removeParticipant(@Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
     console.log('removeParticipant Controller login: ', login, ", roomName: ", roomName);
     const removeReturn = await this.service.removeParticipant(login, roomName);

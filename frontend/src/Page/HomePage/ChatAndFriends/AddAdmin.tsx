@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
+import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/BanUser.css';
 
 function AddAdmin(props: { roomsConversData: { name: string, id: number } }) {
@@ -14,7 +15,7 @@ function AddAdmin(props: { roomsConversData: { name: string, id: number } }) {
     async function buttonAddAdmin() {
         let test = false;
         console.log('addFriend');
-        await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);

@@ -95,5 +95,6 @@ export class MuteListService {
 		});
 		const removeReturn = this.MuteListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		return removeReturn;
 	}
 }

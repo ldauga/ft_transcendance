@@ -16,6 +16,7 @@ import { PartcipantsModule } from './api/participants/participants.module';
 import { MatchesHistoryModule } from './api/matchesHistory/matchesHistory.module';
 import { BlackListModule } from './api/blackList/blackList.module';
 import { MuteListModule } from './api/muteList/muteList.module';
+import { EventsModule } from './api/events/events.module';
 //import { AppLoggerMiddleware } from './app.middleware';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
@@ -33,10 +34,11 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 		MatchesHistoryModule,
 		BlackListModule,
 		MuteListModule,
+		EventsModule,
 		ScheduleModule.forRoot(),
 	],
 	controllers: [AppController],
-	providers: [AppService, EventsGateway, CronService],
+	providers: [AppService, CronService],
 })
 export class AppModule {
 }

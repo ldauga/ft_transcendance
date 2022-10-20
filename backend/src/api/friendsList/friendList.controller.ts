@@ -37,7 +37,7 @@ export class FriendListController {
   }
 
   @Post()
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   public createFriendShip(@Body() body: FriendListDto): Promise<FriendListEntity> {
     console.log('body', body)
     const match = this.service.createFriendShip(body);

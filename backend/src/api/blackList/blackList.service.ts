@@ -83,6 +83,9 @@ export class BlackListService {
 		});
 		const removeReturn = this.BlackListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		if (!removeReturn)
+			return false;
+		return true;
 	}
 
 	async removeRoomBan(room_id: number, login_banned: string) {
@@ -94,5 +97,8 @@ export class BlackListService {
 		});
 		const removeReturn = this.BlackListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		if (!removeReturn)
+			return false;
+		return true;
 	}
 }

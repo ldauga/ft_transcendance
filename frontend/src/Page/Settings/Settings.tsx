@@ -69,7 +69,7 @@ function Settings() {
 	};
 
 	const sendGetRequest = (value: string) => {
-	axios.get('http://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
+		axiosConfig.get('http://localhost:5001/auth/2fa/turn-on/' + value)
 		.then(res => {
 			setTwoFactor(true);
 			setUserParameter2FACode('');

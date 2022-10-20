@@ -42,6 +42,7 @@ export class MessagesController {
   
   //TROUVER SOLUTION POUR METTRE LE GUARD
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   public createMessages(@Body() body: MessagesDto): Promise<MessagesEntity> {
     console.log('body createMessages: ', body);
     const newMessage = this.service.createMessages(body);

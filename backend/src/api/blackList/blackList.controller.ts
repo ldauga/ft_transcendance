@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
 import { BlackListDto } from "./dtos/blackList.dto";
 import { BlackListEntity } from "./blackList.entity";
 import { BlackListService } from "./blackList.service";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('blackList')
 export class BlackListController {
@@ -9,11 +10,13 @@ export class BlackListController {
   private readonly BlackListService: BlackListService;
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllBan(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
     return this.BlackListService.getAllBanTimer();
   }
 
   @Get('/checkUserBan/:login/:loginReceiver')
+  @UseGuards(AuthGuard('jwt'))
   public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
     const returnCheck = await this.BlackListService.checkUserBan(login, loginReceiver);
     console.log('checkUserBanReturn Check = ', returnCheck);
@@ -21,6 +24,7 @@ export class BlackListController {
   }
 
   @Get('/checkRoomBan/:id/:login/:roomName')
+  @UseGuards(AuthGuard('jwt'))
   public async checkRoomBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
     const returnCheck = await this.BlackListService.checkRoomBan(id, login, roomName);
     console.log('checkRoomBanReturn Check = ', returnCheck);
@@ -28,12 +32,14 @@ export class BlackListController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   public async createBan(@Body() body: BlackListDto): Promise<BlackListEntity> {
     const newBan = await this.BlackListService.createBan(body);
     return newBan;
   }
 
   @Post('/removeUserBan/:id/:login')
+  @UseGuards(AuthGuard('jwt'))
   public async removeUserBan(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_banned: string): Promise<Boolean> {
     // console.log('body', body);
     console.log('removeUserBan Controller');
@@ -43,6 +49,7 @@ export class BlackListController {
   }
 
   @Post('/removeRoomBan/:id/:login')
+  @UseGuards(AuthGuard('jwt'))
   public async removeRoomBan(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_banned: string): Promise<Boolean> {
     // console.log('body', body);
     console.log('removeUserBan Controller');
