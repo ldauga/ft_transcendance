@@ -713,6 +713,24 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('removeRoomMute')
+  async removeRoomMute(client: Socket, data: any) {
+    this.logger.log(`${client.id} want demute: ${data.login_muted} in room_id: ${data.room_id}`);
+    const removeMuteReturn = await http.get('http://localhost:5001/muteList/removeRoomMute/' + data.room_id + '/' + data.login_muted);
+    await removeMuteReturn.forEach(async item => {
+      //console.log("arrRoom ", arrRoom);
+      const room = arrRoom.find(obj => obj.name == data.room_name);
+      let i = 0;
+      // console.log("room ", room);
+      // console.log("room.users ", room.users);
+      // console.log("room.users.length: ", room.users.length);
+      while (i < room.users.length) {
+        this.server.to(room.users[i].id).emit('demutedUserInRoom', true);
+        i++;
+      }
+    });
+  }
+
   //OLD CHAT EVENTS
 
   @SubscribeMessage('msgToOtherClient')
@@ -887,15 +905,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         profile_pic: string
       },
     }) {
-      const room = this.getRoomByClientLogin(info.user.login)
+    const room = this.getRoomByClientLogin(info.user.login)
 
-      if (room != null) {
-        this.pongInfo.splice(room[0], 1)
+    if (room != null) {
+      this.pongInfo.splice(room[0], 1)
 
-        this.server.to(client.id).emit('leave_queue')
+      this.server.to(client.id).emit('leave_queue')
 
-      }
     }
+  }
 
   @SubscribeMessage('SPECTATE_CLIENT')
   async spectateClient(client: Socket,
@@ -1231,7 +1249,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
-	console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
+    console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
     this.server.to(client.id).emit("getAllClientConnected", arrClient);
   }
 

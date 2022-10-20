@@ -101,6 +101,20 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.removeListener('removeParticipantReturn');
     })
 
+    utilsData.socket.removeAllListeners('demutedUserInRoom');
+
+    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoom: boolean) {
+        console.log('demutedUserInRoom = ', demutedUserInRoom);
+        const length = itemListHistory.length;
+        let secu = 0;
+        while (length == itemListHistory.length && secu < constWhileSecu) {
+            getListItem();
+            secu++;
+        }
+        utilsData.socket.off('demutedUserInRoom');
+        utilsData.socket.removeListener('demutedUserInRoom');
+    })
+
     const addInvitationRequest = () => {
         if (isCreateInvitation)
             setCreateInvitation(false);
@@ -151,6 +165,18 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.emit('removeParticipant', participantToRemove);
         setUpdate(false);
     }
+
+    function demute(item: { login: string, id: number, admin: boolean }) {
+        utilsData.socket.emit('removeRoomMute');
+    };
+
+    function RightItemMuted(item: { login: string, id: number, admin: boolean }) {
+        return (
+            <div className="inItemFriendList_right">
+                <button onClick={() => demute(item)} className="bi bi-mic-fill"></button>
+            </div>
+        );
+    };
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
@@ -209,7 +235,19 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login}.jpg`;
-                if ()
+                if (allUserMute.find(obj => obj.id == item.id)) {
+                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
+                        <div className="inItemFriendList">
+                            <div className="inItemFriendList_left">
+                                <img src={profile_pic}></img>
+                                <p>{item.login}</p>
+                                <p>Muted</p>
+                            </div>
+                            <RightItemMuted login={item.login} id={item.id} admin={admin} />
+                        </div>
+                    </div>)
+                }
+                else {
                     itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
                         <div className="inItemFriendList">
                             <div className="inItemFriendList_left">
@@ -219,6 +257,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                             <RightItem login={item.login} id={item.id} admin={admin} />
                         </div>
                     </div>)
+                }
             })
             setItemListHistory(itemList);
         })
