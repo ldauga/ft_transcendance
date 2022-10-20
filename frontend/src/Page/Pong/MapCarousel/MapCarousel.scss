@@ -1,0 +1,223 @@
+$pong-color: #2e384e; //var
+
+.map-carousel {
+    .field {
+        width: 507px;
+        height: 291px;
+        position: relative;
+        
+        border-width: 3px;
+        border-style: solid;
+        border-color: $pong-color;
+        
+        .net {
+            width: 0;
+            height: 100%;
+            
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            
+            border-width: 1px;
+            border-style: dashed;
+            border-color: $pong-color;
+        }
+        
+        .basic-ping-racket, .basic-pong-racket, .ia-racket {
+            width: 5px;
+            height: 41px;
+            position: absolute;
+            
+            background: $pong-color;
+        }
+        
+        .basic-ping-racket {
+            left: 6%;
+            top: 0%;
+            animation: ping 10s infinite linear;
+        }
+        
+        .basic-pong-racket {
+            top: 0%;
+            right: 6%;
+            animation: pong 10s infinite linear;
+        }
+        
+        .basic-ball {
+            width: 8px;
+            border-radius: 50%;
+            height: 8px;
+            position: absolute;
+            background: $pong-color;
+
+            animation: ball 10s infinite linear;
+        }
+        
+        .ia-ball {
+            width: 8px;
+            border-radius: 50%;
+            height: 8px;
+            position: absolute;
+            background: $pong-color;
+            animation: ia-ball 10s infinite linear;
+        }
+
+        .ia-racket {
+            right: 49.5%;
+            animation: ia-racket 10s infinite linear;
+        }
+    }
+    @media screen and (max-width: 768px) {
+        .basic-ping-racket, .basic-pong-racket {
+            --racket-bottom: 82%;
+        }
+        .basic-ball {
+            --bottom: 97%;
+            --left: 7%;
+            --right: 91%;
+        }
+        .homepage {
+            max-width: 600px;
+            padding: 35px 0 16px 0;
+            margin-top: 150px;
+            .field {
+                width: 418px;
+                height: 242px;
+            }
+            button {
+                margin-top: 30px;
+            }
+        }
+    }
+    
+    @media screen and (max-width: 457px) {
+        .basic-ping-racket, .basic-pong-racket {
+            --racket-bottom: 80%;
+        }
+        .basic-ball {
+            --bottom: 97%;
+            --left: 7%;
+            --right: 91%;
+        }
+        .homepage {
+            margin-top: 144px;
+            .field {
+                width: 404px;
+                height: 215px;
+            }
+        }
+    }
+    
+    @media screen and (max-width: 433px) {
+        .basic-ping-racket, .basic-pong-racket {
+            --racket-bottom: 76%;
+        }
+        .basic-ball {
+            --bottom: 96%;
+            --left: 7%;
+            --right: 91%;
+        }
+        .homepage {
+            margin-top: 144px;
+            .field {
+                width: 345px;
+                height: 174px;
+            }
+        }
+    }
+    
+    @media screen and (max-width: 374px) {
+        .basic-ping-racket, .basic-pong-racket {
+            --racket-bottom: 74%;
+        }
+        .basic-ball {
+            --bottom: 95%;
+            --left: 7%;
+            --right: 90%;
+        }
+        .homepage {
+            margin-top: 144px;
+            .field {
+                width: 283px;
+                height: 163px;
+            }
+        }
+    }
+}
+
+@keyframes ia-ball {
+	0% { // start in the middle
+		top: 34%;
+		left: 52%;
+	}
+	8.3% { // pong
+		top: 52%;
+		left: var(--right);
+	}
+    10.6% { //ia
+        top: 70%;
+        left: 50%;
+    }
+	// 30% {
+	// 	top: var(--bottom);
+	// 	left: 27%;
+	// }
+	41.5% { // pong
+		top: 70%;
+		left: var(--right);
+	}
+	58.1% { // ping
+		top: 55%;
+		left: var(--left);
+	}
+	74.7% { //pong
+		top: 13%;
+		left: var(--right);
+	}
+	79% {
+		top: var(--top);
+		left: 70%;
+	}
+	91.3% { // ping
+		top: 22%;
+		left: var(--left);
+	}
+	100% { // back to center
+		top: 34%;
+		left: 52%;
+	}
+}
+
+@keyframes ia-racket {
+	0% { // start in the middle
+		top: 34%;
+	}
+	8.3% { // pong
+		top: 45%;
+	}
+	24.9% { // ping
+		top: 85%;
+	}
+	30% {
+		top: var(--bottom);
+	}
+	41.5% { // pong
+		top: 70%;
+	}
+	58.1% { // ping
+		top: 55%;
+	}
+	74.7% { //pong
+		top: 13%;
+	}
+	79% {
+		top: var(--top);
+	}
+	91.3% { // ping
+		top: 22%;
+	}
+	100% { // back to center
+		top: 34%;
+	}
+}

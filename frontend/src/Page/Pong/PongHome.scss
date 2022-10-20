@@ -1,62 +1,68 @@
+:root {
+	--bottom: 97%;
+	--left: 6.7%;
+	--right: 92%;
+	--top: 0%;
+
+	--racket-bottom: 87%;
+}
+
 .pong {
+	max-width: 736px;
+	padding: 60px 0 25px 0;
+	border: solid;
+	background: #FDFEFE;
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+	border-width: 1px;
+	border-color: #2e384e;
+	margin: auto;
 	display: flex;
-	color: white;
 	flex-direction: column;
+	margin-top: 300px;
 	align-items: center;
-	margin-top: 8vh;
 
-	.css-zjf1nq-MuiPaper-root, .css-rh92k-MuiPaper-root-MuiMobileStepper-root {
-		background: #2f3b52;
-		color: #fff;
-		.css-1knaqv7-MuiButtonBase-root-MuiButton-root {
-			color: #f55951;
+	.select-map {
+		display: flex;
+		align-items: center;
+		justify-content: space-evenly;
+		width: 100%;
+		svg {
+			cursor: pointer;
+			height: 40px;
+			width: 40px;
+			border: solid 3px #2e384e;
+			transition: all .3s ease-out;
+			&:hover {
+				color: white;
+				background: #2e384e;
+			}
 		}
-		.css-1knaqv7-MuiButtonBase-root-MuiButton-root.Mui-disabled {
-			color: rgba($color: #f55951, $alpha: .26);
-		}
-		
-		.css-26w9jf-MuiMobileStepper-dot {
-			background: #f55951;
+		button {
+			all: unset;
 		}
 	}
 
-	img {
-			height: 255px;
-			display: 'block';
-			overflow: 'hidden';
-			width: '100%';
-	}
-
-	button.join-queue {
-		margin-top: 1vh;
-		background: #f1e8e6;
-		border: none;
-		color: black;
-		padding: 1vh 1vw;
+	.join-queue {
+		color: #2e384e;
+		border-color: #2e384e;
+		background: unset;
+		letter-spacing: 1px;
+		border-width: 3px;
+		margin-top: 49px;
+		font-family: 'Roboto', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
 		cursor: pointer;
-		border-radius: 5px;
-		font-family: 'Roboto';
+		text-transform: uppercase;
 		transition: all .3s ease-out;
 		&:hover {
-			background: #cbc3c1;
-		}
-	}
-
-	button.create-map{
-		margin-top: 1vh;
-		background: #88e592;
-		border: none;
-		color: black;
-		padding: 1vh 1vw;
-		cursor: pointer;
-		border-radius: 5px;
-		font-family: 'Roboto';
-		transition: all .3s ease-out;
-		&:hover {
-			background: #73c47b;
+			color: #FFFF;
+			background: #2e384e;
 		}
 	}
 }
+
+
 
 .loadingScreen {
 
@@ -87,7 +93,4 @@
 			background: #ce8170;
 		}
 	}
-
-
-
 }
