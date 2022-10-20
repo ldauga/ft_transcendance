@@ -54,3 +54,8 @@
 .notifTopContainer button {
     font-size: 1rem;
 }
+
+.ListItemNotif {
+	display: flex;
+	flex-direction: column;
+}
