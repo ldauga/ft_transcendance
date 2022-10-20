@@ -159,8 +159,8 @@ function PongHome(props: any) {
 				<div className='loadingScreen'>
 					<CircularProgress className='circularProgress' />
 					<span>Waiting for opponent...</span>
-								{/* <button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> : */}
-					<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Leave queue</button>
+								<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
+					{/* <button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Leave queue</button> */}
 				</div>}
 		</>
 	);
