@@ -14,8 +14,8 @@ export class MuteListService {
 
 	private logger: Logger = new Logger('MuteList');
 
-	public async getAllMuteTimer(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
-		let arrReturn: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = [];
+	public async getAllMuteTimer(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
+		let arrReturn: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
 		const returnAll = await this.MuteListRepository.find();
 		returnAll.forEach(element => {
 			const newMute = {
@@ -23,6 +23,7 @@ export class MuteListService {
 				userOrRoom: element.userOrRoom,
 				id_sender: element.id_sender,
 				room_id: element.room_id,
+				alwaysOrNot: element.alwaysOrNot,
 				date: element.date,
 				timer: element.timer
 			};
@@ -38,6 +39,7 @@ export class MuteListService {
 				{ room_id: room_id, room_name: room_name }
 			]
 		});
+		console.log("returnAll: ", returnAll.length);
 		returnAll.forEach(element => {
 			const newMute = {
 				id_muted: element.id_muted,
@@ -103,7 +105,7 @@ export class MuteListService {
 		console.log('removeReturn', removeReturn);
 	}
 
-	async removeRoomMute(room_id: number, login_muted: string) {
+	async removeRoomMute(room_id: number, login_muted: string): Promise<Boolean> {
 		console.log("removeRoomMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
@@ -112,5 +114,9 @@ export class MuteListService {
 		});
 		const removeReturn = this.MuteListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		if (removeReturn)
+			return true;
+		else
+			return false;
 	}
 }

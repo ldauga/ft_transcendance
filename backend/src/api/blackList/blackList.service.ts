@@ -13,8 +13,8 @@ export class BlackListService {
 
 	private logger: Logger = new Logger('BlackList');
 
-	public async getAllBanTimer(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
-		let arrReturn: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = [];
+	public async getAllBanTimer(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
+		let arrReturn: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
 		const returnAll = await this.BlackListRepository.find();
 		returnAll.forEach(element => {
 			const newBan = {
@@ -22,6 +22,7 @@ export class BlackListService {
 				userOrRoom: element.userOrRoom,
 				id_sender: element.id_sender,
 				room_id: element.room_id,
+				alwaysOrNot: element.alwaysOrNot,
 				date: element.date,
 				timer: element.timer
 			};

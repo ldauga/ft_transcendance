@@ -52,10 +52,11 @@ export class CronService {
     time = time + 1;
     const getAllBan = http.get('http://localhost:5001/blackList');
     getAllBan.forEach(async item => {
-      const a: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = item.data;
+      const a: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item.data;
       a.forEach(async item => {
-        if (item.timer + item.date <= time) {
-          console.log("go remove");
+        // console.log("item: ", item);
+        if (!item.alwaysOrNot && item.timer + item.date <= time) {
+          console.log("go remove ban");
           if (!item.userOrRoom) {
             const removeUserBanReturn = await http.post('http://localhost:5001/blackList/removeUserBan/' + item.id_sender + '/' + item.login_banned);
             console.log(removeUserBanReturn.forEach(item => (console.log('removeUserBanReturn in eventgateway'))));
@@ -69,10 +70,11 @@ export class CronService {
     });
     const getAllMute = http.get('http://localhost:5001/muteList');
     getAllMute.forEach(async item => {
-      const b: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = item.data;
+      const b: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item.data;
       b.forEach(async item => {
-        if (item.timer + item.date <= time) {
-          console.log("go remove");
+        // console.log("item: ", item);
+        if (!item.alwaysOrNot && item.timer + item.date <= time) {
+          console.log("go remove mute");
           const removeUserMuteReturn = await http.post('http://localhost:5001/muteList/removeRoomMute/' + item.room_id + '/' + item.login_muted);
           console.log(removeUserMuteReturn.forEach(item => (console.log('removeUserMuteReturn in eventgateway'))));
         }
@@ -694,6 +696,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     });
     if (verif) {
       this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
+      console.log("data.alwaysOrNot: ", data.alwaysOrNot);
       const newMute = {
         id_sender: data.id_sender,
         id_muted: data.id_muted,
@@ -709,14 +712,27 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         timer: data.timer
       }
       const returnMute = http.post('http://localhost:5001/muteList/', newMute);
-      console.log(returnMute.forEach(item => (console.log('returnMute in eventgateway'))));
+      await returnMute.forEach(async item => {
+        //console.log("arrRoom ", arrRoom);
+        const room = arrRoom.find(obj => obj.name == data.room_name);
+        let i = 0;
+        // console.log("room ", room);
+        // console.log("room.users ", room.users);
+        // console.log("room.users.length: ", room.users.length);
+        while (i < room.users.length) {
+          this.server.to(room.users[i].id).emit('demutedUserInRoom', true);
+          i++;
+        }
+      });
     }
   }
 
   @SubscribeMessage('removeRoomMute')
   async removeRoomMute(client: Socket, data: any) {
     this.logger.log(`${client.id} want demute: ${data.login_muted} in room_id: ${data.room_id}`);
-    const removeMuteReturn = await http.get('http://localhost:5001/muteList/removeRoomMute/' + data.room_id + '/' + data.login_muted);
+    const tmp = 'http://localhost:5001/muteList/removeRoomMute/' + data.room_id + '/' + data.login_muted;
+    console.log(tmp);
+    const removeMuteReturn = await http.post(tmp);
     await removeMuteReturn.forEach(async item => {
       //console.log("arrRoom ", arrRoom);
       const room = arrRoom.find(obj => obj.name == data.room_name);

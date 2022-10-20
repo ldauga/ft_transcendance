@@ -10,12 +10,10 @@ import AddAdmin from './AddAdmin';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import MuteRoomParticipant from './MuteRoomParticipant';
 
-function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
+function AffParticipantsBanned(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
-
-    const [isCreateInvitation, setCreateInvitation] = useState(false);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
@@ -23,8 +21,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const [isAdmin, setAdmin] = useState(false);
 
     const [banRoomParticipant, setBanRoomParticipant] = useState(false);
-    const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
-    const [addAdmin, setAddAdmin] = useState(false);
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
@@ -72,21 +68,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.removeAllListeners('newParticipant');
 
-    utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
-        console.log('newParticipant = ', newParticipantReturn);
-        if (newParticipantReturn == true) {
-            console.log("New participant in ", props.roomsConversData.name);//NOTIF à ajouter
-            const length = itemListHistory.length;
-            let secu = 0;
-            while (length == itemListHistory.length && secu < constWhileSecu) {
-                getListItem();
-                secu++;
-            }
-        }
-        utilsData.socket.off('newParticipant');
-        utilsData.socket.removeListener('newParticipant');
-    })
-
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
@@ -101,46 +82,11 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.removeListener('removeParticipantReturn');
     })
 
-    utilsData.socket.removeAllListeners('demutedUserInRoom');
-
-    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoom: boolean) {
-        console.log('demutedUserInRoom = ', demutedUserInRoom);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
-        utilsData.socket.off('demutedUserInRoom');
-        utilsData.socket.removeListener('demutedUserInRoom');
-    })
-
-    const addInvitationRequest = () => {
-        if (isCreateInvitation)
-            setCreateInvitation(false);
-        else
-            setCreateInvitation(true);
-    };
-
-    const handleClickMuteRoomParticipant = () => {
-        if (muteRoomParticipant)
-            setMuteRoomParticipant(false);
-        else
-            setMuteRoomParticipant(true);
-    }
-
     const handleClickBanRoomParticipant = () => {
         if (banRoomParticipant)
             setBanRoomParticipant(false);
         else
             setBanRoomParticipant(true);
-    }
-
-    const handleClickAddAdmin = () => {
-        if (addAdmin)
-            setAddAdmin(false);
-        else
-            setAddAdmin(true);
     }
 
     const closeAffParticipantsRooms = () => {
@@ -156,35 +102,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         else
             props.setRooms(true);
     }
-
-    const removeParticipant = (item: { login: string, id: number }) => {
-        const participantToRemove = {
-            login: item.login,
-            room_name: props.roomsConversData.name
-        }
-        utilsData.socket.emit('removeParticipant', participantToRemove);
-        setUpdate(false);
-    }
-
-    function demute(item: { login: string, id: number, admin: boolean }) {
-        utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login });
-    };
-
-    function RightItemMuted(item: { login: string, id: number, admin: boolean }) {
-        console.log("RightItemMuted isAdmin: ", isAdmin, ", admin: ", item.admin);
-        if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
-            return (
-                <div className="inItemFriendList_right">
-                    <button onClick={() => demute(item)} className="bi bi-mic-fill"></button>
-                    <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button>
-                </div>
-            );
-        else
-            return (
-                <div className="inItemFriendList_right">
-                </div>
-            );
-    };
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
@@ -205,10 +122,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         if (isAdmin)
             return (
                 <div className="mainHeaderRight mainHeaderSide">
-                    <button onClick={handleClickMuteRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
-                    <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
-                    <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                 </div>
             );
         else
@@ -223,7 +137,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         let allUserMute: { id_muted: number, name_muted: string }[] = [];
-        await axios.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axios.get('http://localhost:5001/blackList/getAllRoomBan/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log('res.data allUserMute = ', res.data);
             allUserMute = res.data;
             console.log('nameTmp allUserBan = ', allUserMute);
@@ -241,9 +155,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                             <div className="inItemFriendList_left">
                                 <img src={profile_pic}></img>
                                 <p>{item.login}</p>
-                                <p>Muted</p>
                             </div>
-                            <RightItemMuted login={item.login} id={item.id} admin={admin} />
                         </div>
                     </div>)
                 }
@@ -295,12 +207,9 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 <RightHeader />
             </div>
             {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
-            {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
-            {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
-            {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
             <AffList />
         </div>
     );
 };
 
-export default AffParticipantsRooms;
+export default AffParticipantsBanned;

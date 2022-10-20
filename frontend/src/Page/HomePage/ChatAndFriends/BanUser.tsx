@@ -21,7 +21,8 @@ function BanUser() {
 
     async function buttonBanUser() {
         let test = false;
-        console.log('addFriend');
+        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+            return;
         await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
