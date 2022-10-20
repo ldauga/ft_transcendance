@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@900&display=swap');
 
 nav {
 	background: #FDFEFE;
@@ -19,7 +20,7 @@ nav {
 		all: unset;
 		margin-left: 10px;
 		cursor: pointer;
-		font-family: 'Shadows Into Light', cursive;
+		font-family: 'Titillium Web', cursive;
 		font-size: 16px;
 	}
 
@@ -51,6 +52,8 @@ nav {
 		text-transform: uppercase;
 		span {
 			display: none;
+			font-family: 'Roboto';
+			font-weight: 400;
 		}
 	}
 	@media screen and (min-width: 425px) {
@@ -66,10 +69,22 @@ nav {
 	}
 	
 	@media screen and (min-width: 768px) {
+		height: 83px;
 		a {
-			font-size: 29px;
+			font-size: 37px;
+		}
+		.right {
+			gap: 10px;
+		}
+		svg, div {
+			height: 43px;
 		}
 		.profile {
+			.avatar {
+				--avatar-size: 40px;
+				height: var(--avatar-size);
+				width: var(--avatar-size);
+			}
 			span {
 				font-size: 13px;
 			}
@@ -77,24 +92,25 @@ nav {
 	}
 	
 	@media screen and (min-width: 1024px) {
-		height: 62px;
+		height: 95px;
 		a {
-			font-size: 34px;
+			font-size: 47px;
+			letter-spacing: 2px;
 		}
 		.right {
-			gap: 10px;
+			gap: 20px;
 		}
 		svg, div {
-			height: 39px;
+			height: 56px;
 		}
 		.avatar {
-			--avatar-size: 45px;
+			--avatar-size: 56px;
 			height: var(--avatar-size);
 			width: var(--avatar-size);
 		}
 		.profile {
 			span {
-				font-size: 15px;
+				font-size: 20px;
 			}
 		}
 	}
