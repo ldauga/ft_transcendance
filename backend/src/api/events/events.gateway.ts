@@ -113,7 +113,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   ) {}
   @WebSocketServer()
   server: Server;
-  private http = new HttpService;
+  //private http = new HttpService;
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
@@ -987,7 +987,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
               }
 
-              const match = this.http.post('http://localhost:5001/matchesHistory', data);
+              const match = http.post('http://localhost:5001/matchesHistory', data);
 
               match.forEach((item) => { })
 
@@ -1044,7 +1044,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
         }
 
-        const match = this.http.post('http://localhost:5001/matchesHistory', data);
+        const match = http.post('http://localhost:5001/matchesHistory', data);
 
         match.forEach((item) => { })
 
@@ -1090,7 +1090,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       winner_id: this.pongInfo[room[0]].players[0].score === 3 ? this.pongInfo[room[0]].players[0].user.id : this.pongInfo[room[0]].players[1].user.id,
     }
 
-    const match = this.http.post('http://localhost:5001/matchesHistory', data);
+    const match = http.post('http://localhost:5001/matchesHistory', data);
 
     match.forEach((item) => { })
 
