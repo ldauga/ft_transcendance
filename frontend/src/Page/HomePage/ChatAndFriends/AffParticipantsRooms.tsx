@@ -185,23 +185,40 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
+    const returnAllUserBan = async () => {
+        let allUserBan: { name: string, id: number }[] = [];
+        await axios.get('http://localhost:5001/blackList/getAllRoomBan/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+            console.log('res.data allUserBan = ', res.data);
+            allUserBan = res.data;
+            console.log('nameTmp allUserBan = ', allUserBan);
+        })
+        return (allUserBan)
+    };
+
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
+        let allUserMute: { name: string, id: number }[] = [];
+        await axios.get('http://localhost:5001/getAllRoomMute/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+            console.log('res.data allUserMute = ', res.data);
+            allUserMute = res.data;
+            console.log('nameTmp allUserBan = ', allUserMute);
+        });//récupère tous les user mute de la room
         await axios.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             let itemList: any[] = []
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login}.jpg`;
-                itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                    <div className="inItemFriendList">
-                        <div className="inItemFriendList_left">
-                            <img src={profile_pic}></img>
-                            <p>{item.login}</p>
+                if ()
+                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
+                        <div className="inItemFriendList">
+                            <div className="inItemFriendList_left">
+                                <img src={profile_pic}></img>
+                                <p>{item.login}</p>
+                            </div>
+                            <RightItem login={item.login} id={item.id} admin={admin} />
                         </div>
-                        <RightItem login={item.login} id={item.id} admin={admin} />
-                    </div>
-                </div>)
+                    </div>)
             })
             setItemListHistory(itemList);
         })

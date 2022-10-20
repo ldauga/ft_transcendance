@@ -30,6 +30,23 @@ export class BlackListService {
 		return arrReturn;
 	}
 
+	public async getAllRoomBan(room_id: number, room_name: string): Promise<{ id_banned: number, login_banned: string }[]> {
+		let arrReturn: { id_banned: number, login_banned: string }[] = [];
+		const returnAll = await this.BlackListRepository.find({
+			where: [
+				{ room_id: room_id, room_name: room_name }
+			]
+		});
+		returnAll.forEach(element => {
+			const newBan = {
+				id_banned: element.id_banned,
+				login_banned: element.login_banned
+			};
+			arrReturn.push(newBan);
+		});
+		return arrReturn;
+	}
+
 	async checkUserBan(login: string, login_receiver: string): Promise<Boolean> {
 		const check = await this.BlackListRepository.findOne({
 			where: [

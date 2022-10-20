@@ -31,6 +31,23 @@ export class MuteListService {
 		return arrReturn;
 	}
 
+	public async getAllRoomMute(room_id: number, room_name: string): Promise<{ id_muted: number, login_muted: string }[]> {
+		let arrReturn: { id_muted: number, login_muted: string }[] = [];
+		const returnAll = await this.MuteListRepository.find({
+			where: [
+				{ room_id: room_id, room_name: room_name }
+			]
+		});
+		returnAll.forEach(element => {
+			const newMute = {
+				id_muted: element.id_muted,
+				login_muted: element.login_muted
+			};
+			arrReturn.push(newMute);
+		});
+		return arrReturn;
+	}
+
 	async checkUserMute(login: string, login_receiver: string): Promise<Boolean> {
 		const check = await this.MuteListRepository.findOne({
 			where: [

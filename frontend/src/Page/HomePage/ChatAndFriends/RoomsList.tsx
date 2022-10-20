@@ -12,7 +12,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
-    const [itemListMyRooms, setitemListMyRooms] = useState(Array<{ name: string, id: number }>);
     const [update, setUpdate] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [password, setPassword] = useState("");
@@ -106,10 +105,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
             console.log('res.data MyRooms = ', res.data);
             myRooms = res.data;
             console.log('nameTmp MyRooms = ', myRooms);
-            setitemListMyRooms(myRooms);
-            console.log("itemListMyRooms 1 : ", itemListMyRooms);
         })
-        console.log("itemListMyRooms 2 : ", itemListMyRooms);
         await axios.get('http://localhost:5001/rooms/').then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);

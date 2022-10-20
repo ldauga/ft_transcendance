@@ -13,6 +13,12 @@ export class MuteListController {
     return this.MuteListService.getAllMuteTimer();
   }
 
+  @Get('/getAllRoomMute/:roomId/:roomName')
+  public getAllRoomMute(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_muted: number, login_muted: string }[]> {
+    return this.MuteListService.getAllRoomMute(roomId, roomName);
+  }
+
+
   @Get('/checkUserMute/:login/:loginReceiver')
   public async checkUserMute(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
     const returnCheck = await this.MuteListService.checkUserMute(login, loginReceiver);

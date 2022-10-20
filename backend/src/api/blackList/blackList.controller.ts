@@ -13,6 +13,11 @@ export class BlackListController {
     return this.BlackListService.getAllBanTimer();
   }
 
+  @Get('/getAllRoomBan/:roomId/:roomName')
+  public getAllRoomBan(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_banned: number, login_banned: string }[]> {
+    return this.BlackListService.getAllRoomBan(roomId, roomName);
+  }
+
   @Get('/checkUserBan/:login/:loginReceiver')
   public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
     const returnCheck = await this.BlackListService.checkUserBan(login, loginReceiver);
