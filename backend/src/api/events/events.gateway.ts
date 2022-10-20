@@ -26,6 +26,7 @@ import { MatchesHistoryModule } from '../matchesHistory/matchesHistory.module';
 import { MatchesHistoryService } from '../matchesHistory/matchesHistory.service';
 import { BlackListService } from '../blackList/blackList.service';
 import { isInt16Array } from 'util/types';
+import { MuteListService } from '../muteList/muteList.service';
 
 interface Client {
   id: string;
@@ -108,6 +109,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     private readonly ParticipantsService: ParticipantsService,
     private readonly MatchesHistoryService: MatchesHistoryService,
     private readonly BlacklistService: BlackListService,
+    private readonly MutelistService: MuteListService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -557,27 +559,25 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     let verifBan = false;
     let verifMute = false;
     if (!data.userOrRoom) {
-      const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
-      await checkIfBanned.forEach(async item => {
-        console.log("item.data: ", item.data);
-        if (item.data)
+      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
+      const checkIfBanned = await this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver);
+        console.log("item.data: ", checkIfBanned);
+        if (checkIfBanned == true)
           verifBan = true;
-      });
     }
     else {
-      const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
-      await checkIfBanned.forEach(async item => {
-        console.log("item.data: ", item.data);
-        if (item.data)
+      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      const checkIfBanned = await this.BlacklistService.checkRoomBan(data.id_sender, data.login_sender, data.room_name);
+        console.log("item.data: ", checkIfBanned);
+        if (checkIfBanned == true)
           verifBan = true;
-      });
-      const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
-      await checkIfMuted.forEach(async item => {
-        console.log("item.data: ", item.data);
-        if (item.data)
+      }
+      //const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      const checkIfMuted = await this.MutelistService.checkRoomMute(data.id_sender, data.login_sender, data.room_name);
+
+        console.log("item.data: ", checkIfMuted);
+        if (checkIfMuted== true)
           verifMute = true;
-      });
-    }
     console.log("verifBan: ", verifBan);
     if (!verifBan && !verifMute) {
     const newMsg = {
@@ -615,6 +615,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
     }
   }
+}
 
   //BLACK LIST EVENTS
 

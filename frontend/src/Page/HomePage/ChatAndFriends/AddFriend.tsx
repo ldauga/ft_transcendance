@@ -66,6 +66,7 @@ function AddFriend() {
                         room_id: 0,
                         room_name: ""
                     }
+                    console.log('emit');
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                 }
                 return;

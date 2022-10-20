@@ -13,6 +13,8 @@ import { MatchesHistoryEntity } from "../matchesHistory/matchesHistory.entity";
 import { MatchesHistoryService } from "../matchesHistory/matchesHistory.service";
 import { MessagesEntity } from "../messages/messages.entity";
 import { MessagesService } from "../messages/messages.service";
+import { MuteListEntity } from "../muteList/muteList.entity";
+import { MuteListService } from "../muteList/muteList.service";
 import { ParticipantsEntity } from "../participants/participants.entity";
 import { ParticipantsService } from "../participants/participants.service";
 import { RoomsEntity } from "../rooms/rooms.entity";
@@ -23,11 +25,11 @@ import { EventsGateway } from "./events.gateway";
 @Module({
     imports: [
         TypeOrmModule.forFeature([FriendListEntity, InvitationRequestEntity, MatchesHistoryEntity,
-            MessagesEntity, ParticipantsEntity, RoomsEntity, BlackListEntity]),
+            MessagesEntity, ParticipantsEntity, RoomsEntity, BlackListEntity, MuteListEntity]),
         AuthModule, UserModule
     ],
     providers: [EventsGateway, FriendListService, InvitationRequestService, 
-        MatchesHistoryService, MessagesService, ParticipantsService, RoomsService, BlackListService],
+        MatchesHistoryService, MessagesService, ParticipantsService, RoomsService, BlackListService, MuteListService],
     exports: [EventsModule]
 })
 export class EventsModule {}
