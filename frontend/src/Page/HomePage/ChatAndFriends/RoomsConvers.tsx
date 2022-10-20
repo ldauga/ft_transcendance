@@ -147,8 +147,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
-        await axiosConfig.get('http://localhost:5001/messages/' + props.roomsConversData.id + '/' + props.roomsConversData.id + '/room').then(async (res) => {
-            console.log("get List Item Room Conversation");
+        await axiosConfig.get('http://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+            console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, text: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>

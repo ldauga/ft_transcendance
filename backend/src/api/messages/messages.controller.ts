@@ -9,10 +9,10 @@ export class MessagesController {
   @Inject(MessagesService)
   private readonly service: MessagesService;
 
-  @Get()
+  @Get('/room/:room_id')
   @UseGuards(AuthGuard('jwt'))
-  public getAllMessages(): Promise<MessagesEntity[]> {
-    return this.service.getAllMessages();
+  public getRoomConversMessages(@Param('room_id', ParseIntPipe) id: number): Promise<MessagesEntity[]> {
+    return this.service.getRoomConversMessages(id);
   }
 
   @Get('/:id')
@@ -27,12 +27,6 @@ export class MessagesController {
     return this.service.getConversMessages(id1, id2);
   }
 
-  @Get('/room/:room_id')
-  @UseGuards(AuthGuard('jwt'))
-  public getRoomConversMessages(@Param('room_id', ParseIntPipe) id: number): Promise<MessagesEntity[]> {
-    return this.service.getRoomConversMessages(id);
-  }
-
   @Get('/:id1/:id2/:id3')
   @UseGuards(AuthGuard('jwt'))
   public getUser(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number, @Param('id3', ParseIntPipe) id3: number): Promise<{ id: number, login: string }[]> {
@@ -41,7 +35,7 @@ export class MessagesController {
   }
   
   //TROUVER SOLUTION POUR METTRE LE GUARD
-  @Post()
+  /*@Post()
   @UseGuards(AuthGuard('jwt'))
   public createMessages(@Body() body: MessagesDto): Promise<MessagesEntity> {
     console.log('body createMessages: ', body);
@@ -49,7 +43,7 @@ export class MessagesController {
     if (!newMessage)
       return null;
     return newMessage;
-  }
+  }*/
 
   @Post('/removeAllRoomMessages/')
   public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<Boolean> {
@@ -58,5 +52,11 @@ export class MessagesController {
     if (!newMessage)
       return null;
     return newMessage;
+  }
+
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  public getAllMessages(): Promise<MessagesEntity[]> {
+    return this.service.getAllMessages();
   }
 }

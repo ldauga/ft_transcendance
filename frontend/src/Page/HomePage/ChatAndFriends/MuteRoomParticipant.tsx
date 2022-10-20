@@ -24,7 +24,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
     async function buttonMuteRoomParticipant() {
         let test = false;
         console.log('addFriend');
-        await axios.get('http://localhost:5001/user/login/' + text, {withCredentials:true}).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text, {withCredentials:true}).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);

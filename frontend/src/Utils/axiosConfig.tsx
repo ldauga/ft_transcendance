@@ -11,7 +11,7 @@ const axiosConfig = axios.create({
 axiosConfig.interceptors.response.use(
   response => {console.log('interceptor response,', response); return response; },
   error => {
-    axios.get('http://localhost:5001/auth/refresh')
+    axios.get('http://localhost:5001/auth/refresh', { withCredentials: true})
     .catch((error) => {
       console.log('interceptor error', error)
       if (error.response.data['statusCode'] == 401) 
