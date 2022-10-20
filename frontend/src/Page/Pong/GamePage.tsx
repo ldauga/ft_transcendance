@@ -17,13 +17,14 @@ var canvas = {
 
 const GamePage = (props: any) => {
 
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
 
     // drawFont : desine le fond du jeu
     function drawFont(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
-            ctx.fillStyle = room.map.mapColor;
+            ctx.fillStyle = 'rgb(245, 246, 247)';
 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -37,7 +38,7 @@ const GamePage = (props: any) => {
             for (let index = 0; index < room.map.obstacles.length; index++) {
                 const element = room.map.obstacles[index];
 
-                ctx.fillStyle = element.color;
+                ctx.fillStyle = 'rgb(48, 56, 76)';
 
                 ctx.fillRect(element.x, element.y, element.width, element.height);
             }
@@ -67,9 +68,7 @@ const GamePage = (props: any) => {
 
             ctx.beginPath();
 
-            ctx.fillStyle = 'green';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'rgb(48, 56, 76)';
 
             ctx.arc(room.ball.x, room.ball.y, room.ball.radius, 0, Math.PI * 2);
 
@@ -83,18 +82,26 @@ const GamePage = (props: any) => {
     // drawPlayers : dessine les joueurs suivant leurs positions
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
-            ctx.fillStyle = 'red';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = 'red';
+
+            const currentPlayer = room.players.find(item => item.user?.login == persistantReducer.userReducer.user?.login)
+
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = 'black';
+            ctx.textAlign = "center";
+
+            ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
+
+            ctx.fillStyle = 'rgb(48, 56, 76)';
 
             ctx.fillRect(room.players[0].x, room.players[0].y, room.players[0].width, room.players[0].height);
 
-            ctx.fillStyle = 'blue';
-            ctx.shadowColor = 'blue';
+            ctx.fillStyle = 'rgb(48, 56, 76)';
 
             ctx.fillRect(room.players[1].x, room.players[1].y, room.players[1].width, room.players[1].height);
 
             ctx.shadowBlur = 0;
+
+
         }
     }
 
@@ -105,10 +112,10 @@ const GamePage = (props: any) => {
             ctx.textAlign = 'center';
             ctx.font = '50px Arial';
 
-            ctx.fillStyle = 'red'
+            ctx.fillStyle = 'black'
             ctx.fillText(room.players[0].score.toString(), canvas.width / 4 + canvas.width / 16, canvas.height / 10);
 
-            ctx.fillStyle = 'blue'
+            ctx.fillStyle = 'black'
             ctx.fillText(room.players[1].score.toString(), (canvas.width / 4 * 3) - canvas.width / 16, canvas.height / 10);
 
         }
@@ -121,7 +128,7 @@ const GamePage = (props: any) => {
             ctx.beginPath();
 
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#3A3935';
+            ctx.strokeStyle = 'rgb(48, 56, 76)';
 
             ctx.moveTo(canvas.width / 8, 0);
             ctx.lineTo(canvas.width / 8, canvas.height);
@@ -141,8 +148,8 @@ const GamePage = (props: any) => {
 
             ctx.beginPath();
 
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#3A3935';
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = 'rgb(48, 56, 76)';
             ctx.setLineDash([canvas.height / 30, canvas.height / 120]);
 
             ctx.moveTo(canvas.width / 2, 0);
@@ -158,8 +165,8 @@ const GamePage = (props: any) => {
     function drawText(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
-            ctx.font = '50px Arial';
-            ctx.fillStyle = 'white';
+            ctx.font = 'bold 50px Arial';
+            ctx.fillStyle = 'rgb(48, 56, 76)';
             ctx.textAlign = "center";
 
             if (!room.players[0].connected || !room.players[1].connected) {
@@ -178,6 +185,14 @@ const GamePage = (props: any) => {
 
             ctx.fillRect(canvas.width / 6 * 3 + canvas.width / 48, canvas.height / 8 * 5, canvas.width / 3, canvas.height / 8);
 
+            ctx.font = 'bold 50px Arial';
+            ctx.fillStyle = 'rgb(48, 56, 76)';
+            ctx.textAlign = "center";
+
+            if (room.players[0].user!.login == persistantReducer.userReducer.user!.login)
+                ctx.fillText("YOU", canvas.width / 6 - canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
+            else
+                ctx.fillText("YOU", canvas.width / 6 * 3 + canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
         }
     }
 
@@ -239,22 +254,26 @@ const GamePage = (props: any) => {
                 drawSpectator(room)
 
                 drawFont(ctx, room)
-
-                drawLimitCamps(ctx)
-
+                
                 drawLimitsMove(ctx)
 
-                drawObstacle(ctx, room)
+                if (room.players[0].ready && room.players[1].ready) {
+                drawLimitCamps(ctx)
+
+
+                    drawObstacle(ctx, room)
+                }
 
                 drawScore(ctx, room)
-
-
+                
+                
                 if (!room.players[0].ready || !room.players[1].ready) {
                     drawText(ctx, room)
                     return
                 }
+                
 
-                drawBallParticles(ctx, room)
+                // drawBallParticles(ctx, room)
 
                 drawBall(ctx, room)
 

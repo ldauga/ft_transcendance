@@ -13,7 +13,7 @@ const GameSwitch=() => {
     // const [checkReconnexion, setCheckReconnexion] = useState(false);
     const [specID, setSpecID] = useState("atourret");
     const [roomID, setRoomID] = useState("");
-    const [gameMap, setGameMap] = React.useState("");
+    const [gameMap, setGameMap] = React.useState('map1');
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const utilsData = useSelector((state: RootState) => state.utils);

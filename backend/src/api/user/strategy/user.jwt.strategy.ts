@@ -29,9 +29,9 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         const user = await this.userService.getUserById(payload.sub);
         if (!user)
             throw new UnauthorizedException('User not found.')
-        console.log(user)
+        //console.log(user)
         let now = Date.now().toString().substring(0, 10);
-        console.log(now)
+        //console.log(now)
         if (payload.exp < now) {
            console.log('oui')
         }

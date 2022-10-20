@@ -26,11 +26,11 @@ import { MatchesHistoryModule } from '../matchesHistory/matchesHistory.module';
 import { MatchesHistoryService } from '../matchesHistory/matchesHistory.service';
 import { BlackListService } from '../blackList/blackList.service';
 import { isInt16Array } from 'util/types';
+import { MuteListService } from '../muteList/muteList.service';
 
 interface Client {
   id: string;
   username: string;
-  socket: Socket;
 }
 
 interface Participant {
@@ -76,6 +76,17 @@ export class CronService {
         }
       });
     });
+    const getAllMute = http.get('http://localhost:5001/muteList');
+    getAllMute.forEach(async item => {
+      const b: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = item.data;
+      b.forEach(async item => {
+        if (item.timer + item.date <= time) {
+          console.log("go remove");
+          const removeUserMuteReturn = await http.post('http://localhost:5001/muteList/removeRoomMute/' + item.room_id + '/' + item.login_muted);
+          console.log(removeUserMuteReturn.forEach(item => (console.log('removeUserMuteReturn in eventgateway'))));
+        }
+      });
+    });
   }
 }
 let arrClient: Client[] = [];
@@ -98,6 +109,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     private readonly ParticipantsService: ParticipantsService,
     private readonly MatchesHistoryService: MatchesHistoryService,
     private readonly BlacklistService: BlackListService,
+    private readonly MutelistService: MuteListService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -122,14 +134,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
           if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
             this.pongInfo.splice(room[0], 1)
-            return ;
+            return;
           }
         }
     }
     room = this.getRoomBySpectateID(client.id)
     if (room != null) {
       let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
-      if (tmp != -1)  this.pongInfo[room[0]].spectate
+      if (tmp != -1) this.pongInfo[room[0]].spectate
 
 
     }
@@ -140,8 +152,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`Client connected: ${client.id}`);
     const newClient: Client = {
       id: client.id,
-      username: "",
-      socket: null
+      username: ""
     };
     arrClient.push(newClient);
   }
@@ -152,7 +163,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     await arrClient.forEach((item) => {
       if (item.id == client.id) {
         item.username = user.login;
-        item.socket = client;
         let i = 0;
         while (i < arrParticipants.length) {
           const participantReturn = arrParticipants.find(obj => obj.username == user.login);
@@ -546,6 +556,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createMsg')
   async createMsg(client: Socket, data: any) {
     this.logger.log(`${client.id} create newMsg: ${data.text}`);
+    let verifBan = false;
+    let verifMute = false;
+    if (!data.userOrRoom) {
+      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
+      const checkIfBanned = await this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver);
+        console.log("item.data: ", checkIfBanned);
+        if (checkIfBanned == true)
+          verifBan = true;
+    }
+    else {
+      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      const checkIfBanned = await this.BlacklistService.checkRoomBan(data.id_sender, data.login_sender, data.room_name);
+        console.log("item.data: ", checkIfBanned);
+        if (checkIfBanned == true)
+          verifBan = true;
+      }
+      //const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      const checkIfMuted = await this.MutelistService.checkRoomMute(data.id_sender, data.login_sender, data.room_name);
+
+        console.log("item.data: ", checkIfMuted);
+        if (checkIfMuted== true)
+          verifMute = true;
+    console.log("verifBan: ", verifBan);
+    if (!verifBan && !verifMute) {
     const newMsg = {
       id_sender: data.id_sender,
       id_receiver: data.id_receiver,
@@ -581,6 +615,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
     }
   }
+}
 
   //BLACK LIST EVENTS
 
@@ -669,6 +704,38 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
    console.log('returnBan in eventgateway', returnBan);
   }
 
+  //MUTELIST EVENTS
+
+  @SubscribeMessage('createRoomMute')
+  async createRoomMute(client: Socket, data: any) {
+    let verif = false;
+    const checkParticipant = await http.get('http://localhost:5001/participants/check/' + data.login_muted + '/' + data.room_name);
+    await checkParticipant.forEach(async item => {
+      this.logger.log(`${item.data} data`);
+      if (item.data == true) {
+        verif = true;
+      }
+    });
+    if (verif) {
+      this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
+      const newMute = {
+        id_sender: data.id_sender,
+        id_muted: data.id_muted,
+        login_sender: data.login_sender,
+        login_muted: data.login_muted,
+        userOrRoom: data.userOrRoom,
+        receiver_login: data.receiver_login,
+        room_id: data.room_id,
+        room_name: data.room_name,
+        cause: data.cause,
+        date: time,
+        alwaysOrNot: data.alwaysOrNot,
+        timer: data.timer
+      }
+      const returnMute = http.post('http://localhost:5001/muteList/', newMute);
+      console.log(returnMute.forEach(item => (console.log('returnMute in eventgateway'))));
+    }
+  }
 
   //OLD CHAT EVENTS
 
@@ -829,6 +896,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
     }
   }
+
+  @SubscribeMessage('LEAVE_QUEUE')
+  async leaveQueue(
+    client: Socket,
+    info: {
+      user: {
+        id: number,
+        login: string,
+        nickname: string,
+        wins: number,
+        looses: number,
+        rank: number,
+        profile_pic: string
+      },
+    }) {
+      const room = this.getRoomByClientLogin(info.user.login)
+
+      if (room != null) {
+        this.pongInfo.splice(room[0], 1)
+
+        this.server.to(client.id).emit('leave_queue')
+
+      }
+    }
 
   @SubscribeMessage('SPECTATE_CLIENT')
   async spectateClient(client: Socket,
@@ -1164,6 +1255,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
+	console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
     this.server.to(client.id).emit("getAllClientConnected", arrClient);
   }
 
