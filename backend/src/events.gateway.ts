@@ -68,6 +68,17 @@ export class CronService {
         }
       });
     });
+    const getAllMute = http.get('http://localhost:5001/muteList');
+    getAllMute.forEach(async item => {
+      const b: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = item.data;
+      b.forEach(async item => {
+        if (item.timer + item.date <= time) {
+          console.log("go remove");
+          const removeUserMuteReturn = await http.post('http://localhost:5001/muteList/removeRoomMute/' + item.room_id + '/' + item.login_muted);
+          console.log(removeUserMuteReturn.forEach(item => (console.log('removeUserMuteReturn in eventgateway'))));
+        }
+      });
+    });
   }
 }
 let arrClient: Client[] = [];
