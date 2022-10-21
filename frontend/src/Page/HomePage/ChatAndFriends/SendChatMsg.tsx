@@ -14,7 +14,7 @@ function SendChatMsg() {
 
     async function sendMsg() {
         let test = false;
-        console.log('addFriend');
+        console.log('sendMsg');
         await axios.get('http://localhost:5001/user/login/' + login).then(async (res) => {
             setText("");
             console.log("axios.get");

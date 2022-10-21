@@ -18,7 +18,7 @@ export class MuteListService {
 		let arrReturn: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = [];
 		const returnAll = await this.MuteListRepository.find();
 		returnAll.forEach(element => {
-			const newBan = {
+			const newMute = {
 				login_muted: element.login_muted,
 				userOrRoom: element.userOrRoom,
 				id_sender: element.id_sender,
@@ -26,7 +26,7 @@ export class MuteListService {
 				date: element.date,
 				timer: element.timer
 			};
-			arrReturn.push(newBan);
+			arrReturn.push(newMute);
 		});
 		return arrReturn;
 	}
@@ -54,8 +54,8 @@ export class MuteListService {
 	}
 
 	async createMute(body: any): Promise<MuteListEntity> {
-		console.log("createBan");
-		const returnBan = this.MuteListRepository.save({
+		console.log("createMute");
+		const returnMute = this.MuteListRepository.save({
 			id_sender: body.id_sender,
 			id_muted: body.id_muted,
 			login_sender: body.login_sender,
@@ -70,13 +70,13 @@ export class MuteListService {
 			timer: body.timer
 		}
 		)
-		if (!returnBan)
+		if (!returnMute)
 			return null;
-		return returnBan;
+		return returnMute;
 	}
 
 	async removeUserMute(id_sender: number, login_muted: string) {
-		console.log("removeUserBan");
+		console.log("removeUserMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ id_sender: id_sender, login_muted: login_muted }
@@ -87,7 +87,7 @@ export class MuteListService {
 	}
 
 	async removeRoomMute(room_id: number, login_muted: string) {
-		console.log("removeRoomBan");
+		console.log("removeRoomMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ room_id: room_id, login_muted: login_muted }

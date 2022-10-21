@@ -67,6 +67,17 @@ export class CronService {
         }
       });
     });
+    const getAllMute = http.get('http://localhost:5001/muteList');
+    getAllMute.forEach(async item => {
+      const b: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[] = item.data;
+      b.forEach(async item => {
+        if (item.timer + item.date <= time) {
+          console.log("go remove");
+          const removeUserMuteReturn = await http.post('http://localhost:5001/muteList/removeRoomMute/' + item.room_id + '/' + item.login_muted);
+          console.log(removeUserMuteReturn.forEach(item => (console.log('removeUserMuteReturn in eventgateway'))));
+        }
+      });
+    });
   }
 }
 let arrClient: Client[] = [];
@@ -520,17 +531,32 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createMsg')
   async createMsg(client: Socket, data: any) {
     this.logger.log(`${client.id} want create newMsg: ${data.text}`);
-    let verif = false;
+    let verifBan = false;
+    let verifMute = false;
     if (!data.userOrRoom) {
       const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
       await checkIfBanned.forEach(async item => {
         console.log("item.data: ", item.data);
-        if (!item.data)
-          verif = true;
+        if (item.data)
+          verifBan = true;
       });
     }
-    console.log("verif: ", verif);
-    if ((!data.userOrRoom && verif) || data.userOrRoom) {
+    else {
+      const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      await checkIfBanned.forEach(async item => {
+        console.log("item.data: ", item.data);
+        if (item.data)
+          verifBan = true;
+      });
+      const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      await checkIfMuted.forEach(async item => {
+        console.log("item.data: ", item.data);
+        if (item.data)
+          verifMute = true;
+      });
+    }
+    console.log("verifBan: ", verifBan);
+    if (!verifBan && !verifMute) {
       this.logger.log(`${client.id} create newMsg: ${data.text}`);
       const newMsg = {
         id_sender: data.id_sender,
@@ -653,6 +679,39 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const returnBan = http.post('http://localhost:5001/blackList/', newBan);
     console.log(returnBan.forEach(item => (console.log('returnBan in eventgateway'))));
+  }
+
+  //MUTELIST EVENTS
+
+  @SubscribeMessage('createRoomMute')
+  async createRoomMute(client: Socket, data: any) {
+    let verif = false;
+    const checkParticipant = await http.get('http://localhost:5001/participants/check/' + data.login_muted + '/' + data.room_name);
+    await checkParticipant.forEach(async item => {
+      this.logger.log(`${item.data} data`);
+      if (item.data == true) {
+        verif = true;
+      }
+    });
+    if (verif) {
+      this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
+      const newMute = {
+        id_sender: data.id_sender,
+        id_muted: data.id_muted,
+        login_sender: data.login_sender,
+        login_muted: data.login_muted,
+        userOrRoom: data.userOrRoom,
+        receiver_login: data.receiver_login,
+        room_id: data.room_id,
+        room_name: data.room_name,
+        cause: data.cause,
+        date: time,
+        alwaysOrNot: data.alwaysOrNot,
+        timer: data.timer
+      }
+      const returnMute = http.post('http://localhost:5001/muteList/', newMute);
+      console.log(returnMute.forEach(item => (console.log('returnMute in eventgateway'))));
+    }
   }
 
   //OLD CHAT EVENTS

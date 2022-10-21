@@ -8,6 +8,7 @@ import { constWhileSecu } from '../HomePage';
 import BanRoomParticipant from './BanRoomParticipant';
 import AddAdmin from './AddAdmin';
 import CreateInvitationRooms from './CreateInvitationRooms';
+import MuteRoomParticipant from './MuteRoomParticipant';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -22,6 +23,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const [isAdmin, setAdmin] = useState(false);
 
     const [banRoomParticipant, setBanRoomParticipant] = useState(false);
+    const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
 
     const checkIfAdmin = async () => {
@@ -106,6 +108,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             setCreateInvitation(true);
     };
 
+    const handleClickMuteRoomParticipant = () => {
+        if (muteRoomParticipant)
+            setMuteRoomParticipant(false);
+        else
+            setMuteRoomParticipant(true);
+    }
+
     const handleClickBanRoomParticipant = () => {
         if (banRoomParticipant)
             setBanRoomParticipant(false);
@@ -162,6 +171,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         if (isAdmin)
             return (
                 <div className="mainHeaderRight mainHeaderSide">
+                    <button onClick={handleClickMuteRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
                     <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
@@ -229,6 +239,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 <RightHeader />
             </div>
             {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
+            {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
             {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
             {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
             <AffList />
