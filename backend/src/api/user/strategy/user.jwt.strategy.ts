@@ -47,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             profile_pic: user.profile_pic,
             isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
-        console.log(retUser)
+        //console.log(retUser)
         return retUser;
     }
 }
