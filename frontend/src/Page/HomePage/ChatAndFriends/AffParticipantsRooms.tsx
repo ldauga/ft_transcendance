@@ -231,12 +231,12 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         let allUserMute: { id_muted: number, name_muted: string }[] = [];
-        await axios.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log('res.data allUserMute = ', res.data);
             allUserMute = res.data;
             console.log('nameTmp allUserBan = ', allUserMute);
         });//récupère tous les user mute de la room
-        await axios.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             let itemList: any[] = []
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number }) => {

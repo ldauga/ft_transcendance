@@ -69,7 +69,7 @@ export class BlackListService {
 		return arrReturn;
 	}
 
-	async checkUserBan(login: string, login_receiver: string): Promise<Boolean> {
+	async checkUserBan(login: string, login_receiver: string): Promise<boolean> {
 		console.log("login: ", login, ", login_receiver: ", login_receiver);
 		const check = await this.BlackListRepository.findOne({
 			where: [
@@ -81,7 +81,7 @@ export class BlackListService {
 		return true;
 	}
 
-	async checkRoomBan(id: number, login: string, roomName: string): Promise<Boolean> {
+	async checkRoomBan(id: number, login: string, roomName: string): Promise<boolean> {
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ id_banned: id, login_banned: login, room_name: roomName }

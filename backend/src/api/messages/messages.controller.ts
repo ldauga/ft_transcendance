@@ -33,7 +33,7 @@ export class MessagesController {
     const returnCheck = this.service.getRelationMessages(id1);
     return returnCheck;
   }
-  
+
   //TROUVER SOLUTION POUR METTRE LE GUARD
   /*@Post()
   @UseGuards(AuthGuard('jwt'))
@@ -46,7 +46,7 @@ export class MessagesController {
   }*/
 
   @Post('/removeAllRoomMessages/')
-  public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<Boolean> {
+  public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<boolean> {
     console.log('body removeAllRoomMessages: ', body);
     const newMessage = this.service.removeAllRoomMessages(body.room_id, body.room_name);
     if (!newMessage)

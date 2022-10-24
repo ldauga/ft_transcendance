@@ -50,7 +50,7 @@ export class MuteListService {
 		return arrReturn;
 	}
 
-	async checkUserMute(login: string, login_receiver: string): Promise<Boolean> {
+	async checkUserMute(login: string, login_receiver: string): Promise<boolean> {
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ login_muted: login, login_sender: login_receiver }
@@ -61,7 +61,7 @@ export class MuteListService {
 		return true;
 	}
 
-	async checkRoomMute(id: number, login: string, roomName: string): Promise<Boolean> {
+	async checkRoomMute(id: number, login: string, roomName: string): Promise<boolean> {
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ id_muted: id, login_muted: login, room_name: roomName }
@@ -105,7 +105,7 @@ export class MuteListService {
 		console.log('removeReturn', removeReturn);
 	}
 
-	async removeRoomMute(room_id: number, login_muted: string): Promise<Boolean> {
+	async removeRoomMute(room_id: number, login_muted: string): Promise<boolean> {
 		console.log("removeRoomMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [

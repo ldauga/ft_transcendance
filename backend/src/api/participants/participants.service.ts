@@ -37,7 +37,7 @@ export class ParticipantsService {
 		return participants;
 	}
 
-	async checkParticipant(login: string, roomName: string): Promise<Boolean> {
+	async checkParticipant(login: string, roomName: string): Promise<boolean> {
 		const check = await this.ParticipantsRepository.findOne({
 			where: [
 				{ user_login: login, room_name: roomName }
@@ -48,7 +48,7 @@ export class ParticipantsService {
 		return true;
 	}
 
-	async checkAdmin(login: string, roomName: string): Promise<Boolean> {
+	async checkAdmin(login: string, roomName: string): Promise<boolean> {
 		const check = await this.ParticipantsRepository.findOne({
 			where: [
 				{ user_login: login, room_name: roomName }
@@ -62,7 +62,7 @@ export class ParticipantsService {
 			return false;
 	}
 
-	async checkIfAdminOrParticipant(login: string, roomName: string): Promise<Boolean> {
+	async checkIfAdminOrParticipant(login: string, roomName: string): Promise<boolean> {
 		const check = await this.ParticipantsRepository.findOne({
 			where: [
 				{ user_login: login, room_name: roomName }
@@ -111,7 +111,7 @@ export class ParticipantsService {
 		return returnParticipant;
 	}
 
-	async removeParticipant(login: string, room_name: string): Promise<Boolean> {
+	async removeParticipant(login: string, room_name: string): Promise<boolean> {
 		if (!this.checkParticipant(login, room_name))
 			return false;
 		const check = await this.ParticipantsRepository.findOne({

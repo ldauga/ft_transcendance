@@ -30,7 +30,7 @@ export class FriendListService {
 		return matches;
 	}
 
-	async checkExistRelation(id1: number, id2: number): Promise<Boolean> {
+	async checkExistRelation(id1: number, id2: number): Promise<boolean> {
 		const returnCheck = await this.FriendListRepository.findOne({
 			where: [
 				{ id_user1: id1, id_user2: id2 },
@@ -58,7 +58,7 @@ export class FriendListService {
 		return match;
 	}
 
-	async removeFriendShip(id1: number, id2: number): Promise<Boolean> {
+	async removeFriendShip(id1: number, id2: number): Promise<boolean> {
 		if (!this.checkExistRelation(id1, id2))
 			return false;
 		const check = await this.FriendListRepository.findOne({

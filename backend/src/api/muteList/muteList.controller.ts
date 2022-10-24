@@ -20,14 +20,14 @@ export class MuteListController {
 
 
   @Get('/checkUserMute/:login/:loginReceiver')
-  public async checkUserMute(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
+  public async checkUserMute(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<boolean> {
     const returnCheck = await this.MuteListService.checkUserMute(login, loginReceiver);
     console.log('checkUserMuteReturn Check = ', returnCheck);
     return returnCheck;
   }
 
   @Get('/checkRoomMute/:id/:login/:roomName')
-  public async checkRoomMute(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
+  public async checkRoomMute(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
     const returnCheck = await this.MuteListService.checkRoomMute(id, login, roomName);
     console.log('checkRoomMuteReturn Check = ', returnCheck);
     return returnCheck;
@@ -40,7 +40,7 @@ export class MuteListController {
   }
 
   @Post('/removeUserMute/:id/:login')
-  public async removeUserMute(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_muted: string): Promise<Boolean> {
+  public async removeUserMute(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_muted: string): Promise<boolean> {
     // console.log('body', body);
     console.log('removeUserMute Controller');
     const removeReturn = await this.MuteListService.removeUserMute(id_sender, login_muted);
@@ -49,7 +49,7 @@ export class MuteListController {
   }
 
   @Post('/removeRoomMute/:id/:login')
-  public async removeRoomMute(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_muted: string): Promise<Boolean> {
+  public async removeRoomMute(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_muted: string): Promise<boolean> {
     // console.log('body', body);
     console.log('removeUserMute Controller');
     const removeReturn = await this.MuteListService.removeRoomMute(room_id, login_muted);
