@@ -1078,9 +1078,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
               }
 
-              const match = http.post('http://localhost:5001/matchesHistory', data);
-
-              match.forEach((item) => { })
+              //const match = http.post('http://localhost:5001/matchesHistory', data);
+              const match = this.MatchesHistoryService.createMatch(data);
 
               room[1].players.forEach((item, index) => {
                 if (!item.connected) {
@@ -1135,9 +1134,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
         }
 
-        const match = http.post('http://localhost:5001/matchesHistory', data);
-
-        match.forEach((item) => { })
+        //const match = http.post('http://localhost:5001/matchesHistory', data);
+        const match = this.MatchesHistoryService.createMatch(data);
 
         room[1].players.forEach((item, index) => {
           if (!item.connected) {
@@ -1181,9 +1179,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       winner_id: this.pongInfo[room[0]].players[0].score === 3 ? this.pongInfo[room[0]].players[0].user.id : this.pongInfo[room[0]].players[1].user.id,
     }
 
-    const match = http.post('http://localhost:5001/matchesHistory', data);
-
-    match.forEach((item) => { })
+    const match = this.MatchesHistoryService.createMatch(data);
 
     this.pongInfo[room[0]].players.forEach((item, index) => {
       if (!item.connected) {
