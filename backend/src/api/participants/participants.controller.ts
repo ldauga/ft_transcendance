@@ -35,7 +35,7 @@ export class ParticipantsController {
 
   @Get('/check/:login/:name')
   @UseGuards(AuthGuard('jwt'))
-  public async checkParticipant(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
+  public async checkParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkParticipant(login, name);
     console.log('checkParticipant Check = ', returnCheck);
     return returnCheck;
@@ -43,7 +43,7 @@ export class ParticipantsController {
 
   @Get('/checkAdmin/:login/:name')
   @UseGuards(AuthGuard('jwt'))
-  public async checkIfAdmin(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
+  public async checkIfAdmin(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkAdmin(login, name);
     console.log('checkAdmin Check = ', returnCheck);
     return returnCheck;
@@ -51,7 +51,7 @@ export class ParticipantsController {
 
   @Get('/checkIfAdminOrParticipant/:login/:name')
   @UseGuards(AuthGuard('jwt'))
-  public async checkIfAdminOrParticipant(@Param('login') login: string, @Param('name') name: string): Promise<Boolean> {
+  public async checkIfAdminOrParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkIfAdminOrParticipant(login, name);
     console.log('checkIfAdminOrParticipant Check = ', returnCheck);
     return returnCheck;
@@ -75,7 +75,7 @@ export class ParticipantsController {
 
   @Post('/:login/:roomName')
   @UseGuards(AuthGuard('jwt'))
-  public async removeParticipant(@Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
+  public async removeParticipant(@Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
     console.log('removeParticipant Controller login: ', login, ", roomName: ", roomName);
     const removeReturn = await this.service.removeParticipant(login, roomName);
     console.log('removeRParticipanteturn Controller', removeReturn);

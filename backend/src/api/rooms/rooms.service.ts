@@ -47,7 +47,7 @@ export class RoomsService {
 		return ("ok");
 	}
 
-	async checkRoom(nameToCheck: string): Promise<Boolean> {
+	async checkRoom(nameToCheck: string): Promise<boolean> {
 		const check = await this.RoomsRepository.findOne({
 			where: [
 				{ name: nameToCheck }
@@ -58,7 +58,7 @@ export class RoomsService {
 		return true;
 	}
 
-	async checkIfOwner(idToCheck: number, nameToCheck: string): Promise<Boolean> {
+	async checkIfOwner(idToCheck: number, nameToCheck: string): Promise<boolean> {
 		const check = await this.RoomsRepository.findOne({
 			where: [
 				{ name: nameToCheck, owner_id: idToCheck }
@@ -69,7 +69,7 @@ export class RoomsService {
 		return true;
 	}
 
-	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<Boolean> {
+	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
 		console.log("service changePassword, room name: ", room_name)
 		if (!this.checkRoom(room_name))
 			return false;
@@ -100,7 +100,7 @@ export class RoomsService {
 		return returnRoom;
 	}
 
-	async removeRoom(id_user: number, room_name: string): Promise<Boolean> {
+	async removeRoom(id_user: number, room_name: string): Promise<boolean> {
 		if (!this.checkRoom(room_name))
 			return false;
 		if (!this.checkIfOwner(id_user, room_name))

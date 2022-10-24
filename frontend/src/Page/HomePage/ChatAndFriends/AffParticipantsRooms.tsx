@@ -10,6 +10,7 @@ import AddAdmin from './AddAdmin';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import MuteRoomParticipant from './MuteRoomParticipant';
+import AffParticipantsBanned from './AffParticipantsBanned';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -27,16 +28,18 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
 
+    const [isAffBanned, setAffBanned] = useState(false);
+
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, {withCredentials:true}).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, {withCredentials:true}).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -102,6 +105,20 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.removeListener('removeParticipantReturn');
     })
 
+    utilsData.socket.removeAllListeners('demutedUserInRoom');
+
+    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoom: boolean) {
+        console.log('demutedUserInRoom = ', demutedUserInRoom);
+        const length = itemListHistory.length;
+        let secu = 0;
+        while (length == itemListHistory.length && secu < constWhileSecu) {
+            getListItem();
+            secu++;
+        }
+        utilsData.socket.off('demutedUserInRoom');
+        utilsData.socket.removeListener('demutedUserInRoom');
+    })
+
     const addInvitationRequest = () => {
         if (isCreateInvitation)
             setCreateInvitation(false);
@@ -153,6 +170,30 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         setUpdate(false);
     }
 
+    function demute(item: { login: string, id: number, admin: boolean }) {
+        utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login });
+    };
+
+    function RightItemMuted(item: { login: string, id: number, admin: boolean }) {
+        console.log("RightItemMuted isAdmin: ", isAdmin, ", admin: ", item.admin);
+        if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
+            return (
+                <div className="inItemFriendList_right">
+                    <button onClick={() => demute(item)} className="bi bi-mic-fill"></button>
+                    <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button>
+                </div>
+            );
+        else
+            return (
+                <div className="inItemFriendList_right">
+                </div>
+            );
+    };
+
+    const affBanned = async () => {
+        setAffBanned(true);
+    };
+
     function RightItem(item: { login: string, id: number, admin: boolean }) {
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
         if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
@@ -173,7 +214,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             return (
                 <div className="mainHeaderRight mainHeaderSide">
                     <button onClick={handleClickMuteRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
-                    <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
+                    <button onClick={affBanned}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
                     <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                 </div>
@@ -189,20 +230,42 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
+        let allUserMute: { id_muted: number, name_muted: string }[] = [];
+        await axiosConfig.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+            console.log('res.data allUserMute = ', res.data);
+            allUserMute = res.data;
+            console.log('nameTmp allUserBan = ', allUserMute);
+        });//récupère tous les user mute de la room
         await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             let itemList: any[] = []
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login}.jpg`;
-                itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                    <div className="inItemFriendList">
-                        <div className="inItemFriendList_left">
-                            <img src={profile_pic}></img>
-                            <p>{item.login}</p>
+                console.log("test1: ", allUserMute);
+                console.log("test: ", allUserMute.find(obj => obj.id_muted == item.id));
+                if (allUserMute.find(obj => obj.id_muted == item.id)) {
+                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
+                        <div className="inItemFriendList">
+                            <div className="inItemFriendList_left">
+                                <img src={profile_pic}></img>
+                                <p>{item.login}</p>
+                                <p>Muted</p>
+                            </div>
+                            <RightItemMuted login={item.login} id={item.id} admin={admin} />
                         </div>
-                        <RightItem login={item.login} id={item.id} admin={admin} />
-                    </div>
-                </div>)
+                    </div>)
+                }
+                else {
+                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
+                        <div className="inItemFriendList">
+                            <div className="inItemFriendList_left">
+                                <img src={profile_pic}></img>
+                                <p>{item.login}</p>
+                            </div>
+                            <RightItem login={item.login} id={item.id} admin={admin} />
+                        </div>
+                    </div>)
+                }
             })
             setItemListHistory(itemList);
         })
@@ -230,20 +293,37 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
+    function MainAff() {
+        if (isAffBanned) {
+            return (
+                <div className="mainAffGene">
+                    <AffParticipantsBanned roomsConversData={props.roomsConversData} setAffParticipantsRooms={props.setAffParticipantsRooms} setConversRooms={props.setConversRooms} closeConvers={props.closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} setAffBanned={setAffBanned} />
+                </div>
+            );
+        }
+        else {
+            return (
+                <div className="mainAffGene">
+                    <div id="header" className="mainHeader">
+                        <div className="mainHeaderLeft mainHeaderSide">
+                            <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
+                        </div>
+                        <h3>{props.roomsConversData.name}</h3>
+                        <RightHeader />
+                    </div>
+                    {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
+                    {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
+                    {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
+                    {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
+                    <AffList />
+                </div>
+            );
+        }
+    };
+
     return (
         <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
-                </div>
-                <h3>{props.roomsConversData.name}</h3>
-                <RightHeader />
-            </div>
-            {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
-            {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
-            {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
-            {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
-            <AffList />
+            <MainAff />
         </div>
     );
 };

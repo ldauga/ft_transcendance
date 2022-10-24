@@ -23,13 +23,13 @@ export class FriendListController {
 
   @Get('/:id1/:id2')
   @UseGuards(AuthGuard('jwt'))
-  public checkFriendList(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+  public checkFriendList(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<boolean> {
     return this.service.checkExistRelation(id1, id2);
   }
 
   @Post('/:id1/:id2')
   @UseGuards(AuthGuard('jwt'))
-  public async removeFriendShip(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<Boolean> {
+  public async removeFriendShip(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<boolean> {
     console.log('removeFriendShip Controller');
     const removeReturn = await this.service.removeFriendShip(id1, id2);
     console.log('removeReturn Controller', removeReturn);

@@ -15,9 +15,19 @@ export class BlackListController {
     return this.BlackListService.getAllBanTimer();
   }
 
+  @Get('/getAllRoomBan/:roomId/:roomName')
+  public getAllRoomBan(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_banned: number, login_banned: string }[]> {
+    return this.BlackListService.getAllRoomBan(roomId, roomName);
+  }
+
+  @Get('/getAllUserBan/:id/:login')
+  public getAllUserBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string): Promise<{ id_banned: number, login_banned: string }[]> {
+    return this.BlackListService.getAllUserBan(id, login);
+  }
+
   @Get('/checkUserBan/:login/:loginReceiver')
   @UseGuards(AuthGuard('jwt'))
-  public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
+  public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkUserBan(login, loginReceiver);
     console.log('checkUserBanReturn Check = ', returnCheck);
     return returnCheck;
@@ -25,7 +35,7 @@ export class BlackListController {
 
   @Get('/checkRoomBan/:id/:login/:roomName')
   @UseGuards(AuthGuard('jwt'))
-  public async checkRoomBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<Boolean> {
+  public async checkRoomBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkRoomBan(id, login, roomName);
     console.log('checkRoomBanReturn Check = ', returnCheck);
     return returnCheck;
@@ -40,7 +50,7 @@ export class BlackListController {
 
   @Post('/removeUserBan/:id/:login')
   @UseGuards(AuthGuard('jwt'))
-  public async removeUserBan(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_banned: string): Promise<Boolean> {
+  public async removeUserBan(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_banned: string): Promise<boolean> {
     // console.log('body', body);
     console.log('removeUserBan Controller');
     const removeReturn = await this.BlackListService.removeUserBan(id_sender, login_banned);
@@ -50,7 +60,7 @@ export class BlackListController {
 
   @Post('/removeRoomBan/:id/:login')
   @UseGuards(AuthGuard('jwt'))
-  public async removeRoomBan(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_banned: string): Promise<Boolean> {
+  public async removeRoomBan(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_banned: string): Promise<boolean> {
     // console.log('body', body);
     console.log('removeUserBan Controller');
     const removeReturn = await this.BlackListService.removeRoomBan(room_id, login_banned);

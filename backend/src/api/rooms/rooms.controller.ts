@@ -17,7 +17,7 @@ export class RoomsController {
 
   @Get('/check/:name')
   @UseGuards(AuthGuard('jwt'))
-  public async checkRoom(@Param('name') name: string): Promise<Boolean> {
+  public async checkRoom(@Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkRoom(name);
     console.log('checkRoom Check = ', returnCheck);
     return returnCheck;
@@ -33,7 +33,7 @@ export class RoomsController {
 
   @Get('/checkIfOwner/:id/:name')
   @UseGuards(AuthGuard('jwt'))
-  public async checkIfOwner(@Param('id', ParseIntPipe) id: number, @Param('name') name: string): Promise<Boolean> {
+  public async checkIfOwner(@Param('id', ParseIntPipe) id: number, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkIfOwner(id, name);
     // console.log('checkIfOwner Check = ', returnCheck);
     return returnCheck;
@@ -41,7 +41,7 @@ export class RoomsController {
 
   @Post('/changePassword/')
   @UseGuards(AuthGuard('jwt'))
-  public async changePassword(@Body() body: { room_name: string, passwordOrNot: boolean, password: string }): Promise<Boolean> {
+  public async changePassword(@Body() body: { room_name: string, passwordOrNot: boolean, password: string }): Promise<boolean> {
     console.log('changePassword Controller');
     const changeReturn = await this.service.changePassword(body.room_name, body.passwordOrNot, body.password);
     console.log('changePassword Controller', changeReturn);
@@ -58,7 +58,7 @@ export class RoomsController {
 
   @Post('/:id/:roomName')
   @UseGuards(AuthGuard('jwt'))
-  public async removeRoom(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<Boolean> {
+  public async removeRoom(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<boolean> {
     console.log('removeRoom Controller');
     const removeReturn = await this.service.removeRoom(id, roomName);
     console.log('removeRoom Controller', removeReturn);
