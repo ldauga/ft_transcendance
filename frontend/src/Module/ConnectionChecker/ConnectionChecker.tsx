@@ -18,7 +18,7 @@ function ConnectionChecker(props: {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
   
   if (!test) {
-      axiosConfig.get("http://localhost:5001/user/userExist/"/*, { withCredentials: true }*/).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
+      axios.get("http://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
   
       utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
       test = true;
