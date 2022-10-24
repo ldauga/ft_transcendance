@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.css'
 import '../Homepage.scss'
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function CreateInvitationRooms(props: { roomsConversData: { name: string, id: number } }) {
 
@@ -14,7 +15,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
 
     const createInvitation = async () => {
         console.log('create Invitation Room');
-        await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -27,7 +28,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
             else {
                 let a = 1;
                 let b = 1;
-                await axios.get('http://localhost:5001/invitationRequest/checkInvitationRequestForRooms/' + res.data.id + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/invitationRequest/checkInvitationRequestForRooms/' + res.data.id + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check Invitation Room:', res.data);
                     if (res.data == true) {
                         console.log("invitation Room already exist");
@@ -37,7 +38,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                         console.log('invitation Room not exist');
                     }
                 })
-                await axios.get('http://localhost:5001/participants/check/' + receiver_login_tmp + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/participants/check/' + receiver_login_tmp + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check participants:', res.data);
                     if (res.data == true) {
                         console.log("participant already exist");
@@ -55,6 +56,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                         id_user2: res.data.id,
                         user1_accept: true,
                         user2_accept: false,
+                        sender_id: userData.userReducer.user?.id,
                         sender_login: userData.userReducer.user?.login,
                         receiver_login: receiver_login_tmp,
                         userOrRoom: true,

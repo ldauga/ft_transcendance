@@ -11,10 +11,9 @@ export class LocalStrategy extends PassportStrategy(Strategy,'local') {
 	){
         super({
             ignoreExpiration: false,
-            secretOrKey: 'super-cat',
+            secretOrKey: process.env.SECRET,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
-                console.log(Date.now());
                 if (!data) {
 					return null;
                 }

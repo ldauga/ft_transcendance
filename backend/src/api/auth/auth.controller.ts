@@ -28,7 +28,7 @@ export class AuthController {
 		};
 		res.cookie('auth-cookie', secretData, { httpOnly: false });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
-		//Gestion d erreur si la personne refuse la connexion sur l'intra
+		//Gestion d erreur si la personne refuse la connexion sur l'intra ?
 	}
 
 	@Get('/loginSans42/:login')
@@ -44,6 +44,7 @@ export class AuthController {
 	}
 
 	@Get('2fa/generate')
+	@UseGuards(AuthGuard('jwt'))
 	async register(@Res() response: Response, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
 		if (!user)
@@ -54,6 +55,7 @@ export class AuthController {
 	}
 
 	@Get('2fa/verify/:code')
+	@UseGuards(AuthGuard('jwt'))
 	async verifyCode(@Param('code') code: string, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
 		if (!user)
@@ -71,7 +73,8 @@ export class AuthController {
 	}
 
 	@Get('2fa/turn-on/:code')
-	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request, @Body() body) {
+	@UseGuards(AuthGuard('jwt'))
+	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
 		if (!user)
 			throw new BadRequestException('User not found');
@@ -88,17 +91,24 @@ export class AuthController {
 	}
 
 	@Get('2fa/turn-off/')
-	async turnOffTwoFactorAuthentication(@Req() request, @Body() body) {
+	@UseGuards(AuthGuard('jwt'))
+	async turnOffTwoFactorAuthentication(@Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
 		if (!user)
 			throw new BadRequestException('User not found');
 		return await this.userServices.turnOffTwoFactorAuthentication(user.login);
 	}
 
-	@Get('/refresh')
+	@Get('/refresh/')
 	@UseGuards(AuthGuard('refresh'))
-	async refresh(@Query() query, @Res({ passthrough: true }) res: Response) {
-		//await this.authService.createRefreshToken(query);
+	async refresh(@Req() request, @Res({ passthrough: true }) res: Response) {
+		const accessToken = await this.authService.createAccessTokenFromRefresh(request);
+		let refreshToken = request?.cookies["auth-cookie"].refreshToken;
+		const secretData = {
+			accessToken,
+			refreshToken
+		};
+		res.cookie('auth-cookie', secretData, { httpOnly: false });
 	}
 
 }

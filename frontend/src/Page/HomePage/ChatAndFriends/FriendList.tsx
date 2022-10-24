@@ -5,8 +5,9 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.css';
 import AddFriend from "./AddFriend";
 import BanUser from "./BanUser";
+import axiosConfig from "../../../Utils/axiosConfig";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -15,8 +16,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const [update, setUpdate] = useState(false);
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
-
-	const [banUser, setBanUser] = useState(false);
 
 	const handleClickClose = () => {
 		props.closeFriendList();
@@ -31,10 +30,8 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	const handleClickBanUser = () => {
-		if (banUser)
-			setBanUser(false);
-		else
-			setBanUser(true);
+		props.setFriendList(false);
+		props.setBannedUsers(true);
 	};
 
 	const handleClickInvitationRequest = () => {
@@ -98,7 +95,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	const getListItem = async () => {
-		await axios.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
+		await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
 			console.log("get");
 			let itemList: any[] = []
 			console.log('res.data = ', res.data);
@@ -111,11 +108,11 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
 					<div className="inItemFriendList">
 						<div className="inItemFriendList_left">
-							<img onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + friendLogin)}} src={profile_pic}></img>
+							<img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + friendLogin) }} src={profile_pic}></img>
 							<p>{friendLogin}</p>
 						</div>
 						<div className="inItemFriendList_right">
-							<button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', {user: userData.userReducer.user, specID: friendLogin}) }} className="bi bi-eye"></button>
+							<button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
 							<button onClick={() => openChat(item)} className="bi bi-chat"></button>
 							<button onClick={() => removeFriend(item)} className="bi bi-x-lg"></button>
 						</div>
@@ -155,7 +152,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				</div>
 			</div>
 			{newAddFriend && <AddFriend />}
-			{banUser && <BanUser />}
 			<ItemsFriendList />
 		</div>
 	)

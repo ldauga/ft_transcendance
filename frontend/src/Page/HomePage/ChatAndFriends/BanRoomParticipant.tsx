@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
+import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/BanRoomParticipant.css';
 
 function BanRoomParticipant(props: { roomsConversData: { name: string, id: number } }) {
@@ -22,8 +23,9 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
 
     async function buttonBanRoomParticipant() {
         let test = false;
-        console.log('addFriend');
-        await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+            return;
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -36,7 +38,7 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
             else {
                 let a = 1;
                 let b = 1;
-                await axios.get('http://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -62,7 +64,7 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
                         room_name: props.roomsConversData.name,
                         cause: "",
                         date: 0,
-                        alwaysOrNot: false,
+                        alwaysOrNot: alwaysOrNot,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomBan', newBan);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch, UnauthorizedException } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -16,7 +16,7 @@ import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
-      destination: './uploads/profileimages',
+      destination: './uploads/profileImages',
       filename: (req, file, cb) => {
           const filename: string = uuidv4();
           const extension: string = path.parse(file.originalname).ext;
@@ -32,16 +32,19 @@ export class UserController {
   private readonly service: UserService;
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllUsers(): Promise<UserEntity[]> {
     return this.service.getAllUsers();
   }
 
   @Get('/id/:id')
+  @UseGuards(AuthGuard('jwt'))
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
-	return this.service.getUserById(id);
+	  return this.service.getUserById(id);
   }
 
   @Get('/login/:login')
+  @UseGuards(AuthGuard('jwt')) //A FAIRE FONCTIONNER AVEC "buttonAddFriend()" dans AddFriend.tsx
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
     console.log('Login')
     return this.service.getUserByLogin(login);
@@ -54,28 +57,30 @@ export class UserController {
   }
 
   @Get('/userExist')
+  @UseGuards(AuthGuard('jwt'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
-    return this.service.getUserByRefreshToken(req.cookies['auth-cookie'].refreshToken);
+    const refreshToken = req.cookies['auth-cookie']?.refreshToken;
+    if (refreshToken == undefined)
+      throw new UnauthorizedException('Missing refreshToken.')
+    return this.service.getUserByRefreshToken(refreshToken);
   }
 
   @Get('profilePic/:fileId')
+  @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
     return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 
   @Post('upload')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', storage))
   public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
   @Post('updateNickname')
+  @UseGuards(AuthGuard('jwt'))
   public updateNickname(@Req() req: Request, @Body() body): Promise<GetUserDto> {
     return this.service.updateNickname(req.cookies['auth-cookie'].refreshToken, body);
-  }
-
-  @Post('updateRank')
-  public updateRank(@Req() req: Request, @Body() body): Promise<GetUserDto> {
-    return this.service.updateRank(req.cookies['auth-cookie'].refreshToken, body);
   }
 }

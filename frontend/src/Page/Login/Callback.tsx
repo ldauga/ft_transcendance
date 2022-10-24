@@ -9,11 +9,12 @@ import { actionCreators } from "../../State";
 import { RootState } from "../../State/Reducers";
 import './Callback.scss';
 import logo from '../assets/logo_transcendence.png';
+import axiosConfig from "../../Utils/axiosConfig";
 
 export default function Callback() {
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
-
+    const [cookie, setCookie] = useCookies(['auth-cookie']);
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
     const [turnOn, setTurnOn] = useState(false);
@@ -22,7 +23,7 @@ export default function Callback() {
 
     function turnOn2fa(value: string) {
         console.log('code: ' + value);
-        axios.get('http://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
+        axiosConfig.get('http://localhost:5001/auth/2fa/verify/' + value)
             .then((e) => {setTwoFactor(true), setTurnOn(true)})
             .catch((e) => {
                 setRes(e.response.status)
@@ -40,8 +41,10 @@ export default function Callback() {
 		}
 	  });
 
-    if (persistantReducer.userReducer.user === null)
-        axios.get("http://localhost:5001/user/userExist/", {withCredentials: true}).then((item) => { setUser(item.data); })
+    if (persistantReducer.userReducer.user === null) {
+        axiosConfig.get("http://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
+        console.log(cookie)
+    }
 
     if (persistantReducer.userReducer.user !== null) {
 

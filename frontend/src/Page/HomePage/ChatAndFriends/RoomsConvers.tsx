@@ -11,6 +11,7 @@ import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
 import { constWhileSecu } from '../HomePage';
 import ChangeRoomPassword from './ChangeRoomPassword';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -111,14 +112,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axios.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axios.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -130,7 +131,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfOwner = async () => {
-        await axios.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -146,8 +147,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
-        await axios.get('http://localhost:5001/messages/' + props.roomsConversData.id + '/' + props.roomsConversData.id + '/room').then(async (res) => {
-            console.log("get List Item Room Conversation");
+        await axiosConfig.get('http://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+            console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, text: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>

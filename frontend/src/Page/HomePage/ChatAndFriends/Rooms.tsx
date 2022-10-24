@@ -6,6 +6,7 @@ import './CSS/Rooms.css'
 import '../Homepage.scss'
 import CreateRooms from './CreateRooms';
 import { constWhileSecu } from '../HomePage';
+import axiosConfig from '../../../Utils/axiosConfig';
 
 function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, setRoomsList: Function }) {
 
@@ -89,7 +90,7 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
     })
 
     const getListItem = async () => {
-        await axios.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
             const nameTmp: { name: string, id: number }[] = res.data;

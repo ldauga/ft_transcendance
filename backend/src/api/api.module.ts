@@ -11,6 +11,8 @@ import { BlackListModule } from './blackList/blackList.module';
 import { MuteListModule } from './muteList/muteList.module';
 
 @Module({
-  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, FriendListModule, InvitationRequestModule, RoomsModule, PartcipantsModule, BlackListModule, MuteListModule],
+  imports: [UserModule, AuthModule, MatchesHistoryModule, MessagesModule, 
+    FriendListModule, InvitationRequestModule, RoomsModule, 
+    PartcipantsModule, BlackListModule, MuteListModule],
 })
 export class ApiModule { }

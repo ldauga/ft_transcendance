@@ -1,4 +1,4 @@
-import { Logger, Injectable, Req, UseGuards, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Logger, Injectable, Req, UseGuards, BadRequestException, UnauthorizedException, ConsoleLogger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -8,8 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
-import { UpdateNicknameDto } from './dtos/updateNickname.dto';
-
+	
 @Injectable()
 export class UserService {
 	constructor(
@@ -25,6 +24,8 @@ export class UserService {
 	}
 
 	async getUserById(id: number): Promise<UserEntity> {
+		if (id == undefined)
+			return null;
 		const user = await this.userRepository.findOneBy({ id: id });
 		if (!user)
 			return null;
@@ -46,10 +47,13 @@ export class UserService {
 	}
 
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
+		//console.log('signedRefreshToken', signedRefreshToken)
+		if (signedRefreshToken === undefined)
+			throw new UnauthorizedException('Token not found.');
 		var user: any;
 		if (signedRefreshToken.refreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken.refreshToken });
-		else
+		else if (signedRefreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken });
 
 		if (!user)
@@ -74,21 +78,10 @@ export class UserService {
 		return user.totpsecret;
 	}
 
-	async getUserByToken(refreshToken: any): Promise<GetUserDto> {
+	async getUserByToken(refreshToken: any): Promise<UserEntity> {
 		const user = await this.userRepository.findOneBy({ refreshToken: refreshToken });
 		if (!user)
 			return null;
-		/*const retUser = {
-			id: user.id,
-			login: user.login,
-			nickname: user.nickname,
-			wins: user.wins,
-			losses: user.losses,
-			rank: user.rank,
-			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-		}
-		return retUser;*/
 		return user;
 	}
 
@@ -172,27 +165,6 @@ export class UserService {
 		return retUser;
 	}
 
-	async updateRank(refreshToken: string, body): Promise<GetUserDto> {
-		const user = await this.getUserByRefreshToken(refreshToken)
-		if (!user)
-			return null;
-
-		user.rank = body.rank;
-		this.userRepository.save(user);
-
-		const retUser: GetUserDto = {
-			id: user.id,
-			login: user.login,
-			nickname: user.nickname,
-			wins: user.wins,
-			losses: user.losses,
-			rank: user.rank,
-			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
-		}
-		return retUser;
-	}
-
 	async updateProfilePic(refreshToken, filename: string): Promise<GetUserDto> {
 		const user = await this.getUserByRefreshToken(refreshToken);
 		if (!user)
@@ -238,7 +210,6 @@ export class UserService {
 
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 		const user = await this.getUserById(userId);
-		// console.log(user);
 		if (!user)
 			return null;
 		user.totpsecret = secret;
@@ -246,6 +217,8 @@ export class UserService {
 	}
 
 	async turnOnTwoFactorAuthentication(login: string): Promise<GetUserDto> {
+
+		console.log('here')
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;

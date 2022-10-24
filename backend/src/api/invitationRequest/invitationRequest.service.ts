@@ -5,7 +5,7 @@ import { InvitationRequestDto } from "./dtos/invitationRequest.dto";
 import { InvitationRequestEntity } from "./invitationRequest.entity";
 
 @Injectable()
-export class invitationRequestService {
+export class InvitationRequestService {
 	constructor(
 		@InjectRepository(InvitationRequestEntity)
 		private readonly InvitationRequestRepository: Repository<InvitationRequestEntity>,
@@ -29,7 +29,7 @@ export class invitationRequestService {
 		return invit;
 	}
 
-	async checkInvitationRequest(id1: number, id2: number): Promise<Boolean> {
+	async checkInvitationRequest(id1: number, id2: number): Promise<boolean> {
 		const check = await this.InvitationRequestRepository.findOne({
 			where: [
 				{ id_user1: id1, id_user2: id2 },
@@ -43,7 +43,7 @@ export class invitationRequestService {
 		return true;
 	}
 
-	async checkInvitationRequestForRooms(id: number, roomName: string): Promise<Boolean> {
+	async checkInvitationRequestForRooms(id: number, roomName: string): Promise<boolean> {
 		const check = await this.InvitationRequestRepository.findOne({
 			where: [
 				{ id_user2: id, room_name: roomName }
@@ -82,6 +82,7 @@ export class invitationRequestService {
 		});
 		const removeReturn = this.InvitationRequestRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		return removeReturn;
 	}
 
 }

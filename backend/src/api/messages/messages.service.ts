@@ -113,7 +113,7 @@ export class MessagesService {
 		return newMessage;
 	}
 
-	async removeAllRoomMessages(room_id: number, room_name: string): Promise<Boolean> {
+	async removeAllRoomMessages(room_id: number, room_name: string): Promise<boolean> {
 		console.log("removeAllRoomMessages room: ", room_name);
 		if (room_id == 0)
 			return false;

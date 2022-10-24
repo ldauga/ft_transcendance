@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import axios from 'axios';
 import { GetUserDto } from "../dtos/getUser.dto";
 import { UserService } from "../user.service";
 
@@ -12,13 +13,12 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     ){
         super({
             ignoreExpiration: false,
-            secretOrKey: 'super-cat',
+            secretOrKey: process.env.SECRET,
             passthrough: true,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
                 let data = request?.cookies["auth-cookie"];
-                console.log('jwt cookies', data);
                 if (!data) {
-					return null;
+                    return null;
                 }
 				return data.accessToken;
             }])
@@ -27,9 +27,16 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
 
     async validate(payload:any) {
         const user = await this.userService.getUserById(payload.sub);
-        console.log(Date.now());
         if (!user)
-            return null;
+            throw new UnauthorizedException('User not found.')
+        //console.log(user)
+        let now = Date.now().toString().substring(0, 10);
+        //console.log(now)
+        if (payload.exp < now) {
+           console.log('oui')
+        }
+       //throw new UnauthorizedException('Expired refresh token');
+
         const retUser: GetUserDto = {
             id: user.id,
             login: user.login,
@@ -40,6 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             profile_pic: user.profile_pic,
             isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
+        console.log(retUser)
         return retUser;
     }
 }

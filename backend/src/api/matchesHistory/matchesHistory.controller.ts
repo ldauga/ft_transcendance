@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { UpdateWinLooseDto } from "../user/dtos/updateWinLoose.dto";
 import { UserService } from "../user/user.service";
 import { MatchesHistoryDto } from "./dtos/matchesHistory.dto";
@@ -15,6 +16,7 @@ export class MatchesHistoryController {
   private readonly MatchesHistoryService: MatchesHistoryService;
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllMatchesHistory(): Promise<MatchesHistoryEntity[]> {
     return this.MatchesHistoryService.getAllMatchesHistory();
   }
@@ -25,16 +27,19 @@ export class MatchesHistoryController {
   //Utiliser le UseGuard('jwt')
   //Recuperer l'id et faire le reste
   @Get('/:id')
+  @UseGuards(AuthGuard('jwt'))
   public getUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<MatchesHistoryEntity[]> {
   	return this.MatchesHistoryService.getUserMatchesHistory(id);
   }
 
   @Get('parsedMatchesHistory/:id')
+  @UseGuards(AuthGuard('jwt'))
   public async getParsedUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<{nickname_user1: string, score_u1: number, nickname_user2: string, score_u2: number, winner_login: string, date: number}[]> {
     return this.MatchesHistoryService.getParsedUserMatchesHistory(id);
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   public async createMatch(@Body() body: MatchesHistoryDto): Promise<MatchesHistoryEntity> {
 	  const match = await this.MatchesHistoryService.createMatch(body);
     if(!match)

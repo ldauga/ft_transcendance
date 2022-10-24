@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
+import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/BanUser.css';
 
 function BanUser() {
@@ -21,8 +22,9 @@ function BanUser() {
 
     async function buttonBanUser() {
         let test = false;
-        console.log('addFriend');
-        await axios.get('http://localhost:5001/user/login/' + text).then(async (res) => {
+        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+            return;
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -35,7 +37,7 @@ function BanUser() {
             else {
                 let a = 1;
                 let b = 1;
-                await axios.get('http://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);

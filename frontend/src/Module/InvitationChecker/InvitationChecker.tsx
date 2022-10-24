@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../State";
-import { Client, Notif, NotifType } from "../../State/type";
+import { Client, msg, Notif, NotifType } from "../../State/type";
+import axiosConfig from "../../Utils/axiosConfig";
 
 import './InvitationChecker.css'
 
@@ -21,7 +22,7 @@ function InvitationChecker(props: { children: any }) {
 	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
-		axios.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
+		axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {

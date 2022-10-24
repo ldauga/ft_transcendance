@@ -16,6 +16,7 @@ import master_rank_img from '../../Assets/rank/master_rank.png'
 import { RiFileWarningLine } from 'react-icons/ri'
 import NavBar from '../Navbar/Navbar'
 import { Dictionary } from '@reduxjs/toolkit'
+import axiosConfig from '../../Utils/axiosConfig'
 
 export function StatPlayer() {
 	const [profileUserId, setProfileUserId] = useState(0)
@@ -39,7 +40,7 @@ export function StatPlayer() {
 		if (!profileUserId) {
 			if (!verifLogin) {
 				setVerifLogin(true);
-				axios.get("http://localhost:5001/user/login/" + login).then((res) => {
+				axiosConfig.get("http://localhost:5001/user/login/" + login).then((res) => {
 					if (res.data == '') return;
 					setVerifNick(true)
 					setProfileUser(res.data)
@@ -99,7 +100,7 @@ export function StatPlayer() {
 			}
 			else if (!verifNick) {
 				setVerifNick(true);
-				axios.get("http://localhost:5001/user/nickname/" + login).then((res) => {
+				axiosConfig.get("http://localhost:5001/user/nickname/" + login).then((res) => {
 					if (res.data == '') return ;
 					setProfileUser(res.data)
 					setProfileUserId(res.data.id)
@@ -160,7 +161,7 @@ export function StatPlayer() {
 		else if (!profileUserMatchHistory.length && profileUserId && !check) {
 
 			setCheck(true);
-			axios.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + profileUserId).then((res) => {
+			axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + profileUserId).then((res) => {
 				console.log('dos', res.data)
 
 				let matches: any[] = []
