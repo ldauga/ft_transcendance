@@ -1,0 +1,37 @@
+.background {
+    .ping-bg {
+        position: fixed;
+        filter: blur(11px);
+        z-index: -1;
+        transform: rotate(329deg);
+        height: 437px;
+        width: 58px;
+        left: 9vw;
+        top: 62vh;
+        background: rgb(46, 56, 78);
+    }
+    
+    .ball-bg {
+        border-radius: 50%;
+        position: fixed;
+        filter: blur(11px);
+        z-index: -1;
+        height: 58px;
+        width: 58px;
+        left: 27vw;
+        top: 31vh;
+        background: rgb(46, 56, 78);
+    }
+    
+    .pong-bg {
+        position: fixed;
+        filter: blur(11px);
+        z-index: -1;
+        transform: rotate(126deg);
+        height: 437px;
+        width: 58px;
+        left: 82vw;
+        top: 18vh;
+        background: rgb(46, 56, 78);
+    }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import './Homepage.scss';
 import NavBar from '../../Module/Navbar/Navbar';
+import Background from '../../Module/Background/Background';
 
 export const constWhileSecu = 10;
 
@@ -8,6 +9,7 @@ function HomePage() {
     return (
         <>
             <NavBar />
+            <Background />
             <div className="homepage">
                 <div className="field">
                     <div className="net"></div>
