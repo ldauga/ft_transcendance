@@ -1,6 +1,18 @@
 $pong-color: #2e384e; //var
 
 .map-carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    span {
+        position: absolute;
+        font-family: 'Roboto';
+        font-weight: 700;
+        font-size: 160px;
+    }
+    .blur-field {
+        filter: blur(11px);
+    }
     .field {
         width: 507px;
         height: 291px;
@@ -24,14 +36,68 @@ $pong-color: #2e384e; //var
             border-color: $pong-color;
         }
         
-        .basic-ping-racket, .basic-pong-racket, .ia-racket, .ia-ping-racket, .ia-pong-racket, .test-racket {
+        .basic-ping-racket, .basic-pong-racket, .ia-racket, .ia-ping-racket,
+        .ia-pong-racket, .test-racket, .expand-ping-racket, .expand-pong-racket,
+        .create-ping-racket, .create-pong-racket {
             width: 5px;
             height: 41px;
             position: absolute;
 
             background: $pong-color;
         }
+
+        .expand-middle {
+            height: 34px;
+            width: 5px;
+            position: absolute;
+            left: 49.5%;
+            top: 44%;
+            justify-content: center;
+            background-color: $pong-color;
+            animation: expand 10s infinite linear;
+        }
+
+        .create-ping-racket {
+            left: 6%;
+            top: 25%;
+        }
+
+        .create-pong-racket {
+            right: 6%;
+            top: 35%;
+        }
+
+        .create-ball {
+            width: 8px;
+            left: 50%;
+            top: 50%;
+            border-radius: 50%;
+            height: 8px;
+            position: absolute;
+            background: $pong-color;
+
+        }
         
+        .expand-ping-racket {
+            left: 6%;
+            animation: expand-ping 10s infinite linear;
+        }
+
+        .expand-pong-racket {
+            right: 6%;
+            animation: expand-pong 10s infinite linear;
+        }
+
+        .expand-ball {
+            width: 8px;
+            border-radius: 50%;
+            height: 8px;
+            position: absolute;
+            background: $pong-color;
+
+            animation: expand-ball 10s infinite linear;
+        }
+
         .basic-ping-racket {
             left: 6%;
             top: 0%;
@@ -61,7 +127,6 @@ $pong-color: #2e384e; //var
             left: 6%;
             background: red!important;
             z-index: 2;
-            // animation: ia-pong 10s infinite linear;
         }
         
         .basic-ball {
@@ -165,6 +230,161 @@ $pong-color: #2e384e; //var
             }
         }
     }
+}
+
+@keyframes expand {
+    0% {
+        transform: scaleY(1);
+    } 25% {
+        transform: scaleY(8.6);
+    } 50% {
+        transform: scaleY(1);
+    } 75% {
+        transform: scaleY(8.6);
+    } 100% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes expand-ball {
+	0% { // start in the middle
+		top: 34%;
+		left: 52%;
+	}
+	8.3% { // pong
+		top: 52%;
+		left: var(--right);
+	}
+    17.75%{ //expand
+        top: 60%;
+        left: 49.5%;
+    }
+	24.9% { // pong
+		top: 74%;
+		left: var(--right);
+	}
+    36.8% {
+		top: var(--bottom);
+		left: 27%;
+	}
+    40% { //ping
+        top: 87%;
+        left: var(--left);
+    }
+	56.6% { // pong
+		top: 70%;
+		left: var(--right);
+	}
+	64.9% { // expand
+		top: 55%;
+		left: 49.5%;
+	}
+	74.7% { //pong
+		top: 13%;
+		left: var(--right);
+	}
+	79% {
+		top: var(--top);
+		left: 70%;
+	}
+	91.3% { // ping
+		top: 22%;
+		left: var(--left);
+	}
+	100% { // back to center
+		top: 34%;
+		left: 52%;
+	}
+}
+
+@keyframes expand-ping { // left player
+	0% {
+		top: 10%;
+	}
+	5% {
+		top: 10%;
+	}
+	9% {
+		top: 24%;
+	}
+	13% {
+		top: 17%;
+	}
+	24.9% { // tap
+		top: var(--racket-bottom);
+	}
+    40% {
+        top: 83%;
+    }
+	47% {
+		top: 37%;
+	}
+	52% {
+		top: 41%;
+	}
+	56% {
+		top: 64%;
+	}
+	58.1% { // tap
+		top: 54%;
+	}
+	70% {
+		top: 74%;
+	}
+	84% {
+		top: 12%;
+	}
+	91.3% { // tap
+		top: 18%;
+	}
+	100% {
+		top: 10%;
+	}
+}
+
+@keyframes expand-pong { // right player
+	0% {
+		top: var(--racket-bottom);
+	}
+	8.3% { // tap
+		top: 51%;
+	}
+	20% {
+		top: 60%;
+	}
+	24.9% { //tap
+		top: 65%;
+	}
+	41.5% {
+		top: 68%;
+	}
+	46% {
+		top: 36%;
+	}
+	52% {
+		top: 18%;
+	}
+    56.6% { //tap
+        top: 65%;
+    }
+	58.1% {
+		top: 53%;
+	}
+	66% {
+		top: 14%;
+	}
+	70% {
+		top: 20%;
+	}
+	74.7% {
+		top: 10%;
+	}
+	91.3% { // tap
+		top: 10%;
+	}
+	100% {
+		top: var(--racket-bottom);
+	}
 }
 
 @keyframes ia-ping { // left player

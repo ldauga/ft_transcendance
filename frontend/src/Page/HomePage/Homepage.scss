@@ -22,7 +22,7 @@ $pong-color: #2e384e; //var
 	margin: auto;
 	display: flex;
 	flex-direction: column;
-	margin-top: 300px;
+	margin-top: 20vh;
 	align-items: center;
 
 
@@ -115,7 +115,6 @@ $pong-color: #2e384e; //var
 	.homepage {
 		max-width: 600px;
 		padding: 35px 0 16px 0;
-		margin-top: 150px;
 		.field {
 			width: 418px;
 			height: 242px;
@@ -136,7 +135,6 @@ $pong-color: #2e384e; //var
 		--right: 91%;
 	}
 	.homepage {
-		margin-top: 144px;
 		.field {
 			width: 404px;
 			height: 215px;
@@ -154,7 +152,6 @@ $pong-color: #2e384e; //var
 		--right: 91%;
 	}
 	.homepage {
-		margin-top: 144px;
 		.field {
 			width: 345px;
 			height: 174px;
@@ -172,7 +169,6 @@ $pong-color: #2e384e; //var
 		--right: 90%;
 	}
 	.homepage {
-		margin-top: 144px;
 		.field {
 			width: 283px;
 			height: 163px;
