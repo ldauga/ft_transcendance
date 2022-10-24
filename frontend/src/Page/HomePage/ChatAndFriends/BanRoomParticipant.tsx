@@ -63,7 +63,7 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
                         room_name: props.roomsConversData.name,
                         cause: "",
                         date: 0,
-                        alwaysOrNot: false,
+                        alwaysOrNot: alwaysOrNot,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomBan', newBan);

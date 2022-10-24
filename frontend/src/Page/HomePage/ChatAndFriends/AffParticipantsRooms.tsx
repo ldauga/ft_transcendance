@@ -9,6 +9,7 @@ import BanRoomParticipant from './BanRoomParticipant';
 import AddAdmin from './AddAdmin';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import MuteRoomParticipant from './MuteRoomParticipant';
+import AffParticipantsBanned from './AffParticipantsBanned';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -25,6 +26,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const [banRoomParticipant, setBanRoomParticipant] = useState(false);
     const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
+
+    const [isAffBanned, setAffBanned] = useState(false);
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
@@ -186,6 +189,10 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
+    const affBanned = async () => {
+        setAffBanned(true);
+    };
+
     function RightItem(item: { login: string, id: number, admin: boolean }) {
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
         if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
@@ -206,7 +213,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             return (
                 <div className="mainHeaderRight mainHeaderSide">
                     <button onClick={handleClickMuteRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
-                    <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
+                    <button onClick={affBanned}><i className="bi bi-person-x-fill"></i></button>
                     <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
                     <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button>
                 </div>
@@ -285,20 +292,37 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
+    function MainAff() {
+        if (isAffBanned) {
+            return (
+                <div className="mainAffGene">
+                    <AffParticipantsBanned roomsConversData={props.roomsConversData} setAffParticipantsRooms={props.setAffParticipantsRooms} setConversRooms={props.setConversRooms} closeConvers={props.closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} setAffBanned={setAffBanned} />
+                </div>
+            );
+        }
+        else {
+            return (
+                <div className="mainAffGene">
+                    <div id="header" className="mainHeader">
+                        <div className="mainHeaderLeft mainHeaderSide">
+                            <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
+                        </div>
+                        <h3>{props.roomsConversData.name}</h3>
+                        <RightHeader />
+                    </div>
+                    {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
+                    {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
+                    {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
+                    {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
+                    <AffList />
+                </div>
+            );
+        }
+    };
+
     return (
         <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
-                </div>
-                <h3>{props.roomsConversData.name}</h3>
-                <RightHeader />
-            </div>
-            {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
-            {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
-            {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
-            {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
-            <AffList />
+            <MainAff />
         </div>
     );
 };

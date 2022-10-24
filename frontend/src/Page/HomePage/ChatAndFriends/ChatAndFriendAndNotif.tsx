@@ -12,6 +12,7 @@ import './CSS/ChatAndFriends.scss'
 import AffNotif from "./AffNotif";
 import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
+import AffUsersBanned from "./AffUsersBanned";
 
 function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function }) {
 
@@ -27,6 +28,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
     const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
     const [isNotif, setNotif] = useState(false);
     const [isRoomsList, setRoomsList] = useState(false);
+    const [isBannedUsers, setBannedUsers] = useState(false);
 
     const [goToOpenInvitationRequest, setGoToOpenInvitationRequest] = useState(false);
 
@@ -43,6 +45,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
         setOldAffRoomConvers("");
         setNotif(false);
         setRoomsList(false);
+        setBannedUsers(false);
     }
 
     useEffect(() => {
@@ -61,7 +64,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
 
     return (
         <div className="mainAffChatAndFriend">
-            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} />}
+            {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} setBannedUsers={setBannedUsers} />}
             {isNotif && <AffNotif setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
@@ -69,6 +72,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
             {isRooms && <Rooms setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} setRoomsList={setRoomsList} />}
             {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} />}
             {isRoomsList && <RoomsList setRooms={setRooms} setRoomsList={setRoomsList} />}
+            {isBannedUsers && <AffUsersBanned setFriendList={setFriendList} setBannedUsers={setBannedUsers} />}
         </div>
     )
 }

@@ -39,19 +39,41 @@ export class BlackListService {
 			]
 		});
 		returnAll.forEach(element => {
-			const newBan = {
-				id_banned: element.id_banned,
-				login_banned: element.login_banned
-			};
-			arrReturn.push(newBan);
+			if (element.userOrRoom) {
+				const newBan = {
+					id_banned: element.id_banned,
+					login_banned: element.login_banned
+				};
+				arrReturn.push(newBan);
+			}
+		});
+		return arrReturn;
+	}
+
+	public async getAllUserBan(id: number, login: string): Promise<{ id_banned: number, login_banned: string }[]> {
+		let arrReturn: { id_banned: number, login_banned: string }[] = [];
+		const returnAll = await this.BlackListRepository.find({
+			where: [
+				{ id_sender: id, login_sender: login }
+			]
+		});
+		returnAll.forEach(element => {
+			if (!element.userOrRoom) {
+				const newBan = {
+					id_banned: element.id_banned,
+					login_banned: element.login_banned
+				};
+				arrReturn.push(newBan);
+			}
 		});
 		return arrReturn;
 	}
 
 	async checkUserBan(login: string, login_receiver: string): Promise<Boolean> {
+		console.log("login: ", login, ", login_receiver: ", login_receiver);
 		const check = await this.BlackListRepository.findOne({
 			where: [
-				{ login_banned: login, login_sender: login_receiver }
+				{ login_banned: login, login_sender: login_receiver, userOrRoom: false }
 			]
 		});
 		if (check == null)
