@@ -1098,15 +1098,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     var room = this.getRoomByID(info[0])
     if (room != null) {
       for (let index = 0; index < 2; index++)
-        if (this.pongInfo[room[0]].players[index].id == client.id) {
-          if (this.pongInfo[room[0]].players[index].verifEnter) {
-            this.pongInfo[room[0]].players[index].verifEnter = false
-            return;
-          }
-          this.pongInfo[room[0]].players[index].verifEnter = true
-          this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
-        }
-
+        if (this.pongInfo[room[0]].players[index].id == client.id)
+          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready))
+            this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
     }
   }
 
@@ -1270,7 +1264,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       await user.forEach(async (userRes, index, arr) => {
         // console.log('this.getRoomByClientLogin(userRes.data.login) :', this.getRoomByClientLogin(userRes.data.login))
         if (this.getRoomByClientLogin(userRes.data.login) != null)
-        retArr.push({ user: userRes.data, status: "in-game" })
+          retArr.push({ user: userRes.data, status: "in-game" })
         else if (arrClient.find(client => client.username == userRes.data.nickname) != undefined)
           retArr.push({ user: userRes.data, status: "connected" })
         else

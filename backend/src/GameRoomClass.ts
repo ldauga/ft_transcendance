@@ -31,8 +31,6 @@ class Player {
 	sendNotif: boolean
 	dateDeconnection: number
 
-	verifEnter: boolean
-
 	width: number
 	height: number
 
@@ -68,7 +66,6 @@ class Player {
 		this.connected = false
 		this.sendNotif = false
 		this.dateDeconnection = 0
-		this.verifEnter = false
 
 		this.width = canvas.width / 40
 		this.height = canvas.height / 5

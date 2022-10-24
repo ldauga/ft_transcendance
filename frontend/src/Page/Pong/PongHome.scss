@@ -60,6 +60,25 @@
 			background: #2e384e;
 		}
 	}
+
+	.create-map {
+		color: #2e4e2f;
+		border-color: #2e4e2f;
+		background: unset;
+		letter-spacing: 1px;
+		border-width: 3px;
+		margin-top: 49px;
+		font-family: 'Roboto', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		cursor: pointer;
+		text-transform: uppercase;
+		transition: all .3s ease-out;
+		&:hover {
+			color: #FFFF;
+			background: #2e4e2f;
+		}
+	}
 }
 
 
@@ -81,7 +100,7 @@
 		font-family: 'Roboto', sans-serif;
 	}
 
-	button.leave-queue {
+	.leave-queue {
 		color: #4e2e2e;
 		border-color: #4e2e2e;
 		background: unset;
@@ -97,6 +116,24 @@
 		&:hover {
 			color: #FFFF;
 			background: #4e2e2e;
+		}
+	}
+	.join-queue {
+		color: #2e384e;
+		border-color: #2e384e;
+		background: unset;
+		letter-spacing: 1px;
+		border-width: 3px;
+		margin-top: 49px;
+		font-family: 'Roboto', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		cursor: pointer;
+		text-transform: uppercase;
+		transition: all .3s ease-out;
+		&:hover {
+			color: #FFFF;
+			background: #2e384e;
 		}
 	}
 }

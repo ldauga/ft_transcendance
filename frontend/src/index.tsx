@@ -9,11 +9,9 @@ import { CookiesProvider } from 'react-cookie';
 const container = document.getElementById('app');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
-  <React.StrictMode>
-    <CookiesProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </CookiesProvider>
-  </React.StrictMode>,
+  <CookiesProvider>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </CookiesProvider>
 );

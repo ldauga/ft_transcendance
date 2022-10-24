@@ -37,7 +37,7 @@ const steps = [
 function PongHome(props: any) {
 	const theme = useTheme();
 	const [activeStep, setActiveStep] = React.useState(0);
-	const nbMap = 2;
+	const nbMap = 4;
 	const maxSteps = steps.length;
 
 	const utilsData = useSelector((state: RootState) => state.utils);
@@ -69,6 +69,8 @@ function PongHome(props: any) {
 			props.setGameMap('map3')
 		else if (props.gameMap == 'map3')
 			props.setGameMap('createMap')
+		else if (props.gameMap == 'createMap')
+			props.setGameMap('map1')
 
 		setActiveStep((prevActiveStep) => (prevActiveStep + 1) % nbMap);
 	};
@@ -80,6 +82,8 @@ function PongHome(props: any) {
 			props.setGameMap('map2')
 		else if (props.gameMap == 'map2')
 			props.setGameMap('map1')
+		if (props.gameMap == 'map1')
+			props.setGameMap('createMap')
 
 		setActiveStep((prevActiveStep) => (prevActiveStep + (nbMap - 1)) % nbMap);
 	};
@@ -91,18 +95,30 @@ function PongHome(props: any) {
 	return (
 		<>
 			<NavBar />
-			<Background />
-			<div className='pong'>
-				<div className='select-map'>
-					<button onClick={handleBack}><ArrowBackIosNew /></button>
-					<MapCarousel activeStep={activeStep}/>
-					<button onClick={handleNext}> <ArrowForwardIos /> </button>
-				</div>
-                <button className='join-queue' onClick={ () => joinQueue()}>Join Queue</button>
-			</div>
+			{!inQueue ?
+				<>
+					<Background />
+					<div className='pong'>
+						<div className='select-map'>
+							<button onClick={handleBack}><ArrowBackIosNew /></button>
+							<MapCarousel activeStep={activeStep} />
+							<button onClick={handleNext}> <ArrowForwardIos /> </button>
+						</div>
+						{
+							props.gameMap != 'createMap' ?
+								<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
+								<button className='create-map' onClick={() => props.setCreateMap(true)}>Create map</button>
+						}
+					</div></> :
+				<div className='loadingScreen'>
+					<CircularProgress className='circularProgress' />
+					<span>Waiting for opponent...</span>
+					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
+					<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Leave queue</button>
+				</div>}
 		</>
 	)
-	
+
 	// return (
 	// 	<>
 	// 		<NavBar />

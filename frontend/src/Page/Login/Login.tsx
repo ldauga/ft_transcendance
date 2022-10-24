@@ -14,7 +14,7 @@ function Login(props: { user?: any }) {
 	function onClick42Login() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=f285bfcaa5737b6f83635b8a450e66139dddce3936e39d98a1d6ed76ceb3b6e4&redirect_uri=http%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
+		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-bfefebbec4535153df2d3db283bafab0ba8027dd304604a100070653921d9721&redirect_uri=http%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
 	}
 
 	function onClickLoginSans42() {
