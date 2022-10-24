@@ -16,9 +16,8 @@ axiosConfig.interceptors.response.use(
         console.log('interceptor error', error)
         if (error.response.data['statusCode'] == 401)
           window.open('http://localhost:3000', '_self')
-        return error;
-      }
-      );
+      });
+    return error;
   }
 )
 

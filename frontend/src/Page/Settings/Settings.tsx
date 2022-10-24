@@ -31,14 +31,14 @@ function Settings() {
 		param(true);
 
 		if (param == setOpenEditZone2fa) {
-			axiosConfig.get('http://localhost:5001/auth/2fa/generate/', { withCredentials: true }).then(res => (setUserParameter2FAQrCode(res.data)))
+			axiosConfig.get('http://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data)))
 		}
 	};
 
 	const handleClose = (param: any) => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}, { withCredentials: true }).then((res) => { setUser(res.data) })
+			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => {console.log('err', err)})
 
 		if (userParameterNewProfilePicture != null) {
 

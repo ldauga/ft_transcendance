@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         private readonly userService: UserService,
     ){
         super({
-            ignoreExpiration: false,
+            ignoreExpiration: true,
             secretOrKey: process.env.SECRET,
             passthrough: true,
             jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
@@ -29,13 +29,12 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         const user = await this.userService.getUserById(payload.sub);
         if (!user)
             throw new UnauthorizedException('User not found.')
-        //console.log(user)
         let now = Date.now().toString().substring(0, 10);
-        //console.log(now)
-        if (payload.exp < now) {
-           console.log('oui')
+        console.log('now:', now);
+        console.log('exp:', payload.exp);
+        if (payload.exp <= now) {
+          throw new UnauthorizedException('Expired access token');
         }
-       //throw new UnauthorizedException('Expired refresh token');
 
         const retUser: GetUserDto = {
             id: user.id,
@@ -47,7 +46,6 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
             profile_pic: user.profile_pic,
             isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
         }
-        //console.log(retUser)
         return retUser;
     }
 }
