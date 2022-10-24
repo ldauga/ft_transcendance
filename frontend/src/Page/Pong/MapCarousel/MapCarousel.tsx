@@ -10,9 +10,17 @@ const steps = [
     },
     {
         label: 'ia',
-        middle: 'ia-racket',
-        ping: 'basic-ping-racket',
-        pong: 'basic-pong-racket',
+        firstMiddle: 'ia-racket',
+        ping: 'ia-ping-racket',
+        pong: 'ia-pong-racket',
+        ball: 'ia-ball',
+    },
+    {
+        label: 'ia',
+        firstMiddle: 'ia-racket',
+        secondMiddle: 'ia-racket',
+        ping: 'ia-ping-racket',
+        pong: 'ia-pong-racket',
         ball: 'ia-ball',
     }
 ]
@@ -23,8 +31,10 @@ function MapCarousel(props: any) {
             <div className="field">
                 <div className="net"></div>
                 <div className={steps[props.activeStep].ping}></div>
-                <div className={steps[props.activeStep].middle}></div>
+                <div className={steps[props.activeStep].firstMiddle}></div>
+                <div className={steps[props.activeStep].secondMiddle}></div>
                 <div className={steps[props.activeStep].pong}></div>
+                {/* <div className='test-racket'></div> */}
                 <div className={steps[props.activeStep].ball}></div>
             </div>
         </div>
