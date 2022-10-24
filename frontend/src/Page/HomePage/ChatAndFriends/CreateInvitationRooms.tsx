@@ -56,6 +56,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                         id_user2: res.data.id,
                         user1_accept: true,
                         user2_accept: false,
+                        sender_id: userData.userReducer.user?.id,
                         sender_login: userData.userReducer.user?.login,
                         receiver_login: receiver_login_tmp,
                         userOrRoom: true,

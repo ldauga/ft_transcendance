@@ -23,7 +23,8 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
 
     async function buttonBanRoomParticipant() {
         let test = false;
-        console.log('addFriend');
+        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+            return;
         await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
@@ -63,7 +64,7 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
                         room_name: props.roomsConversData.name,
                         cause: "",
                         date: 0,
-                        alwaysOrNot: false,
+                        alwaysOrNot: alwaysOrNot,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomBan', newBan);

@@ -23,8 +23,11 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
 
     async function buttonMuteRoomParticipant() {
         let test = false;
-        console.log('addFriend');
-        await axiosConfig.get('http://localhost:5001/user/login/' + text, {withCredentials:true}).then(async (res) => {
+        console.log("button with alwaysOrNot: ", alwaysOrNot);
+        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+            return;
+        console.log("button mute");
+        await axiosConfig.get('http://localhost:5001/user/login/' + text, { withCredentials: true }).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -63,7 +66,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
                         room_name: props.roomsConversData.name,
                         cause: "",
                         date: 0,
-                        alwaysOrNot: false,
+                        alwaysOrNot: alwaysOrNot,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomMute', newMuted);

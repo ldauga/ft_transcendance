@@ -15,6 +15,16 @@ export class BlackListController {
     return this.BlackListService.getAllBanTimer();
   }
 
+  @Get('/getAllRoomBan/:roomId/:roomName')
+  public getAllRoomBan(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_banned: number, login_banned: string }[]> {
+    return this.BlackListService.getAllRoomBan(roomId, roomName);
+  }
+
+  @Get('/getAllUserBan/:id/:login')
+  public getAllUserBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string): Promise<{ id_banned: number, login_banned: string }[]> {
+    return this.BlackListService.getAllUserBan(id, login);
+  }
+
   @Get('/checkUserBan/:login/:loginReceiver')
   @UseGuards(AuthGuard('jwt'))
   public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<Boolean> {
