@@ -153,6 +153,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     }
 
     const closeConvers = () => {
+        console.log("closeConvers AffParticipantRooms");
         props.setAffParticipantsRooms(false);
         props.setConversRooms(false);
         if (props.oldAffRoomConvers == "chat")
@@ -163,6 +164,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const removeParticipant = (item: { login: string, id: number }) => {
         const participantToRemove = {
+            id_sender: userData.userReducer.user?.id,
             login: item.login,
             room_name: props.roomsConversData.name
         }

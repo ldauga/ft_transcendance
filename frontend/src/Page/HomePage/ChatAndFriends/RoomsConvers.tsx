@@ -63,7 +63,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const length = itemListHistory.length;
         let secu = 0;
         while (length == itemListHistory.length && secu < constWhileSecu) {
-            setItemListHistory([]);
             getListItem();
             secu++;
         }

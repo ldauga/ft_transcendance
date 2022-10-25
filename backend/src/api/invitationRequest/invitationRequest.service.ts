@@ -73,7 +73,7 @@ export class InvitationRequestService {
 		return returnInvitationRequest;
 	}
 
-	async removeInvitationRequest(id1: number, id2: number) {
+	async removeInvitationRequest(id1: number, id2: number): Promise<boolean> {
 		console.log("removeInvitationRequest");
 		const check = await this.InvitationRequestRepository.findOne({
 			where: [
@@ -82,7 +82,9 @@ export class InvitationRequestService {
 		});
 		const removeReturn = this.InvitationRequestRepository.delete(check);
 		console.log('removeReturn', removeReturn);
-		return removeReturn;
+		if (removeReturn)
+			return true;
+		return false;
 	}
 
 }

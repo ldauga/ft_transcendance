@@ -45,7 +45,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	utilsData.socket.removeAllListeners('returnRemoveFriend');
-	utilsData.socket.removeAllListeners('newFriendReceived');
 
 	utilsData.socket.on('returnRemoveFriend', function (returnRemoveFriend: boolean) {
 		console.log('returnRemoveFriend = ', returnRemoveFriend);
@@ -62,6 +61,8 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 		utilsData.socket.off('returnRemoveFriend');
 		utilsData.socket.removeListener('returnRemoveFriend');
 	})
+
+	utilsData.socket.removeAllListeners('newFriendReceived');
 
 	utilsData.socket.on('newFriendReceived', function (data: any) {
 		console.log('newFriendReceived = ', data);
@@ -96,7 +97,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	const getListItem = async () => {
 		await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
-			console.log("get");
+			console.log("get friendList");
 			let itemList: any[] = []
 			console.log('res.data = ', res.data);
 			res.data.forEach((item: { id_user1: number, id_user2: number, login_user1: string, login_user2: string }) => {

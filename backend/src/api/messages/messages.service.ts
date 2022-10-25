@@ -134,5 +134,6 @@ export class MessagesService {
 			});
 		}
 		console.log(20000 - secu, " messages deleted");
+		return (true);
 	}
 }

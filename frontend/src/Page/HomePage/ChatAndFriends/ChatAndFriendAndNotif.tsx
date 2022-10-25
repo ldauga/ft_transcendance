@@ -32,6 +32,8 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
 
     const [goToOpenInvitationRequest, setGoToOpenInvitationRequest] = useState(false);
 
+    console.log("enter chatandfirend");
+
     const closeAll = () => {
         setFriendList(false);
         setInvitationRequest(false);
@@ -49,6 +51,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
     }
 
     useEffect(() => {
+        console.log("useEffect() ChatAndFriednAndNotif");
         closeAll();
         if (props.isNavChat)
             setChat(true);

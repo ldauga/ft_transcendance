@@ -112,6 +112,9 @@ export class RoomsService {
 		});
 		const removeReturn = this.RoomsRepository.delete(check);
 		console.log('removeRoomReturn', removeReturn);
+		if (removeReturn)
+			return true;
+		return false;
 	}
 
 	// async getParticipantsRoom(id: number): Promise<number[]> {

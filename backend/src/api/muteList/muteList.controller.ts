@@ -9,7 +9,7 @@ export class MuteListController {
   private readonly MuteListService: MuteListService;
 
   @Get()
-  public getAllMute(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
+  public getAllMute(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
     return this.MuteListService.getAllMuteTimer();
   }
 

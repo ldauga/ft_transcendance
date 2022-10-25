@@ -36,25 +36,30 @@ function InvitationChecker(props: { children: any }) {
 		})
 	}
 
+	utilsData.socket.removeAllListeners('notif');
+
+	utilsData.socket.on('notif', function (notif: Notif) {
+		// for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
+		// 	if (persistantReducer.notifReducer.notifArray[index] == notif)
+		// 		return;
+		// 	if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
+		// 		delNotif(persistantReducer.notifReducer.notifArray[index])
+		// 		setNotif(notif)
+		// 		return;
+		// 	}
+		// }
+		// setNotif(notif)
+		console.log('notifArray', persistantReducer.notifReducer.notifArray)
+		utilsData.socket.off('notif');
+		utilsData.socket.removeListener('notif');
+	})
+
 	useEffect(() => {
+		console.log("useEffect() invitationChecker");
 		if (!test) {
 			verifInvitationRequest()
 			test = true
 		}
-
-		utilsData.socket.on('notif', function (notif: Notif) {
-			for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
-				if (persistantReducer.notifReducer.notifArray[index] == notif)
-					return;
-				if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
-					delNotif(persistantReducer.notifReducer.notifArray[index])
-					setNotif(notif)
-					return;
-				}
-			}
-			setNotif(notif)
-			console.log('notifArray', persistantReducer.notifReducer.notifArray)
-		})
 	})
 
 	utilsData.socket.on('start_spectate', function (arrClient: Client[]) {

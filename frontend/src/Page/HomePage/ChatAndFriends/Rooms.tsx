@@ -27,6 +27,7 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
     };
 
     const affRoomsList = async () => {
+        console.log("affRoomsList");
         props.setRooms(false);
         props.setRoomsList(true);
     };
