@@ -2,13 +2,12 @@ import { Avatar } from '@mui/material';
 import './Leaderboard.scss';
 
 import unranked from './../../../Assets/rank/unranked.png'
-import iron_rank_img from '../../../Assets/rank/iron_rank.png'
 import bronze_rank_img from '../../../Assets/rank/bronze_rank.png'
 import gold_rank_img from '../../../Assets/rank/gold_rank.png'
 import diamond_rank_img from '../../../Assets/rank/diamond_rank.png'
-import master_rank_img from '../../../Assets/rank/master_rank.png'
+import silver_rank_img from '../../../Assets/rank/silver_rank.png'
+import platinium_rank_img from '../../../Assets/rank/platinium_rank.png'
 
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import { useEffect, useState } from 'react';
@@ -62,13 +61,13 @@ function Leaderboard() {
 							<tr className='element' onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname)}} key={row.nickname}>
 								<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
 								<td><img src={
-									row.login == 'ldauga' ? master_rank_img :
+									row.login == 'ldauga' ? diamond_rank_img :
 										!row.wins ? unranked :
-											row.wins < 5 ? iron_rank_img :
-												row.wins < 10 ? bronze_rank_img :
+											row.wins < 5 ? bronze_rank_img :
+												row.wins < 10 ? silver_rank_img :
 													row.wins < 20 ? gold_rank_img :
-														row.wins < 50 ? diamond_rank_img :
-															master_rank_img
+														row.wins < 50 ? platinium_rank_img :
+															diamond_rank_img
 								} /></td>
 								<td>{row.wins}</td>
 								<td>{row.losses}</td>
