@@ -24,8 +24,11 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
     async function buttonMuteRoomParticipant() {
         let test = false;
         console.log("button with alwaysOrNot: ", alwaysOrNot);
-        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+        console.log("text.length = ", text.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
+        if (text.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
+            console.log("Wrong input for muteUser in Room");
             return;
+        }
         console.log("button mute");
         await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");

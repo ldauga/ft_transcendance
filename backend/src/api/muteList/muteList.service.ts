@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { stringify } from "querystring";
 import { Repository } from "typeorm";
 import { MuteListDto } from "./dtos/muteList.dto";
 import { MuteListController } from "./muteList.controller";
@@ -14,14 +15,15 @@ export class MuteListService {
 
 	private logger: Logger = new Logger('MuteList');
 
-	public async getAllMuteTimer(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
-		let arrReturn: { login_muted: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
+	public async getAllMuteTimer(): Promise<{ login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
+		let arrReturn: { login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
 		const returnAll = await this.MuteListRepository.find();
 		returnAll.forEach(element => {
 			const newMute = {
 				login_muted: element.login_muted,
 				userOrRoom: element.userOrRoom,
 				id_sender: element.id_sender,
+				login_sender: element.login_sender,
 				room_id: element.room_id,
 				alwaysOrNot: element.alwaysOrNot,
 				date: element.date,
@@ -39,7 +41,7 @@ export class MuteListService {
 				{ room_id: room_id, room_name: room_name }
 			]
 		});
-		console.log("returnAll: ", returnAll.length);
+		// console.log("returnAll: ", returnAll.length);
 		returnAll.forEach(element => {
 			const newMute = {
 				id_muted: element.id_muted,
@@ -94,7 +96,7 @@ export class MuteListService {
 		return returnMute;
 	}
 
-	async removeUserMute(id_sender: number, login_muted: string) {
+	async removeUserMute(id_sender: number, login_muted: string): Promise<boolean> {
 		console.log("removeUserMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
@@ -103,6 +105,10 @@ export class MuteListService {
 		});
 		const removeReturn = this.MuteListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
+		if (removeReturn)
+			return true;
+		else
+			return false;
 	}
 
 	async removeRoomMute(room_id: number, login_muted: string): Promise<boolean> {

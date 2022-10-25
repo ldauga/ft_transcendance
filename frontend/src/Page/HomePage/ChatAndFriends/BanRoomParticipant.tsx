@@ -23,8 +23,11 @@ function BanRoomParticipant(props: { roomsConversData: { name: string, id: numbe
 
     async function buttonBanRoomParticipant() {
         let test = false;
-        if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
+        console.log("text.length = ", text.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
+        if (text.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
+            console.log("Wrong input for banUser in Room");
             return;
+        }
         await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");

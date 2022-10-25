@@ -11,7 +11,7 @@ export class BlackListController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  public getAllBan(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, date: number, timer: number }[]> {
+  public getAllBan(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, date: number, timer: number }[]> {
     return this.BlackListService.getAllBanTimer();
   }
 

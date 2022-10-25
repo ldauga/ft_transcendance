@@ -37,7 +37,7 @@ const steps = [
 function PongHome(props: any) {
 	const theme = useTheme();
 	const [activeStep, setActiveStep] = React.useState(0);
-	const nbMap = 2;
+	const nbMap = 4;
 	const maxSteps = steps.length;
 
 	const utilsData = useSelector((state: RootState) => state.utils);

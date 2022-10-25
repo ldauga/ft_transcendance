@@ -58,7 +58,7 @@ export class UserController {
   }
 
   @Get('/userExist')
-  // @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
     const refreshToken = req.cookies['auth-cookie']?.refreshToken;
     if (refreshToken == undefined)

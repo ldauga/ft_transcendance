@@ -7,25 +7,25 @@ import { GetUserDto } from "../dtos/getUser.dto";
 import { UserService } from "../user.service";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(
         private readonly userService: UserService,
-    ){
+    ) {
         super({
             ignoreExpiration: true,
             secretOrKey: process.env.SECRET,
             passthrough: true,
-            jwtFromRequest: ExtractJwt.fromExtractors([(request:Request) => {
+            jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
                 let data = request?.cookies["auth-cookie"];
                 if (!data) {
                     return null;
                 }
-				return data.accessToken;
+                return data.accessToken;
             }])
         });
     }
 
-    async validate(payload:any) {
+    async validate(payload: any) {
         const user = await this.userService.getUserById(payload.sub);
         if (!user)
             throw new UnauthorizedException('User not found.')
@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
         //console.log('now:', now);
         //console.log('exp:', payload.exp);
         if (payload.exp <= now) {
-          throw new UnauthorizedException('Expired access token');
+            throw new UnauthorizedException('Expired access token');
         }
 
         const retUser: GetUserDto = {

@@ -151,6 +151,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
     }
 
     useEffect(() => {
+        console.log("useEffect RoomsList");
         getListItem();
     }, [props]);
 

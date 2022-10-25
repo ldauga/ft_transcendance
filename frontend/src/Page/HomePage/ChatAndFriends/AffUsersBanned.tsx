@@ -60,6 +60,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     }
 
     const debanUser = (item: { id_banned: number, login_banned: string }) => {
+        console.log("button debanUser");
         utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login_banned });
     }
 

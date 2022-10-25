@@ -13,14 +13,15 @@ export class BlackListService {
 
 	private logger: Logger = new Logger('BlackList');
 
-	public async getAllBanTimer(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
-		let arrReturn: { login_banned: string, userOrRoom: boolean, id_sender: number, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
+	public async getAllBanTimer(): Promise<{ login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[]> {
+		let arrReturn: { login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = [];
 		const returnAll = await this.BlackListRepository.find();
 		returnAll.forEach(element => {
 			const newBan = {
 				login_banned: element.login_banned,
 				userOrRoom: element.userOrRoom,
 				id_sender: element.id_sender,
+				login_sender: element.login_sender,
 				room_id: element.room_id,
 				alwaysOrNot: element.alwaysOrNot,
 				date: element.date,
@@ -116,16 +117,21 @@ export class BlackListService {
 
 	async removeUserBan(id_sender: number, login_banned: string) {
 		console.log("removeUserBan");
+		console.log("id sender = ", id_sender, ", login_banned = ", login_banned);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ id_sender: id_sender, login_banned: login_banned }
 			]
 		});
-		const removeReturn = this.BlackListRepository.delete(check);
-		console.log('removeReturn', removeReturn);
-		if (!removeReturn)
-			return false;
-		return true;
+		console.log("check = ", check);
+		if (check) {
+			const removeReturn = this.BlackListRepository.delete(check);
+			console.log('removeReturn', removeReturn);
+			if (!removeReturn)
+				return false;
+			return true;
+		}
+		return false;
 	}
 
 	async removeRoomBan(room_id: number, login_banned: string) {
