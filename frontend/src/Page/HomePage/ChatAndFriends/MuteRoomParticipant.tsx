@@ -27,7 +27,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
         if (text.length <= 0 || (days && hours && minutes && seconds && !alwaysOrNot))
             return;
         console.log("button mute");
-        await axiosConfig.get('http://localhost:5001/user/login/' + text, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
