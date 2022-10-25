@@ -23,9 +23,8 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
-		res.cookie('auth-cookie', secretData, { httpOnly: false });
+		res.cookie('auth-cookie', secretData, { httpOnly: true });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
-		//Gestion d erreur si la personne refuse la connexion sur l'intra ?
 	}
 
 	@Get('/loginSans42/:login')
@@ -36,7 +35,7 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
-		res.cookie('auth-cookie', secretData, { httpOnly: false });
+		res.cookie('auth-cookie', secretData, { httpOnly: true });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
 
@@ -105,7 +104,7 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
-		res.cookie('auth-cookie', secretData, { httpOnly: false });
+		res.cookie('auth-cookie', secretData, { httpOnly: true });
 	}
 
 }

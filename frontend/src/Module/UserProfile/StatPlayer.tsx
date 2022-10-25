@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { isPropertyAccessOrQualifiedName } from 'typescript'
-import './StatPlayer.css'
+import './StatPlayer.scss'
 
 import { AiOutlineClose } from 'react-icons/ai'
 
@@ -17,6 +17,8 @@ import { RiFileWarningLine } from 'react-icons/ri'
 import NavBar from '../Navbar/Navbar'
 import { Dictionary } from '@reduxjs/toolkit'
 import axiosConfig from '../../Utils/axiosConfig'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../State'
 
 export function StatPlayer() {
 	const [profileUserId, setProfileUserId] = useState(0)
@@ -24,14 +26,18 @@ export function StatPlayer() {
 	const [userProfilePicture, setUserProfilePicture] = useState("")
 	const [profileUser, setProfileUser] = useState<Dictionary<any>>({})
 	const [check, setCheck] = useState(false)
-	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>)
+	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>);
+
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer)
+	const nickname = persistantReduceur.userReducer.user?.nickname;
+	const login = persistantReduceur.userReducer.user?.login;
+
+	// const login = window.location.href.split('/')[window.location.href.split('/').length - 1];
 
 	var monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.",
 		"Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
 
 	var dayNames = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Sat."]
-
-	const login = window.location.href.split('/')[window.location.href.split('/').length - 1]
 
 	const [verifLogin, setVerifLogin] = useState(false)
 	const [verifNick, setVerifNick] = useState(false)
@@ -201,53 +207,76 @@ export function StatPlayer() {
 
 	return (
 		<>
-			<NavBar />
-			<div className="statPlayerContent">
-				<div className="userIdentity">
-					<div className="userPictureNName">
-						<div className="userProfilePictureContainer">
-							<img src={userProfilePicture} />
-						</div>
-						<div className="userLogin">
-							<div className="userLoginText">Login :</div>
-							<div className="userLoginText" id='userLoginText'></div>
-						</div>
-						<div className="userNickname">
-							<div className="userNicknameText">Nickname :</div>
-							<div className="userNicknameText" id='userNicknameText'></div>
-						</div>
-					</div>
-					<div className="statUserInfo">
-						<div className='statUserRank'>
-							<div className='statUserImgContainer'>
-								<img src={rankImage} />
-							</div>
-							<div className='statUserRankName'>
-								<div className='statUserRankNameText'>Rank :</div>
-								<div className='statUserRankNameTextValue' id='statUserRankNameValue'></div>
-							</div>
-						</div>
-						<div className='statUserInfoContainer'>
-							<div className='statUserInfoElement first'>
-								<div className='userInfoText'>Number of Wins :</div>
-								<div className='userInfoText value' id='statPlayerNumberWinsValue'></div>
-							</div>
-							<div className='statUserInfoElement second'>
-								<div className='userInfoText'>Number of Losses :</div>
-								<div className='userInfoText value' id='statPlayerNumberLossesValue'></div>
-							</div>
-							<div className='statUserInfoElement third'>
-								<div className='userInfoText'>Win Rate :</div>
-								<div className='userInfoText value' id='statPlayerWinRateValue'></div>
-							</div>
-						</div>
+		<NavBar />
+		<div className='stat-player-content'>
+			<div className='profile'>
+				<div className='user'>
+					<img src={userProfilePicture} />
+					<div className='name'>
+						<p>{nickname}</p>
+						<p>{login}</p>
+						<p><div className='status-player'></div> online</p>
 					</div>
 				</div>
-				<div className="userProfileMatches">
-					{profileUserMatchHistory}
+				<div className='buttons'>
+					<button>Add Friend</button>
+					<button>Invite Game</button>
+					<button>Send Message</button>
 				</div>
 			</div>
+		</div>
 		</>
 	)
+
+	// return (
+	// 	<>
+	// 		<NavBar />
+	// 		<div className="statPlayerContent">
+	// 			<div className="userIdentity">
+	// 				<div className="userPictureNName">
+	// 					<div className="userProfilePictureContainer">
+	// 						<img src={userProfilePicture} />
+	// 					</div>
+	// 					<div className="userLogin">
+	// 						<div className="userLoginText">Login :</div>
+	// 						<div className="userLoginText" id='userLoginText'></div>
+	// 					</div>
+	// 					<div className="userNickname">
+	// 						<div className="userNicknameText">Nickname :</div>
+	// 						<div className="userNicknameText" id='userNicknameText'></div>
+	// 					</div>
+	// 				</div>
+	// 				<div className="statUserInfo">
+	// 					<div className='statUserRank'>
+	// 						<div className='statUserImgContainer'>
+	// 							<img src={rankImage} />
+	// 						</div>
+	// 						<div className='statUserRankName'>
+	// 							<div className='statUserRankNameText'>Rank :</div>
+	// 							<div className='statUserRankNameTextValue' id='statUserRankNameValue'></div>
+	// 						</div>
+	// 					</div>
+	// 					<div className='statUserInfoContainer'>
+	// 						<div className='statUserInfoElement first'>
+	// 							<div className='userInfoText'>Number of Wins :</div>
+	// 							<div className='userInfoText value' id='statPlayerNumberWinsValue'></div>
+	// 						</div>
+	// 						<div className='statUserInfoElement second'>
+	// 							<div className='userInfoText'>Number of Losses :</div>
+	// 							<div className='userInfoText value' id='statPlayerNumberLossesValue'></div>
+	// 						</div>
+	// 						<div className='statUserInfoElement third'>
+	// 							<div className='userInfoText'>Win Rate :</div>
+	// 							<div className='userInfoText value' id='statPlayerWinRateValue'></div>
+	// 						</div>
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 			<div className="userProfileMatches">
+	// 				{profileUserMatchHistory}
+	// 			</div>
+	// 		</div>
+	// 	</>
+	// )
 
 }
