@@ -98,6 +98,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
+    console.log('arrClient :', arrClient)
     this.logger.log(`Client disconnected: ${client.id}`);
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     // for (let i = 0; i < arrClient.length; i++) {
@@ -978,10 +979,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   getRoomByClientLogin(ClientLogin: string): [number, gameRoomClass] | null {
-    for (let i = 0; i < this.pongInfo.length; i++)
-      for (let j = 0; j < 2; j++)
-        if (this.pongInfo[i].players[j].user.login == ClientLogin)
+    for (let i = 0; i < this.pongInfo.length; i++) {
+      console.log('this.pongInfo[i] :', this.pongInfo[i])
+      for (let j = 0; j < 2; j++) {
+        console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
+
+        if (this.pongInfo[i].players[j].user.login == ClientLogin) {
+
           return [i, this.pongInfo[i]]
+        }
+      }
+    }
     return null
   }
 
@@ -1279,11 +1287,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async enter(client: Socket, info: [string, boolean]) {
     var room = this.getRoomByID(info[0])
     if (room != null) {
-
       for (let index = 0; index < 2; index++)
         if (this.pongInfo[room[0]].players[index].id == client.id)
-          this.pongInfo[room[0]].players[index].ready = true
-
+          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready))
+            this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
     }
   }
 
@@ -1421,8 +1428,43 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
-    console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
     this.server.to(client.id).emit("getAllClientConnected", arrClient);
+  }
+
+  @SubscribeMessage('GET_ALL_FRIEND_CONNECTED')
+  async getAllFriendConnected(client: Socket, info: { user: any }) {
+
+    const friendList = http.get('http://localhost:5001/friendList/' + info.user.id);
+
+    let friendRes: any;
+
+    const retArr = []
+
+    await friendList.forEach(async res => {
+      friendRes = res.data
+    })
+
+    for (let index = 0; index < friendRes.length; index++) {
+      var user: any
+      if (friendRes[index].id_user1 != info.user.id)
+        user = http.get('http://localhost:5001/user/id/' + friendRes[index].id_user1)
+      else
+        user = http.get('http://localhost:5001/user/id/' + friendRes[index].id_user2);
+
+      await user.forEach(async (userRes, index, arr) => {
+        // console.log('this.getRoomByClientLogin(userRes.data.login) :', this.getRoomByClientLogin(userRes.data.login))
+        if (this.getRoomByClientLogin(userRes.data.login) != null)
+          retArr.push({ user: userRes.data, status: "in-game" })
+        else if (arrClient.find(client => client.username == userRes.data.nickname) != undefined)
+          retArr.push({ user: userRes.data, status: "connected" })
+        else
+          retArr.push({ user: userRes.data, status: "offline" })
+      })
+    }
+
+    console.log('retArr :', retArr)
+
+    this.server.to(client.id).emit("getAllFriendConnected", retArr);
   }
 
   ///////////////////////////////////////////////////////////

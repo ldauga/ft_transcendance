@@ -456,12 +456,15 @@ const CreateMapTemp = (props: any) => {
 		props.setGameStart(true);
 	});
 
-	utilsData.socket.on('getAllClientConnected', function (clientConnected: Array<any>) {
+	utilsData.socket.on('getAllFriendConnected', function (friendConnected: Array<any>) {
 		const tmp: any[] = []
 
-		clientConnected.forEach(client => {
-			if (client.username != persistantReduceur.userReducer.user?.nickname)
-				tmp.push(client)
+		console.log(friendConnected)
+
+		friendConnected.forEach(friend => {
+			if (friend.status == 'connected')
+				tmp.push({id: tmp.length, username: friend.user.nickname})
+			
 		})
 
 		setConnectedClient(tmp)
@@ -560,7 +563,7 @@ const CreateMapTemp = (props: any) => {
 					</div>
 					<div className="invite-friend">
 						<Autocomplete
-							onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
+							onFocus={() => { utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', {user: persistantReduceur.userReducer.user}) }}
 							onChange={(e) => {setInvitInput(e.currentTarget.innerHTML)}}
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}

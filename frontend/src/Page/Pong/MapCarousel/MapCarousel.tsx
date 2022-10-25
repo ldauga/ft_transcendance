@@ -2,13 +2,13 @@ import './MapCarousel.scss'
 
 const steps = [
     {
-        label: 'basic',
+        label: 'Map original',
         ping: 'basic-ping-racket',
         pong: 'basic-pong-racket',
         ball: 'basic-ball',
     },
     {
-        label: 'ia',
+        label: 'Map with obstacle 1',
         middle: 'ia-racket',
         ping: 'ia-ping-racket',
         pong: 'ia-pong-racket',
