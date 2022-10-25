@@ -8,16 +8,22 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategy/local.strategy';
 import { UserEntity } from '../user/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
 	  TypeOrmModule.forFeature([UserEntity]),
 	  PassportModule.register({ defaultStrategy: 'local' }),
-	  JwtModule.register({
-		  secret: 'super-cat',
-		  signOptions: {
+	  JwtModule.registerAsync({
+		useFactory: async (configService: ConfigService) => {
+		  return {
+			secret: configService.get<string>('SECRET'),
+			signOptions: {
 			  expiresIn: '15min',
-		  },
+			},
+		  };
+		},
+		inject: [ConfigService],
 	  }),
 	  HttpModule,
 	  UserModule,
