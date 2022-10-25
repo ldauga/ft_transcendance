@@ -1,0 +1,70 @@
+.stat-player-content {
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
+	font-family: 'Roboto', sans-serif;
+	background: #FFFF;
+	.profile {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 7px;
+		.user {
+			display: flex;
+			align-items: center;
+			p {
+				line-height: 1px;
+
+				&:nth-child(2) {
+					font-size: 13px;
+					color: rgba($color: #2e384e, $alpha: .6);
+					line-height: 0px;
+				}
+				&:last-of-type {
+					display: flex;
+					align-items: baseline;
+				}
+			}
+			.name {
+				margin-left: 4px;
+				.status-player {
+					height: 8px;
+					width: 8px;
+					border-radius: 50%;
+					background: rgba(28,177,123);
+					margin-right: 2px;
+				}
+			}
+		}
+		img {
+			--avatar-size: 61px;
+			height: var(--avatar-size);
+			width: var(--avatar-size);
+			border-radius: 50%;
+			position: relative;
+			object-fit: cover;
+		}
+
+		.buttons {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: 3px;
+			button {
+				color: #2e384e;
+				border-color: #2e384e;
+				background: unset;
+				border-width: 1px;
+				font-family: "Roboto", sans-serif;
+				font-size: 10px;
+				font-weight: 700;
+				cursor: pointer;
+				text-transform: uppercase;
+				transition: all 0.3s ease-out;
+				&:hover {
+					color: #FFFF;
+					background: #2e384e;
+				}
+			}
+		}
+	}
+}

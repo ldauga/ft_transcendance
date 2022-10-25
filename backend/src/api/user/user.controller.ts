@@ -44,20 +44,21 @@ export class UserController {
   }
 
   @Get('/login/:login')
-  @UseGuards(AuthGuard('jwt')) //A FAIRE FONCTIONNER AVEC "buttonAddFriend()" dans AddFriend.tsx
+  @UseGuards(AuthGuard('jwt'))
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
     console.log('Login')
     return this.service.getUserByLogin(login);
   }
 
   @Get('/nickname/:nickname')
+  @UseGuards(AuthGuard('jwt'))
   public getUserByNickname(@Param('nickname') nickname: string): Promise<UserEntity> {
     console.log('Nickname')
 	  return this.service.getUserByNickname(nickname);
   }
 
   @Get('/userExist')
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
     const refreshToken = req.cookies['auth-cookie']?.refreshToken;
     if (refreshToken == undefined)

@@ -4,7 +4,6 @@ import { actionCreators, RootState } from "../../State";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import InvitationChecker from "../InvitationChecker/InvitationChecker";
-import axiosConfig from "../../Utils/axiosConfig";
 
 var test = false
 

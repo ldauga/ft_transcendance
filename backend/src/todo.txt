@@ -1,5 +1,0 @@
-[] Voir pour Axios interceptor
-[] Utiliser Authorization Bearer ?
-[] Encoder les tokens dans la DB, utiliser bcrypt dans les guards pour comparer les tokens envoyes avec ceux encode dans la DB
-[] Cookies http only: true / false ?
-[] accessToken / refresh dans localStorage ?
