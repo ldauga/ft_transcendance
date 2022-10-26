@@ -113,11 +113,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+
+    const tmp = arrClient.find(item => item.id == client.id)
+
+    if (tmp.username != undefined) {
+
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
+
+      for (let i = 0; i < friendList.length; i++) {
+        let loginTmp;
+        if (friendList[i].login_user1 == tmp.username)
+          loginTmp = friendList[i].login_user2;
+        else
+          loginTmp = friendList[i].login_user1;
+        const _client = arrClient.find(obj => obj.username == loginTmp);
+        if (_client) {
+          this.server.to(_client.id).emit('friendConnection', true);
+          console.log("emit friendConnection to ", _client.username);
+        }
+      }
+    }
+
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
-    // for (let i = 0; i < arrClient.length; i++) {
-    //   if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username != ""))
-    //     this.server.to(arrClient[i].id).emit('removeFriend', arrClient[indexOfClient]);
-    // }
     if (indexOfClient !== -1)
       arrClient.splice(indexOfClient, 1);
 
