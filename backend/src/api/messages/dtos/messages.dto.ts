@@ -26,4 +26,19 @@ export class MessagesDto {
 
 	@IsString()
 	public text: string;
+
+	@IsString()
+	public year: string;
+
+	@IsString()
+	public month: string;
+
+	@IsString()
+	public day: string;
+
+	@IsString()
+	public hour: string;
+
+	@IsString()
+	public minute: string;
 }
