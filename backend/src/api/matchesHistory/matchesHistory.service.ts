@@ -48,15 +48,17 @@ export class MatchesHistoryService {
 
 		for (let index = 0; index < matches.length; index++) {
 
-			var nickname1 = (await this.userService.getUserById(matches[index].id_user1)).nickname;
-			var nickname2 = (await this.userService.getUserById(matches[index].id_user2)).nickname;
+			var user1 = (await this.userService.getUserById(matches[index].id_user1));
+			var user2 = (await this.userService.getUserById(matches[index].id_user2));
 
 			ret.push({
-				nickname_user1: nickname1,
+				nickname_user1: user1.nickname,
+				login_user1: user1.login,
 				score_u1: matches[index].score_u1,
-				nickname_user2: nickname2,
+				nickname_user2: user1.nickname,
+				login_user2: user1.login,
 				score_u2: matches[index].score_u2,
-				winner_nickname: (matches[index].winner_id == matches[index].id_user1 ? nickname1 : nickname2),
+				winner_nickname: (matches[index].winner_id == matches[index].id_user1 ? user1.nickname : user2.nickname),
 				date: matches[index].date
 			})
 		}
