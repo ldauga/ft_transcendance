@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import Chat from "./Chat";
 import Convers from "./Convers";
-import './CSS/FriendList.css';
 import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
 import Rooms from "./Rooms";
