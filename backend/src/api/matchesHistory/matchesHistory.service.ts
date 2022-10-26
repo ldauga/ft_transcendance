@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { UpdateWinLooseDto } from "../user/dtos/updateWinLoose.dto";
 import { UserService } from "../user/user.service";
 import { MatchesHistoryDto } from "./dtos/matchesHistory.dto";
 import { MatchesHistoryEntity } from "./matchesHistory.entity";
@@ -66,17 +67,28 @@ export class MatchesHistoryService {
 	//Recuperer les id des joueurs
 	//Inserer les datas de base
 	async createMatch(body: any): Promise<MatchesHistoryEntity> {
-		const match = this.MatchesHistoryRepository.save({
+		const match = await this.MatchesHistoryRepository.save({
 			id_user1: body.id_user1,
 			score_u1: body.score_u1,
 			id_user2: body.id_user2,
 			score_u2: body.score_u2,
 			winner_id: body.winner_id,
 			date: new Date()
-		}
-		)
+		})
+		
 		if (!match)
 			return null;
+
+		const toSend = new UpdateWinLooseDto()
+
+		toSend.id = match.id_user1
+		toSend.win = (match.id_user1 == match.winner_id)
+		await this.userService.updateWinLoose(toSend)
+
+		toSend.id = match.id_user2
+		toSend.win = (match.id_user2 == match.winner_id)
+		await this.userService.updateWinLoose(toSend)
+
 		return match;
 	}
 

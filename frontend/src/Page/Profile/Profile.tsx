@@ -9,11 +9,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 
 import unranked from './../../Assets/rank/unranked.png'
-import iron_rank_img from '../../Assets/rank/iron_rank.png'
 import bronze_rank_img from '../../Assets/rank/bronze_rank.png'
 import gold_rank_img from '../../Assets/rank/gold_rank.png'
 import diamond_rank_img from '../../Assets/rank/diamond_rank.png'
-import master_rank_img from '../../Assets/rank/master_rank.png'
+import silver_rank_img from '../../Assets/rank/silver_rank.png'
+import platinium_rank_img from '../../Assets/rank/platinium_rank.png'
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -74,13 +74,13 @@ function Profile() {
                             <h3>Your rank :</h3>
                             <div className='rankContent'>
                                 <img src={
-                                    persistantReducer.userReducer.user?.login == 'ldauga' ? master_rank_img :
+                                    persistantReducer.userReducer.user?.login == 'ldauga' ? diamond_rank_img :
                                         !persistantReducer.userReducer.user?.wins ? unranked :
-                                            persistantReducer.userReducer.user?.wins < 5 ? iron_rank_img :
-                                                persistantReducer.userReducer.user?.wins < 10 ? bronze_rank_img :
+                                            persistantReducer.userReducer.user?.wins < 5 ? bronze_rank_img :
+                                                persistantReducer.userReducer.user?.wins < 10 ? silver_rank_img :
                                                     persistantReducer.userReducer.user?.wins < 20 ? gold_rank_img :
-                                                        persistantReducer.userReducer.user?.wins < 50 ? diamond_rank_img :
-                                                            master_rank_img} />
+                                                        persistantReducer.userReducer.user?.wins < 50 ? platinium_rank_img :
+                                                            diamond_rank_img} />
                                 <span>
 									{persistantReducer.userReducer.user?.login == 'ldauga' ? 'Master Rank' :
 										!persistantReducer.userReducer.user?.wins ? 'unranked' :
