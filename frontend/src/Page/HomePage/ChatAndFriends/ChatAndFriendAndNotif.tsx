@@ -13,7 +13,9 @@ import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
 import AffUsersBanned from "./AffUsersBanned";
 
-function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function }) {
+function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function }) {
+
+	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
     const [isFriendList, setFriendList] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
@@ -60,14 +62,16 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
             setInvitationRequest(true);
             setGoToOpenInvitationRequest(false);
         }
-        else if (props.isNotif)
+        else if (props.isNotif) {
+            props.setLastNbNotif(persistantReduceur.notifReducer.notifArray.length)
             setNotif(true);
+        }
     }, [props.isNavChat, props.isNotif, props.isNavFriendList]);
 
     return (
         <div className="mainAffChatAndFriend">
             {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} setBannedUsers={setBannedUsers} />}
-            {isNotif && <AffNotif setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
+            {isNotif && <AffNotif setLastNbNotif={props.setLastNbNotif} setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} />}
             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
