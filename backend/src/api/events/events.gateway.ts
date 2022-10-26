@@ -27,6 +27,7 @@ import { MatchesHistoryService } from '../matchesHistory/matchesHistory.service'
 import { BlackListService } from '../blackList/blackList.service';
 import { isInt16Array } from 'util/types';
 import { MuteListService } from '../muteList/muteList.service';
+import { UserService } from '../user/user.service';
 
 interface Client {
   id: string;
@@ -83,6 +84,7 @@ export class CronService {
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
+    private readonly UserService: UserService,
     private readonly FriendListService: FriendListService,
     private readonly invitationRequestService: InvitationRequestService,
     private readonly RoomsService: RoomsService,
@@ -1355,7 +1357,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     info.gameRoom.players[0].connected = true
     info.gameRoom.players[0].id = client.id
 
-
     for (let index = 0; index < info.gameRoom.map.obstacles.length; index++) {
       info.gameRoom.map.obstacles[index].initialX = info.gameRoom.map.obstacles[index].x
       info.gameRoom.map.obstacles[index].initialY = info.gameRoom.map.obstacles[index].y
@@ -1422,6 +1423,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.pongInfo[room[0]].started = true
     this.pongInfo[room[0]].setOponnent(client.id, info.user)
 
+    this.pongInfo[room[0]].players[1].sendNotif = true
+
     this.server.to(room[1].roomID).emit('start', "custom" + info.inviteID)
 
   }
@@ -1434,36 +1437,26 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('GET_ALL_FRIEND_CONNECTED')
   async getAllFriendConnected(client: Socket, info: { user: any }) {
 
-    const friendList = http.get('http://localhost:5001/friendList/' + info.user.id);
-
-    let friendRes: any;
+    const friendList = await this.FriendListService.getUserFriendList(info.user.id);
 
     const retArr = []
 
-    await friendList.forEach(async res => {
-      friendRes = res.data
-    })
+    for (let index = 0; index < friendList.length; index++) {
 
-    for (let index = 0; index < friendRes.length; index++) {
       var user: any
-      if (friendRes[index].id_user1 != info.user.id)
-        user = http.get('http://localhost:5001/user/id/' + friendRes[index].id_user1)
+
+      if (friendList[index].id_user1 != info.user.id)
+        user = await this.UserService.getUserById(friendList[index].id_user1)
       else
-        user = http.get('http://localhost:5001/user/id/' + friendRes[index].id_user2);
-
-      await user.forEach(async (userRes, index, arr) => {
-        // console.log('this.getRoomByClientLogin(userRes.data.login) :', this.getRoomByClientLogin(userRes.data.login))
-        if (this.getRoomByClientLogin(userRes.data.login) != null)
-          retArr.push({ user: userRes.data, status: "in-game" })
-        else if (arrClient.find(client => client.username == userRes.data.nickname) != undefined)
-          retArr.push({ user: userRes.data, status: "connected" })
-        else
-          retArr.push({ user: userRes.data, status: "offline" })
-      })
+        user = await this.UserService.getUserById(friendList[index].id_user2);
+      console.log(arrClient.find(client => client.username == user.nickname))
+      if (this.getRoomByClientLogin(user.login) != null)
+        retArr.push({ user: user, status: "in-game" })
+      else if (arrClient.find(client => client.username == user.nickname) != undefined)
+        retArr.push({ user: user, status: "connected" })
+      else
+        retArr.push({ user: user, status: "offline" })
     }
-
-    console.log('retArr :', retArr)
-
     this.server.to(client.id).emit("getAllFriendConnected", retArr);
   }
 
