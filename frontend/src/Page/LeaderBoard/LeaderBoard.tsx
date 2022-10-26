@@ -1,23 +1,18 @@
-import { Avatar } from '@mui/material';
-import './Leaderboard.scss';
+import { useEffect, useState } from "react";
+import Background from "../../Module/Background/Background";
+import NavBar from "../../Module/Navbar/Navbar";
+import axiosConfig from "../../Utils/axiosConfig";
+import './LeaderBoard.scss';
+import unranked from './../../Assets/rank/unranked.png'
+import bronze_rank_img from '../../Assets/rank/bronze_rank.png'
+import gold_rank_img from '../../Assets/rank/gold_rank.png'
+import diamond_rank_img from '../../Assets/rank/diamond_rank.png'
+import silver_rank_img from '../../Assets/rank/silver_rank.png'
+import platinium_rank_img from '../../Assets/rank/platinium_rank.png'
 
-import unranked from './../../../Assets/rank/unranked.png'
-import bronze_rank_img from '../../../Assets/rank/bronze_rank.png'
-import gold_rank_img from '../../../Assets/rank/gold_rank.png'
-import diamond_rank_img from '../../../Assets/rank/diamond_rank.png'
-import silver_rank_img from '../../../Assets/rank/silver_rank.png'
-import platinium_rank_img from '../../../Assets/rank/platinium_rank.png'
+function LeaderBoard() {
 
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
-import { useEffect, useState } from 'react';
-import axiosConfig from '../../../Utils/axiosConfig';
-
-
-function Leaderboard() {
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-
-	const [rows, setRows] = useState<any[]>([])
+    const [rows, setRows] = useState<any[]>([])
 
 	useEffect(() => {
 		if (!rows.length) {
@@ -42,26 +37,28 @@ function Leaderboard() {
 		console.log('oui', rows)
 	})
 
-	return (
-		<div className='leaderboard'>
-			<table>
+    return (
+        <>
+        <NavBar />
+        <Background />
+        <div className="leaderboard">
+            <table>
 				<thead>
 					<tr>
-						<th>Username</th>
+						<th>Nickname</th>
 						<th>Rank</th>
 						<th>Wins</th>
-						<th>Losses</th>
+						<th>Loses</th>
 					</tr>
 				</thead>
 			</table>
-			<div className='tabContent'>
+            <div className='tabContent'>
 				<table>
 					<tbody>
 						{rows.map((row) => (
 							<tr className='element' onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname)}} key={row.nickname}>
 								<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
 								<td><img src={
-									row.login == 'ldauga' ? diamond_rank_img :
 										!row.wins ? unranked :
 											row.wins < 5 ? bronze_rank_img :
 												row.wins < 10 ? silver_rank_img :
@@ -76,8 +73,9 @@ function Leaderboard() {
 					</tbody>
 				</table>
 			</div>
-		</div>
-	)
+        </div>
+        </>
+    )
 }
 
-export default Leaderboard;
+export default LeaderBoard;

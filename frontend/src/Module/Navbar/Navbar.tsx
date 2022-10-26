@@ -1,4 +1,4 @@
-import { Logout, Person, Settings } from '@mui/icons-material';
+import { Leaderboard, Logout, Person, Settings } from '@mui/icons-material';
 import { Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -199,13 +199,13 @@ function NavBar() {
 							</ListItemIcon>
 							Profile
 						</MenuItem>
-						<Divider />
-						<MenuItem component={Link} href="/Settings">
+						<MenuItem component={Link} href="/LeaderBoard">
 							<ListItemIcon>
-								<Settings fontSize="small" />
+								<Leaderboard fontSize="small" />
 							</ListItemIcon>
-							Settings
+							Leaderboard
 						</MenuItem>
+						<Divider />
 						<MenuItem onClick={logout}>
 							<ListItemIcon>
 								<Logout fontSize="small" />
