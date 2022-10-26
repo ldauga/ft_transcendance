@@ -54,8 +54,10 @@
 			flex-direction: column;
 			justify-content: center;
 			gap: 5px;
-			button {
+			button, label {
 				color: #2e384e;
+				border: solid;
+				text-align: center;
 				border-color: #2e384e;
 				background: unset;
 				border-width: 1px;
@@ -162,9 +164,9 @@
 					span:first-child {
 						margin-right: 3px;
 						cursor: pointer;
-						transition: all .3s ease-out;
+						transition: all .1s ease-out;
 						&:hover {
-							color: #f1e8e6;
+							color: #FFFF;
 						}
 					}
 					span:last-child {
@@ -212,7 +214,7 @@
 				}
 			}
 			.buttons {
-				button {
+				button, label {
 					font-size: 15px;
 				}
 			}
@@ -237,7 +239,7 @@
 			}
 			.buttons {
 				gap: 8px;
-				button {
+				button, label {
 					border-width: 2px;
 					font-size: 17px;
 				}

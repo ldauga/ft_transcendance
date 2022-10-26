@@ -17,7 +17,7 @@ var canvas = {
 
 const GamePage = (props: any) => {
 
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
 
     // drawFont : desine le fond du jeu
@@ -176,23 +176,35 @@ const GamePage = (props: any) => {
             else
                 ctx.fillText("Press ENTER to play !", canvas.width / 2, canvas.height / 2);
 
-
-            ctx.fillStyle = (room.players[0].ready ? 'red' : '#220000');
+            ctx.fillStyle = 'black';
 
             ctx.fillRect(canvas.width / 6 - canvas.width / 48, canvas.height / 8 * 5, canvas.width / 3, canvas.height / 8);
-
-            ctx.fillStyle = (room.players[1].ready ? 'blue' : '#000022');
-
             ctx.fillRect(canvas.width / 6 * 3 + canvas.width / 48, canvas.height / 8 * 5, canvas.width / 3, canvas.height / 8);
 
+            ctx.fillStyle = (room.players[0].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)');
+
+            ctx.fillRect(canvas.width / 6 - canvas.width / 48 + 5, canvas.height / 8 * 5 + 5, canvas.width / 3 - 10, canvas.height / 8 - 10);
+
+            ctx.fillStyle = (room.players[1].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)');
+
+            ctx.fillRect(canvas.width / 6 * 3 + canvas.width / 48 + 5, canvas.height / 8 * 5 + 5, canvas.width / 3 - 10, canvas.height / 8 - 10);
+
             ctx.font = 'bold 50px Arial';
-            ctx.fillStyle = 'rgb(48, 56, 76)';
             ctx.textAlign = "center";
 
-            if (room.players[0].user!.login == persistantReducer.userReducer.user!.login)
+            if (room.players[0].user!.login == persistantReducer.userReducer.user!.login) {
+
+                ctx.fillStyle = !room.players[0].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)';
                 ctx.fillText("YOU", canvas.width / 6 - canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
-            else
+                ctx.fillStyle = !room.players[1].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)';
+                ctx.fillText("HIM", canvas.width / 6 * 3 + canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
+            }
+            else {
+                ctx.fillStyle = !room.players[1].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)';
                 ctx.fillText("YOU", canvas.width / 6 * 3 + canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
+                ctx.fillStyle = !room.players[0].ready ? 'rgb(48, 56, 76)' : 'rgb(244, 246, 247)';
+                ctx.fillText("HIM", canvas.width / 6 - canvas.width / 48 + canvas.width / 6, canvas.height / 8 * 5 + canvas.height / 32 * 3);
+            }
         }
     }
 
@@ -254,24 +266,24 @@ const GamePage = (props: any) => {
                 drawSpectator(room)
 
                 drawFont(ctx, room)
-                
+
                 drawLimitsMove(ctx)
 
                 if (room.players[0].ready && room.players[1].ready) {
-                drawLimitCamps(ctx)
+                    drawLimitCamps(ctx)
 
 
                     drawObstacle(ctx, room)
                 }
 
                 drawScore(ctx, room)
-                
-                
+
+
                 if (!room.players[0].ready || !room.players[1].ready) {
                     drawText(ctx, room)
                     return
                 }
-                
+
 
                 // drawBallParticles(ctx, room)
 
@@ -300,19 +312,22 @@ const GamePage = (props: any) => {
 
     });
 
+    let verifKey = false
+
     function onKeyDown(e: any) {
         if (e.key === 'ArrowUp')
             utilsData.socket.emit('ARROW_UP', [props.roomID, true]);
         if (e.key === 'ArrowDown')
             utilsData.socket.emit('ARROW_DOWN', [props.roomID, true]);
-        if (e.key === 'Enter')
+        if (e.key === 'Enter') {
             utilsData.socket.emit('ENTER', [props.roomID, true]);
+        }
         if (e.key === ' ')
             utilsData.socket.emit('SPACE', [props.roomID, true]);
     }
 
     // Lance la fonction onKeyDown chaque fois qu'une touche est appuyée
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", (e) => onKeyDown(e));
 
     function onKeyUp(e: any) {
         if (e.key === 'ArrowUp')
@@ -329,9 +344,6 @@ const GamePage = (props: any) => {
     return (
         <div className="mainDiv">
             <Navbar />
-            {/* <video width="100%" height="93%" autoPlay loop muted>
-                <source src={require('../assets/backgound.mp4')} type="video/ogg" />
-            </video> */}
             <div className="boardDiv">
                 <div className="blocksContainerCenter">
                     <canvas id='spectate1'

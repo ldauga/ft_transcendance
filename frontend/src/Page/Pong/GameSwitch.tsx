@@ -7,7 +7,7 @@ import CreateMapTemp from './CreateMapTemp';
 
 let checkReconnexion = false
 
-const GameSwitch=() => {
+const GameSwitch = () => {
     const [gameStart, setGameStart] = useState(false);
     const [createMap, setCreateMap] = useState(false);
     // const [checkReconnexion, setCheckReconnexion] = useState(false);
@@ -20,11 +20,11 @@ const GameSwitch=() => {
 
 
     // useEffect(() => {
-        if (!checkReconnexion) {
-            checkReconnexion = true
-            console.log('oui')
-            utilsData.socket.emit('CHECK_RECONNEXION', {user: persistantReducer.userReducer.user})
-        }
+    if (!checkReconnexion) {
+        checkReconnexion = true
+        console.log('oui')
+        utilsData.socket.emit('CHECK_RECONNEXION', { user: persistantReducer.userReducer.user })
+    }
 
     // })
 
@@ -62,7 +62,7 @@ const GameSwitch=() => {
             //     setGameMap={setGameMap}
             //     createMap={createMap}
             //     setCreateMap={setCreateMap}
-            //     />
+            // />
         )
 }
 

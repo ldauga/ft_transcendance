@@ -62,7 +62,7 @@ function ChatAndFriendAndNotif(props: { setOpenPopUp: any, isNotif: boolean, isN
         }
         else if (props.isNotif)
             setNotif(true);
-    }, [props]);
+    }, [props.isNavChat, props.isNotif, props.isNavFriendList]);
 
     return (
         <div className="mainAffChatAndFriend">

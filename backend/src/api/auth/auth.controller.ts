@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { isConstructorDeclaration } from 'typescript';
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +20,9 @@ export class AuthController {
 		}
 
 		const accessToken = await this.authService.login(query);
+		console.log(accessToken)
 		const refreshToken = await this.userServices.getRefreshToken(accessToken);
+		console.log(refreshToken);
 		const secretData = {
 			accessToken,
 			refreshToken

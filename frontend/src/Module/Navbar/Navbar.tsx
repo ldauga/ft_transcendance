@@ -47,6 +47,7 @@ function NavBar() {
 
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReduceur.userReducer.user?.nickname;
+	const login = persistantReduceur.userReducer.user?.login;
 	const avatar = persistantReduceur.userReducer.user?.profile_pic;
 
 	const closeFriendList = () => {
@@ -192,7 +193,7 @@ function NavBar() {
 						transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 						anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 					>
-						<MenuItem component={Link} href="/Profile">
+						<MenuItem component={Link} href={`/Profile/${login}`}>
 							<ListItemIcon>
 								<Person fontSize="small" />
 							</ListItemIcon>

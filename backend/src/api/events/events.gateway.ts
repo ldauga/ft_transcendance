@@ -1033,10 +1033,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   getRoomByClientLogin(ClientLogin: string): [number, gameRoomClass] | null {
-    for (let i = 0; i < this.pongInfo.length; i++)
-      for (let j = 0; j < 2; j++)
-        if (this.pongInfo[i].players[j].user.login == ClientLogin)
+    for (let i = 0; i < this.pongInfo.length; i++) {
+      console.log('this.pongInfo[i] :', this.pongInfo[i])
+      for (let j = 0; j < 2; j++) {
+        console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
+
+        if (this.pongInfo[i].players[j].user.login == ClientLogin) {
+
           return [i, this.pongInfo[i]]
+        }
+      }
+    }
     return null
   }
 
@@ -1334,11 +1341,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async enter(client: Socket, info: [string, boolean]) {
     var room = this.getRoomByID(info[0])
     if (room != null) {
-
       for (let index = 0; index < 2; index++)
         if (this.pongInfo[room[0]].players[index].id == client.id)
-          this.pongInfo[room[0]].players[index].ready = true
-
+          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready))
+            this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
     }
   }
 
@@ -1507,13 +1513,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     this.server.to(client.id).emit("getAllFriendConnected", retArr);
   }
-
-  @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
-  async getAllClientConnected(client: Socket) {
-    console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
-    this.server.to(client.id).emit("getAllClientConnected", arrClient);
-  }
-
+  
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')
   async getAllClientConnectedNotFriend(client: Socket) {
     console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');
