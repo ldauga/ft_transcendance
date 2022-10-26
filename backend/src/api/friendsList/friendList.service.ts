@@ -64,8 +64,8 @@ export class FriendListService {
 			id_user2: body.id_user2,
 			login_user1: body.login_user1,
 			login_user2: body.login_user2
-		}
-		)
+		});
+
 		if (!match)
 			return null;
 		return match;
@@ -80,6 +80,7 @@ export class FriendListService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
+		
 		const removeReturn = this.FriendListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
 		return true;

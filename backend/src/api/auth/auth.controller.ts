@@ -9,7 +9,7 @@ export class AuthController {
 	constructor(
 		private authService: AuthService,
 		private userServices: UserService
-	) { }
+	) {}
 
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
@@ -17,14 +17,14 @@ export class AuthController {
 			res.status(401).redirect(`http://localhost:3000/`);
 			return ;
 		}
+
 		const accessToken = await this.authService.login(query);
-		console.log(accessToken);
 		const refreshToken = await this.userServices.getRefreshToken(accessToken);
-		console.log(refreshToken)
 		const secretData = {
 			accessToken,
 			refreshToken
 		};
+
 		res.cookie('auth-cookie', secretData, { httpOnly: true });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
@@ -37,6 +37,7 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
+		
 		res.cookie('auth-cookie', secretData, { httpOnly: true });
 		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
 	}
@@ -45,8 +46,10 @@ export class AuthController {
 	@UseGuards(AuthGuard('jwt'))
 	async register(@Res() response: Response, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
+		
 		if (!user)
 			throw new BadRequestException('User not found')
+		
 		const refreshToken = request.cookies['auth-cookie'].refreshToken;
 		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken, request);
 		return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
@@ -56,17 +59,20 @@ export class AuthController {
 	@UseGuards(AuthGuard('jwt'))
 	async verifyCode(@Param('code') code: string, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken);
+		
 		if (!user)
 			throw new BadRequestException('User not found')
+		
 		const totpsecret = await this.userServices.getTotpSecret(user.login);
-		const isCodeValid =
-			this.authService.isTwoFactorAuthenticationCodeValid(
-				code,
-				totpsecret,
-			);
+		const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
+			code,
+			totpsecret,
+		);
+		
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
+		
 		return isCodeValid;
 	}
 
@@ -74,17 +80,19 @@ export class AuthController {
 	@UseGuards(AuthGuard('jwt'))
 	async turnOnTwoFactorAuthentication(@Param('code') code: string, @Req() request) {
 		const user = await this.userServices.getUserByRefreshToken(request.cookies['auth-cookie'].refreshToken)
+		
 		if (!user)
 			throw new BadRequestException('User not found');
 		const totpsecret = await this.userServices.getTotpSecret(user.login);
-		const isCodeValid =
-			this.authService.isTwoFactorAuthenticationCodeValid(
+		const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
 				code,
 				totpsecret,
-			);
+		);
+
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
+		
 		return await this.userServices.turnOnTwoFactorAuthentication(user.login);
 	}
 
@@ -108,5 +116,4 @@ export class AuthController {
 		};
 		res.cookie('auth-cookie', secretData, { httpOnly: true });
 	}
-
 }

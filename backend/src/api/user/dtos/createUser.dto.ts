@@ -8,4 +8,8 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	public login: string;
+
+	@IsString()
+	@IsNotEmpty()
+	public image_url: string;
 }
