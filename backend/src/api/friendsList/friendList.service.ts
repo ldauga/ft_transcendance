@@ -30,6 +30,19 @@ export class FriendListService {
 		return matches;
 	}
 
+	async getUserFriendListWithLogin(login: string): Promise<FriendListEntity[]> {
+		const matches = await this.FriendListRepository.find({
+			where: [
+				{ login_user1: login },
+				{ login_user2: login }
+			]
+		});
+		// console.log('matches', matches);
+		if (!matches)
+			return null; // gestion d erreur needed
+		return matches;
+	}
+
 	async checkExistRelation(id1: number, id2: number): Promise<boolean> {
 		const returnCheck = await this.FriendListRepository.findOne({
 			where: [

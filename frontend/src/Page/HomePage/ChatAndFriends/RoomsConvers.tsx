@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/RoomsConvers.css'
 import './CSS/Rooms.css'
-import './CSS/Convers.css'
+import './CSS/Convers.scss'
 import '../Homepage.scss'
 import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
@@ -196,7 +196,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <h3>{props.roomsConversData.name}</h3>
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
                         <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={removeRoom} className="bi bi-x-lg"></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
                         <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button>
                     </div>

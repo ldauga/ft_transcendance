@@ -35,4 +35,19 @@ export class MessagesEntity {
   @Column()
   public text: string;
 
+  @Column()
+  public year: string;
+
+  @Column()
+  public month: string;
+
+  @Column()
+  public day: string;
+
+  @Column()
+  public hour: string;
+
+  @Column()
+  public minute: string;
+
 }
