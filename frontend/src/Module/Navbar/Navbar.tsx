@@ -1,5 +1,5 @@
 import { Leaderboard, Logout, Person, Settings } from '@mui/icons-material';
-import { Badge, Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';

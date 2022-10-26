@@ -119,9 +119,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const tmp = arrClient.find(item => item.id == client.id)
 
-    if (tmp.username != "") {
+    // if (tmp.username != "") {
 
-      checkReconnexionArr.push(tmp.username)
+    //   checkReconnexionArr.push(tmp.username)
 
       // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
 
@@ -137,7 +137,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       //     console.log("emit friendConnection to ", _client.username);
       //   }
       // }
-    }
+    // }
 
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
