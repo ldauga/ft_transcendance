@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
-import './CSS/Convers.css'
+import './CSS/Convers.scss'
 
 function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string }) {
 
@@ -55,16 +55,87 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         utilsData.socket.removeListener('newMsgReceived');
     })
 
+    function getYear() {
+        const date = Date();
+        let tmp = date.split(' ');
+        return (tmp[3]);
+    }
+
+    function getMonth() {
+        const date = Date();
+        let tmp = date.split(' ');
+        return (tmp[1]);
+    }
+
+    function getDay() {
+        const date = Date();
+        let tmp = date.split(' ');
+        return (tmp[2]);
+    }
+
+    function getHour() {
+        const date = Date();
+        let tmp = date.split(' ');
+        let tmp2 = tmp[4].split(':');
+        return (tmp2[0]);
+    }
+
+    function getMinute() {
+        const date = Date();
+        let tmp = date.split(' ');
+        let tmp2 = tmp[4].split(':');
+        return (tmp2[1]);
+    }
+
+    //onMouseOut={e => { e.currentTarget.children[1].toggleAttribute('className') }}
+
+    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        return (
+            <div onMouseOver={e => { e.currentTarget.parentElement?.children[1].classList.add("date") }} onMouseOut={e => { e.currentTarget.parentElement?.children[1].classList.remove("date") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
+                <p>{props.item.text}</p>
+            </div>
+        );
+    };
+
+    function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        console.log("Date: ", Date());
+        if (getYear() != props.item.year)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else if (getMonth() != props.item.month)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else if (getDay() != props.item.day)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+    };
+
+    // e.currentTarget.children[1].toggleAttribute("date")
+
     const getListItem = async () => {
         await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
             // console.log('res.data = ', res.data);
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string }) => {
+            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>
-                    <div className={(item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
-                        <p>{item.text}</p>
-                    </div>
+                    <Item item={item} />
+                    <AffDate item={item} />
                 </div>)
             });
             console.log('itemList : ', itemList);

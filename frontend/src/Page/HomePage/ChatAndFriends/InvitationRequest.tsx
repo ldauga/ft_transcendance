@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
-import './CSS/InvitationRequest.css';
+import './CSS/InvitationRequest.scss';
 import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
 import axiosConfig from "../../../Utils/axiosConfig";
@@ -135,18 +135,26 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
         setUpdate(true);
     });
 
+    function ItemsInvitationsRequests() {
+        return (
+            <div id="ListItemsInvitationsRequests">
+                {itemListHistory}
+            </div>
+        );
+    };
+
     return (
-        <div className="mainAffGene">
+        <div id="mainInvitationRequest" className="mainAffGene">
             <div className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
+                <div className="mainHeaderSide">
                     <button onClick={handleClick}><i className="bi bi-arrow-left"></i></button>
                 </div>
                 <h3>Pending Invitation</h3>
-                <div className="mainHeaderRight mainHeaderSide">
+                <div className="mainHeaderSide">
 
                 </div>
             </div>
-            {itemListHistory}
+            <ItemsInvitationsRequests />
         </div>
     )
 }

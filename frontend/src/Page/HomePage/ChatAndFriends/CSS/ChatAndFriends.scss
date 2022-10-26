@@ -2,30 +2,18 @@
 .mainAffGene {
     height: 100%;
 
-    button {
-        font-size: 2rem;
-        background: none;
-        padding: 0;
-        border: 0;
-        color: white;
-    }
-
-    button:hover {
-        cursor: pointer;
-    }
-
     .mainAffGene {
         height: 100%;
-        background-color: #f5f8ff;
+        background-color: white;
     }
 
-	.mainAffGeneNotif {
+    .mainAffGeneNotif {
         height: 100%;
-		transition: all 1s;
-        background-color: #f5f8ff;
-		overflow-y: scroll;
+        transition: all 1s;
+        background-color: white;
+        overflow-y: scroll;
     }
-    
+
     .bi-x-lg:hover {
         color: red;
     }
@@ -63,46 +51,21 @@
         height: 3rem;
     }
 
-    .addFriendContainer {
-        height: 6%;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        background-color: #34476b;
-    }
-
-    .addFriendContainer input {
-        height: 2rem;
-        width: 15rem;
-        border-radius: 15px;
-        padding-left: 0.5rem;
-    }
-
-    .addFriendContainer button {
-        width: auto;
-        height: 2rem;
-        text-align: center;
-        border-radius: 15px;
-        background-color: white;
-        margin-right: 0.5rem;
-        margin-left: 1rem;
-        color: #34476b;
-        font-size: 1.3rem;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-
     .itemListConversContainerMe {
         display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
+        flex-direction: column;
+        align-items: flex-end;
     }
 
     .itemListConversContainerCorrespondant {
         display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .conversInItemList {
+        width: 100%;
+        height: 100%;
     }
 
     .converItemList {
@@ -124,59 +87,54 @@
     }
 
     .converItemListMe {
-        color: white;
-        background-color: #34476b;
+        color: black;
+        background-color: white;
+        border: #2E384E solid 2px;
     }
 
     .converItemListCorrespondant {
         color: white;
-        background-color: #3e66ac;
+        background-color: #2E384E;
     }
 
-    /* .bi-check-lg::before {
-        font-size: 1.5rem;
-    } */
-
-    /* HEADER GENERAL */
-
-    /* HTML TYPE: */
-
-    /* <div className="mainHeader">
-        <div className="mainHeaderLeft mainHeaderSide">
-            <button onClick={handleClickClose}><i className="bi bi-x"></i></button>
-        </div>
-        <h3>Friends</h3>
-        <div className="mainHeaderRight mainHeaderSide">
-            <button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
-            <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
-            <button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
-        </div>
-    </div> */
+    //
 
     .mainHeader {
         width: auto;
-        height: 8%;
+        height: 5%;
         position: sticky;
         top: 0;
         display: flex;
         align-items: center;
-        background-color: #34476b;
+        background-color: white;
         overflow: hidden;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
 
     .mainHeaderSide {
-        width: 30%;
+        width: 50%;
         display: flex;
+        align-items: center;
+    }
+
+    .mainHeaderLeft {
+        justify-content: flex-start;
     }
 
     .mainHeaderRight {
-        justify-content: space-between;
+        justify-content: flex-end;
     }
 
-    .mainHeader h3 {
-        width: 60%;
-        text-align: center;
+    button {
+        font-size: 2rem;
+        background: none;
+        padding: 0;
+        border: 0;
+        color: #2E384E;
+    }
+
+    button:hover {
+        cursor: pointer;
     }
 }
