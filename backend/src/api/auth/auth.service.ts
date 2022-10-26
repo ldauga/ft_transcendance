@@ -6,7 +6,7 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import * as bcrypt from 'bcrypt'
+// import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
