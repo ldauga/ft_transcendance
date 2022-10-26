@@ -8,9 +8,9 @@ import ConnectionChecker from './Module/ConnectionChecker/ConnectionChecker';
 import GameSwitch from './Page/Pong/GameSwitch';
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './State/store';
-import Profile from './Page/Profile/Profile';
 import Settings from './Page/Settings/Settings';
 import { StatPlayer } from './Module/UserProfile/StatPlayer';
+import LeaderBoard from './Page/LeaderBoard/LeaderBoard';
 
 function App() {
 
@@ -29,8 +29,8 @@ function App() {
           <Route path='/HomePage' element={<ConnectionChecker component={<HomePage />} />} />
 
           <Route path='/pong' element={<ConnectionChecker component={<GameSwitch />} />} />
+          <Route path='/LeaderBoard' element={<ConnectionChecker component={<LeaderBoard />} />} />
 
-          <Route path='/Profile' element={<ConnectionChecker component={<Profile />} />} />
           <Route path='/Profile/*' element={<ConnectionChecker component={<StatPlayer />} />} />
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
