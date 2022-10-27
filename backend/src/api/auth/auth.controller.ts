@@ -20,9 +20,7 @@ export class AuthController {
 		}
 
 		const accessToken = await this.authService.login(query);
-		console.log(accessToken)
 		const refreshToken = await this.userServices.getRefreshToken(accessToken);
-		console.log(refreshToken);
 		const secretData = {
 			accessToken,
 			refreshToken

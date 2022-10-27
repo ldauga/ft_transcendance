@@ -25,7 +25,6 @@ export class AuthService {
 	private logger: Logger = new Logger('AuthService');
 
 	async login(req: any) {
-		console.log(req);
 		try {
 			const token = this.http.post(`${this.API_authorizationURI}`,
 			`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
