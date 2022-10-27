@@ -2,8 +2,8 @@ import axios from 'axios';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/RoomsConvers.css'
-import './CSS/Rooms.css'
+import './CSS/RoomsConvers.scss'
+import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
 import '../Homepage.scss'
 import CreateInvitationRooms from './CreateInvitationRooms';
@@ -12,6 +12,8 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import { constWhileSecu } from '../HomePage';
 import ChangeRoomPassword from './ChangeRoomPassword';
 import axiosConfig from '../../../Utils/axiosConfig';
+import { Button } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -69,6 +71,36 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
     })
+
+    function getYear() {
+        const date = Date();
+        if (!date)
+            return ("");
+        let tmp = date.split(' ');
+        if (!tmp || !tmp[3])
+            return ("");
+        return (tmp[3]);
+    }
+
+    function getMonth() {
+        const date = Date();
+        if (!date)
+            return ("");
+        let tmp = date.split(' ');
+        if (!tmp || !tmp[1])
+            return ("");
+        return (tmp[1]);
+    }
+
+    function getDay() {
+        const date = Date();
+        if (!date)
+            return ("");
+        let tmp = date.split(' ');
+        if (!tmp || !tmp[2])
+            return ("");
+        return (tmp[2]);
+    }
 
     const handleClickChangePassword = () => {
         if (isChangeRoomPassword)
@@ -143,17 +175,52 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
     };
 
+    function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        console.log("Date: ", Date());
+        if (getYear() != props.item.year)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else if (getMonth() != props.item.month)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else if (getDay() != props.item.day)
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+        else
+            return (
+                <div className='dateDisplayNone'>
+                    <p>{props.item.hour}:{props.item.minute}</p>
+                </div>
+            );
+    };
+
+    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        return (
+            <div onMouseOver={e => { e.currentTarget.parentElement?.children[1].classList.add("date") }} onMouseOut={e => { e.currentTarget.parentElement?.children[1].classList.remove("date") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
+                <p>{props.item.text}</p>
+            </div>
+        );
+    };
+
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         await axiosConfig.get('http://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, text: string }) => {
+            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>
-                    <div className={(item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
-                        <p>{item.text}</p>
-                    </div>
+                    <Item item={item} />
+                    <AffDate item={item} />
                 </div>)
             });
             console.log('itemList : ', itemList);
@@ -237,6 +304,23 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             setMessageText("");
         };
 
+        function SendButton() {
+            if (messageText.length <= 0) {
+                return (
+                    <Button className="sendButtonDisabled" variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
+                        <SendIcon id="sendIcon" />
+                    </Button>
+                );
+            }
+            else {
+                return (
+                    <Button variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
+                        <SendIcon id="sendIcon" />
+                    </Button>
+                );
+            }
+        };
+
         return (
             <div id="roomsConvers">
                 <Header />
@@ -249,9 +333,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
                         placeholder="Your message..."
                     />
-                    <button type="button" onClick={() => sendMessage()}>
-                        Send
-                    </button>
+                    <SendButton />
                 </div>
             </div>
         );

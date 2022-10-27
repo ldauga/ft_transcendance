@@ -2,6 +2,37 @@
     display: block;
     height: 100%;
     width: 100%;
+
+    #groupIconGroupItem {}
+
+    .itemGroupList {
+        display: flex;
+        flex-direction: row;
+        height: 3.5rem;
+        width: 100%;
+        margin-top: 2vh;
+        padding-left: 1rem;
+        padding-right: 1rem;
+
+        .inGroupItem {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+
+            #groupIconGroupItem {
+                background-color: #2e384e;
+                border-radius: 50px;
+                font-size: 2.9rem;
+                color: white;
+                padding: 0.4rem;
+            }
+
+            p {
+                margin-left: 1rem;
+                font-size: 2rem;
+            }
+        }
+    }
 }
 
 #mainAffRoomsBig {
@@ -20,14 +51,26 @@
 }
 
 #CreateGroupContainer {
-    height: 26%;
+    height: 30%;
     width: auto;
     display: flex;
     flex-direction: column;
     padding-left: 2rem;
     align-items: flex-start;
     justify-content: flex-end;
-    background-color: #34476b;
+    background-color: white;
+
+    .createButtonDisabled {
+        background-color: hsla(240, 1%, 66%, 0.767);
+        color: white;
+        border-radius: 4px;
+    }
+
+    .createButton {
+        background-color: #2e384e;
+        color: white;
+        border-radius: 4px;
+    }
 }
 
 #PasswordOrNotContainerInput {

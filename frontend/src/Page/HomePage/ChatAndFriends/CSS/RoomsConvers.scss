@@ -1,0 +1,32 @@
+#roomsConvers {
+    display: block;
+    height: 100%;
+    width: 100%;
+
+    #affConversBig {
+        overflow: scroll;
+        height: 88%;
+    }
+
+    #affConversSmall {
+        overflow: scroll;
+        height: 74%;
+    }
+
+    #RoomsConversHeaderRight {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    #RoomsConversHeaderRight .bi-plus-lg {
+        margin-left: 1rem;
+    }
+
+    .dateDisplayNone {
+        display: none;
+    }
+
+    .date {
+        display: flex;
+    }
+}

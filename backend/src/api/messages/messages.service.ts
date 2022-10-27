@@ -1,6 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { stringify } from "querystring";
 import { Repository } from "typeorm";
+import { UserService } from "../user/user.service";
 import { MessagesDto } from "./dtos/messages.dto";
 import { MessagesEntity } from "./messages.entity";
 
@@ -10,6 +12,8 @@ export class MessagesService {
 		@InjectRepository(MessagesEntity)
 		private readonly MessagesRepository: Repository<MessagesEntity>,
 	) { }
+
+	private readonly UserService: UserService
 
 	private logger: Logger = new Logger('Messages');
 
@@ -61,8 +65,8 @@ export class MessagesService {
 				{ id_receiver: id }
 			]
 		});
-		let returnArray: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }[] = [];
-		messagesReturn.forEach(item => {
+		let returnArray: { id: number, login: string, nickname: string, profile_pic: string; userOrRoom: boolean, room_id: number, room_name: string }[] = [];
+		messagesReturn.forEach(async item => {
 			if (!item.userOrRoom) {
 				let idTmp;
 				let loginTmp;
@@ -75,8 +79,9 @@ export class MessagesService {
 					loginTmp = item.login_receiver;
 				}
 				let returnFind = returnArray.find(item => item.id == idTmp);
+				//const user = await this.UserService.getUserById(idTmp);
 				if (!returnFind) {
-					returnArray.push({ id: idTmp, login: loginTmp, userOrRoom: false, room_id: 0, room_name: "" });
+					returnArray.push({ id: idTmp, login: loginTmp, nickname: "", profile_pic: "", userOrRoom: false, room_id: 0, room_name: "" });
 				}
 			}
 			else {
@@ -84,7 +89,7 @@ export class MessagesService {
 				let roomNameTmp = item.room_name;
 				let returnFind = returnArray.find(item => item.room_id == roomIdTmp);
 				if (!returnFind) {
-					returnArray.push({ id: 0, login: "", userOrRoom: true, room_id: roomIdTmp, room_name: roomNameTmp });
+					returnArray.push({ id: 0, login: "", nickname: "", profile_pic: "", userOrRoom: true, room_id: roomIdTmp, room_name: roomNameTmp });
 				}
 			}
 		});

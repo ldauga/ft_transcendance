@@ -31,13 +31,14 @@ export class FriendListService {
 	}
 
 	async getUserFriendListWithLogin(login: string): Promise<FriendListEntity[]> {
+		//console.log("friendList.service store: ", login);
 		const matches = await this.FriendListRepository.find({
 			where: [
 				{ login_user1: login },
 				{ login_user2: login }
 			]
 		});
-		// console.log('matches', matches);
+		//console.log('matches', matches);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;

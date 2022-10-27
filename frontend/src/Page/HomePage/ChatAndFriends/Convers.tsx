@@ -1,3 +1,5 @@
+import { Button } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -27,6 +29,8 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     function sendMessage() {
+        if (messageText.length <= 0)
+            return;
         const newMsg = {
             id_sender: userData.userReducer.user?.id,
             id_receiver: props.conversCorrespondantData.id,
@@ -57,19 +61,31 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     function getYear() {
         const date = Date();
+        if (!date)
+            return ("");
         let tmp = date.split(' ');
+        if (!tmp || !tmp[3])
+            return ("");
         return (tmp[3]);
     }
 
     function getMonth() {
         const date = Date();
+        if (!date)
+            return ("");
         let tmp = date.split(' ');
+        if (!tmp || !tmp[1])
+            return ("");
         return (tmp[1]);
     }
 
     function getDay() {
         const date = Date();
+        if (!date)
+            return ("");
         let tmp = date.split(' ');
+        if (!tmp || !tmp[2])
+            return ("");
         return (tmp[2]);
     }
 
@@ -152,6 +168,23 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         getListItem();
     }, [props]);
 
+    function SendButton() {
+        if (messageText.length <= 0) {
+            return (
+                <Button className="sendButtonDisabled" variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
+                    <SendIcon id="sendIcon" />
+                </Button>
+            );
+        }
+        else {
+            return (
+                <Button variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
+                    <SendIcon id="sendIcon" />
+                </Button>
+            );
+        }
+    };
+
     return (
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
@@ -173,9 +206,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
                     placeholder="Your message..."
                 />
-                <button type="button" onClick={() => sendMessage()}>
-                    Send
-                </button>
+                <SendButton />
             </div>
         </div>
     );

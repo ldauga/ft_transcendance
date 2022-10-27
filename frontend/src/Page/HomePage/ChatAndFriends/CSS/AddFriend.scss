@@ -4,19 +4,19 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding-right: 1.5rem;
+    padding-right: 1rem;
     padding-left: 0.5rem;
 
     .AutocompleteInput {
-        width: 50%;
+        width: 65%;
     }
 
-    .addFriendButton {
+    #addFriendButton {
         color: #2e384e;
         border-color: #2e384e;
         background: unset;
-        font-size: 1.5rem;
-        margin-left: 0.5rem;
+        font-size: 2rem;
+        margin-left: 1.0rem;
         // letter-spacing: 2.5px;
         font-family: 'Roboto', sans-serif;
         font-weight: 700;
@@ -26,10 +26,10 @@
         border: solid 3px !important;
     }
 
-    .addFriendButton:hover {
+    #addFriendButton:hover {
         color: #FFFF;
         background: #2e384e;
-        border: solid 3px !important;
+        border: solid 3px #2e384e !important;
     }
 
 }
