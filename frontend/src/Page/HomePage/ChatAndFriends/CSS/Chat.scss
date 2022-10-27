@@ -12,9 +12,14 @@
     width: auto;
     margin-left: 0.5rem;
     margin-right: 0.5rem;
-    background-color: #34476b;
+    background-color: white;
+    color: black;
     height: 5rem;
     font-size: 2.0rem;
+
+    img {
+        margin-right: 1rem;
+    }
 }
 
 .itemConvers:hover {

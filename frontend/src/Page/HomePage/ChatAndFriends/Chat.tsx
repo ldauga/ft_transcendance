@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { isJSDocTemplateTag } from 'typescript';
 import { RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
-import './CSS/Chat.css'
+import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
 
 function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
@@ -52,27 +52,40 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     }
 
     const getListItem = async () => {
+        let relationList: any[] = [];
         await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
-            let itemList: any[] = [];
-            console.log('res.data = ', res.data);
-            res.data.forEach((item: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
-                if (!item.userOrRoom) {
-                    itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
-                        <div className="itemConvers" onClick={() => openConvers(item)}>
-                            <p>{item.login}</p>
-                        </div>
-                    </div>)
-                }
-                else {
-                    itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
-                        <div className="itemConvers" onClick={() => openConvers(item)}>
-                            <p>{item.room_name}</p>
-                        </div>
-                    </div>)
-                }
-            });
-            setItemListHistory(itemList);
-        })
+            relationList = res.data;
+        });
+        console.log("relationList: ", relationList);
+        for (let i = 0; i < relationList.length; i++) {
+            if (!relationList[i].userOrRoom) {
+                const user = await axiosConfig.get('http://localhost:5001/user/id/' + relationList[i].id);
+                console.log("user.data: ", user.data, "i: ", i);
+                relationList[i].nickname = user.data.nickname;
+                relationList[i].profile_pic = user.data.profile_pic;
+            }
+        }
+        let itemList: any[] = [];
+        await relationList.forEach(async (item: { id: number, login: string, nickname: string, profile_pic: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
+            console.log("test2");
+            if (!item.userOrRoom) {
+                await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
+                    <div className="itemConvers" onClick={() => openConvers(item)}>
+                        <img src={item.profile_pic}></img>
+                        <p>{item.nickname}</p>
+                    </div>
+                </div>)
+            }
+            else {
+                await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
+                    <div className="itemConvers" onClick={() => openConvers(item)}>
+                        <p>{item.room_name}</p>
+                    </div>
+                </div>)
+            }
+        });
+        console.log("end");
+        setItemListHistory(itemList);
     }
 
     useEffect(() => {
