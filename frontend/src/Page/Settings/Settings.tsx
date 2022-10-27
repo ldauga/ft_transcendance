@@ -183,7 +183,7 @@ function Settings() {
 							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axios.get('http://localhost:5001/auth/2fa/turn-off/', { withCredentials: true }).then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
+									<button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
 								</div>
 							</>
 						}

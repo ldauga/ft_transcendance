@@ -29,6 +29,7 @@ import { isInt16Array } from 'util/types';
 import { MuteListService } from '../muteList/muteList.service';
 import { UserService } from '../user/user.service';
 import { freemem } from 'os';
+import { info } from 'console';
 
 interface Client {
   id: string;
@@ -89,6 +90,8 @@ function getMinute() {
   return (tmp2[1]);
 }
 
+const checkReconnexionArr = []
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -96,6 +99,7 @@ function getMinute() {
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
+    private readonly UserService: UserService,
     private readonly FriendListService: FriendListService,
     private readonly invitationRequestService: InvitationRequestService,
     private readonly RoomsService: RoomsService,
@@ -104,7 +108,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     private readonly MatchesHistoryService: MatchesHistoryService,
     private readonly BlacklistService: BlackListService,
     private readonly MutelistService: MuteListService,
-    private readonly UserService: UserService,
   ) { }
   @WebSocketServer()
   server: Server;
@@ -113,11 +116,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
-    // for (let i = 0; i < arrClient.length; i++) {
-    //   if (arrClient.find(obj => obj.id !== client.id) && arrClient.find(obj => obj.username != ""))
-    //     this.server.to(arrClient[i].id).emit('removeFriend', arrClient[indexOfClient]);
+
+    const tmp = arrClient.find(item => item.id == client.id)
+
+    // if (tmp.username != "") {
+
+    //   checkReconnexionArr.push(tmp.username)
+
+      // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
+
+      // for (let i = 0; i < friendList.length; i++) {
+      //   let loginTmp;
+      //   if (friendList[i].login_user1 == tmp.username)
+      //     loginTmp = friendList[i].login_user2;
+      //   else
+      //     loginTmp = friendList[i].login_user1;
+      //   const _client = arrClient.find(obj => obj.username == loginTmp);
+      //   if (_client) {
+      //     this.server.to(_client.id).emit('friendConnection', true);
+      //     console.log("emit friendConnection to ", _client.username);
+      //   }
+      // }
     // }
+
+    const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
       arrClient.splice(indexOfClient, 1);
 
@@ -166,7 +188,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('storeClientInfo')
   async storeClientInfo(client: Socket, user: { login: string }) {
     console.log("storeClientInfo");
-    await arrClient.forEach((item) => {
+
+    if (checkReconnexionArr.findIndex(item => item == user.login) >= 0)
+      checkReconnexionArr.splice(checkReconnexionArr.findIndex(item => item == user.login), 1)
+
+    arrClient.forEach((item) => {
       if (item.id == client.id) {
         item.username = user.login;
         let i = 0;
@@ -232,6 +258,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       //i++;
       //}
     });
+  }
+
+  @Interval(1000)
+  tmpFunction() {
+    checkReconnexionArr.forEach(async user => {
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(user);
+
+      for (let i = 0; i < friendList.length; i++) {
+        let loginTmp;
+        if (friendList[i].login_user1 == user)
+          loginTmp = friendList[i].login_user2;
+        else
+          loginTmp = friendList[i].login_user1;
+        const _client = arrClient.find(obj => obj.username == loginTmp);
+        if (_client) {
+          this.server.to(_client.id).emit('friendConnection', true);
+          console.log("emit friendConnection to ", _client.username);
+        }
+      }
+    })
+
+    checkReconnexionArr.splice(0, checkReconnexionArr.length)
   }
 
   @Interval(1000)
@@ -1033,10 +1081,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   getRoomByClientLogin(ClientLogin: string): [number, gameRoomClass] | null {
-    for (let i = 0; i < this.pongInfo.length; i++)
-      for (let j = 0; j < 2; j++)
-        if (this.pongInfo[i].players[j].user.login == ClientLogin)
+    for (let i = 0; i < this.pongInfo.length; i++) {
+      console.log('this.pongInfo[i] :', this.pongInfo[i])
+      for (let j = 0; j < 2; j++) {
+        console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
+
+        if (this.pongInfo[i].players[j].user.login == ClientLogin) {
+
           return [i, this.pongInfo[i]]
+        }
+      }
+    }
     return null
   }
 
@@ -1334,11 +1389,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async enter(client: Socket, info: [string, boolean]) {
     var room = this.getRoomByID(info[0])
     if (room != null) {
-
       for (let index = 0; index < 2; index++)
         if (this.pongInfo[room[0]].players[index].id == client.id)
-          this.pongInfo[room[0]].players[index].ready = true
-
+          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready))
+            this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
     }
   }
 
@@ -1402,7 +1456,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     info.gameRoom.roomID = "custom" + client.id
     info.gameRoom.players[0].connected = true
     info.gameRoom.players[0].id = client.id
-
 
     for (let index = 0; index < info.gameRoom.map.obstacles.length; index++) {
       info.gameRoom.map.obstacles[index].initialX = info.gameRoom.map.obstacles[index].x
@@ -1470,13 +1523,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.pongInfo[room[0]].started = true
     this.pongInfo[room[0]].setOponnent(client.id, info.user)
 
+    this.pongInfo[room[0]].players[1].sendNotif = true
+
     this.server.to(room[1].roomID).emit('start', "custom" + info.inviteID)
 
   }
 
   @SubscribeMessage('GET_ALL_FRIEND_CONNECTED')
   async getAllFriendConnected(client: Socket, info: { user: any }) {
-    console.log("GET_ALL_FRIEND_CONNECTED");
 
     const friendList = await this.FriendListService.getUserFriendList(info.user.id)
 
@@ -1485,8 +1539,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const retArr = []
 
     friendRes = friendList;
-    console.log("friendRes: ", friendRes.length);
-    console.log("arrClient: ", arrClient.length);
 
     for (let index = 0; index < friendRes.length; index++) {
       var user: any
@@ -1494,7 +1546,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         user = await this.UserService.getUserById(friendRes[index].id_user1);
       else
         user = await this.UserService.getUserById(friendRes[index].id_user2);
-      // console.log('this.getRoomByClientLogin(userRes.data.login) :', this.getRoomByClientLogin(userRes.data.login))
+
       if (this.getRoomByClientLogin(user.login) != null)
         retArr.push({ user: user, status: "in-game" })
       else if (arrClient.find(client => client.username == user.nickname) != undefined)
@@ -1503,17 +1555,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         retArr.push({ user: user, status: "offline" })
     }
 
-    console.log('retArr.length :', retArr.length);
-
     this.server.to(client.id).emit("getAllFriendConnected", retArr);
   }
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
-    console.log('GET_ALL_CLIENT_CONNECTED :', arrClient)
     this.server.to(client.id).emit("getAllClientConnected", arrClient);
   }
-
+  
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')
   async getAllClientConnectedNotFriend(client: Socket) {
     console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');

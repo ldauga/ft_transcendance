@@ -6,7 +6,6 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -38,10 +37,10 @@ export class AuthService {
     */
 
 	async login(req: any) {
+		console.log(req);
 		try {
 			const token = this.http.post(`${this.API_authorizationURI}`,
 			`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
-
 			this.accessToken = (await lastValueFrom(token)).data.access_token;
 			this.headers = { Authorization: `Bearer ${this.accessToken}` };
 

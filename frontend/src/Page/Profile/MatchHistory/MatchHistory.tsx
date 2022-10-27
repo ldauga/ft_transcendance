@@ -22,7 +22,6 @@ function MatchHistory() {
 	useEffect(() => {
 		if (!verif) {
 			let res = axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
-			console.log('ici', res)
 			setVerif(true);
 		}
 	})
