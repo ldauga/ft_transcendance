@@ -82,7 +82,11 @@ export class RoomsService {
 		});
 		console.log("check: ", check);
 		check.passwordOrNot = passwordOrNot;
-		check.password = password;
+
+		const saltOrRounds = 10;
+		const hash = await bcrypt.hash(password, saltOrRounds);
+		check.password = hash;
+		
 		const returnRoom = this.RoomsRepository.save(check);
 		return true;
 	}
