@@ -235,21 +235,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //this.server.to(client.id).emit('friendsList', arrClient);
       }
     })
-    const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
-    if (friendList) {
-      for (let i = 0; i < friendList.length; i++) {
-        let loginTmp;
-        if (friendList[i].login_user1 == user.login)
-          loginTmp = friendList[i].login_user2;
-        else
-          loginTmp = friendList[i].login_user1;
-        const _client = arrClient.find(obj => obj.username == loginTmp);
-        if (_client) {
-          this.server.to(_client.id).emit('friendConnection', true);
-          console.log("emit friendConnection to ", _client.username);
-        }
-      }
-    }
+    // const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
+    // if (friendList) {
+    //   for (let i = 0; i < friendList.length; i++) {
+    //     let loginTmp;
+    //     if (friendList[i].login_user1 == user.login)
+    //       loginTmp = friendList[i].login_user2;
+    //     else
+    //       loginTmp = friendList[i].login_user1;
+    //     const _client = arrClient.find(obj => obj.username == loginTmp);
+    //     if (_client) {
+    //       this.server.to(_client.id).emit('friendConnection', true);
+    //       console.log("emit friendConnection to ", _client.username);
+    //     }
+    //   }
+    // }
     // console.log("arrParticipant.lenght = ", arrParticipants.length);
     // console.log("arrRoom: ", arrRoom);
   };
