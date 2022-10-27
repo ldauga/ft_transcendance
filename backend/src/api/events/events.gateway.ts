@@ -119,9 +119,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const tmp = arrClient.find(item => item.id == client.id)
 
-    if (tmp.username != "") {
-
-      checkReconnexionArr.push(tmp.username)
+    if (tmp != undefined && tmp.username != "") {
+      checkReconnexionArr.push({username: tmp.username, date: new Date()})
+    }
 
       // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
 
@@ -137,7 +137,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       //     console.log("emit friendConnection to ", _client.username);
       //   }
       // }
-    }
 
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
@@ -189,8 +188,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async storeClientInfo(client: Socket, user: { login: string }) {
     console.log("storeClientInfo");
 
-    if (checkReconnexionArr.findIndex(item => item == user.login) >= 0)
-      checkReconnexionArr.splice(checkReconnexionArr.findIndex(item => item == user.login), 1)
+    let tmp: number; 
+
+    if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
+      checkReconnexionArr.splice(tmp, 1)
 
     arrClient.forEach((item) => {
       if (item.id == client.id) {
@@ -263,11 +264,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(1000)
   tmpFunction() {
     checkReconnexionArr.forEach(async user => {
-      const friendList = await this.FriendListService.getUserFriendListWithLogin(user);
+      if (new Date().getMilliseconds() - user.date.getMilliseconds() < 1000)
+        return ;
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(user.username);
 
       for (let i = 0; i < friendList.length; i++) {
         let loginTmp;
-        if (friendList[i].login_user1 == user)
+        if (friendList[i].login_user1 == user.username)
           loginTmp = friendList[i].login_user2;
         else
           loginTmp = friendList[i].login_user1;
