@@ -40,7 +40,8 @@ export class RoomsService {
 			return ("room not found");
 		if (check.passwordOrNot) {
 			console.log("check.password: ", check.password, ", passwordInput: ", password);
-			if (check.password.localeCompare(password) == 0)
+			const isMatch = await bcrypt.compare(password, check.password);
+			if (isMatch)
 				return ("ok");
 			else
 				return ("wrong password");
@@ -89,12 +90,11 @@ export class RoomsService {
 	async createRoom(body: any): Promise<RoomsEntity> {
 		const saltOrRounds = 10;
 		const hash = await bcrypt.hash(body.password, saltOrRounds);
-		console.log(hash);
 
 		const returnRoom = this.RoomsRepository.save({
 			name: body.name,
 			description: body.description,
-			password: body.password,
+			password: hash,
 			identifiant: body.identifiant,
 			owner_id: body.owner_id,
 			publicOrPrivate: body.publicOrPrivate,
