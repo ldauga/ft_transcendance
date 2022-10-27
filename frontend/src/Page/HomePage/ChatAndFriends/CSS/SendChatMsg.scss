@@ -1,0 +1,58 @@
+#sendChatMsgContainer {
+    height: 13%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    background-color: white;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    .AutocompleteInput {
+        width: 65%;
+    }
+}
+
+.sendZoneSendChatMsg {
+    position: -webkit-sticky;
+    position: sticky;
+    width: 100%;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: white;
+    margin-top: 0.5rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+
+    input {
+        width: 63%;
+        height: 3rem;
+        border-radius: 4px;
+        border: solid 1px #C4C4C4;
+        padding-left: 9px;
+    }
+
+    button {
+        width: 16%;
+        height: 100%;
+        font-size: 1.5rem;
+        text-align: center;
+        border-radius: 15px;
+        background-color: #34476b;
+        color: white;
+        margin-left: 1rem;
+    }
+
+    #sendIcon {
+        font-size: 2.7rem;
+        // width: 3rem;
+        // height: 3rem;
+    }
+
+    .sendButtonDisabled {
+        background-color: hsla(240, 1%, 66%, 0.767);
+    }
+}

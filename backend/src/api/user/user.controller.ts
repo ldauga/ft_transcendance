@@ -1,13 +1,11 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, BadRequestException, UseInterceptors, UploadedFile, Res, Put, Patch, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, UseInterceptors, UploadedFile, Res, UnauthorizedException } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
-import { CreateUserDto } from './dtos/createUser.dto';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { GetUserDto } from './dtos/getUser.dto';
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateNicknameDto } from './dtos/updateNickname.dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
@@ -58,7 +56,7 @@ export class UserController {
   }
 
   @Get('/userExist')
-  //@UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('refresh'))
   public userExist(@Req() req: Request): Promise<GetUserDto> {
     const refreshToken = req.cookies['auth-cookie']?.refreshToken;
     if (refreshToken == undefined)
@@ -69,6 +67,7 @@ export class UserController {
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
+    // deepcode ignore PT: <please specify a reason of ignoring this>
     return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 

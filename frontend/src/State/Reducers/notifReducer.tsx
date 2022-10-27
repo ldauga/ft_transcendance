@@ -7,7 +7,7 @@ export interface NotifArray {
 }
 
 export const initialState: NotifArray = {
-	notifArray: new Array<Notif>
+	notifArray: new Array<Notif>,
 }
 
 export const notifReducer = (state: NotifArray = initialState, action: notifAction) => {

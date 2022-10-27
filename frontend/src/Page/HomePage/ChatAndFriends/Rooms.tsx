@@ -2,13 +2,14 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/Rooms.css'
+import './CSS/Rooms.scss'
 import '../Homepage.scss'
 import CreateRooms from './CreateRooms';
 import { constWhileSecu } from '../HomePage';
 import axiosConfig from '../../../Utils/axiosConfig';
+import GroupIcon from '@mui/icons-material/Group';
 
-function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, setRoomsList: Function }) {
+function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, setRoomsList: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -34,7 +35,7 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
 
     const exit = () => {
         props.setRooms(false);
-        props.setFriendList(true);
+        props.setChat(true);
     };
 
     const openConvers = (item: { name: string, id: number }) => {
@@ -96,8 +97,9 @@ function Rooms(props: { setFriendList: Function, setRooms: Function, setRoomsCon
             console.log('res.data = ', res.data);
             const nameTmp: { name: string, id: number }[] = res.data;
             nameTmp.forEach(item => {
-                itemList.push(<div key={itemList.length.toString()} className='itemList'>
-                    <div className="inItem" onClick={() => openConvers(item)}>
+                itemList.push(<div key={itemList.length.toString()} className='itemGroupList'>
+                    <div className="inGroupItem" onClick={() => openConvers(item)}>
+                        <GroupIcon id="groupIconGroupItem" />
                         <p>{item.name}</p>
                     </div>
                 </div>)

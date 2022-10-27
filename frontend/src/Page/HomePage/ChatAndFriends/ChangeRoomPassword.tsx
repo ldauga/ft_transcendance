@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/Rooms.css'
+import './CSS/Rooms.scss'
 import '../Homepage.scss'
 import { Checkbox } from '@mui/material';
 

@@ -60,33 +60,58 @@ let time = Math.round((date.valueOf() / 1000));
 
 function getYear() {
   const date = Date();
+  if (!date)
+    return ("");
   let tmp = date.split(' ');
+  if (!tmp || !tmp[3])
+    return ("");
   return (tmp[3]);
 }
 
 function getMonth() {
   const date = Date();
+  if (!date)
+    return ("");
   let tmp = date.split(' ');
+  if (!tmp || !tmp[1])
+    return ("");
   return (tmp[1]);
 }
 
 function getDay() {
   const date = Date();
+  if (!date)
+    return ("");
   let tmp = date.split(' ');
+  if (!tmp || !tmp[2])
+    return ("");
+  console.log("get day: ", tmp[2]);
   return (tmp[2]);
 }
 
 function getHour() {
   const date = Date();
+  if (!date)
+    return ("");
   let tmp = date.split(' ');
+  if (!tmp || !tmp[4])
+    return ("");
   let tmp2 = tmp[4].split(':');
+  if (!tmp2 || !tmp2[0])
+    return ("");
   return (tmp2[0]);
 }
 
 function getMinute() {
   const date = Date();
+  if (!date)
+    return ("");
   let tmp = date.split(' ');
+  if (!tmp || !tmp[4])
+    return ("");
   let tmp2 = tmp[4].split(':');
+  if (!tmp2 || !tmp2[1])
+    return ("");
   return (tmp2[1]);
 }
 
@@ -123,20 +148,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       checkReconnexionArr.push({username: tmp.username, date: new Date()})
     }
 
-      // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
+    // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
 
-      // for (let i = 0; i < friendList.length; i++) {
-      //   let loginTmp;
-      //   if (friendList[i].login_user1 == tmp.username)
-      //     loginTmp = friendList[i].login_user2;
-      //   else
-      //     loginTmp = friendList[i].login_user1;
-      //   const _client = arrClient.find(obj => obj.username == loginTmp);
-      //   if (_client) {
-      //     this.server.to(_client.id).emit('friendConnection', true);
-      //     console.log("emit friendConnection to ", _client.username);
-      //   }
-      // }
+    // for (let i = 0; i < friendList.length; i++) {
+    //   let loginTmp;
+    //   if (friendList[i].login_user1 == tmp.username)
+    //     loginTmp = friendList[i].login_user2;
+    //   else
+    //     loginTmp = friendList[i].login_user1;
+    //   const _client = arrClient.find(obj => obj.username == loginTmp);
+    //   if (_client) {
+    //     this.server.to(_client.id).emit('friendConnection', true);
+    //     console.log("emit friendConnection to ", _client.username);
+    //   }
+    // }
+    // }
 
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
@@ -208,21 +234,26 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           else
             i++;
         }
-        console.log("test");
+        //console.log("test");
         //this.server.to(client.id).emit('friendsList', arrClient);
       }
     })
-    const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
-    for (let i = 0; i < friendList.length; i++) {
-      let loginTmp;
-      if (friendList[i].login_user1 == user.login)
-        loginTmp = friendList[i].login_user2;
-      else
-        loginTmp = friendList[i].login_user1;
-      const _client = arrClient.find(obj => obj.username == loginTmp);
-      if (_client) {
-        this.server.to(_client.id).emit('friendConnection', true);
-        console.log("emit friendConnection to ", _client.username);
+    if (user.login) {
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
+      //console.log("friendList: ", friendList);
+      if (friendList) {
+        for (let i = 0; i < friendList.length; i++) {
+          let loginTmp;
+          if (friendList[i].login_user1 == user.login)
+            loginTmp = friendList[i].login_user2;
+          else
+            loginTmp = friendList[i].login_user1;
+          const _client = arrClient.find(obj => obj.username == loginTmp);
+          if (_client) {
+            this.server.to(_client.id).emit('friendConnection', true);
+            console.log("emit friendConnection to ", _client.username);
+          }
+        }
       }
     }
     // console.log("arrParticipant.lenght = ", arrParticipants.length);
@@ -457,13 +488,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const addFriendReturn = await this.FriendListService.createFriendShip(newFriend);
     //console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
     console.log(addFriendReturn)
-    let _client_data = arrClient.find(obj => obj.username === data.login_user2);
-    if (client.id == _client_data.id) {
-      _client_data = arrClient.find(obj => obj.username === data.login_user1);
-    }
-    if (_client_data != null) {
-      console.log("newFriend to ", _client_data.username);
-      this.server.to(_client_data.id).emit('newFriendReceived', data);
+    if (addFriendReturn) {
+      const _client1 = arrClient.find(obj => obj.username === data.login_user1);
+      const _client2 = arrClient.find(obj => obj.username === data.login_user2);
+      if (_client1) {
+        console.log("newFriend to ", _client1.username);
+        this.server.to(_client1.id).emit('newFriendReceived', data);
+      }
+      if (_client2) {
+        console.log("newFriend to ", _client1.username);
+        this.server.to(_client1.id).emit('newFriendReceived', data);
+      }
     }
   }
 
@@ -797,7 +832,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         hour: getHour(),
         minute: getMinute()
       }
-      console.log("msg: ", newMsg);
+      //console.log("msg: ", newMsg);
       //const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
       const returnMsg = await this.MessagesService.createMessages(newMsg);
       //console.log('returnMsg in eventgateway', returnMsg);
@@ -1563,7 +1598,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
-    this.server.to(client.id).emit("getAllClientConnected", arrClient);
+    const _client = arrClient.find(obj => obj.id == client.id);
+    const user = await this.UserService.getAllUsers();
+    const retArr = [];
+    if (_client && user) {
+      for (let i = 0; user.length > i; i++) {
+        if (user[i].login != _client.username)
+          retArr.push({ id: user[i].id, login: user[i].login, nickname: user[i].nickname, profile_pic: user[i].profile_pic });
+      }
+    }
+    if (retArr.length <= 0)
+      this.server.to(client.id).emit("getAllClientConnected", null);
+    else
+      this.server.to(client.id).emit("getAllClientConnected", retArr);
   }
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')

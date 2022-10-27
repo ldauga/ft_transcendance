@@ -30,25 +30,37 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        height: 7%;
-        background-color: #34476b;
+        height: 6%;
+        background-color: white;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
-    }
 
-    .sendZoneConvers input {
-        width: 75%;
-        height: 3rem;
-        border-radius: 15px;
-    }
+        input {
+            width: 80%;
+            height: 100%;
+            border-radius: 15px;
+            border: solid 1px #2e384e;
+        }
 
-    .sendZoneConvers button {
-        width: 20%;
-        text-align: center;
-        border-radius: 15px;
-        background-color: white;
-        color: #34476b;
-        height: 3rem;
+        button {
+            width: 16%;
+            height: 100%;
+            font-size: 1.5rem;
+            text-align: center;
+            border-radius: 15px;
+            background-color: #34476b;
+            color: white;
+        }
+
+        #sendIcon {
+            font-size: 2.7rem;
+            // width: 3rem;
+            // height: 3rem;
+        }
+
+        .sendButtonDisabled {
+            background-color: hsla(240, 1%, 66%, 0.767);
+        }
     }
 
     .itemListConversContainerMe {
@@ -110,6 +122,11 @@
         overflow: hidden;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+
+        h3 {
+            text-align: center;
+            width: 60%;
+        }
     }
 
     .mainHeaderSide {
@@ -123,6 +140,20 @@
     }
 
     .mainHeaderRight {
+        justify-content: flex-end;
+    }
+
+    .mainHeaderSideWithTitle {
+        width: 20%;
+        display: flex;
+        align-items: center;
+    }
+
+    .mainHeaderLeftWithTitle {
+        justify-content: flex-start;
+    }
+
+    .mainHeaderRightWithTitle {
         justify-content: flex-end;
     }
 

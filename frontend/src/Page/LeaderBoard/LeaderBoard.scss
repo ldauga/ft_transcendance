@@ -1,0 +1,140 @@
+.leaderboard {
+	--nickname-size: 124px;
+	background: #FFFF;
+	margin-top: 10px;
+	table {
+		border: 1px solid rgba(#2e384e, 0.5);
+		border-collapse: collapse;
+		border-spacing: 0;
+		table-layout: fixed;
+		width: 100%;
+	
+		thead {
+			background-color: rgba(255,255,255,0.3)
+		}
+	
+		th {
+			padding: 10px 0 10px 3px;
+			text-align: left;
+			&:first-of-type {
+				width: var(--nickname-size);
+			}
+		}
+	
+		td {
+			border-bottom: 1px solid rgba(#2e384e, 0.5);
+			padding: 5px 0 5px 5px;
+			&:first-of-type {
+				width: var(--nickname-size);
+			}
+		}
+	}
+	
+	.tabContent {
+		height: 100%;
+		overflow-x:auto;
+		margin-top: 0px;
+		img {
+			vertical-align: middle;
+			--avatar-size: 27px;
+			height: var(--avatar-size);
+			width: var(--avatar-size);
+			// border: 4px solid green;
+			// padding: 6px;
+			border-radius: 50%;
+			position: relative;
+			object-fit: cover;
+		}
+
+		.element {
+			cursor: pointer;
+
+			transition: all .3s ease-in-out;
+		}
+		.element:hover {
+			background: rgba($color: #f1e8e6, $alpha: .3);
+		}
+	}
+
+	::-webkit-scrollbar {
+		width: 6px;
+	} 
+	::-webkit-scrollbar-track {
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	} 
+	::-webkit-scrollbar-thumb {
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	}
+
+	@media screen and (min-width: 425px) {
+		--nickname-size: 150px;
+		table {
+			thead {
+				font-size: 18px;
+			}
+			tbody {
+				font-size: 19px;
+			}
+			th {
+				padding: 15px 0 15px 6px;
+			}
+			td {
+				padding: 9px 0 9px 10px;
+			}
+		}
+		.tabContent {
+			img {
+				--avatar-size: 33px;
+			}
+		}
+	}
+	
+	@media screen and (min-width: 768px) {
+		--nickname-size: 150px;
+		table {
+			thead {
+				font-size: 21px;
+			}
+			tbody {
+				font-size: 22px;
+			}
+			th {
+				padding: 15px 0 15px 15px;
+			}
+			td {
+				padding: 9px 0 9px 25px;
+			}
+		}
+		.tabContent {
+			img {
+				--avatar-size: 45px;
+			}
+		}
+	}
+	
+	@media screen and (min-width: 1024px) {
+		--nickname-size: 260px;
+		width: 1024px;
+		margin: 0 auto;
+		margin-top: 66px;
+		table {
+			thead {
+				font-size: 24px;
+			}
+			tbody {
+				font-size: 25px;
+			}
+			th {
+				padding: 27px 0 27px 21px;
+			}
+			td {
+				padding: 12px 0 12px 28px;
+			}
+		}
+		.tabContent {
+			img {
+				--avatar-size: 54px;
+			}
+		}
+	}
+}

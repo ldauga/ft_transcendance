@@ -9,7 +9,6 @@ const axiosConfig = axios.create({
 
 axiosConfig.interceptors.response.use(
   response => { return response; },
-  // response => { console.log('interceptor response,', response); return response; },
   error => {
     axios.get('http://localhost:5001/auth/refresh', { withCredentials: true })
       .catch((error) => {

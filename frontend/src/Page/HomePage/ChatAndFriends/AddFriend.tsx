@@ -103,7 +103,7 @@ function AddFriend() {
     return (
         <div className="addFriendContainer">
             <Autocomplete
-                onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
+                onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
                 options={connectedClient.map((option) => option.username)}
                 renderInput={(params) => <TextField {...params} label="Invite friend" />}
                 // onChange={(event: any, newValue: string | null) => {
@@ -121,7 +121,7 @@ function AddFriend() {
                 className="AutocompleteInput"
                 sx={{ width: 300 }}
             />
-            <button className="addFriendButton" type="button" onClick={() => buttonAddFriend()}>
+            <button id="addFriendButton" type="button" onClick={() => buttonAddFriend()}>
                 Send
             </button>
         </div>

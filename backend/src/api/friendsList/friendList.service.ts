@@ -31,13 +31,14 @@ export class FriendListService {
 	}
 
 	async getUserFriendListWithLogin(login: string): Promise<FriendListEntity[]> {
+		//console.log("friendList.service store: ", login);
 		const matches = await this.FriendListRepository.find({
 			where: [
 				{ login_user1: login },
 				{ login_user2: login }
 			]
 		});
-		// console.log('matches', matches);
+		//console.log('matches', matches);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;
@@ -64,8 +65,8 @@ export class FriendListService {
 			id_user2: body.id_user2,
 			login_user1: body.login_user1,
 			login_user2: body.login_user2
-		}
-		)
+		});
+
 		if (!match)
 			return null;
 		return match;
@@ -80,6 +81,7 @@ export class FriendListService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
+		
 		const removeReturn = this.FriendListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
 		return true;

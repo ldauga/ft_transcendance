@@ -1,9 +1,12 @@
+import { Autocomplete, Button, TextField } from "@mui/material";
+import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
-import './CSS/SendChatMsg.css'
+import './CSS/SendChatMsg.scss'
+import './CSS/Convers.scss'
 
 function SendChatMsg() {
 
@@ -11,12 +14,39 @@ function SendChatMsg() {
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [text, setText] = useState('');
-    const [login, setLogin] = useState('');
+
+    const [messageText, setMessageText] = useState('');
+
+    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
+
+    const [inputValue, setInputValue] = useState('');
+
+    utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
+
+    utilsData.socket.on('getAllClientConnected', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log('getAllClientConnected = ', data);
+        const tmp: any[] = []
+        data.forEach(client => {
+            if (client.login != userData.userReducer.user?.login) {
+                const a = { id: client.id, username: client.login };
+                tmp.push(a);
+            }
+        })
+        setConnectedClient(tmp);
+        utilsData.socket.off('getAllClientConnected');
+        utilsData.socket.removeListener('getAllClientConnected');
+    })
+
+    useEffect(() => {
+        utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED');
+    }, []);
 
     async function sendMsg() {
+        if (text.length <= 0 || inputValue.length <= 0)
+            return;
         let test = false;
         console.log('sendMsg');
-        await axiosConfig.get('http://localhost:5001/user/login/' + login).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -46,9 +76,54 @@ function SendChatMsg() {
         });
     }
 
+    function SendButton() {
+        if (text.length <= 0 || inputValue.length <= 0) {
+            return (
+                <Button className="sendButtonDisabled" variant="contained" onClick={sendMsg} disabled={text.length <= 0 || inputValue.length <= 0}>
+                    <SendIcon id="sendIcon" />
+                </Button>
+            );
+        }
+        else {
+            return (
+                <Button variant="contained" onClick={sendMsg} disabled={text.length <= 0 || inputValue.length <= 0}>
+                    <SendIcon id="sendIcon" />
+                </Button>
+            );
+        }
+    };
+
     return (
         <div id="sendChatMsgContainer">
-            <div id="sendChatMsgFirstContainer">
+            <Autocomplete
+                onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
+                options={connectedClient.map((option) => option.username)}
+                renderInput={(params) => <TextField {...params} label="Select a user" />}
+                // onChange={(event: any, newValue: string | null) => {
+                //   setValue(newValue);
+                // }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+
+                // value={value}
+                onChange={(event: any, newValue: string | null) => {
+                    setInputValue(newValue || "");
+                }}
+                className="AutocompleteInput"
+                sx={{ width: 300 }}
+            />
+            <div className="sendZoneSendChatMsg">
+                <input
+                    value={text}
+                    onChange={e => setText(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') sendMsg() }}
+                    placeholder="Your message..."
+                />
+                <SendButton />
+            </div>
+            {/* <div id="sendChatMsgFirstContainer">
                 <input
                     value={login}
                     onChange={e => setLogin(e.target.value)}
@@ -65,7 +140,7 @@ function SendChatMsg() {
                 <button type="button" onClick={() => sendMsg()}>
                     Add Friend
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 }

@@ -2,9 +2,10 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/Rooms.css'
+import './CSS/Rooms.scss'
 import '../Homepage.scss'
-import { Checkbox } from '@mui/material';
+import { Button, Checkbox, TextField } from '@mui/material';
+import CreateIcon from '@mui/icons-material/Create';
 import axiosConfig from '../../../Utils/axiosConfig';
 
 function CreateRooms() {
@@ -48,29 +49,48 @@ function CreateRooms() {
         }
     };
 
+    function CreateButton() {
+        if (text.length <= 0) {
+            return (
+                <Button className="createButtonDisabled" variant="contained" onClick={createGroup} disabled={text.length <= 0} endIcon={<CreateIcon />} >
+                    Create
+                </Button>
+            );
+        }
+        else {
+            return (
+                <Button className="createButton" variant="contained" onClick={createGroup} disabled={text.length <= 0} endIcon={<CreateIcon />} >
+                    Create
+                </Button>
+            );
+        }
+    };
+
     return (
         <div id="CreateGroupContainer">
             <h3>Create a group</h3>
-            <input
+            <TextField id="createRoomTextField" label="Enter a name" variant="outlined" value={text} onChange={e => setText(e.target.value)} />
+            {/* <input
                 value={text}
                 onChange={e => setText(e.target.value)}
                 placeholder="Enter name"
             // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
-            />
+            /> */}
             <div id="PasswordOrNotContainer">
                 <p>Password</p>
                 <Checkbox
                     value={passwordOrNot}
                     onChange={e => setPasswordOrNot(!passwordOrNot)}
                 />
-                <input
+                <TextField id="createRoomPasswordTextField" label="Enter a password" variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
+                {/* <input
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Enter password"
                     disabled={!passwordOrNot}
                     id="PasswordOrNotContainerInput"
                 // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
-                />
+                /> */}
             </div>
             <div id="PrivateOrNotContainer">
                 <p>Private</p>
@@ -79,9 +99,10 @@ function CreateRooms() {
                     onChange={e => setPublicOrPrivate(!publicOrPrivate)}
                 />
             </div>
-            <button type="button" onClick={() => createGroup()}>
+            <CreateButton />
+            {/* <button type="button" onClick={() => createGroup()}>
                 Create Group
-            </button>
+            </button> */}
         </div>
     );
 };

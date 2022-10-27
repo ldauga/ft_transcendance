@@ -29,7 +29,7 @@ export class MessagesController {
 
   @Get('/:id1/:id2/:id3')
   @UseGuards(AuthGuard('jwt'))
-  public getUser(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number, @Param('id3', ParseIntPipe) id3: number): Promise<{ id: number, login: string }[]> {
+  public getUser(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number, @Param('id3', ParseIntPipe) id3: number): Promise<any[]> {
     const returnCheck = this.service.getRelationMessages(id1);
     return returnCheck;
   }

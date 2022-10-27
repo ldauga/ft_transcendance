@@ -2,10 +2,12 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/RoomsList.css'
+import './CSS/RoomsList.scss'
 import { constWhileSecu } from '../HomePage';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import axiosConfig from '../../../Utils/axiosConfig';
+import NoEncryptionIcon from '@mui/icons-material/NoEncryption';
+import LockIcon from '@mui/icons-material/Lock';
 
 function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
 
@@ -118,13 +120,13 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
                         itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
                             <div className="roomsInItem">
                                 <div className='roomListInItem1'>
-                                    <i className="bi bi-lock-fill"></i>
+                                    <LockIcon className='lockIcons' />
                                 </div>
                                 <p className='roomsItemRoomName'>{item.name}</p>
                                 <div className='roomListInItem2'>
-                                    <button type="button" onClick={() => handleClickOpen(item)}>
+                                    <Button className="joinButton" variant="contained" onClick={() => handleClickOpen(item)} >
                                         Join
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>)
@@ -134,12 +136,13 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
                         itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
                             <div className="roomsInItem">
                                 <div className='roomListInItem1'>
+                                    <NoEncryptionIcon className='lockIcons' />
                                 </div>
                                 <p className='roomsItemRoomName'>{item.name}</p>
                                 <div className='roomListInItem2'>
-                                    <button type="button" onClick={() => join(item)}>
+                                    <Button className="joinButton" variant="contained" onClick={() => join(item)} >
                                         Join
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>)
@@ -158,11 +161,11 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
     return (
         <div id="roomsAff">
             <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
+                <div className="mainHeaderLeftWithTitle mainHeaderSideWithTitle">
                     <button onClick={exit} className="bi bi-arrow-left"></button>
                 </div>
                 <h3>Groups List</h3>
-                <div id="roomsHeaderRight" className="mainHeaderRight mainHeaderSide">
+                <div id="roomsHeaderRight" className="mainHeaderRightWithTitle mainHeaderSideWithTitle">
                 </div>
             </div>
             <div id="mainAffRoomsLIst">

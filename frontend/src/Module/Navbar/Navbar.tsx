@@ -1,4 +1,4 @@
-import { Logout, Person, Settings } from '@mui/icons-material';
+import { Leaderboard, Logout, Person, Settings } from '@mui/icons-material';
 import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -196,19 +196,19 @@ function NavBar() {
 						transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 						anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 					>
-						<MenuItem component={Link} href="/Profile">
+						<MenuItem component={Link} href={`/Profile/${persistantReducer.userReducer.user!.login}`}>
 							<ListItemIcon>
 								<Person fontSize="small" />
 							</ListItemIcon>
 							Profile
 						</MenuItem>
-						<Divider />
-						<MenuItem component={Link} href="/Settings">
+						<MenuItem component={Link} href="/LeaderBoard">
 							<ListItemIcon>
-								<Settings fontSize="small" />
+								<Leaderboard fontSize="small" />
 							</ListItemIcon>
-							Settings
+							Leaderboard
 						</MenuItem>
+						<Divider />
 						<MenuItem onClick={logout}>
 							<ListItemIcon>
 								<Logout fontSize="small" />

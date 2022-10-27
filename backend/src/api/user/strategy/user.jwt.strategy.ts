@@ -14,7 +14,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         super({
             ignoreExpiration: true,
             secretOrKey: process.env.SECRET,
-            passthrough: true,
             jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
                 let data = request?.cookies["auth-cookie"];
                 if (!data) {
@@ -30,8 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         if (!user)
             throw new UnauthorizedException('User not found.')
         let now = Date.now().toString().substring(0, 10);
-        //console.log('now:', now);
-        //console.log('exp:', payload.exp);
         if (payload.exp <= now) {
             throw new UnauthorizedException('Expired access token');
         }
