@@ -122,6 +122,11 @@
         overflow: hidden;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+
+        h3 {
+            text-align: center;
+            width: 60%;
+        }
     }
 
     .mainHeaderSide {
@@ -135,6 +140,20 @@
     }
 
     .mainHeaderRight {
+        justify-content: flex-end;
+    }
+
+    .mainHeaderSideWithTitle {
+        width: 20%;
+        display: flex;
+        align-items: center;
+    }
+
+    .mainHeaderLeftWithTitle {
+        justify-content: flex-start;
+    }
+
+    .mainHeaderRightWithTitle {
         justify-content: flex-end;
     }
 

@@ -93,7 +93,7 @@ export class MessagesService {
 				}
 			}
 		});
-		console.log("returnArray : ", returnArray);
+		//console.log("returnArray : ", returnArray);
 		if (!returnArray)
 			return null;
 		return returnArray;
