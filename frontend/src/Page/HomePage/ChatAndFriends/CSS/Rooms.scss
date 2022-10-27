@@ -33,6 +33,15 @@
             }
         }
     }
+
+    #roomsHeader {
+        display: flex;
+    }
+
+    #roomsHeaderRight {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 #mainAffRoomsBig {
@@ -43,11 +52,6 @@
 #mainAffRoomsSmall {
     overflow: scroll;
     height: 68%;
-}
-
-#roomsHeaderRight {
-    display: flex;
-    justify-content: flex-end;
 }
 
 #CreateGroupContainer {
