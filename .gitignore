@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 .vscode
 **/.env
-=======
-<<<<<<< HEAD
->>>>>>> master
+
 **/node_modules
 .DS_Store
-=======
+
 node_modules
->>>>>>> front-home
