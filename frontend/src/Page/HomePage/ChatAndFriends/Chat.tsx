@@ -7,7 +7,7 @@ import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
 
-function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
+function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setRooms: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -50,6 +50,11 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         else
             setSendChatMsg(true);
     }
+
+    const handleClickRooms = () => {
+        props.setChat(false);
+        props.setRooms(true);
+    };
 
     const getListItem = async () => {
         let relationList: any[] = [];
@@ -114,11 +119,12 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
                 <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeChat} className="bi bi-x-lg"></button>
+                    <button onClick={closeChat} className="bi bi-x"></button>
                 </div>
-                <h3>Messages</h3>
+                <h3>Chat</h3>
                 <div className="mainHeaderRight mainHeaderSide">
-                    <button onClick={openSendChatMsg} className="bi bi-send-fill"></button>
+                    <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+                    <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
                 </div>
             </div>
             {isSendChatMsg && <SendChatMsg />}
