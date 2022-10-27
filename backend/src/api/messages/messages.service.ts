@@ -105,7 +105,12 @@ export class MessagesService {
 			userOrRoom: body.userOrRoom,
 			room_id: body.room_id,
 			room_name: body.room_name,
-			text: body.text
+			text: body.text,
+			year: body.year,
+			month: body.month,
+			day: body.day,
+			hour: body.hour,
+			minute: body.minute
 		}
 		)
 		if (!newMessage)

@@ -6,7 +6,6 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -25,23 +24,11 @@ export class AuthService {
 	private headers: { Authorization: string };
 	private logger: Logger = new Logger('AuthService');
 
-	/*
-    *   @query - contient la variable 'code' reçue via la méthode GET permettant d'identifier l'utilisateur qui s'est connecté
-    *   @token - contient le retour de la requête en méthode POST, afin de récupérer "l'acccess_token"
-    *   @access_token - token permettant d'effectuer des requêtes sur l'API 42
-    *   @data - contient le resultat de la requête permettant d'obtenir un profil Intra 42
-    *
-    *   returns: @accessToken
-    *
-    *   Récupère les informations de l'utilisateur venant de se log avec l'Intra 42 et créer un profil s'il n'existe pas.
-    *   La fonction retourne un "accessToken", qui devra être transmis aux routes protégées afin d'effectuer des requêtes.
-    */
-
 	async login(req: any) {
+		console.log(req);
 		try {
 			const token = this.http.post(`${this.API_authorizationURI}`,
 			`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
-
 			this.accessToken = (await lastValueFrom(token)).data.access_token;
 			this.headers = { Authorization: `Bearer ${this.accessToken}` };
 
@@ -75,12 +62,6 @@ export class AuthService {
 
 	async generateTwoFactorAuthenticationSecret(refreshToken: string, request: Request) {
 		const secret = authenticator.generateSecret();
-		// const saltRounds = 10;
-		// const hash = await bcrypt.hash(secret, saltRounds);
-		// console.log(hash);
-		// const isMatch = await bcrypt.compare(secret, hash);
-		// console.log(isMatch);
-	
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);
 		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);
 		

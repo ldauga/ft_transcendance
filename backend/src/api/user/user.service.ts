@@ -95,7 +95,7 @@ export class UserService {
 		user.nickname = body.login;
 		user.login = body.login;
 		user.rank = 800;
-		user.profile_pic = `https://cdn.intra.42.fr/users/${user.login}.jpg`;
+		user.profile_pic = body.image_url;
 
 		return this.userRepository.save(user);
 	}

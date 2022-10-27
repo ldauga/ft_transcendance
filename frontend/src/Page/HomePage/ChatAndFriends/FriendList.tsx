@@ -2,20 +2,34 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
-import './CSS/FriendList.css';
+import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
 import BanUser from "./BanUser";
 import axiosConfig from "../../../Utils/axiosConfig";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Person, Settings } from "@mui/icons-material";
+import FriendListItem from "./FriendListItem";
 
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
 
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const open = Boolean(anchorEl);
+
+	const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
+	const open2 = Boolean(anchorEl2);
+
 	const [itemListHistory, setItemListHistory] = useState(Array<any>);
 	const [update, setUpdate] = useState(false);
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
+
+	const [friendArr, setFriendArr] = useState(Array<any>);
+
+	const info = { user: userData.userReducer.user };
 
 	const handleClickClose = () => {
 		props.closeFriendList();
@@ -44,20 +58,32 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 		props.setRooms(true);
 	};
 
+	utilsData.socket.removeAllListeners('friendConnection');
+
+	utilsData.socket.on('friendConnection', function (friendConnection: boolean) {
+		console.log('friendConnection = ', friendConnection);
+		if (friendConnection == true)
+			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
+		utilsData.socket.off('friendConnection');
+		utilsData.socket.removeListener('friendConnection');
+	})
+
+	utilsData.socket.removeAllListeners('friendDeconnection');
+
+	utilsData.socket.on('friendDeconnection', function (friendDeconnection: boolean) {
+		console.log('friendDeconnection = ', friendDeconnection);
+		if (friendDeconnection == true)
+			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
+		utilsData.socket.off('friendDeconnection');
+		utilsData.socket.removeListener('friendDeconnection');
+	})
+
 	utilsData.socket.removeAllListeners('returnRemoveFriend');
 
 	utilsData.socket.on('returnRemoveFriend', function (returnRemoveFriend: boolean) {
 		console.log('returnRemoveFriend = ', returnRemoveFriend);
-		if (returnRemoveFriend == true) {
-			const length = itemListHistory.length;
-			let secu = 0;
-			while (length == itemListHistory.length && secu < 5) {
-				setItemListHistory([]);
-				console.log('test');
-				getListItem();
-				secu++;
-			}
-		}
+		if (returnRemoveFriend == true)
+			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('returnRemoveFriend');
 		utilsData.socket.removeListener('returnRemoveFriend');
 	})
@@ -66,62 +92,41 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	utilsData.socket.on('newFriendReceived', function (data: any) {
 		console.log('newFriendReceived = ', data);
-		const length = itemListHistory.length;
-		let secu = 0;
-		while (length == itemListHistory.length && secu < 5) {
-			setItemListHistory([]);
-			getListItem();
-			secu++;
-		}
+		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('newFriendReceived');
 		utilsData.socket.removeListener('newFriendReceived');
 	})
 
-	const removeFriend = (item: { id_user1: number, id_user2: number, login_user1: string, login_user2: string }) => {
-		utilsData.socket.emit('removeFriend', item);
-		setUpdate(true);
-	};
+	const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
 
-	const openChat = async (item: { id_user1: number, id_user2: number, login_user1: string, login_user2: string }) => {
+	utilsData.socket.removeAllListeners('getAllFriendConnected');
 
-		let idTmp = item.id_user1;
-		if (userData.userReducer.user?.id == item.id_user1)
-			idTmp = item.id_user2;
-		let loginTmp = item.login_user1;
-		if (userData.userReducer.user?.login == item.login_user1)
-			loginTmp = item.login_user2;
-		props.setConversCorrespondantData({ id: idTmp, login: loginTmp });
-		props.setFriendList(false);
-		props.setConvers(true);
-	};
-
-	const getListItem = async () => {
-		await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id).then(async (res) => {
-			console.log("get friendList");
-			let itemList: any[] = []
-			console.log('res.data = ', res.data);
-			res.data.forEach((item: { id_user1: number, id_user2: number, login_user1: string, login_user2: string }) => {
-				let friendLogin = item.login_user1;
-				if (item.id_user1 == userData.userReducer.user?.id)
-					friendLogin = item.login_user2;
-				const profile_pic = `https://cdn.intra.42.fr/users/${friendLogin}.jpg`;
-				console.log("profile_pic", profile_pic);
-				itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-					<div className="inItemFriendList">
-						<div className="inItemFriendList_left">
-							<img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + friendLogin) }} src={profile_pic}></img>
-							<p>{friendLogin}</p>
-						</div>
-						<div className="inItemFriendList_right">
-							<button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
-							<button onClick={() => openChat(item)} className="bi bi-chat"></button>
-							<button onClick={() => removeFriend(item)} className="bi bi-x-lg"></button>
-						</div>
-					</div>
-				</div>)
-			})
-			setItemListHistory(itemList);
+	utilsData.socket.on('getAllFriendConnected', function (data: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }[]) {
+		console.log('getAllFriendConnected = ', data);
+		getListItem(data);
+		const tmp: any[] = []
+		data.forEach(client => {
+			if (client.user.login != userData.userReducer.user?.login) {
+				const a = { id: client.user.id, username: client.user.login };
+				tmp.push(a);
+			}
 		})
+		setConnectedClient(tmp);
+		utilsData.socket.off('getAllFriendConnected');
+		utilsData.socket.removeListener('getAllFriendConnected');
+	})
+
+	const getListItem = async (data: any) => {
+		console.log("get friendList");
+		let itemList: any[] = []
+		console.log('data = ', data);
+		data.forEach((item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }) => {
+			console.log("item: ", item);
+			itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
+				<FriendListItem setFriendList={props.setFriendList} setConvers={props.setConvers} setConversCorrespondantData={props.setConversCorrespondantData} setOldAff={props.setOldAff} closeFriendList={props.closeFriendList} item={item} setUpdate={setUpdate} />
+			</div>)
+		})
+		setItemListHistory(itemList);
 	}
 
 	function ItemsFriendList() {
@@ -133,23 +138,88 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	useEffect(() => {
-		console.log("friendlist useEffect()");
-		getListItem();
-		props.setOldAff("FriendList");
+		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 	}, [props]);
+
+	const handleClickOpenOptions = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseOptions = () => {
+		setAnchorEl(null);
+	};
+
+	function MenuOptions() {
+		return (
+			<Menu
+				disableAutoFocusItem
+				anchorEl={anchorEl}
+				id="account-menu"
+				open={open}
+				onClose={handleCloseOptions}
+				onClick={handleCloseOptions}
+				PaperProps={{
+					elevation: 0,
+					sx: {
+						overflow: 'visible',
+						filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+						mt: 1.5,
+						'& .MuiAvatar-root': {
+							width: 32,
+							height: 32,
+							ml: -0.5,
+							mr: 1,
+						},
+						'&:before': {
+							content: '""',
+							display: 'block',
+							position: 'absolute',
+							top: 0,
+							right: 14,
+							width: 10,
+							height: 10,
+							bgcolor: 'background.paper',
+							transform: 'translateY(-50%) rotate(45deg)',
+							zIndex: 0,
+						},
+					},
+				}}
+				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+			>
+				<MenuItem onClick={handleClickAddFriend}>
+					<ListItemIcon>
+						<Person fontSize="small" />
+					</ListItemIcon>
+					Add Friend
+				</MenuItem>
+				<Divider />
+				<MenuItem onClick={handleClickInvitationRequest}>
+					<ListItemIcon>
+						<Settings fontSize="small" />
+					</ListItemIcon>
+					Invitation Request
+				</MenuItem>
+			</Menu>
+		);
+	};
+
+	// <button onClick={handleClickBanUser}><i className="bi bi-person-x-fill"></i></button>
+	// <button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
+	// <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+	// <button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
 
 	return (
 		<div className="mainAffGene">
-			<div id="header" className="mainHeader">
+			<div className="mainHeader">
 				<div className="mainHeaderLeft mainHeaderSide">
 					<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
 				</div>
-				<h3>Friends</h3>
 				<div className="mainHeaderRight mainHeaderSide">
-					<button onClick={handleClickBanUser}><i className="bi bi-person-x-fill"></i></button>
-					<button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
-					<button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
-					<button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
+					<IconButton onClick={handleClickOpenOptions}>
+						<MoreVertIcon />
+					</IconButton>
+					<MenuOptions />
 				</div>
 			</div>
 			{newAddFriend && <AddFriend />}

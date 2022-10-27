@@ -1,22 +1,25 @@
+import { Autocomplete, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
-import './CSS/AddFriend.css';
+import './CSS/AddFriend.scss';
 
 function AddFriend() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [text, setText] = useState('');
+    const [inputValue, setInputValue] = useState('');
+
+    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
 
     async function buttonAddFriend() {
         let test = false;
         console.log('addFriend');
-        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
-            setText("");
+        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
+            setInputValue("");
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -75,16 +78,51 @@ function AddFriend() {
         });
     }
 
+    utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
+
+    utilsData.socket.on('getAllClientConnectedWithoutFriend', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log('getAllClientConnectedWithoutFriend = ', data);
+        const tmp: any[] = []
+        data.forEach(client => {
+            if (client.login != userData.userReducer.user?.login) {
+                const a = { id: client.id, username: client.login };
+                tmp.push(a);
+            }
+        })
+        setConnectedClient(tmp);
+        utilsData.socket.off('getAllClientConnectedWithoutFriend');
+        utilsData.socket.removeListener('getAllClientConnectedWithoutFriend');
+    })
+
+    useEffect(() => {
+        utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS');
+    }, []);
+
+    // const [value, setValue] = React.useState<string | null>;
+
     return (
         <div className="addFriendContainer">
-            <input
-                value={text}
-                onChange={e => setText(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') buttonAddFriend() }}
-                placeholder="Enter login"
+            <Autocomplete
+                onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
+                options={connectedClient.map((option) => option.username)}
+                renderInput={(params) => <TextField {...params} label="Invite friend" />}
+                // onChange={(event: any, newValue: string | null) => {
+                //   setValue(newValue);
+                // }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+
+                // value={value}
+                onChange={(event: any, newValue: string | null) => {
+                    setInputValue(newValue || "");
+                }}
+                className="AutocompleteInput"
+                sx={{ width: 300 }}
             />
-            <button type="button" onClick={() => buttonAddFriend()}>
-                Add Friend
+            <button className="addFriendButton" type="button" onClick={() => buttonAddFriend()}>
+                Send
             </button>
         </div>
     )
