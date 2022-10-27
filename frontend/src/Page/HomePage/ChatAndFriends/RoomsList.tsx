@@ -161,11 +161,11 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
     return (
         <div id="roomsAff">
             <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
+                <div className="mainHeaderLeftWithTitle mainHeaderSideWithTitle">
                     <button onClick={exit} className="bi bi-arrow-left"></button>
                 </div>
                 <h3>Groups List</h3>
-                <div id="roomsHeaderRight" className="mainHeaderRight mainHeaderSide">
+                <div id="roomsHeaderRight" className="mainHeaderRightWithTitle mainHeaderSideWithTitle">
                 </div>
             </div>
             <div id="mainAffRoomsLIst">

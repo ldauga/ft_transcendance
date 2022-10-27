@@ -85,6 +85,7 @@ function getDay() {
   let tmp = date.split(' ');
   if (!tmp || !tmp[2])
     return ("");
+  console.log("get day: ", tmp[2]);
   return (tmp[2]);
 }
 
@@ -96,7 +97,7 @@ function getHour() {
   if (!tmp || !tmp[4])
     return ("");
   let tmp2 = tmp[4].split(':');
-  if (!tmp2 || tmp2[0])
+  if (!tmp2 || !tmp2[0])
     return ("");
   return (tmp2[0]);
 }
@@ -109,7 +110,7 @@ function getMinute() {
   if (!tmp || !tmp[4])
     return ("");
   let tmp2 = tmp[4].split(':');
-  if (!tmp2 || tmp2[1])
+  if (!tmp2 || !tmp2[1])
     return ("");
   return (tmp2[1]);
 }
@@ -827,7 +828,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         hour: getHour(),
         minute: getMinute()
       }
-      console.log("msg: ", newMsg);
+      //console.log("msg: ", newMsg);
       //const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
       const returnMsg = await this.MessagesService.createMessages(newMsg);
       //console.log('returnMsg in eventgateway', returnMsg);
