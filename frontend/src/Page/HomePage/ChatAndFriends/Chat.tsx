@@ -58,13 +58,13 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const getListItem = async () => {
         let relationList: any[] = [];
-        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('http://10.3.3.5:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             relationList = res.data;
         });
         console.log("relationList: ", relationList);
         for (let i = 0; i < relationList.length; i++) {
             if (!relationList[i].userOrRoom) {
-                const user = await axiosConfig.get('http://localhost:5001/user/id/' + relationList[i].id);
+                const user = await axiosConfig.get('http://10.3.3.5:5001/user/id/' + relationList[i].id);
                 console.log("user.data: ", user.data, "i: ", i);
                 relationList[i].nickname = user.data.nickname;
                 relationList[i].profile_pic = user.data.profile_pic;

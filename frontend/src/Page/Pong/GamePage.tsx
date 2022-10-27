@@ -263,7 +263,7 @@ const GamePage = (props: any) => {
 
                 resetCanvas()
 
-                drawSpectator(room)
+                // drawSpectator(room)
 
                 drawFont(ctx, room)
 

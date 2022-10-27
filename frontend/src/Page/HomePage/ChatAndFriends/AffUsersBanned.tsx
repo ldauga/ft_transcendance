@@ -66,7 +66,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     const getListItem = async () => {
         let itemList: any[] = [];
-        await axiosConfig.get('http://localhost:5001/blackList/getAllUserBan/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('http://10.3.3.5:5001/blackList/getAllUserBan/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login).then(async (res) => {
             res.data.forEach((item: { id_banned: number, login_banned: string }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login_banned}.jpg`;
                 itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>

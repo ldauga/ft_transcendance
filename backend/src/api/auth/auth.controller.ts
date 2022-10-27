@@ -15,7 +15,7 @@ export class AuthController {
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
 		if (query.error == "access_denied") {
-			res.status(401).redirect(`http://localhost:3000/`);
+			res.status(401).redirect(`http://10.3.3.5:3000/`);
 			return ;
 		}
 
@@ -27,7 +27,7 @@ export class AuthController {
 		};
 
 		res.cookie('auth-cookie', secretData, { httpOnly: true });
-		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
+		res.status(302).redirect(`http://10.3.3.5:3000/Login/Callback`);
 	}
 
 	@Get('/loginSans42/:login')
@@ -40,7 +40,7 @@ export class AuthController {
 		};
 		
 		res.cookie('auth-cookie', secretData, { httpOnly: true });
-		res.status(302).redirect(`http://localhost:3000/Login/Callback`);
+		res.status(302).redirect(`http://10.3.3.5:3000/Login/Callback`);
 	}
 
 	@Get('2fa/generate')

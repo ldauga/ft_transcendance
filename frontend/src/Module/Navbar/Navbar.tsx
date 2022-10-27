@@ -43,7 +43,7 @@ function NavBar() {
 
 		delAllNotif();
 		setTwoFactor(false);
-		utilsData.socket.emit('deconnection', persistantReducer.userReducer.user);
+		window.location.replace('http://10.3.3.5:3000')
 	}
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)

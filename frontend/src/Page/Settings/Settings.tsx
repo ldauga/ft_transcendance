@@ -31,14 +31,14 @@ function Settings() {
 		param(true);
 
 		if (param == setOpenEditZone2fa) {
-			axiosConfig.get('http://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data)))
+			axiosConfig.get('http://10.3.3.5:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data)))
 		}
 	};
 
 	const handleClose = (param: any) => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => {console.log('err', err)})
+			axiosConfig.post('http://10.3.3.5:5001/user/updateNickname', { nickname: userParameterNewNickname}).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => {console.log('err', err)})
 
 		if (userParameterNewProfilePicture != null) {
 
@@ -47,7 +47,7 @@ function Settings() {
 
 			var config = {
 				method: 'post',
-				url: 'http://localhost:5001/user/upload',
+				url: 'http://10.3.3.5:5001/user/upload',
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
@@ -69,7 +69,7 @@ function Settings() {
 	};
 
 	const sendGetRequest = (value: string) => {
-		axiosConfig.get('http://localhost:5001/auth/2fa/turn-on/' + value)
+		axiosConfig.get('http://10.3.3.5:5001/auth/2fa/turn-on/' + value)
 		.then(res => {
 			setTwoFactor(true);
 			setUserParameter2FACode('');
@@ -117,7 +117,7 @@ function Settings() {
 									/>
 								</DialogContent>
 								<DialogActions>
-									<Button onClick={e => { if (userParameterNewNickname!.length >= 3 && userParameterNewNickname!.length <= 30) handleClose(setOpenEditZoneNickname); else }}>Edit</Button>
+									<Button onClick={e => { if (userParameterNewNickname!.length >= 3 && userParameterNewNickname!.length <= 30) handleClose(setOpenEditZoneNickname); }}>Edit</Button>
 								</DialogActions>
 							</Dialog>
 						</div>
@@ -183,7 +183,7 @@ function Settings() {
 							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
+									<button onClick={() => { axiosConfig.get('http://10.3.3.5:5001/auth/2fa/turn-off/').then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
 								</div>
 							</>
 						}

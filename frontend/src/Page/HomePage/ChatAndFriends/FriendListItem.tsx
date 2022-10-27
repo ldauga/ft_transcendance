@@ -81,13 +81,17 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem onClick={() => { }}>
-                    <ListItemIcon>
-                        <Person fontSize="small" />
-                    </ListItemIcon>
-                    Spectate Friend
-                </MenuItem>
-                <Divider />
+                {props.item.status == 'in-game' ?
+                    <>
+                        <MenuItem onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: props.item.user.login }) }}>
+                            <ListItemIcon>
+                                <Person fontSize="small" />
+                            </ListItemIcon>
+                            Spectate Friend
+                        </MenuItem>
+                        <Divider />
+                    </> :
+                    <></>}
                 <MenuItem onClick={removeFriend}>
                     <ListItemIcon>
                         <Person fontSize="small" />
@@ -113,26 +117,18 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     }, [props]);
 
     function AffStatus() {
-        if (props.item.status == "connected")
-            return (
-                <div className="itemFriendListStatus">
-                    <div className="itemFriendListStatusPoint"></div>
-                    <p>{props.item.status}</p>
-                </div>
-            );
-        else
-            return (
-                <div className="itemFriendListStatus">
-                    <div className="itemFriendListStatusPoint"></div>
-                    <p>{props.item.status}</p>
-                </div>
-            );
+        return (
+            <div className="itemFriendListStatus">
+                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'connected' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
+                <p>{props.item.status}</p>
+            </div>
+        );
     };
 
     return (
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
-                <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.item.user.login) }} ></img>
+                <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://10.3.3.5:3000/Profile/' + props.item.user.login) }} ></img>
                 <p>{props.item.user.nickname}</p>
                 <AffStatus />
             </div>

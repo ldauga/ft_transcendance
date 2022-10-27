@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { removeEmitHelper } from "typescript";
 import { RoomsDto } from "./dtos/rooms.dto";
 import { RoomsEntity } from "./rooms.entity";
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class RoomsService {
@@ -88,8 +87,8 @@ export class RoomsService {
 
 	async createRoom(body: any): Promise<RoomsEntity> {
 		const saltOrRounds = 10;
-		const hash = await bcrypt.hash(body.password, saltOrRounds);
-		console.log(hash);
+		// const hash = await bcrypt.hash(body.password, saltOrRounds);
+		// console.log(hash);
 
 		const returnRoom = this.RoomsRepository.save({
 			name: body.name,
