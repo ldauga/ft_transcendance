@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { UserService } from "../user/user.service";
 import { ParticipantsDto } from "./dtos/participants.dto";
 import { ParticipantsEntity } from "./participants.entity";
 
@@ -12,6 +13,8 @@ export class ParticipantsService {
 	) { }
 
 	private logger: Logger = new Logger('participants');
+
+	private readonly UserService: UserService
 
 	public async getAllParticipants(): Promise<{ login: string, room_name: string }[]> {
 		let arrReturn: { login: string, room_name: string }[] = [];
@@ -96,6 +99,26 @@ export class ParticipantsService {
 		return returnParticipant;
 	}
 
+	async removeAdmin(body: any): Promise<ParticipantsEntity> {
+		const returnRemoveParticipant = this.removeParticipant(body.user_login, body.room_name);
+		console.log("returnRemoveParticipant service: ", returnRemoveParticipant);
+		if (!returnRemoveParticipant)
+			return null;
+		const newParticipant = {
+			user_id: body.user_id,
+			user_login: body.user_login,
+			room_id: body.room_id,
+			room_name: body.room_name,
+			admin: false,
+			publicOrPrivate: body.publicOrPrivate
+		};
+		const returnParticipant = this.createParticipant(newParticipant);
+		console.log("returnParticipant service: ", returnParticipant);
+		if (!returnParticipant)
+			return null;
+		return returnParticipant;
+	}
+
 	async createParticipant(body: any): Promise<ParticipantsEntity> {
 		const returnParticipant = this.ParticipantsRepository.save({
 			user_id: body.user_id,
@@ -124,18 +147,40 @@ export class ParticipantsService {
 		return true;
 	}
 
-	public async getAllUsersForOneRoom(name: string): Promise<{ login: string, id: number }[]> {
+	public async getAllUsersForOneRoom(name: string): Promise<{ login: string, id: number, admin: boolean }[]> {
 		const participants = await this.ParticipantsRepository.find({
 			where: [
 				{ room_name: name }
 			]
 		});
-		let arrParticipants: { login: string, id: number }[] = [];
+		let arrParticipants: { login: string, id: number, admin: boolean }[] = [];
 		if (!participants)
 			return arrParticipants;
-		participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id })));
+		participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id, admin: item.admin })));
 		return arrParticipants;
 	}
+
+	// public async getAllUsersForRoom(name: string): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {
+	// 	const participants = await this.ParticipantsRepository.find({
+	// 		where: [
+	// 			{ room_name: name }
+	// 		]
+	// 	});
+	// 	let arrParticipants: { login: string, id: number }[] = [];
+	// 	console.log("participants: ", participants);
+	// 	if (!participants)
+	// 		return null;
+	// 	await participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id })));
+	// 	let arrUsers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
+	// 	await arrParticipants.forEach(async item => {
+	// 		console.log("test1");
+	// 		const user = await this.UserService.getUserById(item.id);
+	// 		console.log("user: ", user);
+	// 		arrUsers.push({ id: user.id, login: user.login, nickname: user.nickname, profile_pic: user.profile_pic });
+	// 	});
+	// 	console.log("arrUsers: ", arrUsers);
+	// 	return arrUsers;
+	// }
 
 	public async getAllRoomUser(login: string): Promise<{ name: string, id: number }[]> {
 		const participants = await this.ParticipantsRepository.find({

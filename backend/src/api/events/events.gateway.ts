@@ -345,7 +345,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               const _room = arrRoom.find(obj => obj.id == item.room_id);
               if (_room) {
                 let i = 0;
-                while (_room.users.length >= i) {
+                while (_room.users.length > i) {
                   this.server.to(_room.users[i].id).emit('debanedUserInRoom', true);
                   i++;
                 }
@@ -372,7 +372,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             const _room = arrRoom.find(obj => obj.id == item.room_id);
             if (_room) {
               let i = 0;
-              while (_room.users.length >= i) {
+              while (_room.users.length > i) {
                 this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
                 i++;
               }
@@ -716,9 +716,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeParticipant(client: Socket, data: any) {
     this.logger.log(`${client.id} want remove Participant`);
     const _client_sender = arrClient.find(obj => obj.id == client.id);
-    const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
-    if (!verifIfAdmin)
-      return;
+    if (_client_sender.username != data.login) {
+      console.log(_client_sender.username, " want remove ", data.login);
+      const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
+      if (!verifIfAdmin) {
+        console.log("Fail, he isn't admin");
+        return;
+      }
+    }
+    else
+      console.log(_client_sender.username, " want quit room ");
     const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
     console.log("verifIfReceiverIsAdmin: ", verifIfReceiverIsAdmin);
     if (verifIfReceiverIsAdmin) {
@@ -778,7 +785,47 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log("room: ", a);
       let i = 0;
       while (i < a.users.length) {
-        this.server.to(a.users[i].id).emit('newParticipant', true);
+        console.log("refreshParticipants to ", a.users[i].username)
+        this.server.to(a.users[i].id).emit('refreshParticipants', true);
+        i++;
+      }
+    }
+  }
+
+  @SubscribeMessage('removeAdmin')
+  async removeAdmin(client: Socket, data: any) {
+    let verif = false;
+    console.log("remove admin");
+    //const checkIfOwner = await this.http.get('http://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    const checkIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.login_sender);
+    if (checkIfOwner == true)
+      verif = true;
+    // const checkIfAdmin = await this.http.get('http://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
+    const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login_sender, data.room_name);
+    if (checkIfAdmin == true)
+      verif = true;
+    //const checkParticipant = await this.http.get('http://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
+    const checkParticipant = await this.ParticipantsService.checkAdmin(data.login_admin, data.room_name);
+    this.logger.log(`${checkParticipant} data`);
+    console.log("verif : ", verif);
+    if (checkParticipant == true && verif == true) {
+      this.logger.log(`${client.id} remove Admin: `, data.login_admin);
+      const newParticipant = {
+        user_id: data.id_admin,
+        user_login: data.login_admin,
+        room_id: data.room_id,
+        room_name: data.room_name,
+        admin: true
+      };
+      //const participantReturn = await this.http.post('http://localhost:5001/participants/admin', newParticipant);
+      const participantReturn = await this.ParticipantsService.removeAdmin(newParticipant);
+      console.log('participantReturn in eventgateway', participantReturn);
+      const a = arrRoom.find(obj => obj.name == data.room_name);
+      console.log("room: ", a);
+      let i = 0;
+      while (i < a.users.length) {
+        console.log("refreshParticipants to ", a.users[i].username)
+        this.server.to(a.users[i].id).emit('refreshParticipants', true);
         i++;
       }
     }
@@ -846,9 +893,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         let i = 0;
         //console.log("room ", room);
         //console.log("room.users ", room.users);
-        //console.log("room.users.length: ", room.users.length);
+        console.log("room.users.length: ", room.users.length);
         while (i < room.users.length) {
-          //console.log('new Msg to ', room.users[i].username);
+          console.log('new Msg to ', room.users[i].username);
           this.server.to(room.users[i].id).emit('newMsgReceived', data);
           i++;
         }
