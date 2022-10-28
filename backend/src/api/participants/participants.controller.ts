@@ -29,9 +29,16 @@ export class ParticipantsController {
 
   @Get('/allUserForOneRoom/:roomName')
   @UseGuards(AuthGuard('jwt'))
-  public getAllUsersForOneRoom(@Param('roomName') name: string): Promise<{ login: string, id: number }[]> {
+  public getAllUsersForOneRoom(@Param('roomName') name: string): Promise<{ login: string, id: number, admin: boolean }[]> {
     return this.service.getAllUsersForOneRoom(name);
   }
+
+  // @Get('/allUsersForRoom/:roomName/:roomId')
+  // @UseGuards(AuthGuard('jwt'))
+  // public getAllUsersForRoom(@Param('roomName') name: string, @Param('roomId') id: number): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {
+  //   console.log("controller getusers");
+  //   return this.service.getAllUsersForRoom(name);
+  // }
 
   @Get('/check/:login/:name')
   @UseGuards(AuthGuard('jwt'))

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/AffParticipantsRooms.css'
+import './CSS/AffParticipantsRooms.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import BanUser from './BanUser';
