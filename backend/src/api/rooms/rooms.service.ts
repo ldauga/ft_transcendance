@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { removeEmitHelper } from "typescript";
 import { RoomsDto } from "./dtos/rooms.dto";
 import { RoomsEntity } from "./rooms.entity";
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class RoomsService {
