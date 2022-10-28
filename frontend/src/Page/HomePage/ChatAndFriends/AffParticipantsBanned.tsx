@@ -154,7 +154,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         if (isAdmin)
             return (
                 <div className="mainHeaderRight mainHeaderSide">
-                    <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
+                    {/* <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button> */}
                 </div>
             );
         else
@@ -217,7 +217,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
                 <h3>Banned Users</h3>
                 <RightHeader />
             </div>
-            {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
+            {/* {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />} */}
             <AffList />
         </div>
     );

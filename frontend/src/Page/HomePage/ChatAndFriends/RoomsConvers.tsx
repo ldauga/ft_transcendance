@@ -12,13 +12,15 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import { constWhileSecu } from '../HomePage';
 import ChangeRoomPassword from './ChangeRoomPassword';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Person, Settings } from "@mui/icons-material";
+import { Logout, Person, Settings } from "@mui/icons-material";
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -39,6 +41,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const bottom = useRef<null | HTMLDivElement>(null);
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+    const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
+
+    const [password, setPassword] = useState('');
+
+    const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     // const scrollToBottom = useScrollToBottom();
 
@@ -279,6 +287,35 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         bottom.current?.scrollIntoView();
     }, [props, isConversRooms]);
 
+    const handleClickOpenDialogChangePassword = () => {
+        setOpenDialogChangePassword(true);
+    };
+
+    const handleCloseDialogChangePassword = () => {
+        setPassword("");
+        setPasswordOrNot(false);
+        setOpenDialogChangePassword(false);
+    };
+
+    const updateSettings = async () => {
+        if (password.length >= 0) {
+            console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
+            const newPassword = {
+                login: userData.userReducer.user?.login,
+                room_name: props.roomsConversData.name,
+                passwordOrNot: passwordOrNot,
+                password: password
+            }
+            console.log("roomName: ", props.roomsConversData.name);
+            utilsData.socket.emit('changePassword', newPassword);
+        }
+        else
+            console.log("empty password");
+        setPassword("");
+        setPasswordOrNot(false);
+        setOpenDialogChangePassword(false);
+    };
+
     function Header() {
         const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
         const open = Boolean(anchorEl);
@@ -329,24 +366,24 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
+                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                        <ListItemIcon>
+                            <SettingsIcon fontSize="small" />
+                        </ListItemIcon>
+                        Change Password
+                    </MenuItem>
+                    <Divider />
                     <MenuItem onClick={quitConvers}>
                         <ListItemIcon>
-                            <Person fontSize="small" />
+                            <LogoutIcon fontSize="small" />
                         </ListItemIcon>
                         Quit Room
                     </MenuItem>
-                    <Divider />
                     <MenuItem onClick={removeRoom}>
                         <ListItemIcon>
-                            <Settings fontSize="small" />
+                            <DeleteIcon fontSize="small" />
                         </ListItemIcon>
                         Remove Room
-                    </MenuItem>
-                    <MenuItem onClick={handleClickChangePassword}>
-                        <ListItemIcon>
-                            <Settings fontSize="small" />
-                        </ListItemIcon>
-                        Change Password
                     </MenuItem>
                 </Menu>
             );
@@ -397,7 +434,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         Quit Room
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={handleClickChangePassword}>
+                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
@@ -548,6 +585,37 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
             {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>
+                <Grid container direction={"column"} spacing={1}>
+                    <Grid item>
+                        <DialogTitle className="TitleContainerDialogChangePassword" >Change Password</DialogTitle>
+                    </Grid>
+                    <Grid item>
+                        <DialogContent>
+                            <Grid container direction={"row"} spacing={5}>
+                                <Grid item>
+                                    <Switch value={passwordOrNot} onChange={e => setPasswordOrNot(!passwordOrNot)} />
+                                </Grid>
+                                <Grid item>
+                                    <TextField
+                                        id="outlined-password-input"
+                                        label="Password"
+                                        type="password"
+                                        autoComplete="current-password"
+                                        variant="outlined"
+                                        disabled={!passwordOrNot}
+                                        value={password} onChange={e => setPassword(e.target.value)}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                    </Grid>
+                </Grid>
+                <DialogActions>
+                    <Button onClick={handleCloseDialogChangePassword}>Cancel</Button>
+                    <Button onClick={updateSettings}>Enter</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

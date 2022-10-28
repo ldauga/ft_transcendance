@@ -456,7 +456,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_client_receiver != null) {
         console.log("newMsgReceived to ", _client_receiver.username);
         this.server.to(_client_receiver.id).emit('newInvitationReceived', data);
+        this.server.to(_client_receiver.id).emit('refreshUser', true);
       }
+      if (invitationRequestReturn)
+        this.server.to(client.id).emit('refreshUser', true);
     }
   };
 
@@ -520,6 +523,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createChatRooms')
   async createChatRooms(client: Socket, data: any) {
     this.logger.log(`${client.id} create Rooms`);
+    const search = arrRoom.find(obj => obj.name == data.name);
+    if (search) {
+      console.log("room name already exist");
+      return;
+    }
     const newRooms = {
       name: data.name,
       description: data.description,
@@ -539,7 +547,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       room_name: data.name,
       admin: true
     }
-    const tmp_room_id = data.id;
+    const tmp_room_id = roomReturn.id;
     //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
     console.log('participantReturn in eventgateway', participantReturn);
@@ -679,15 +687,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createParticipant')
   async createParticipant(client: Socket, data: any) {
-    this.logger.log(`${client.id} create Participant`);
-    const verifIfOwner = await this.RoomsService.checkIfOwner(data.user_login, data.room_name);
+    this.logger.log(`${client.id} create Participant, data: `, data);
+    const verifIfOwner = await this.RoomsService.checkIfOwner(data.user_id, data.room_name);
     const adminTmp = verifIfOwner;
+    const checkIfPrivate = await this.RoomsService.checkIfPrivate(data.room_name);
     const newParticipant = {
       user_id: data.user_id,
       user_login: data.user_login,
       room_id: data.room_id,
       room_name: data.room_name,
-      admin: adminTmp
+      admin: adminTmp,
+      publicOrPrivate: checkIfPrivate
     }
     //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
@@ -1659,6 +1669,47 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')
   async getAllClientConnectedNotFriend(client: Socket) {
     console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');
+    const _client = arrClient.find(obj => obj.id == client.id);
+    if (_client) {
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(_client.username);
+      const userList = await this.UserService.getAllUsers();
+      if (friendList && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search1 = friendList.find(obj => obj.login_user1 == userList[index].login);
+          const search2 = friendList.find(obj => obj.login_user2 == userList[index].login);
+          if (!search1 && !search2) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
+        this.server.to(client.id).emit("getAllClientConnectedWithoutFriend", retArr);
+      }
+    }
+  }
+
+  @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS')
+  async getAllClientConnectedNotParticipants(client: Socket, data: { room_id: number, room_name: string }) {
+    console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
+      const userList = await this.UserService.getAllUsers();
+      if (roomParticipants && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomParticipants.find(obj => obj.user_login == userList[index].login);
+          if (!search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllClientConnectedWithoutParticipants", retArr);
+      }
+    }
+
     const _client = arrClient.find(obj => obj.id == client.id);
     if (_client) {
       const friendList = await this.FriendListService.getUserFriendListWithLogin(_client.username);

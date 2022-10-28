@@ -71,8 +71,21 @@ export class RoomsService {
 		return true;
 	}
 
+	async checkIfPrivate(nameToCheck: string): Promise<boolean> {
+		const check = await this.RoomsRepository.findOne({
+			where: [
+				{ name: nameToCheck }
+			]
+		});
+		if (check == null)
+			return null;
+		if (check.publicOrPrivate)
+			return true;
+		return false;
+	}
+
 	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
-		console.log("service changePassword, room name: ", room_name)
+		console.log("service changePassword, room name: ", room_name, ", password: ", password, ", passwordOrNot: ", passwordOrNot);
 		if (!this.checkRoom(room_name))
 			return false;
 		const check = await this.RoomsRepository.findOne({
@@ -80,13 +93,13 @@ export class RoomsService {
 				{ name: room_name }
 			]
 		});
-		console.log("check: ", check);
+		console.log("check 1: ", check);
 		check.passwordOrNot = passwordOrNot;
 
 		const saltOrRounds = 10;
 		const hash = await bcrypt.hash(password, saltOrRounds);
 		check.password = hash;
-		
+		console.log("check 2: ", check);
 		const returnRoom = this.RoomsRepository.save(check);
 		return true;
 	}

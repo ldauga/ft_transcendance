@@ -16,6 +16,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from 'react';
 import { Person, Settings } from '@mui/icons-material';
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import PersonOffIcon from '@mui/icons-material/PersonOff';
+import SendIcon from '@mui/icons-material/Send';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -625,24 +627,18 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={affBanned}>
-                        <ListItemIcon>
-                            <Person fontSize="small" />
-                        </ListItemIcon>
-                        Aff Ban
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem onClick={handleClickAddAdmin}>
-                        <ListItemIcon>
-                            <Settings fontSize="small" />
-                        </ListItemIcon>
-                        Add Admin
-                    </MenuItem>
                     <MenuItem onClick={addInvitationRequest}>
                         <ListItemIcon>
-                            <Settings fontSize="small" />
+                            <SendIcon fontSize="small" />
                         </ListItemIcon>
                         Send Invitation
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={affBanned}>
+                        <ListItemIcon>
+                            <PersonOffIcon fontSize="small" />
+                        </ListItemIcon>
+                        Aff Ban
                     </MenuItem>
                 </Menu>
             );
