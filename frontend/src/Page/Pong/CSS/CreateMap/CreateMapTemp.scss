@@ -1,89 +1,141 @@
 .create-map {
-	margin-top: 3vh;
+	margin-top: 107px;
 	display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
 	.canvas {
 		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+		border: 1px solid;
 		canvas {
-			width: 39vw;
+			width: 100%;
 		}
 	}
 	
 	.edit{
+		border: 1px solid;
+		border-top: 0;
+		padding: 12px 0;
 		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-		width: 39vw;
-		background: #2f3b52;
+		width: 100%;
+		background: #FFFF;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-top: -3px;
 
-		.button {
+		.buttons {
 			display: flex;
-			gap: 50px;
-			margin-top: 1vh;
-
-			Button:nth-child(1){
-				background: #edd2cb;
-				color: black;
+			justify-content: center;
+			gap: 28px;
+			button {
+				color: #2e384e;
+				border: solid;
+				text-align: center;
+				border-color: #2e384e;
+				background: unset;
+				border-width: 1.5px;
+				font-family: "Roboto", sans-serif;
+				font-size: 15px;
+				font-weight: 700;
+				cursor: pointer;
+				text-transform: uppercase;
+				transition: all 0.3s ease-out;
 				&:hover {
-					background: #c8aea8;
+					color: #FFFF;
+					background: #2e384e;
 				}
-			}
-			
-			Button:nth-child(2) {
-				background: #361d32;
-				&:hover {
-					background: #2a1626;
+				&:nth-child(2) {
+					background: #2e384e;
+					color: #FFFF;
+					&:hover {
+						color: #2e384e;
+						background: #FFFF;
+					}
 				}
 			}
 		}
 
 		.MuiFormControl-root {
 			svg {
-				color: white;
+				color: #2e384e;
 			}
 		}
 		.MuiFormLabel-root {
-			color: rgba($color: #fff, $alpha: .3);
+			color: rgba($color: #2e384e, $alpha: .3);
 		}
 		.MuiAutocomplete-inputRoot {
 			color: white;
 			width: 168px;
 			.MuiOutlinedInput-notchedOutline {
-				border-color: rgba($color: #fff, $alpha: .3);
+				border-color: rgba($color: #2e384e, $alpha: .3);
 				&:hover {
-					border-color: #fff;
+					border-color: #2e384e;
 				}
 				&.Mui-focused {
-					border-color: #fff;
+					border-color: #2e384e;
 				}
 			}
 		}
 		.css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
-			color: #fff;
+			color: #2e384e;
 		}
 
 		.invite-friend {
 			display: flex;
-			margin-top: 1.5vh;
-			margin-bottom: 1vh;
-			Button.play {
-				background: #f1e8e6;
-				color: black;
+			align-items: center;
+			gap: 10px;
+			margin-top: 15px;
+			button.play {
+				color: #2e384e;
+				border: solid;
+				text-align: center;
+				border-color: #2e384e;
+				background: unset;
+				border-width: 2px;
+				font-family: "Roboto", sans-serif;
+				font-size: 15px;
+				letter-spacing: 1px;
+				font-weight: 700;
+				cursor: pointer;
+				text-transform: uppercase;
+				transition: all 0.3s ease-out;
 				&:hover {
-					background: #e2cfcb;
+					color: #FFFF;
+					background: #2e384e;
+				}
+				&:disabled {
+					opacity: .5;
+					pointer-events: none;
 				}
 			}
-			Button.canNotPlay {
-				background: #e80909;
-				color: black;
-				&:hover {
-					background: #c40909;
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		.edit {
+			padding: 23px 0;
+			.buttons {
+				gap: 69px;
+				button {
+					letter-spacing: 1px;
+					border-width: 3px;
+					font-size: 25px;
 				}
 			}
+			.invite-friend {
+				margin-top: 26px;
+				gap: 21px;
+				button.play {
+					border-width: 3px;
+					font-size: 22px;
+				}
+			}
+		}
+	}
+
+	@media screen and (min-width: 800px) {
+		.edit {
+			width: 800px;
 		}
 	}
 }
