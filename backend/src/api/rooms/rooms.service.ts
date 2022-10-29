@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { removeEmitHelper } from "typescript";
 import { RoomsDto } from "./dtos/rooms.dto";
 import { RoomsEntity } from "./rooms.entity";
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class RoomsService {
@@ -39,7 +40,8 @@ export class RoomsService {
 			return ("room not found");
 		if (check.passwordOrNot) {
 			console.log("check.password: ", check.password, ", passwordInput: ", password);
-			if (check.password.localeCompare(password) == 0)
+			const isMatch = await bcrypt.compare(password, check.password);
+			if (isMatch)
 				return ("ok");
 			else
 				return ("wrong password");
@@ -69,8 +71,21 @@ export class RoomsService {
 		return true;
 	}
 
+	async checkIfPrivate(nameToCheck: string): Promise<boolean> {
+		const check = await this.RoomsRepository.findOne({
+			where: [
+				{ name: nameToCheck }
+			]
+		});
+		if (check == null)
+			return null;
+		if (check.publicOrPrivate)
+			return true;
+		return false;
+	}
+
 	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
-		console.log("service changePassword, room name: ", room_name)
+		console.log("service changePassword, room name: ", room_name, ", password: ", password, ", passwordOrNot: ", passwordOrNot);
 		if (!this.checkRoom(room_name))
 			return false;
 		const check = await this.RoomsRepository.findOne({
@@ -78,22 +93,25 @@ export class RoomsService {
 				{ name: room_name }
 			]
 		});
-		console.log("check: ", check);
+		console.log("check 1: ", check);
 		check.passwordOrNot = passwordOrNot;
-		check.password = password;
+
+		const saltOrRounds = 10;
+		const hash = await bcrypt.hash(password, saltOrRounds);
+		check.password = hash;
+		console.log("check 2: ", check);
 		const returnRoom = this.RoomsRepository.save(check);
 		return true;
 	}
 
 	async createRoom(body: any): Promise<RoomsEntity> {
 		const saltOrRounds = 10;
-		// const hash = await bcrypt.hash(body.password, saltOrRounds);
-		// console.log(hash);
+		const hash = await bcrypt.hash(body.password, saltOrRounds);
 
 		const returnRoom = this.RoomsRepository.save({
 			name: body.name,
 			description: body.description,
-			password: body.password,
+			password: hash,
 			identifiant: body.identifiant,
 			owner_id: body.owner_id,
 			publicOrPrivate: body.publicOrPrivate,

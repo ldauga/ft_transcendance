@@ -5,18 +5,42 @@ import { RootState } from '../../../State';
 import './CSS/Rooms.scss'
 import '../Homepage.scss'
 import axiosConfig from '../../../Utils/axiosConfig';
+import { Autocomplete, TextField } from '@mui/material';
 
 function CreateInvitationRooms(props: { roomsConversData: { name: string, id: number } }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [text, setText] = useState('');
+    const [inputValue, setInputValue] = useState('');
+
+    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
+
+    utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
+
+    utilsData.socket.on('getAllClientConnectedWithoutParticipants', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log('getAllClientConnectedWithoutParticipants = ', data);
+        const tmp: any[] = []
+        data.forEach(client => {
+            if (client.login != userData.userReducer.user?.login) {
+                const a = { id: client.id, username: client.login };
+                tmp.push(a);
+            }
+        })
+        setConnectedClient(tmp);
+        utilsData.socket.off('getAllClientConnectedWithoutParticipants');
+        utilsData.socket.removeListener('getAllClientConnectedWithoutParticipants');
+    })
+
+    useEffect(() => {
+        const data = { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name };
+        utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS', data);
+    }, []);
 
     const createInvitation = async () => {
         console.log('create Invitation Room');
-        await axiosConfig.get('http://10.3.3.5:5001/user/login/' + text).then(async (res) => {
-            setText("");
+        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
+            setInputValue("");
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -72,14 +96,27 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
 
     return (
         <div className="addFriendContainer">
-            <input
-                value={text}
-                onChange={e => setText(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') createInvitation() }}
-                placeholder="Enter name"
+            <Autocomplete
+                onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
+                options={connectedClient.map((option) => option.username)}
+                renderInput={(params) => <TextField {...params} label="Invite" />}
+                // onChange={(event: any, newValue: string | null) => {
+                //   setValue(newValue);
+                // }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+
+                // value={value}
+                onChange={(event: any, newValue: string | null) => {
+                    setInputValue(newValue || "");
+                }}
+                className="AutocompleteInput"
+                sx={{ width: 300 }}
             />
-            <button type="button" onClick={() => createInvitation()}>
-                Send invitation
+            <button id="addFriendButton" type="button" onClick={() => createInvitation()}>
+                Send
             </button>
         </div>
     );

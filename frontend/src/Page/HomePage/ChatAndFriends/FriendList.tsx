@@ -19,9 +19,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
-	const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
-	const open2 = Boolean(anchorEl2);
-
 	const [itemListHistory, setItemListHistory] = useState(Array<any>);
 	const [update, setUpdate] = useState(false);
 

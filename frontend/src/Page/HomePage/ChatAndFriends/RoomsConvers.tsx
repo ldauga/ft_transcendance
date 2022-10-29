@@ -12,8 +12,15 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import { constWhileSecu } from '../HomePage';
 import ChangeRoomPassword from './ChangeRoomPassword';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Logout, Person, Settings } from "@mui/icons-material";
+import BathtubIcon from '@mui/icons-material/Bathtub';
+import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -29,9 +36,17 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isConversRooms, setConversRooms] = useState(true);
     const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
 
+    const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
+
     const bottom = useRef<null | HTMLDivElement>(null);
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+    const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
+
+    const [password, setPassword] = useState('');
+
+    const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     // const scrollToBottom = useScrollToBottom();
 
@@ -179,52 +194,85 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         console.log("Date: ", Date());
         if (getYear() != props.item.year)
             return (
-                <div className='dateDisplayNone'>
+                <div className='dateDisplayNoneRoomConvers'>
                     <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
                 </div>
             );
         else if (getMonth() != props.item.month)
             return (
-                <div className='dateDisplayNone'>
+                <div className='dateDisplayNoneRoomConvers'>
                     <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                 </div>
             );
         else if (getDay() != props.item.day)
             return (
-                <div className='dateDisplayNone'>
+                <div className='dateDisplayNoneRoomConvers'>
                     <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                 </div>
             );
         else
             return (
-                <div className='dateDisplayNone'>
+                <div className='dateDisplayNoneRoomConvers'>
                     <p>{props.item.hour}:{props.item.minute}</p>
                 </div>
             );
     };
 
     function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        return (
-            <div onMouseOver={e => { e.currentTarget.parentElement?.children[1].classList.add("date") }} onMouseOut={e => { e.currentTarget.parentElement?.children[1].classList.remove("date") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
-                <p>{props.item.text}</p>
-            </div>
-        );
+        if (props.item.id_sender == userData.userReducer.user?.id) {
+            return (
+                <div className='inItem2'>
+                    <AffDate item={props.item} />
+                    {/* <div>Yo</div> */}
+                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[0].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[0].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
+                        <p>{props.item.text}</p>
+                    </div>
+                </div>
+            );
+        }
+        else {
+            const pp = users.find(obj => obj.id == props.item.id_sender)?.profile_pic;
+            return (
+                <div className='inItem2'>
+                    <img src={pp}></img>
+                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[2].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[2].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
+                        <p>{props.item.text}</p>
+                    </div>
+                    <AffDate item={props.item} />
+                </div>
+            );
+        }
     };
 
     const getListItem = async () => {
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
-        await axiosConfig.get('http://10.3.3.5:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+        console.log("users: ", users);
+        await axiosConfig.get('http://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>
                     <Item item={item} />
-                    <AffDate item={item} />
                 </div>)
             });
             console.log('itemList : ', itemList);
             setItemListHistory(itemList);
+        })
+    }
+
+    const getUsers = async () => {
+        console.log("getUsers");
+        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+            console.log("get List User: ", res.data);
+            let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
+            res.data.forEach(async (item: { login: string, id: number }) => {
+                await axiosConfig.get('http://localhost:5001/user/id/' + item.id).then(async (res) => {
+                    itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
+                });
+            });
+            console.log('itemList get Users: ', itemList);
+            setUsers(itemList);
         })
     }
 
@@ -234,11 +282,168 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         checkIfOwner();
+        getUsers();
         getListItem();
         bottom.current?.scrollIntoView();
     }, [props, isConversRooms]);
 
+    const handleClickOpenDialogChangePassword = () => {
+        setOpenDialogChangePassword(true);
+    };
+
+    const handleCloseDialogChangePassword = () => {
+        setPassword("");
+        setPasswordOrNot(false);
+        setOpenDialogChangePassword(false);
+    };
+
+    const updateSettings = async () => {
+        if (password.length >= 0) {
+            console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
+            const newPassword = {
+                login: userData.userReducer.user?.login,
+                room_name: props.roomsConversData.name,
+                passwordOrNot: passwordOrNot,
+                password: password
+            }
+            console.log("roomName: ", props.roomsConversData.name);
+            utilsData.socket.emit('changePassword', newPassword);
+        }
+        else
+            console.log("empty password");
+        setPassword("");
+        setPasswordOrNot(false);
+        setOpenDialogChangePassword(false);
+    };
+
     function Header() {
+        const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+        const open = Boolean(anchorEl);
+
+        const handleClickOpenOptions = (event: React.MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget);
+        };
+
+        const handleCloseOptions = () => {
+            setAnchorEl(null);
+        };
+
+        function MenuOptionsOwner() {
+            return (
+                <Menu
+                    disableAutoFocusItem
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    onClose={handleCloseOptions}
+                    onClick={handleCloseOptions}
+                    PaperProps={{
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&:before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                        <ListItemIcon>
+                            <SettingsIcon fontSize="small" />
+                        </ListItemIcon>
+                        Change Password
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={quitConvers}>
+                        <ListItemIcon>
+                            <LogoutIcon fontSize="small" />
+                        </ListItemIcon>
+                        Quit Room
+                    </MenuItem>
+                    <MenuItem onClick={removeRoom}>
+                        <ListItemIcon>
+                            <DeleteIcon fontSize="small" />
+                        </ListItemIcon>
+                        Remove Room
+                    </MenuItem>
+                </Menu>
+            );
+        };
+
+        function MenuOptionsAdmin() {
+            return (
+                <Menu
+                    disableAutoFocusItem
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    onClose={handleCloseOptions}
+                    onClick={handleCloseOptions}
+                    PaperProps={{
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&:before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={quitConvers}>
+                        <ListItemIcon>
+                            <Person fontSize="small" />
+                        </ListItemIcon>
+                        Quit Room
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                        <ListItemIcon>
+                            <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Change Password
+                    </MenuItem>
+                </Menu>
+            );
+        };
+
         if (isOwner)
             return (
                 <div id="header" className="mainHeader">
@@ -247,10 +452,17 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     </div>
                     <h3>{props.roomsConversData.name}</h3>
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
+                        <IconButton onClick={affParticipants}>
+                            <BathtubIcon />
+                        </IconButton>
+                        <IconButton onClick={handleClickOpenOptions}>
+                            <MoreVertIcon />
+                        </IconButton>
+                        <MenuOptionsOwner />
+                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={removeRoom} className="bi bi-x-lg"></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button>
+                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
                     </div>
                 </div>
             );
@@ -262,9 +474,16 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     </div>
                     <h3>{props.roomsConversData.name}</h3>
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
+                        <IconButton onClick={affParticipants}>
+                            <BathtubIcon />
+                        </IconButton>
+                        <IconButton onClick={handleClickOpenOptions}>
+                            <MoreVertIcon />
+                        </IconButton>
+                        <MenuOptionsAdmin />
+                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
                         <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button>
+                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
                     </div>
                 </div>
             );
@@ -276,8 +495,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     </div>
                     <h3>{props.roomsConversData.name}</h3>
                     <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
+                        <IconButton onClick={affParticipants}>
+                            <BathtubIcon />
+                        </IconButton>
+                        <IconButton onClick={quitConvers}>
+                            <BabyChangingStationIcon />
+                        </IconButton>
+                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
+                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button> */}
                     </div>
                 </div>
             );
@@ -360,6 +585,37 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         <div id="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
             {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>
+                <Grid container direction={"column"} spacing={1}>
+                    <Grid item>
+                        <DialogTitle className="TitleContainerDialogChangePassword" >Change Password</DialogTitle>
+                    </Grid>
+                    <Grid item>
+                        <DialogContent>
+                            <Grid container direction={"row"} spacing={5}>
+                                <Grid item>
+                                    <Switch value={passwordOrNot} onChange={e => setPasswordOrNot(!passwordOrNot)} />
+                                </Grid>
+                                <Grid item>
+                                    <TextField
+                                        id="outlined-password-input"
+                                        label="Password"
+                                        type="password"
+                                        autoComplete="current-password"
+                                        variant="outlined"
+                                        disabled={!passwordOrNot}
+                                        value={password} onChange={e => setPassword(e.target.value)}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                    </Grid>
+                </Grid>
+                <DialogActions>
+                    <Button onClick={handleCloseDialogChangePassword}>Cancel</Button>
+                    <Button onClick={updateSettings}>Enter</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

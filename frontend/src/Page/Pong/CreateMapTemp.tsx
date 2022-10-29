@@ -5,6 +5,7 @@ import Navbar from "../../Module/Navbar/Navbar";
 import { RootState } from "../../State";
 import { Ball, gameRoomClass, Obstacle } from "./gameRoomClass";
 import './CSS/CreateMap/CreateMapTemp.scss';
+import Background from "../../Module/Background/Background";
 
 var canvas = {
 	"width": 800,
@@ -13,18 +14,18 @@ var canvas = {
 
 const StyledAutocomplete = styled(Autocomplete)({
 	"& .MuiAutocomplete-inputRoot": {
-		color: "white",
+		color: "#2e384e",
 		"& .MuiOutlinedInput-notchedOutline": {
-			borderColor: "white"
+			borderColor: "#2e384e"
 		},
 		"&:hover .MuiOutlinedInput-notchedOutline": {
-			borderColor: "white"
+			borderColor: "#2e384e"
 		},
 		"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-			borderColor: "white"
+			borderColor: "#2e384e"
 		},
 		"&.Mui-focused .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root": {
-			color: "white"
+			color: "#2e384e"
 		}
 	}
 });
@@ -532,6 +533,7 @@ const CreateMapTemp = (props: any) => {
 	return (
 		<>
 			<Navbar />
+			<Background />
 			<div className="create-map">
 				<div className="canvas">
 					<canvas
@@ -544,14 +546,14 @@ const CreateMapTemp = (props: any) => {
 					/>
 				</div>
 				<div className="edit">
-					<div className="button">
-						<Button onClick={async () => {
+					<div className="buttons">
+						<button onClick={async () => {
 							setlastObstacleID(actualObstacleID)
 							room.map.addObstacle('red', actualObstacleID ? 100 : 50, 50, 50, 50, nbObstacle + 1)
 							setActualObstacleID(nbObstacle + 1)
 							setNbObstacle(nbObstacle + 1)
-						}} variant='contained'>Add obstacle</Button>
-						<Button onClick={async () => {
+						}}>Add obstacle</button>
+						<button onClick={async () => {
 							for (let index = 0; index < room.map.obstacles.length; index++) {
 								const element = room.map.obstacles[index];
 								if (actualObstacleID == element.id) {
@@ -559,7 +561,7 @@ const CreateMapTemp = (props: any) => {
 									setActualObstacleID(-1)
 								}
 							}
-						}} variant='contained'>Delete obstacle</Button>
+						}}>Delete obstacle</button>
 					</div>
 					<div className="invite-friend">
 						<Autocomplete
@@ -568,11 +570,7 @@ const CreateMapTemp = (props: any) => {
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
-						{
-							!checkAllCollisionsBall(room.ball) ?
-								<Button className="play" variant="contained" onClick={inviteButtonClick}>Play</Button> :
-								<Button className="canNotPlay" variant="contained"><i className="bi bi-exclamation-octagon-fill"></i></Button>
-						}
+						<button className="play" disabled={checkAllCollisionsBall(room.ball)} onClick={inviteButtonClick}>Play</button>
 					</div>
 				</div>
 			</div>

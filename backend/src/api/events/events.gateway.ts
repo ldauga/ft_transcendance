@@ -353,7 +353,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               const _room = arrRoom.find(obj => obj.id == item.room_id);
               if (_room) {
                 let i = 0;
-                while (_room.users.length >= i) {
+                while (_room.users.length > i) {
                   this.server.to(_room.users[i].id).emit('debanedUserInRoom', true);
                   i++;
                 }
@@ -380,7 +380,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             const _room = arrRoom.find(obj => obj.id == item.room_id);
             if (_room) {
               let i = 0;
-              while (_room.users.length >= i) {
+              while (_room.users.length > i) {
                 this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
                 i++;
               }
@@ -464,7 +464,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_client_receiver != null) {
         console.log("newMsgReceived to ", _client_receiver.username);
         this.server.to(_client_receiver.id).emit('newInvitationReceived', data);
+        this.server.to(_client_receiver.id).emit('refreshUser', true);
       }
+      if (invitationRequestReturn)
+        this.server.to(client.id).emit('refreshUser', true);
     }
   };
 
@@ -528,6 +531,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createChatRooms')
   async createChatRooms(client: Socket, data: any) {
     this.logger.log(`${client.id} create Rooms`);
+    const search = arrRoom.find(obj => obj.name == data.name);
+    if (search) {
+      console.log("room name already exist");
+      return;
+    }
     const newRooms = {
       name: data.name,
       description: data.description,
@@ -547,8 +555,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       room_name: data.name,
       admin: true
     }
-    const tmp_room_id = data.id;
-    //const participantReturn = await this.http.post('http://10.3.3.5:5001/participants', newParticipant);
+    const tmp_room_id = roomReturn.id;
+    //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
     console.log('participantReturn in eventgateway', participantReturn);
     console.log('participant created');
@@ -687,15 +695,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createParticipant')
   async createParticipant(client: Socket, data: any) {
-    this.logger.log(`${client.id} create Participant`);
-    const verifIfOwner = await this.RoomsService.checkIfOwner(data.user_login, data.room_name);
+    this.logger.log(`${client.id} create Participant, data: `, data);
+    const verifIfOwner = await this.RoomsService.checkIfOwner(data.user_id, data.room_name);
     const adminTmp = verifIfOwner;
+    const checkIfPrivate = await this.RoomsService.checkIfPrivate(data.room_name);
     const newParticipant = {
       user_id: data.user_id,
       user_login: data.user_login,
       room_id: data.room_id,
       room_name: data.room_name,
-      admin: adminTmp
+      admin: adminTmp,
+      publicOrPrivate: checkIfPrivate
     }
     //const participantReturn = await this.http.post('http://10.3.3.5:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
@@ -724,9 +734,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeParticipant(client: Socket, data: any) {
     this.logger.log(`${client.id} want remove Participant`);
     const _client_sender = arrClient.find(obj => obj.id == client.id);
-    const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
-    if (!verifIfAdmin)
-      return;
+    if (_client_sender.username != data.login) {
+      console.log(_client_sender.username, " want remove ", data.login);
+      const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
+      if (!verifIfAdmin) {
+        console.log("Fail, he isn't admin");
+        return;
+      }
+    }
+    else
+      console.log(_client_sender.username, " want quit room ");
     const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
     console.log("verifIfReceiverIsAdmin: ", verifIfReceiverIsAdmin);
     if (verifIfReceiverIsAdmin) {
@@ -786,7 +803,47 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log("room: ", a);
       let i = 0;
       while (i < a.users.length) {
-        this.server.to(a.users[i].id).emit('newParticipant', true);
+        console.log("refreshParticipants to ", a.users[i].username)
+        this.server.to(a.users[i].id).emit('refreshParticipants', true);
+        i++;
+      }
+    }
+  }
+
+  @SubscribeMessage('removeAdmin')
+  async removeAdmin(client: Socket, data: any) {
+    let verif = false;
+    console.log("remove admin");
+    //const checkIfOwner = await this.http.get('http://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    const checkIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.login_sender);
+    if (checkIfOwner == true)
+      verif = true;
+    // const checkIfAdmin = await this.http.get('http://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
+    const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login_sender, data.room_name);
+    if (checkIfAdmin == true)
+      verif = true;
+    //const checkParticipant = await this.http.get('http://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
+    const checkParticipant = await this.ParticipantsService.checkAdmin(data.login_admin, data.room_name);
+    this.logger.log(`${checkParticipant} data`);
+    console.log("verif : ", verif);
+    if (checkParticipant == true && verif == true) {
+      this.logger.log(`${client.id} remove Admin: `, data.login_admin);
+      const newParticipant = {
+        user_id: data.id_admin,
+        user_login: data.login_admin,
+        room_id: data.room_id,
+        room_name: data.room_name,
+        admin: true
+      };
+      //const participantReturn = await this.http.post('http://localhost:5001/participants/admin', newParticipant);
+      const participantReturn = await this.ParticipantsService.removeAdmin(newParticipant);
+      console.log('participantReturn in eventgateway', participantReturn);
+      const a = arrRoom.find(obj => obj.name == data.room_name);
+      console.log("room: ", a);
+      let i = 0;
+      while (i < a.users.length) {
+        console.log("refreshParticipants to ", a.users[i].username)
+        this.server.to(a.users[i].id).emit('refreshParticipants', true);
         i++;
       }
     }
@@ -854,9 +911,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         let i = 0;
         //console.log("room ", room);
         //console.log("room.users ", room.users);
-        //console.log("room.users.length: ", room.users.length);
+        console.log("room.users.length: ", room.users.length);
         while (i < room.users.length) {
-          //console.log('new Msg to ', room.users[i].username);
+          console.log('new Msg to ', room.users[i].username);
           this.server.to(room.users[i].id).emit('newMsgReceived', data);
           i++;
         }
@@ -1689,6 +1746,47 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')
   async getAllClientConnectedNotFriend(client: Socket) {
     console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');
+    const _client = arrClient.find(obj => obj.id == client.id);
+    if (_client) {
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(_client.username);
+      const userList = await this.UserService.getAllUsers();
+      if (friendList && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search1 = friendList.find(obj => obj.login_user1 == userList[index].login);
+          const search2 = friendList.find(obj => obj.login_user2 == userList[index].login);
+          if (!search1 && !search2) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
+        this.server.to(client.id).emit("getAllClientConnectedWithoutFriend", retArr);
+      }
+    }
+  }
+
+  @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS')
+  async getAllClientConnectedNotParticipants(client: Socket, data: { room_id: number, room_name: string }) {
+    console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
+      const userList = await this.UserService.getAllUsers();
+      if (roomParticipants && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomParticipants.find(obj => obj.user_login == userList[index].login);
+          if (!search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllClientConnectedWithoutParticipants", retArr);
+      }
+    }
+
     const _client = arrClient.find(obj => obj.id == client.id);
     if (_client) {
       const friendList = await this.FriendListService.getUserFriendListWithLogin(_client.username);
