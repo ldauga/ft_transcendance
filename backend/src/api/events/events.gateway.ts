@@ -228,7 +228,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log(friendList)
 
       for (let i = 0; i < friendList.length; i++) {
-        let loginTmp;
+        let loginTmp: string;
         if (friendList[i].login_user1 == user.login)
           loginTmp = friendList[i].login_user2;
         else
@@ -303,7 +303,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (new Date().getSeconds() - user.date.getSeconds() != 0) {
         const friendList = await this.FriendListService.getUserFriendListWithLogin(user.username);
         for (let i = 0; i < friendList.length; i++) {
-          let loginTmp;
+          let loginTmp: string;
           if (friendList[i].login_user1 == user.username)
             loginTmp = friendList[i].login_user2;
           else
@@ -398,7 +398,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (login != null) {
       const friendList = await this.FriendListService.getUserFriendListWithLogin(login);
       for (let i = 0; i < friendList.length; i++) {
-        let loginTmp;
+        let loginTmp: string;
         if (friendList[i].login_user1 == login)
           loginTmp = friendList[i].login_user2;
         else
@@ -1227,7 +1227,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
 
             for (let i = 0; i < friendList.length; i++) {
-              let loginTmp;
+              let loginTmp: string;
               if (friendList[i].login_user1 == player.user.login)
                 loginTmp = friendList[i].login_user2;
               else
@@ -1294,7 +1294,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
 
             for (let i = 0; i < friendList.length; i++) {
-              let loginTmp;
+              let loginTmp: string;
               if (friendList[i].login_user1 == player.user.login)
                 loginTmp = friendList[i].login_user2;
               else
@@ -1376,6 +1376,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(3)
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
+      console.log(`${index}`)
       if (this.pongInfo[index].started) {
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
@@ -1385,7 +1386,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
 
                 for (let i = 0; i < friendList.length; i++) {
-                  let loginTmp;
+                  let loginTmp: string;
                   if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
                     loginTmp = friendList[i].login_user2;
                   else
@@ -1433,6 +1434,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               this.pongInfo.splice(room[0], 1)
 
               this.server.to(room[1].roomID).emit('finish', room[1])
+
+              room[1].players.forEach(async player => {
+                const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
+      
+                for (let i = 0; i < friendList.length; i++) {
+                  let loginTmp: string;
+                  if (friendList[i].login_user1 == player.user.login)
+                    loginTmp = friendList[i].login_user2;
+                  else
+                    loginTmp = friendList[i].login_user1;
+                  const _client = arrClient.find(obj => obj.username == loginTmp);
+                  if (_client) {
+                    this.server.to(_client.id).emit('friendConnection', true);
+                    console.log("emit friendConnection to ", _client.username);
+                  }
+                }
+              })
 
               return;
             }
@@ -1494,7 +1512,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
 
           for (let i = 0; i < friendList.length; i++) {
-            let loginTmp;
+            let loginTmp: string;
             if (friendList[i].login_user1 == player.user.login)
               loginTmp = friendList[i].login_user2;
             else

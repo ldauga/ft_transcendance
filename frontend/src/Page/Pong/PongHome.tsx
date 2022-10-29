@@ -95,10 +95,11 @@ function PongHome(props: any) {
 	return (
 		<>
 			<NavBar />
+			<Background />
 			{!inQueue ?
 				<>
-					<Background />
 					<div className='pong'>
+					<div className="instruction">Select map and press JOIN QUEUE !</div>
 						<div className='select-map'>
 							<button onClick={handleBack}><ArrowBackIosNew /></button>
 							<MapCarousel activeStep={activeStep} />

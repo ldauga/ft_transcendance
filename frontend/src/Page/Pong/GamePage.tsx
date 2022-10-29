@@ -3,10 +3,13 @@ import Navbar from '../../Module/Navbar/Navbar';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 import { gameRoomClass } from './gameRoomClass';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 import './CSS/GamePage/GamePage.css';
 import './CSS/GamePage/Board.css';
 import './CSS/Utils.css';
+import Background from '../../Module/Background/Background';
+import { Tab } from '@mui/material';
 
 
 var canvas = {
@@ -19,6 +22,7 @@ const GamePage = (props: any) => {
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
+    const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
 
     // drawFont : desine le fond du jeu
     function drawFont(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
@@ -298,17 +302,10 @@ const GamePage = (props: any) => {
     utilsData.socket.on('render', render);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
+        utilsData.socket.emit('RENDER', props.roomID)
         setFinishGame(true)
-        var modal = document.getElementById("myModal");
-        if (modal)
-            modal.style.display = "block";
-        var winnerHeader = document.getElementById("winnerHeader")
-        if (winnerHeader)
-            winnerHeader.innerHTML = (room.players[0].score > room.players[1].score ? room.players[0].user?.login : room.players[1].user?.login) + " as won the game !"
-        return;
-    });
 
-    utilsData.socket.on('deconected', () => {
+        setFinishRoom(room)
 
     });
 
@@ -341,38 +338,119 @@ const GamePage = (props: any) => {
     // Lance la fonction onKeyDown chaque fois qu'une touche est relachée
     document.addEventListener("keyup", onKeyUp);
 
+    const [tabValue, setTabValue] = useState('1')
+
+    function affFinishScreen() {
+
+        let U, H;
+
+        if (finishRoom?.players[0].user?.login == persistantReducer.userReducer.user?.login) {
+            U = finishRoom?.players[0]
+            H = finishRoom?.players[1]
+        } else {
+            U = finishRoom?.players[1]
+            H = finishRoom?.players[0]
+        }
+
+        return (
+            <div className='finishGameScreen'>
+
+                <div className="finishMsg">
+                    <span>
+                        {U?.score == 3 ? 'VICTORY' : 'DEFEAT'}
+                    </span>
+                </div>
+
+                <div className="versusContainer">
+
+                    <div className="playerContainer">
+
+                        <div className={U?.score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
+                            <img src={U?.user?.profile_pic} />
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {U?.user?.nickname}
+                            </span>
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {U?.score}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div className="vs">
+                        <span>VS</span>
+                    </div>
+
+                    <div className="playerContainer">
+
+                        <div className={H?.score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
+                            <img src={H?.user?.profile_pic} />
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {H?.user?.nickname}
+                            </span>
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {H?.score}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div className="buttonContainer">
+
+                    <button onClick={() => {window.location.replace('http://localhost:3000/pong')}} >Replay</button>
+                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/')}} >Home Page</button>
+
+                </div>
+
+            
+            </div>
+        )
+
+    }
+
     return (
         <div className="mainDiv">
             <Navbar />
-            <div className="boardDiv">
-                <div className="blocksContainerCenter">
-                    <canvas id='spectate1'
-                        className='spectate'
-                        height='1000'
-                        width='400'
-                    />
-                    <canvas
-                        id='pongBoard'
-                        className='pongBoard'
-                        height={canvas.height}
-                        width={canvas.width}
-                    />
-                    <canvas id='spectate2'
-                        className='spectate'
-                        height='1000'
-                        width='400'
-                    />
-                </div>
-            </div>
-            <div id="myModal" className="modal">
-                <div className="modal-content">
-                    <h3 id='winnerHeader' className='winnerHeader'></h3>
-                    <div className='flex'>
-                        <button type="button" className='replayButton' onClick={() => { window.location.replace('/') }}> Home </button>
-                        <button type="button" className='replayButton' onClick={() => { window.location.reload() }}> Rejoin the queue </button>
+            <Background />
+            {
+                !finishGame ?
+                    <div className="boardDiv">
+                        <div className="blocksContainerCenter">
+                            <canvas id='spectate1'
+                                className='spectate'
+                                height='1000'
+                                width='400'
+                            />
+                            <canvas
+                                id='pongBoard'
+                                className='pongBoard'
+                                height={canvas.height}
+                                width={canvas.width}
+                            />
+                            <canvas id='spectate2'
+                                className='spectate'
+                                height='1000'
+                                width='400'
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                    :
+                    <>{affFinishScreen()}</>
+            }
         </div>
     );
 };
