@@ -5,7 +5,7 @@ interface UtilsData {
 }
 
 export const initialState: UtilsData = {
-  socket: io('http://10.3.3.5:5001')
+  socket: io('http://localhost:5001')
 };
 
 export const utilsReducer = (state: UtilsData = initialState, action: { type: any; }) => {

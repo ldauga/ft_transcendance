@@ -30,7 +30,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
             return;
         }
         console.log("button mute");
-        await axiosConfig.get('http://10.3.3.5:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -43,7 +43,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://10.3.3.5:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);

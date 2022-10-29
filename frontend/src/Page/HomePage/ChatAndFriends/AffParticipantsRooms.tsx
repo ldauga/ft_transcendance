@@ -278,14 +278,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://10.3.3.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://10.3.3.5:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -669,7 +669,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         let allUserMute: { id_muted: number, name_muted: string }[] = [];
-        await axiosConfig.get('http://10.3.3.5:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log('res.data allUserMute = ', res.data);
             allUserMute = res.data;
             console.log('nameTmp allUserBan = ', allUserMute);

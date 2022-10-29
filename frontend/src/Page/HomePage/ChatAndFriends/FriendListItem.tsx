@@ -128,7 +128,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     return (
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
-                <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://10.3.3.5:3000/Profile/' + props.item.user.login) }} ></img>
+                <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.item.user.login) }} ></img>
                 <p>{props.item.user.nickname}</p>
                 <AffStatus />
             </div>

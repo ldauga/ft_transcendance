@@ -65,7 +65,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://10.3.3.5:3000/pong'
+													window.location.href = 'http://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -90,7 +90,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://10.3.3.5:3000/pong'
+													window.location.href = 'http://localhost:3000/pong'
 												}} >OK</button>
 											</div>
 										</div>
@@ -168,7 +168,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 											<div className="notifMain">
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
-													window.location.href = 'http://10.3.3.5:3000/pong'
+													window.location.href = 'http://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -193,7 +193,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://10.3.3.5:3000/pong'
+													window.location.href = 'http://localhost:3000/pong'
 												}} >OK</button>
 											</div>
 										</div>

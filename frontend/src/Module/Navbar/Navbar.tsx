@@ -43,7 +43,7 @@ function NavBar() {
 
 		delAllNotif();
 		setTwoFactor(false);
-		window.location.replace('http://10.3.3.5:3000')
+		window.location.replace('http://localhost:3000')
 	}
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)

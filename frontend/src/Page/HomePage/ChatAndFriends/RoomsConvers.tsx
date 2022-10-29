@@ -158,14 +158,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://10.3.3.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://10.3.3.5:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -177,7 +177,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfOwner = async () => {
-        await axiosConfig.get('http://10.3.3.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);

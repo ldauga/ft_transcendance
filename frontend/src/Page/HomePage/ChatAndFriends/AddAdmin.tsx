@@ -15,7 +15,7 @@ function AddAdmin(props: { roomsConversData: { name: string, id: number } }) {
     async function buttonAddAdmin() {
         let test = false;
         console.log('addFriend');
-        await axiosConfig.get('http://10.3.3.5:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);

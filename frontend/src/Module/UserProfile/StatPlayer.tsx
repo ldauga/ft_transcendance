@@ -156,7 +156,7 @@ export function StatPlayer() {
 			}
 		});
 		if (!profile.loaded)
-			fetchUser('http://10.3.3.5:5001/user/login/')
+			fetchUser('http://localhost:5001/user/login/')
 		if (profile.loaded)
 			fetchMatchHistory();
 		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
@@ -176,7 +176,7 @@ export function StatPlayer() {
 
 		var config = {
 			method: 'post',
-			url: 'http://10.3.3.5:5001/user/upload',
+			url: 'http://localhost:5001/user/upload',
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},

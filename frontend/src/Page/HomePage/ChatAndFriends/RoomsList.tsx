@@ -104,12 +104,12 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
 
     const getListItem = async () => {
         let myRooms: { name: string, id: number }[];
-        await axiosConfig.get('http://10.3.3.5:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             console.log('res.data MyRooms = ', res.data);
             myRooms = res.data;
             console.log('nameTmp MyRooms = ', myRooms);
         })
-        await axiosConfig.get('http://10.3.3.5:5001/rooms/').then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/rooms/').then(async (res) => {
             let itemList: any[] = [];
             console.log('res.data = ', res.data);
             const nameTmp: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = res.data;

@@ -27,7 +27,7 @@ function BanUser() {
             console.log("Wrong input for banUser");
             return;
         }
-        await axiosConfig.get('http://10.3.3.5:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('http://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);
@@ -40,7 +40,7 @@ function BanUser() {
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://10.3.3.5:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                await axiosConfig.get('http://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
