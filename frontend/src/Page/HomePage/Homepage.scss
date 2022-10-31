@@ -267,7 +267,7 @@ $pong-color: #2e384e; //var
 		top: 54%;
 	}
 	70% {
-		top: 74%;
+		top: var(--racket-bottom);
 	}
 	84% {
 		top: 12%;

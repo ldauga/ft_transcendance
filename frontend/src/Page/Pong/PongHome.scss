@@ -29,7 +29,7 @@
 		svg {
 			cursor: pointer;
 			height: 40px;
-			width: 40px;
+			width: auto;
 			border: solid 3px #2e384e;
 			transition: all .3s ease-out;
 			&:hover {
@@ -58,25 +58,6 @@
 		&:hover {
 			color: #FFFF;
 			background: #2e384e;
-		}
-	}
-
-	.create-map {
-		color: #2e4e2f;
-		border-color: #2e4e2f;
-		background: unset;
-		letter-spacing: 1px;
-		border-width: 3px;
-		margin-top: 49px;
-		font-family: 'Roboto', sans-serif;
-		font-size: 30px;
-		font-weight: 700;
-		cursor: pointer;
-		text-transform: uppercase;
-		transition: all .3s ease-out;
-		&:hover {
-			color: #FFFF;
-			background: #2e4e2f;
 		}
 	}
 }
@@ -134,6 +115,59 @@
 		&:hover {
 			color: #FFFF;
 			background: #2e384e;
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.pong {
+		.select-map {
+			svg {
+				height: 36px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 457px) {
+	.pong {
+		.select-map {
+			svg {
+				height: 35px;
+				border-width: 2px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 433px) {
+	.pong {
+		.select-map {
+			svg {
+				height: 25px;
+				border-width: 2px;
+			}
+		}
+		.join-queue {
+			border-width: 2px;
+			margin-top: 42px;
+			font-size: 28px;
+		}
+	}
+}
+
+@media screen and (max-width: 374px) {
+	.pong {
+		.select-map{
+			svg {
+				height: 20px;
+				border-width: 2px;
+			}
+		}
+		.join-queue {
+			border-width: 2px;
+			margin-top: 36px;
+			font-size: 25px;
 		}
 	}
 }
