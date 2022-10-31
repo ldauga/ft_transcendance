@@ -24,6 +24,7 @@ import { red } from '@mui/material/colors'
 import Background from '../Background/Background'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
 import PinInput from 'react-pin-input'
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 
 export function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
@@ -120,20 +121,14 @@ export function StatPlayer() {
 								</div>
 							</div>
 						</div>
-
 					)
 				})
 				if (!matches.length)
-					matches.push(<div key={'none'} className='noMatchHistory'>
-						<div className="iconContainer">
-							<RiFileWarningLine />
-						</div>
-						<div className="textContainer">
-							No match history found...
-						</div>
-					</div>)
+				matches.push(<div key={'none'} className='no-match'>
+					<SentimentVeryDissatisfiedIcon />
+					<p>You doesn't played match</p>
+				</div>)
 
-				console.log('matches', matches)
 				setProfileUserMatchHistory(matches.reverse())
 			})
 	}
@@ -188,16 +183,16 @@ export function StatPlayer() {
 	}
 
 	const sendGetRequest = (value: string) => {
-		axiosConfig.get('http://localhost:5001/auth/2fa/turn-on/' + value)
-			.then(res => {
-				setTwoFactor(true);
-				setUserParameter2FACode('');
-				setUser(res.data);
-				setUserParameter2FARes(res.status);
-			})
-			.catch(err => {
-				setUserParameter2FARes(err.response.status);
-			});
+		axios.get('http://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
+		.then(res => {
+			setTwoFactor(true);
+			setUserParameter2FACode('');
+			setUser(res.data);
+			setUserParameter2FARes(res.status);
+		})
+		.catch(err => {
+			setUserParameter2FARes(err.response.status);
+		});
 	}
 
 	async function buttonAddFriend() {
@@ -332,7 +327,6 @@ export function StatPlayer() {
 										focus
 										onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }}
 										type="numeric"
-										inputFocusStyle={{ borderColor: '#f55951' }}
 										inputMode="number"
 										style={{ padding: '10px' }}
 										onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
