@@ -64,8 +64,10 @@ export function StatPlayer() {
 		console.log('newNickname: ' + newNickname)
 		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
 			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			if (newNickname)
+			if (newNickname){
 				setProfile({ ...profile, nickname: newNickname });
+				fetchMatchHistory();
+			}
 		}
 	}
 
