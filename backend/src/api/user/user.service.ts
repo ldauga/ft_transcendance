@@ -144,6 +144,8 @@ export class UserService {
 		const user = await this.getUserByRefreshToken(refreshToken)
 		if (!user)
 			return null;
+		if (body.nickname.lenght < 3 || body.nickname.lenght > 8)
+			throw new BadRequestException('Nickname not valid');
 		if (user.nickname == body.nickname)
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(body.nickname))

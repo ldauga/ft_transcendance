@@ -3,7 +3,6 @@ import Navbar from '../../Module/Navbar/Navbar';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 import { gameRoomClass } from './gameRoomClass';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 import './CSS/GamePage/GamePage.css';
 import './CSS/GamePage/Board.css';

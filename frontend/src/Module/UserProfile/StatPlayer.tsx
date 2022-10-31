@@ -22,19 +22,20 @@ import { actionCreators, RootState } from '../../State'
 import { setUser } from '../../State/Action-Creators'
 import { red } from '@mui/material/colors'
 import Background from '../Background/Background'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, TextField } from '@mui/material'
 import PinInput from 'react-pin-input'
 
 export function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const [open, setOpen] = useState(false);
+	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
 	const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
 	const [userParameter2FACode, setUserParameter2FACode] = useState("");
 	const [userParameter2FARes, setUserParameter2FARes] = useState(0);
 	const [fullPinCode, setFullPinCode] = useState(0);
-	const [newNickname, setNewNickname] = useState(persistantReduceur.userReducer.user?.nickname);
+	const [newNickname, setNewNickname] = useState("");
 	const [rank, setRank] = useState({
 		label: '',
 		img: ''
@@ -63,15 +64,15 @@ export function StatPlayer() {
 		console.log('newNickname: ' + newNickname)
 		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
 			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			if (newNickname)
-				setProfile({ ...profile, nickname: newNickname });
+			fetchUser('http://localhost:5001/user/login/')
+			fetchMatchHistory()
 		}
 	}
 
 	const fetchUser = async (url: string) => {
 		await axiosConfig.get(url + profile.login)
 			.then(async (res) => {
-				await setProfile({
+				setProfile({
 					id: res.data.id,
 					login: res.data.login,
 					nickname: res.data.nickname,
@@ -80,7 +81,7 @@ export function StatPlayer() {
 					profile_pic: res.data.profile_pic,
 					loaded: true
 				})
-				if (res.data.wins == '0' && res.data.losses == '0') {
+				if (res.data.wins == 0 && res.data.losses == 0) {
 					setRank({ label: 'unranked', img: unranked })
 				}
 				else if (res.data.wins > 5) {
@@ -120,7 +121,6 @@ export function StatPlayer() {
 								</div>
 							</div>
 						</div>
-
 					)
 				})
 				if (!matches.length)
@@ -306,14 +306,17 @@ export function StatPlayer() {
 								variant="standard"
 								onKeyUp={(e) => {
 									if (e.key === 'Enter') {
-										changeNickname();
-										setOpen(false);
+										if (newNickname.length >= 3 && newNickname.length <= 30) {
+											changeNickname();
+											setOpen(false);
+										} else
+											setOpenSnackbar(true)
 									}
 								}}
 							/>
 						</DialogContent>
 						<DialogActions>
-							<button onClick={() => { changeNickname(); setOpen(false); }}>Edit</button>
+							<button onClick={() => { if (newNickname.length >= 3 && newNickname.length <= 30) { changeNickname(); setOpen(false); } else setOpenSnackbar(true) }}>Edit</button>
 						</DialogActions>
 					</Dialog>
 					<label htmlFor="file-upload">
@@ -382,6 +385,14 @@ export function StatPlayer() {
 					</div>
 				</div>
 			</div>
+			<Snackbar
+				open={openSnackbar}
+				autoHideDuration={5000}
+				onClose={() => { setOpenSnackbar(false) }}>
+				<Alert onClose={() => { setOpenSnackbar(false) }} severity="warning" sx={{ width: '100%' }}>
+					The new nickname must be between 3 and 8 char.
+				</Alert>
+			</Snackbar>
 		</>
 	)
 }
