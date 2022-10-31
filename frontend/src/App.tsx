@@ -16,8 +16,8 @@ function App() {
 
   return (
 
-
     <BrowserRouter>
+
       <PersistGate loading={null} persistor={persistor}>
 
         <Routes>
@@ -38,6 +38,7 @@ function App() {
           <Route path='/NotFound' element={<NotFound />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>
+        
       </PersistGate>
 
     </BrowserRouter>

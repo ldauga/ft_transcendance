@@ -64,14 +64,13 @@ export function StatPlayer() {
 		console.log('newNickname: ' + newNickname)
 		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
 			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			fetchUser('http://localhost:5001/user/login/')
-			fetchMatchHistory()
 		}
 	}
 
 	const fetchUser = async (url: string) => {
 		await axiosConfig.get(url + profile.login)
 			.then(async (res) => {
+				console.log(res.data)
 				setProfile({
 					id: res.data.id,
 					login: res.data.login,
@@ -98,6 +97,7 @@ export function StatPlayer() {
 				} else {
 					setRank({ label: 'bronze', img: bronze_rank_img })
 				}
+				utilsData.socket.emit('GET_CLIENT_STATUS', {user: res.data})
 			})
 	}
 
@@ -137,6 +137,16 @@ export function StatPlayer() {
 				setProfileUserMatchHistory(matches.reverse())
 			})
 	}
+
+	const [status, setStatus] = useState('')
+
+	utilsData.socket.off('getClientStatus')
+
+	utilsData.socket.on('getClientStatus', (info: {user: string, status: string}) => {
+		console.log(info, info.user, profile)
+		if (info.user == profile.login)
+			setStatus(info.status)
+	})
 
 	useEffect(() => {
 		console.log("useEffect() StatPlayer");
@@ -360,7 +370,7 @@ export function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player'></span> online</p>
+								<p><span className='status-player' style={{ backgroundColor: status == 'connected' ? 'green' : status == 'in-game' ? 'orange' : 'darkred' }} ></span> {status}</p>
 						</div>
 					</div>
 					{profile_btn()}
