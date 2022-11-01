@@ -215,15 +215,12 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	return (
 		<div className="mainAffGene">
 			<div className="mainHeader">
-				<div className="mainHeaderLeft mainHeaderSide">
-					<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
-				</div>
-				<div className="mainHeaderRight mainHeaderSide">
-					<IconButton onClick={handleClickOpenOptions}>
-						<MoreVertIcon />
-					</IconButton>
-					<MenuOptions />
-				</div>
+				<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
+				<h3>Friends</h3>
+				<button onClick={handleClickOpenOptions}>
+					<MoreVertIcon />
+				</button>
+				<MenuOptions />
 			</div>
 			{newAddFriend && <AddFriend />}
 			<ItemsFriendList />
