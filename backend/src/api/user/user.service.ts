@@ -24,7 +24,6 @@ export class UserService {
 	}
 
 	async getUserById(id: number): Promise<UserEntity> {
-		console.log("user service id: ", id);
 		if (id == undefined)
 			return null;
 		const user = await this.userRepository.findOneBy({ id: id });

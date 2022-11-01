@@ -135,7 +135,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const quitConvers = () => {
         const participantToRemove = {
             login: userData.userReducer.user?.login,
-            room_name: props.roomsConversData.name
+            room_name: props.roomsConversData.name,
+            room_id: props.roomsConversData.id
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
         setUpdate(false);
@@ -192,30 +193,61 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
         console.log("Date: ", Date());
-        if (getYear() != props.item.year)
-            return (
-                <div className='dateDisplayNoneRoomConvers'>
-                    <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
-                </div>
-            );
-        else if (getMonth() != props.item.month)
-            return (
-                <div className='dateDisplayNoneRoomConvers'>
-                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                </div>
-            );
-        else if (getDay() != props.item.day)
-            return (
-                <div className='dateDisplayNoneRoomConvers'>
-                    <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                </div>
-            );
-        else
-            return (
-                <div className='dateDisplayNoneRoomConvers'>
-                    <p>{props.item.hour}:{props.item.minute}</p>
-                </div>
-            );
+        if (props.item.id_sender == userData.userReducer.user?.id) {
+            if (getYear() != props.item.year)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else if (getMonth() != props.item.month)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else if (getDay() != props.item.day)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+        }
+        else {
+            const user = users.find(obj => obj.id == props.item.id_sender);
+            const nickname = user?.nickname;
+            if (getYear() != props.item.year)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{nickname} - {props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else if (getMonth() != props.item.month)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else if (getDay() != props.item.day)
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+            else
+                return (
+                    <div className='dateDisplayNoneRoomConvers'>
+                        <p>{nickname} - {props.item.hour}:{props.item.minute}</p>
+                    </div>
+                );
+        }
+
     };
 
     function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
@@ -227,6 +259,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <div onMouseOver={e => { e.currentTarget.parentElement?.children[0].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[0].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
                         <p>{props.item.text}</p>
                     </div>
+                </div>
+            );
+        }
+        else if (props.item.id_sender == 0) {
+            return (
+                <div className="server_msg">
+                    <p>{props.item.text}</p>
                 </div>
             );
         }
@@ -252,7 +291,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>
+                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'itemListConversContainerCorrespondant'))}>
                     <Item item={item} />
                 </div>)
             });
@@ -273,6 +312,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             });
             console.log('itemList get Users: ', itemList);
             setUsers(itemList);
+            setUpdate(true);
         })
     }
 
@@ -281,11 +321,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [itemListHistory, isConversRooms])
 
     useEffect(() => {
+        setUpdate(false);
         checkIfOwner();
         getUsers();
         getListItem();
         bottom.current?.scrollIntoView();
-    }, [props, isConversRooms]);
+    }, [props, isConversRooms, update]);
 
     const handleClickOpenDialogChangePassword = () => {
         setOpenDialogChangePassword(true);

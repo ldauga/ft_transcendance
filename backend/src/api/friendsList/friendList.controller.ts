@@ -24,6 +24,7 @@ export class FriendListController {
   @Get('/:id1/:id2')
   @UseGuards(AuthGuard('jwt'))
   public checkFriendList(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<boolean> {
+    console.log("checkExistRelation");
     return this.service.checkExistRelation(id1, id2);
   }
 

@@ -44,6 +44,21 @@
         }
     }
 
+    .itemListConversContainerServer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .server_msg {
+        display: flex;
+        justify-content: center;
+    }
+
+    .server_msg p {
+        color: rgb(190, 190, 190);
+        font-size: 1rem;
+    }
+
     .converItemListRoomConvers {
         height: auto;
         width: auto;

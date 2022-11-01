@@ -25,10 +25,12 @@ import Background from '../Background/Background'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
 import PinInput from 'react-pin-input'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import { sassFalse } from 'sass'
 
 export function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const utilsData = useSelector((state: RootState) => state.utils);
+	const userData = useSelector((state: RootState) => state.persistantReducer);
 	const [open, setOpen] = useState(false);
 	const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
 	const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
@@ -41,7 +43,7 @@ export function StatPlayer() {
 		img: ''
 	})
 
-	const [update, setUpdate] = useState(false);
+	const [update, setUpdate] = useState(true);
 	const [checkIfAddFriend, setCheckIfAddFriend] = useState(true);
 
 	const dispatch = useDispatch();
@@ -55,7 +57,8 @@ export function StatPlayer() {
 		wins: '',
 		losses: '',
 		profile_pic: '',
-		loaded: false
+		loaded: false,
+		friendOrInvitation: false
 	})
 
 	const login = persistantReduceur.userReducer.user?.login;
@@ -64,14 +67,18 @@ export function StatPlayer() {
 		console.log('newNickname: ' + newNickname)
 		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
 			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			if (newNickname){
+			if (newNickname) {
 				setProfile({ ...profile, nickname: newNickname });
 				fetchMatchHistory();
 			}
 		}
 	}
 
+
+
 	const fetchUser = async (url: string) => {
+		// const check = await checkIfFriendOrInvit();
+		//console.log("check before: ", check);
 		await axiosConfig.get(url + profile.login)
 			.then(async (res) => {
 				await setProfile({
@@ -81,7 +88,8 @@ export function StatPlayer() {
 					wins: res.data.wins,
 					losses: res.data.losses,
 					profile_pic: res.data.profile_pic,
-					loaded: true
+					loaded: true,
+					friendOrInvitation: false
 				})
 				if (res.data.wins == '0' && res.data.losses == '0') {
 					setRank({ label: 'unranked', img: unranked })
@@ -126,34 +134,46 @@ export function StatPlayer() {
 					)
 				})
 				if (!matches.length)
-				matches.push(<div key={'none'} className='no-match'>
-					<SentimentVeryDissatisfiedIcon />
-					<p>You doesn't played match</p>
-				</div>)
+					matches.push(<div key={'none'} className='no-match'>
+						<SentimentVeryDissatisfiedIcon />
+						<p>You doesn't played match</p>
+					</div>)
 
 				setProfileUserMatchHistory(matches.reverse())
 			})
 	}
 
 	useEffect(() => {
+		const checkIfFriendOrInvit = async () => {
+			console.log("checkIfFriendOrInvit");
+			await axiosConfig.get('http://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
+				console.log("getFriendList res.data: ", res.data);
+				if (res.data && res.data.length > 0) {
+					console.log("Relation exist");
+					return true;
+				}
+			});
+			await axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
+				console.log("getInvitationRequest res.data: ", res.data);
+				if (res.data && res.data.length > 0) {
+					console.log("Invitation exist");
+					return true;
+				}
+			});
+			return false;
+		};
 		console.log("useEffect() StatPlayer");
+		if (update) {
+			(async () => {
+				const check = await checkIfFriendOrInvit();
+				console.log("setProfile with check = ", check);
+				setProfile({ ...profile, friendOrInvitation: check });
+			})();
+		}
 		setUpdate(false);
-		axiosConfig.get('http://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
-			if (res.data) {
-				setCheckIfAddFriend(false);
-				setUpdate(true);
-				console.log("Relation exist");
-			}
-		});
-		axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
-			if (res.data) {
-				setCheckIfAddFriend(false);
-				setUpdate(true);
-				console.log("Invitation exist");
-			}
-		});
-		if (!profile.loaded)
+		if (!profile.loaded) {
 			fetchUser('http://localhost:5001/user/login/')
+		}
 		if (profile.loaded)
 			fetchMatchHistory();
 		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
@@ -164,7 +184,7 @@ export function StatPlayer() {
 			if (wrongCode)
 				wrongCode.style.display = 'none';
 		}
-	}, [profile, userParameter2FARes, update, checkIfAddFriend])
+	}, [profile, userParameter2FARes, update])
 
 	const editAvatar = (e: any) => {
 		const img = e.target.files.item(0);
@@ -186,15 +206,15 @@ export function StatPlayer() {
 
 	const sendGetRequest = (value: string) => {
 		axios.get('http://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
-		.then(res => {
-			setTwoFactor(true);
-			setUserParameter2FACode('');
-			setUser(res.data);
-			setUserParameter2FARes(res.status);
-		})
-		.catch(err => {
-			setUserParameter2FARes(err.response.status);
-		});
+			.then(res => {
+				setTwoFactor(true);
+				setUserParameter2FACode('');
+				setUser(res.data);
+				setUserParameter2FARes(res.status);
+			})
+			.catch(err => {
+				setUserParameter2FARes(err.response.status);
+			});
 	}
 
 	async function buttonAddFriend() {
@@ -268,11 +288,17 @@ export function StatPlayer() {
 		utilsData.socket.removeListener('refreshUser');
 	})
 
+	const removeFriend = () => {
+		utilsData.socket.emit('removeFriend', { id_user1: userData.userReducer.user?.id, id_user2: profile.id, login_user1: userData.userReducer.user?.login, login_user2: profile.login });
+		setUpdate(true);
+	};
+
 	function profile_btn() {
 		if (login != profile.login) {
-			if (checkIfAddFriend)
+			if (profile.friendOrInvitation)
 				return (
 					<div className='buttons'>
+						<button onClick={removeFriend}>Remove Friend</button>
 						<button>Invite Game</button>
 						<button>Send Message</button>
 					</div>

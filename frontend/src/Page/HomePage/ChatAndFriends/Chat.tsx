@@ -31,14 +31,36 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         utilsData.socket.removeListener('newMsgReceived');
     })
 
-    const openConvers = (item: { id: number, login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
+    utilsData.socket.removeListener('removeParticipantReturn');
+
+    utilsData.socket.on('removeParticipantReturn', function (data: any) {
+        console.log('removeParticipantReturn = ', data);
+        for (let i = 0; i < 5; i++) {
+            getListItem();
+        }
+        utilsData.socket.off('removeParticipantReturn');
+        utilsData.socket.removeListener('removeParticipantReturn');
+    })
+
+    utilsData.socket.removeListener('roomHasBeenDeleted');
+
+    utilsData.socket.on('roomHasBeenDeleted', function (data: any) {
+        console.log('roomHasBeenDeleted = ', data);
+        for (let i = 0; i < 5; i++) {
+            getListItem();
+        }
+        utilsData.socket.off('roomHasBeenDeleted');
+        utilsData.socket.removeListener('roomHasBeenDeleted');
+    })
+
+    const openConvers = (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
         if (!item.userOrRoom) {
-            props.setConversCorrespondantData({ id: item.id, login: item.login });
+            props.setConversCorrespondantData({ id: item.id, login: item.name });
             props.setChat(false);
             props.setConvers(true);
         }
         else {
-            props.setroomsConversData({ name: item.room_name, id: item.room_id });
+            props.setroomsConversData({ name: item.name, id: item.id });
             props.setChat(false);
             props.setRoomsConvers(true);
         }
@@ -58,6 +80,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const getListItem = async () => {
         let relationList: any[] = [];
+        let ChatList: { name: string, id: number, profile_pic: string, userOrRoom: boolean }[] = [];
         await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             relationList = res.data;
         });
@@ -66,25 +89,34 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             if (!relationList[i].userOrRoom) {
                 const user = await axiosConfig.get('http://localhost:5001/user/id/' + relationList[i].id);
                 console.log("user.data: ", user.data, "i: ", i);
-                relationList[i].nickname = user.data.nickname;
-                relationList[i].profile_pic = user.data.profile_pic;
+                console.log("push 1");
+                ChatList.push({ name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
+            }
+            else {
+                const checkIfParticipant = await axiosConfig.get('http://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
+                console.log("checkIfParticipant: ", checkIfParticipant.data);
+                if (checkIfParticipant.data) {
+                    console.log("push 2");
+                    ChatList.push({ name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
+                }
             }
         }
         let itemList: any[] = [];
-        await relationList.forEach(async (item: { id: number, login: string, nickname: string, profile_pic: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
+        console.log("ChatList.length = ", ChatList.length);
+        await ChatList.forEach(async (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
             console.log("test2");
             if (!item.userOrRoom) {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
                         <img src={item.profile_pic}></img>
-                        <p>{item.nickname}</p>
+                        <p>{item.name}</p>
                     </div>
                 </div>)
             }
             else {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <p>{item.room_name}</p>
+                        <p>{item.name}</p>
                     </div>
                 </div>)
             }
