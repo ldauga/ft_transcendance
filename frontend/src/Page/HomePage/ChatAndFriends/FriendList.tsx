@@ -128,7 +128,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	function ItemsFriendList() {
 		return (
-			<div id="ListItemFriendList">
+			<div className="ListItemFriendList">
 				{itemListHistory}
 			</div>
 		);
