@@ -44,21 +44,22 @@ export function StatPlayer() {
 	})
 
 	const [update, setUpdate] = useState(true);
-	const [checkIfAddFriend, setCheckIfAddFriend] = useState(true);
+	const [openConversFromProfile, setOpenConversFromProfile] = useState(false);
+	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "" });
 
 	const dispatch = useDispatch();
 	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
 
 	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>);
 	const [profile, setProfile] = useState({
-		id: '',
+		id: 0,
 		login: window.location.href.split('/')[window.location.href.split('/').length - 1],
 		nickname: '',
 		wins: '',
 		losses: '',
 		profile_pic: '',
 		loaded: false,
-		friendOrInvitation: false
+		friendOrInvitation: 0
 	})
 
 	const login = persistantReduceur.userReducer.user?.login;
@@ -74,7 +75,24 @@ export function StatPlayer() {
 		}
 	}
 
+	utilsData.socket.removeAllListeners('returnCheckIfFriendOrInvit');
 
+	utilsData.socket.on('returnCheckIfFriendOrInvit', function (returnCheckIfFriendOrInvit: number) {
+		console.log('returnCheckIfFriendOrInvit = ', returnCheckIfFriendOrInvit);
+		if (profile.friendOrInvitation != returnCheckIfFriendOrInvit)
+			setProfile({ ...profile, friendOrInvitation: returnCheckIfFriendOrInvit })
+		utilsData.socket.off('returnCheckIfFriendOrInvit');
+		utilsData.socket.removeListener('returnCheckIfFriendOrInvit');
+	})
+
+	utilsData.socket.removeAllListeners('newFriendReceived');
+
+	utilsData.socket.on('newFriendReceived', function (newFriendReceived: any) {
+		console.log('newFriendReceived = ', newFriendReceived);
+		setUpdate(true);
+		utilsData.socket.off('newFriendReceived');
+		utilsData.socket.removeListener('newFriendReceived');
+	})
 
 	const fetchUser = async (url: string) => {
 		// const check = await checkIfFriendOrInvit();
@@ -89,7 +107,7 @@ export function StatPlayer() {
 					losses: res.data.losses,
 					profile_pic: res.data.profile_pic,
 					loaded: true,
-					friendOrInvitation: false
+					friendOrInvitation: 0
 				})
 				if (res.data.wins == '0' && res.data.losses == '0') {
 					setRank({ label: 'unranked', img: unranked })
@@ -144,31 +162,10 @@ export function StatPlayer() {
 	}
 
 	useEffect(() => {
-		const checkIfFriendOrInvit = async () => {
-			console.log("checkIfFriendOrInvit");
-			await axiosConfig.get('http://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
-				console.log("getFriendList res.data: ", res.data);
-				if (res.data && res.data.length > 0) {
-					console.log("Relation exist");
-					return true;
-				}
-			});
-			await axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + profile.id).then(async (res) => {
-				console.log("getInvitationRequest res.data: ", res.data);
-				if (res.data && res.data.length > 0) {
-					console.log("Invitation exist");
-					return true;
-				}
-			});
-			return false;
-		};
 		console.log("useEffect() StatPlayer");
-		if (update) {
-			(async () => {
-				const check = await checkIfFriendOrInvit();
-				console.log("setProfile with check = ", check);
-				setProfile({ ...profile, friendOrInvitation: check });
-			})();
+		if (profile.id) {
+			console.log("emit CHECK_IF_FRIEND_OR_INVIT with id1: ", userData.userReducer.user?.id, ", id2: ", profile.id);
+			utilsData.socket.emit('CHECK_IF_FRIEND_OR_INVIT', { id1: userData.userReducer.user?.id, id2: profile.id });
 		}
 		setUpdate(false);
 		if (!profile.loaded) {
@@ -293,20 +290,25 @@ export function StatPlayer() {
 		setUpdate(true);
 	};
 
+	const sendMsg = () => {
+		setDataOpenConversFromProfile({ id: profile.id, login: profile.login, nickname: profile.nickname });
+		setOpenConversFromProfile(true);
+	};
+
 	function profile_btn() {
 		if (login != profile.login) {
-			if (profile.friendOrInvitation)
+			if (profile.friendOrInvitation == 1)
 				return (
 					<div className='buttons'>
 						<button onClick={removeFriend}>Remove Friend</button>
 						<button>Invite Game</button>
-						<button>Send Message</button>
+						<button onClick={sendMsg}>Send Message</button>
 					</div>
 				);
 			else
 				return (
 					<div className='buttons'>
-						<button onClick={buttonAddFriend}>Add Friend</button>
+						<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
 						<button>Invite Game</button>
 						<button>Send Message</button>
 					</div>
@@ -370,7 +372,7 @@ export function StatPlayer() {
 
 	return (
 		<>
-			<NavBar />
+			<NavBar openFriendConversFromProfile={openConversFromProfile} dataFriendConversFromProfile={dataOpenConversFromProfile} setOpenFriendConversFromProfile={setOpenConversFromProfile} />
 			<Background />
 			<div className='stat-player-content'>
 				<div className='profile'>

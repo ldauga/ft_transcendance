@@ -1812,6 +1812,20 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   }
 
+  @SubscribeMessage('CHECK_IF_FRIEND_OR_INVIT')
+  async checkIfFriendOrInvit(client: Socket, data: { id1: number, id2: number }) {
+    console.log("CHECK_IF_FRIEND_OR_INVIT id1: ", data.id1, ", id2: ", data.id2);
+    const checkFriend = await this.FriendListService.checkExistRelation(data.id1, data.id2);
+    const checkInvit = await this.invitationRequestService.checkInvitationRequest(data.id1, data.id2);
+    console.log("checkFriend: ", checkFriend, ", checkInvit: ", checkInvit);
+    if (checkFriend)
+      this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 1);
+    else if (checkInvit)
+      this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 2);
+    else
+      this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 0);
+  }
+
   @SubscribeMessage('GET_ALL_FRIEND_CONNECTED')
   async getAllFriendConnected(client: Socket, info: { user: any }) {
 

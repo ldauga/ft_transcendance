@@ -94,7 +94,7 @@ function PongHome(props: any) {
 
 	return (
 		<>
-			<NavBar />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
 			{!inQueue ?
 				<>
 					<Background />

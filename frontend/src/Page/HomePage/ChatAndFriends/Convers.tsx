@@ -7,7 +7,7 @@ import { RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Convers.scss'
 
-function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string }) {
+function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -19,7 +19,10 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     const closeConvers = () => {
+        if (props.openFriendConversFromProfile)
+            props.setOpenFriendConversFromProfile(false);
         props.setConvers(false);
+        console.log("oldAff: ", props.oldAff);
         if (props.oldAff == "Chat")
             props.setChat(true);
         else

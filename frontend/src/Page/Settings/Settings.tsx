@@ -38,7 +38,7 @@ function Settings() {
 	const handleClose = (param: any) => {
 		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname}).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => {console.log('err', err)})
+			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
 
 		if (userParameterNewProfilePicture != null) {
 
@@ -70,15 +70,15 @@ function Settings() {
 
 	const sendGetRequest = (value: string) => {
 		axiosConfig.get('http://localhost:5001/auth/2fa/turn-on/' + value)
-		.then(res => {
-			setTwoFactor(true);
-			setUserParameter2FACode('');
-			setUser(res.data);
-			setUserParameter2FARes(res.status);
-		})
-		.catch(err => {
-			setUserParameter2FARes(err.response.status);
-		});
+			.then(res => {
+				setTwoFactor(true);
+				setUserParameter2FACode('');
+				setUser(res.data);
+				setUserParameter2FARes(res.status);
+			})
+			.catch(err => {
+				setUserParameter2FARes(err.response.status);
+			});
 	}
 
 	useEffect(() => {
@@ -86,15 +86,15 @@ function Settings() {
 		if (fullPinCode && userParameter2FARes === 401) {
 			if (wrongCode)
 				wrongCode.style.display = 'block';
-			} else {
+		} else {
 			if (wrongCode)
 				wrongCode.style.display = 'none';
 		}
-	  }, [userParameter2FARes]);
+	}, [userParameter2FARes]);
 
 	return (
 		<>
-			<NavBar />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
 			<div className='settings'>
 				<div className="content">
 					<div className='nick'>
@@ -113,7 +113,7 @@ function Settings() {
 										fullWidth
 										variant="standard"
 										onChange={e => setUserParameterNewNickname(e.target.value)}
-										onKeyDown={e => {if (e.key == 'Enter')handleClose(setOpenEditZoneNickname)}}
+										onKeyDown={e => { if (e.key == 'Enter') handleClose(setOpenEditZoneNickname) }}
 									/>
 								</DialogContent>
 								<DialogActions>
@@ -134,9 +134,9 @@ function Settings() {
 										(<>
 											<DialogTitle>Select an image</DialogTitle>
 											<DialogContent>
-											<label htmlFor="file-upload" className="custom-file-upload">
-												<DriveFolderUpload /> Change Image
-											</label>
+												<label htmlFor="file-upload" className="custom-file-upload">
+													<DriveFolderUpload /> Change Image
+												</label>
 												<input id='file-upload' type="file" accept=".jpeg,.jpg,.png" onChange={e => { setUserParameterNewProfilePicture(e.target.files?.item(0)) }} />
 											</DialogContent>
 										</>) :
@@ -165,25 +165,25 @@ function Settings() {
 										<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
 										<DialogContent className='two-fa'>
 											<img src={userParameter2FAQrCode} />
-											<PinInput 
+											<PinInput
 												length={6}
 												focus
-												onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }} 
+												onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }}
 												type="numeric"
-												inputFocusStyle={{borderColor: '#f55951'}}
+												inputFocusStyle={{ borderColor: '#f55951' }}
 												inputMode="number"
-												style={{padding: '10px'}}
+												style={{ padding: '10px' }}
 												onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
 												autoSelect={true}
 											/>
-											<p className='wrong-code' style={{display: 'none'}}>Wrong Code</p>
+											<p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
 										</DialogContent>
 									</Dialog>
 								</div></> :
 							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => {console.log(res); setUser(res.data)}) }}>Desactivate</button>
+									<button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate</button>
 								</div>
 							</>
 						}
