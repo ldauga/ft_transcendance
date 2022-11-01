@@ -1,6 +1,7 @@
 .ListItemFriendList {
     display: flex;
     flex-direction: column;
+    gap: 10px;
     .itemFriendList {
         display: flex;
         flex-direction: row;
@@ -50,6 +51,7 @@
         .inItemFriendList_left p {
             font-size: 1.5rem;
             color: #2E384E;
+            margin: 0;
         }
     
         .inItemFriendList_right {
@@ -86,6 +88,7 @@
     
             p {
                 font-size: 1rem;
+                margin: 0;
                 font-weight: 200;
                 padding-left: 0.3rem;
             }

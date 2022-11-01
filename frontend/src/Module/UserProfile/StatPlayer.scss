@@ -30,7 +30,7 @@
 }
 
 .stat-player-content {
-	margin-top: 10px;
+	margin-top: 50px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -342,6 +342,7 @@
 	
 	@media screen and (min-width: 768px) {
 		padding: 0 40px;
+		margin-top: 83px;
 		.profile {
 			margin-top: 21px;
 		}
@@ -351,7 +352,7 @@
 		width: 944px;
 		border: solid 1px;
 		margin: 0 auto;
-		margin-top: 66px;
+		margin-top: 127px;
 		.match-history {
 			padding-bottom: 21px;
 			.cards {
@@ -365,5 +366,8 @@
 				}
 			}
 		}
+	}
+	@media screen and (min-width: 1440px) {
+		margin-top: 164px;
 	}
 }
