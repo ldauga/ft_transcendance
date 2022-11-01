@@ -134,10 +134,10 @@ export function StatPlayer() {
 					)
 				})
 				if (!matches.length)
-					matches.push(<div key={'none'} className='no-match'>
-						<SentimentVeryDissatisfiedIcon />
-						<p>You doesn't played match</p>
-					</div>)
+				matches.push(<div key={'none'} className='no-match'>
+					<SentimentVeryDissatisfiedIcon />
+					<p>No match found</p>
+				</div>)
 
 				setProfileUserMatchHistory(matches.reverse())
 			})

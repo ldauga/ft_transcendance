@@ -3,7 +3,9 @@
 
 nav {
 	background: #FDFEFE;
-	// padding: 0 1vw;
+	position: fixed;
+	top: 0;
+	z-index: 2;
 	height: 50px;
 	min-width: 100vw;
 	display: flex;
@@ -59,8 +61,9 @@ nav {
 			font-size: 20px;
 		}
 		.profile {
+			gap: 2px;
 			span {
-				font-size: 10px;
+				font-size: 12px;
 				display: block;
 			}
 		}
@@ -78,18 +81,43 @@ nav {
 			height: 43px;
 		}
 		.profile {
+			gap: 5px;
 			.avatar {
 				--avatar-size: 40px;
 				height: var(--avatar-size);
 				width: var(--avatar-size);
 			}
 			span {
-				font-size: 13px;
+				font-size: 16px;
 			}
 		}
 	}
 	
 	@media screen and (min-width: 1024px) {
+		height: 85px;
+		a {
+			font-size: 44px;
+			letter-spacing: 2px;
+		}
+		.right {
+			gap: 12px;
+		}
+		svg, div {
+			height: 48px;
+		}
+		.avatar {
+			--avatar-size: 43px;
+			height: var(--avatar-size);
+			width: var(--avatar-size);
+		}
+		.profile {
+			span {
+				font-size: 18px;
+			}
+		}
+	}
+
+	@media screen and (min-width: 1440px) {
 		height: 95px;
 		a {
 			font-size: 47px;
