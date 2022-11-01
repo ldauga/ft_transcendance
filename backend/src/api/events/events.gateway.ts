@@ -1631,8 +1631,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     friendRes = friendList;
 
+    console.log("friendRes = ", friendRes);
+
     for (let index = 0; index < friendRes.length; index++) {
       var user: any
+      console.log("friendRes-index: ", friendRes[index]);
       if (friendRes[index].id_user1 != info.user.id)
         user = await this.UserService.getUserById(friendRes[index].id_user1);
       else

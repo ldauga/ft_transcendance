@@ -32,7 +32,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     };
 
     const removeFriend = () => {
-        utilsData.socket.emit('removeFriend', props.item);
+        utilsData.socket.emit('removeFriend', { id_user1: userData.userReducer.user?.id, id_user2: props.item.user.id, login_user1: userData.userReducer.user?.login, login_user2: props.item.user.login });
         props.setUpdate(true);
     };
 

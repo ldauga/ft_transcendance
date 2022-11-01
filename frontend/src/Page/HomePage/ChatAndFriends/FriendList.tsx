@@ -135,6 +135,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	useEffect(() => {
+		console.log("useEffect friendList");
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 	}, [props]);
 
