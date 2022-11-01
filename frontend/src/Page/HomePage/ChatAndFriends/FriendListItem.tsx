@@ -132,17 +132,19 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     return (
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
-                <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.item.user.login) }} ></img>
-                <p>{props.item.user.nickname}</p>
+                <div className="friend-profile" onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.item.user.login) }}>
+                    <img src={props.item.user.profile_pic} />
+                    <p>{props.item.user.nickname}</p>
+                </div>
                 <AffStatus />
             </div>
             <div className="inItemFriendList_right">
-                <IconButton onClick={openChat}>
+                <button onClick={openChat}>
                     <ChatIcon />
-                </IconButton>
-                <IconButton onClick={handleClick}>
+                </button>
+                <button onClick={handleClick}>
                     <MoreVertIcon />
-                </IconButton>
+                </button>
                 <FriendOptions />
             </div>
         </div>
