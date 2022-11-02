@@ -9,12 +9,15 @@ import GameSwitch from './Page/Pong/GameSwitch';
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './State/store';
 import Settings from './Page/Settings/Settings';
-import { StatPlayer } from './Module/UserProfile/StatPlayer';
 import LeaderBoard from './Page/LeaderBoard/LeaderBoard';
+import { SnackbarProvider } from 'notistack';
+import StatPlayer from './Module/UserProfile/StatPlayer';
 
 function App() {
 
   return (
+
+    <SnackbarProvider maxSnack={5}>
 
     <BrowserRouter>
 
@@ -42,6 +45,8 @@ function App() {
       </PersistGate>
 
     </BrowserRouter>
+
+    </SnackbarProvider>
 
   );
 };

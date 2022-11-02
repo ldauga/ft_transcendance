@@ -1669,7 +1669,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
               })
 
-              
+
 
               return;
             }
@@ -2088,5 +2088,29 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`${arrClient.find(obj => obj.id === client.id).username} request her friends list`);
     this.server.to(client.id).emit('friendsList', arrClient);
   }
+
+  @SubscribeMessage('CHANGE_NICKNAME')
+  async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
+
+    this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
+      switch (err.response.message) {
+        case 'Cannot set identical nickname':
+          this.server.to(client.id).emit('changeNicknameError', 'identical-nickname')
+          break;
+        case 'Nickname already used':
+          this.server.to(client.id).emit('changeNicknameError', 'already-used')
+          break;
+        case 'No special char':
+          this.server.to(client.id).emit('changeNicknameError', 'special-char')
+          break;
+        case 'Nickname too short':
+          this.server.to(client.id).emit('changeNicknameError', 'too-short')
+          break;
+      }
+    }).then(() => {
+      this.server.to(client.id).emit('changeNicknameSuccess')
+    })
+  }
+
 
 }
