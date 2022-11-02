@@ -55,8 +55,8 @@ export class MatchesHistoryService {
 				nickname_user1: user1.nickname,
 				login_user1: user1.login,
 				score_u1: matches[index].score_u1,
-				nickname_user2: user1.nickname,
-				login_user2: user1.login,
+				nickname_user2: user2.nickname,
+				login_user2: user2.login,
 				score_u2: matches[index].score_u2,
 				winner_nickname: (matches[index].winner_id == matches[index].id_user1 ? user1.nickname : user2.nickname),
 				date: matches[index].date

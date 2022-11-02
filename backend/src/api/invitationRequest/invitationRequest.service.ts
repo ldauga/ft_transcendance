@@ -25,6 +25,19 @@ export class InvitationRequestService {
 		});
 
 		if (!invit)
+			return []; // gestion d erreur needed
+		return invit;
+	}
+
+	async getAllUserInvitationByLogin(login: string): Promise<InvitationRequestEntity[]> {
+		const invit = await this.InvitationRequestRepository.find({
+			where: [
+				{ sender_login: login },
+				{ receiver_login: login }
+			]
+		});
+
+		if (!invit)
 			return null; // gestion d erreur needed
 		return invit;
 	}
@@ -36,6 +49,7 @@ export class InvitationRequestService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
+		console.log("checkInvitationRequest check: ", check);
 		if (check == null)
 			return false;
 		if (id1 == id2)

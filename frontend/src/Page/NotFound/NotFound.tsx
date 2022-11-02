@@ -1,11 +1,11 @@
-import Navbar from '../../Module/Navbar/Navbar';
+import NavBar from '../../Module/Navbar/Navbar';
 import './NotFound.scss';
 
 const NotFound = () => {
 
     return (
         <div className='Font'>
-            <Navbar />
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
             <h1>Error 404</h1>
             <h2>Page Not Found</h2>
         </div>

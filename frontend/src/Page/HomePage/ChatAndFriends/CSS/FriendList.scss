@@ -1,108 +1,148 @@
-.itemFriendList {
+.ListItemFriendList {
     display: flex;
-    flex-direction: row;
-    height: 6.5vh;
-    width: auto;
-    /* background-color: #454342; */
-    border-radius: 15px;
-    margin-top: 1vh;
-
-    .inItemFriendList {
+    flex-direction: column;
+    gap: 10px;
+    .itemFriendList {
         display: flex;
         flex-direction: row;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
-        margin-left: 0.25vw;
-        margin-right: 0.25vw;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-
-    .inItemFriendList img {
-        width: auto;
-        height: auto;
-        border-radius: 50%;
-    }
-
-    .inItemFriendList_left {
-        display: flex;
-        align-items: baseline;
-        width: 70%;
-        align-items: center;
-
-        img {
-            width: 6vw;
-            height: 6vh;
-            clip-path: ellipse(30% 50%);
+    
+        .inItemFriendList {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 0.25vw;
+            margin-right: 0.25vw;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
-    }
-
-    .inItemFriendList_left p {
-        font-size: 1.5rem;
-        color: #2E384E;
-    }
-
-    .inItemFriendList_right {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 30%;
-    }
-
-    .inItemFriendList_right button {
-        font-size: 1.5rem;
-        padding-left: 0.9rem;
-        color: #34476b;
-        background-color: none;
-    }
-
-    .inItemFriendList_right button:hover {
-        font-size: 1.5rem;
-        background-color: none;
-    }
-
-    .itemFriendListStatus {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 1rem;
-
-        .itemFriendListStatusPoint {
+    
+        .inItemFriendList img {
+            width: auto;
+            height: auto;
             border-radius: 50%;
-            background-color: rgba(28, 177, 123, 1);
-            width: 15px;
-            height: 15px;
         }
-
-        p {
-            font-size: 1rem;
-            padding-left: 0.3rem;
+    
+        .inItemFriendList_left {
+            display: flex;
+            align-items: baseline;
+            width: 70%;
+            align-items: center;
+    
+            .friend-profile {
+                display: flex;
+                gap: 5px;
+                align-items: center;
+                width: 148px;
+                img {
+                    --avatar-size: 51px;
+                    width: var(--avatar-size);
+                    height: var(--avatar-size);
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+                &:hover {
+                    cursor: pointer;
+                }
+            }
         }
-
+    
+        .inItemFriendList_left p {
+            font-size: 1.5rem;
+            color: #2E384E;
+            margin: 0;
+        }
+    
+        .inItemFriendList_right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 30%;
+        }
+    
+        .inItemFriendList_right button {
+            font-size: 1.5rem;
+            padding-left: 0.9rem;
+            color: #34476b;
+            background-color: none;
+        }
+    
+        .inItemFriendList_right button:hover {
+            font-size: 1.5rem;
+            background-color: none;
+        }
+    
+        .itemFriendListStatus {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+    
+            .itemFriendListStatusPoint {
+                border-radius: 50%;
+                background-color: rgba(28, 177, 123, 1);
+                --status-size: 10px;
+                width: var(--status-size);
+                height: var(--status-size);
+            }
+    
+            p {
+                font-size: 1rem;
+                margin: 0;
+                font-weight: 200;
+                padding-left: 0.3rem;
+            }
+    
+        }
+    
+    }
+    
+    .openChat {
+        display: flex;
+        flex-direction: row;
+        height: 10rem;
+        width: auto;
+        background-color: red;
+    }
+    
+    #ListItemFriendList {
+        height: auto;
+        overflow: scroll;
     }
 
-}
+    @media screen and (min-width: 375px) {
+        .inItemFriendList{
+            .inItemFriendList_left {
+                .friend-profile {
+                    gap: 7px;
+                    width: 170px;
+                    img {
+                        --avatar-size: 59px;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (min-width: 425px) {
+        .inItemFriendList {
+            .inItemFriendList_left {
+                .friend-profile {
+                    gap: 11px;
+                    width: 183px;
+                    img {
+                        --avatar-size: 66px;
+                    }
+                }
+                .itemFriendListStatus {
+                    .itemFriendListStatusPoint {
+                        --status-size: 13px;
+                    }
+                    p {
+                        font-size: 1.2rem;
+                    }
+                }
 
-// .inItemFriendList:hover {
-//     transition: all 0.5s;
-//     box-shadow: #34476b 2px 2px 5px;
-//     border: #34476b 0.1px solid;
-//     margin-left: 0.25vw;
-//     margin-right: 0.25vw;
-//     padding-left: 0.44rem;
-//     padding-right: 0.44rem;
-// }
-
-.openChat {
-    display: flex;
-    flex-direction: row;
-    height: 10rem;
-    width: auto;
-    background-color: red;
-}
-
-#ListItemFriendList {
-    height: auto;
-    overflow: scroll;
+            }
+        }
+    }
 }

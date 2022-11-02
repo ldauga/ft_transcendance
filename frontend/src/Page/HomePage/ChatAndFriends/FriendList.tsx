@@ -11,7 +11,7 @@ import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material
 import { Person, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string } }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -128,14 +128,20 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	function ItemsFriendList() {
 		return (
-			<div id="ListItemFriendList">
+			<div className="ListItemFriendList">
 				{itemListHistory}
 			</div>
 		);
 	};
 
 	useEffect(() => {
+		console.log("useEffect friendList");
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
+		if (props.openFriendConversFromProfile) {
+			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login });
+			props.setFriendList(false);
+			props.setConvers(true);
+		}
 	}, [props]);
 
 	const handleClickOpenOptions = (event: React.MouseEvent<HTMLElement>) => {
@@ -209,15 +215,12 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	return (
 		<div className="mainAffGene">
 			<div className="mainHeader">
-				<div className="mainHeaderLeft mainHeaderSide">
-					<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
-				</div>
-				<div className="mainHeaderRight mainHeaderSide">
-					<IconButton onClick={handleClickOpenOptions}>
-						<MoreVertIcon />
-					</IconButton>
-					<MenuOptions />
-				</div>
+				<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
+				<h3>Friends</h3>
+				<button onClick={handleClickOpenOptions}>
+					<MoreVertIcon />
+				</button>
+				<MenuOptions />
 			</div>
 			{newAddFriend && <AddFriend />}
 			<ItemsFriendList />

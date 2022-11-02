@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { GetUserDto } from './dtos/getUser.dto';
 import { UpdateWinLooseDto } from './dtos/updateWinLoose.dto';
-	
+
 @Injectable()
 export class UserService {
 	constructor(
