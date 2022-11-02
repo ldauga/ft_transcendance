@@ -112,12 +112,11 @@ function Settings() {
 										label="New nickname"
 										fullWidth
 										variant="standard"
-										onChange={e => setUserParameterNewNickname(e.target.value)}
-										onKeyDown={e => { if (e.key == 'Enter') handleClose(setOpenEditZoneNickname) }}
+										onChange={e => { if (e.target.value.length < 30) setUserParameterNewNickname(e.target.value)}}
 									/>
 								</DialogContent>
 								<DialogActions>
-									<Button onClick={e => { handleClose(setOpenEditZoneNickname) }}>Edit</Button>
+									<Button onClick={e => { if (userParameterNewNickname!.length >= 3 && userParameterNewNickname!.length <= 30) handleClose(setOpenEditZoneNickname); }}>Edit</Button>
 								</DialogActions>
 							</Dialog>
 						</div>

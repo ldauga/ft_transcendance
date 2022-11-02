@@ -78,9 +78,4 @@ export class UserController {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
 
-  @Post('updateNickname')
-  @UseGuards(AuthGuard('jwt'))
-  public updateNickname(@Req() req: Request, @Body() body): Promise<GetUserDto> {
-    return this.service.updateNickname(req.cookies['auth-cookie'].refreshToken, body);
-  }
 }
