@@ -1,42 +1,106 @@
-#conversHeader {
-    position: sticky;
-    top: 0;
+.chat {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    height: 9%;
-    background-color: #454342;
-}
-
-#conversHeader p {
-    color: white;
-    font-size: 2rem;
-    width: 90%;
-    text-align: center;
-}
-
-#affConvers {
-    overflow: scroll;
-    height: 88%;
-}
-
-button:hover {
-    cursor: pointer;
-}
-
-.dateDisplayNone {
-    display: none;
-}
-
-.date {
-    display: flex;
-}
-
-.date p {
-    font-size: 1rem;
-    padding: 0;
-    margin: 0;
-    margin-right: 3rem;
-    margin-left: 3rem;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    .header {
+        display: flex;
+        border-bottom: 1px solid rgba($color: #2e384e, $alpha: .5);
+        margin-top: 10px;
+        padding-bottom: 10px;
+        align-items: flex-start;
+        button {
+            margin-left: 10px;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            img {
+                cursor: pointer;
+                margin-left: 3px;
+                --avatar-size: 77px;
+                width: var(--avatar-size);
+                height: var(--avatar-size);
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            .name {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                p {
+                    margin: 0;
+                    font-size: 19px;
+                    &:first-of-type {
+                        cursor: pointer;
+                    }
+                    &:last-of-type {
+                        display: flex;
+                        align-items: baseline;
+                        gap: 5px;
+                        font-weight: 200;
+                    }
+                }
+                .status {
+                    --status-size: 8px;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background: rgba(28, 177, 123);
+                }
+            }
+        }
+    }
+    .messages {
+        height: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 0 10px;
+        padding-top: 10px;
+        .content-sender, .content-receiver {
+            max-width: 242px;
+            word-break: break-word;
+            width: fit-content;
+            padding: 0 10px;
+        }
+        .content-receiver {
+            border-radius: 1.125rem 1.125rem 1.125rem 0;
+            border: 1px solid;
+        }
+        .content-sender {
+            border-radius: 1.125rem 1.125rem 0 1.125rem;
+            background: #2e384e;
+            color: white;
+            align-self: flex-end;
+        }
+        .dateDisplayNone {
+            display: none;
+        }
+        .date {
+            display: block;
+            font-weight: 300;
+            font-size: 12px;
+        }
+    }
+    .send-message {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px;
+        border: 1px solid;
+        border-radius: 22px;
+        .MuiFormControl-root {
+            width: -webkit-fill-available;
+            fieldset {
+                all: unset;
+            }
+        }
+        button {
+            margin-right: 10px;
+            font-size: 22px;
+        }
+    }
 }
