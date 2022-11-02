@@ -5,6 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/Rooms.scss'
 import '../Homepage.scss'
 import { Checkbox } from '@mui/material';
+import { valideInput } from '../../../Utils/utils';
 
 function ChangeRoomPassword(props: { roomsConversData: { name: string, id: number } }) {
 
@@ -17,6 +18,14 @@ function ChangeRoomPassword(props: { roomsConversData: { name: string, id: numbe
 
     const updateSettings = async () => {
         console.log('update Settings');
+        if (text.length <= 0)
+            return;
+        if (text.length > 10)
+            return;
+        if (!valideInput(text, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
+            console.log("valideInput false");
+            return;
+        }
         const newPassword = {
             login: userData.userReducer.user?.login,
             room_name: props.roomsConversData.name,

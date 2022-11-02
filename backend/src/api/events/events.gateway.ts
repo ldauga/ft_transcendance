@@ -528,10 +528,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log("room name already exist");
       return;
     }
+    console.log("data: ", data);
+    console.log("createChatRoom password: ", data.password, data.password.lenght);
+    let password = data.password;
+    if (password.lenght <= 0 || !password)
+      password = "NoPassword";
+    console.log("createChatRoom password: ", password, password.length);
     const newRooms = {
       name: data.name,
       description: data.description,
-      password: data.password,
+      password: password,
       identifiant: data.identifiant,
       owner_id: data.owner_id,
       publicOrPrivate: data.publicOrPrivate,

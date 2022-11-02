@@ -43,6 +43,7 @@ function CreateRooms() {
                 publicOrPrivate: publicOrPrivate,
                 passwordOrNot: passwordOrNot
             }
+            console.log("newRoom: ", newRoom);
             utilsData.socket.emit('createChatRooms', newRoom);
             setText("");
             setPassword("");
