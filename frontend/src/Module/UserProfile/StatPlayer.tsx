@@ -22,12 +22,14 @@ import { actionCreators, RootState } from '../../State'
 import { setUser } from '../../State/Action-Creators'
 import { red } from '@mui/material/colors'
 import Background from '../Background/Background'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, TextField } from '@mui/material'
 import PinInput from 'react-pin-input'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import { sassFalse } from 'sass'
+import { SnackbarKey, withSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
 
-export function StatPlayer() {
+function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -37,11 +39,17 @@ export function StatPlayer() {
 	const [userParameter2FACode, setUserParameter2FACode] = useState("");
 	const [userParameter2FARes, setUserParameter2FARes] = useState(0);
 	const [fullPinCode, setFullPinCode] = useState(0);
-	const [newNickname, setNewNickname] = useState(persistantReduceur.userReducer.user?.nickname);
+	const [newNickname, setNewNickname] = useState("");
 	const [rank, setRank] = useState({
 		label: '',
 		img: ''
 	})
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+	const [openNicknameAlreadyTaken, setOpenNicknameAlreadyTaken] = useState(false);
+	const [openNicknameToShort, setOpenNicknameToShort] = useState(false);
+	const [openNicknameSpecialChar, setOpenNicknameSpecialChar] = useState(false);
 
 	const [update, setUpdate] = useState(true);
 	const [openConversFromProfile, setOpenConversFromProfile] = useState(false);
@@ -64,18 +72,57 @@ export function StatPlayer() {
 
 	const login = persistantReduceur.userReducer.user?.login;
 
-	const changeNickname = () => {
-		console.log('newNickname: ' + newNickname)
-		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
-			axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			if (newNickname) {
-				setProfile({ ...profile, nickname: newNickname });
-				fetchMatchHistory();
-			}
-		}
+	const changeNickname = async () => {
+
+		utilsData.socket.emit('CHANGE_NICKNAME', { newNickname: newNickname, user: persistantReduceur.userReducer.user })
+
+		// let verif = false
+		// console.log('newNickname: ' + newNickname)
+
+		// if (newNickname.length < 3 || newNickname.length > 8) {
+		// 	return false
+		// }
+
+		// if (newNickname != persistantReduceur.userReducer.user?.nickname) {
+		// 	await axiosConfig.post('http://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) { setUser(res.data); verif = true; setProfile({ ...profile, nickname: newNickname }); fetchMatchHistory(); } }).catch((err) => {  })
+		// }
+
+		// return verif;
 	}
 
+	const snackbarAction = (snackbarId: SnackbarKey) => (
+		<>
+		  <button onClick={() => { closeSnackbar(snackbarId) }}>
+			Close
+		  </button>
+		</>
+	  );
+
 	utilsData.socket.removeAllListeners('returnCheckIfFriendOrInvit');
+
+	utilsData.socket.off('changeNicknameError')
+
+	utilsData.socket.on('changeNicknameError', function (error: string) {
+		switch (error) {
+			case 'too-short':
+				enqueueSnackbar('The new nickname must be between 3 and 8 char.', {variant: "warning", autoHideDuration: 3000, action: snackbarAction})
+				break;
+			case 'already-used':
+				enqueueSnackbar('Nickname already taken', {variant: "warning", autoHideDuration: 3000})
+				break;
+			case 'special-char':
+				enqueueSnackbar("Do not put special char : \" !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\"", {variant: "warning", autoHideDuration: 3000})
+				break;
+		}
+	})
+
+	utilsData.socket.off('changeNicknameSuccess')
+
+	utilsData.socket.on('changeNicknameSuccess', function () {
+		setProfile({ ...profile, nickname: newNickname })
+		fetchMatchHistory()
+		setOpen(false)
+	})
 
 	utilsData.socket.on('returnCheckIfFriendOrInvit', function (returnCheckIfFriendOrInvit: number) {
 		console.log('returnCheckIfFriendOrInvit = ', returnCheckIfFriendOrInvit);
@@ -99,7 +146,8 @@ export function StatPlayer() {
 		//console.log("check before: ", check);
 		await axiosConfig.get(url + profile.login)
 			.then(async (res) => {
-				await setProfile({
+				console.log(res.data)
+				setProfile({
 					id: res.data.id,
 					login: res.data.login,
 					nickname: res.data.nickname,
@@ -109,7 +157,7 @@ export function StatPlayer() {
 					loaded: true,
 					friendOrInvitation: 0
 				})
-				if (res.data.wins == '0' && res.data.losses == '0') {
+				if (res.data.wins == 0 && res.data.losses == 0) {
 					setRank({ label: 'unranked', img: unranked })
 				}
 				else if (res.data.wins > 5) {
@@ -126,6 +174,7 @@ export function StatPlayer() {
 				} else {
 					setRank({ label: 'bronze', img: bronze_rank_img })
 				}
+				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			})
 	}
 
@@ -152,14 +201,24 @@ export function StatPlayer() {
 					)
 				})
 				if (!matches.length)
-				matches.push(<div key={'none'} className='no-match'>
-					<SentimentVeryDissatisfiedIcon />
-					<p>No match found</p>
-				</div>)
+					matches.push(<div key={'none'} className='no-match'>
+						<SentimentVeryDissatisfiedIcon />
+						<p>No match found</p>
+					</div>)
 
 				setProfileUserMatchHistory(matches.reverse())
 			})
 	}
+
+	const [status, setStatus] = useState('')
+
+	utilsData.socket.off('getClientStatus')
+
+	utilsData.socket.on('getClientStatus', (info: { user: string, status: string }) => {
+		console.log(info, info.user, profile)
+		if (info.user == profile.login)
+			setStatus(info.status)
+	})
 
 	useEffect(() => {
 		console.log("useEffect() StatPlayer");
@@ -331,14 +390,13 @@ export function StatPlayer() {
 								variant="standard"
 								onKeyUp={(e) => {
 									if (e.key === 'Enter') {
-										changeNickname();
-										setOpen(false);
+										changeNickname()
 									}
 								}}
 							/>
 						</DialogContent>
 						<DialogActions>
-							<button onClick={() => { changeNickname(); setOpen(false); }}>Edit</button>
+							<button onClick={changeNickname}>Edit</button>
 						</DialogActions>
 					</Dialog>
 					<label htmlFor="file-upload">
@@ -370,6 +428,8 @@ export function StatPlayer() {
 		}
 	}
 
+	const [alertArray] = useState(Array<{ text: string, open: boolean }>())
+
 	return (
 		<>
 			<NavBar openFriendConversFromProfile={openConversFromProfile} dataFriendConversFromProfile={dataOpenConversFromProfile} setOpenFriendConversFromProfile={setOpenConversFromProfile} />
@@ -381,7 +441,7 @@ export function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player'></span> online</p>
+							<p><span className='status-player' style={{ backgroundColor: status == 'connected' ? 'green' : status == 'in-game' ? 'orange' : 'darkred' }} ></span> {status}</p>
 						</div>
 					</div>
 					{profile_btn()}
@@ -406,6 +466,32 @@ export function StatPlayer() {
 					</div>
 				</div>
 			</div>
+			<Snackbar
+				open={openNicknameToShort}
+				autoHideDuration={5000}
+				onClose={() => { setOpenNicknameToShort(false) }}>
+				<Alert onClose={() => { setOpenNicknameToShort(false) }} severity="warning" sx={{ width: '100%' }}>
+					The new nickname must be between 3 and 8 char.
+				</Alert>
+			</Snackbar>
+			<Snackbar
+				open={openNicknameAlreadyTaken}
+				autoHideDuration={5000}
+				onClose={() => { setOpenNicknameAlreadyTaken(false) }}>
+				<Alert onClose={() => { setOpenNicknameAlreadyTaken(false) }} severity="warning" sx={{ width: '100%' }}>
+					Nickname already taken.
+				</Alert>
+			</Snackbar>
+			<Snackbar
+				open={openNicknameSpecialChar}
+				autoHideDuration={5000}
+				onClose={() => { setOpenNicknameSpecialChar(false) }}>
+				<Alert onClose={() => { setOpenNicknameSpecialChar(false) }} severity="warning" sx={{ width: '100%' }}>
+					{"Do not put special char : \" !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\""}
+				</Alert>
+			</Snackbar>
 		</>
 	)
 }
+
+export default withSnackbar(StatPlayer)

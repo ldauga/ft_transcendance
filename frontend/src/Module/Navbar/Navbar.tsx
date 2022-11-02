@@ -43,7 +43,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 		delAllNotif();
 		setTwoFactor(false);
-		utilsData.socket.emit('deconnection', persistantReducer.userReducer.user);
+		window.location.replace('http://localhost:3000')
 	}
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
