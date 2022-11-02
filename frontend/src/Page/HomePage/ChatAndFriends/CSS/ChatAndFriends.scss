@@ -22,47 +22,6 @@
         color: green;
     }
 
-    .sendZoneConvers {
-        position: -webkit-sticky;
-        position: sticky;
-        bottom: 0;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        height: 6%;
-        background-color: white;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-
-        input {
-            width: 80%;
-            height: 100%;
-            border-radius: 15px;
-            border: solid 1px #2e384e;
-        }
-
-        button {
-            width: 16%;
-            height: 100%;
-            font-size: 1.5rem;
-            text-align: center;
-            border-radius: 15px;
-            background-color: #34476b;
-            color: white;
-        }
-
-        #sendIcon {
-            font-size: 2.7rem;
-            // width: 3rem;
-            // height: 3rem;
-        }
-
-        .sendButtonDisabled {
-            background-color: hsla(240, 1%, 66%, 0.767);
-        }
-    }
-
     .itemListConversContainerMe {
         display: flex;
         flex-direction: column;
@@ -78,29 +37,6 @@
     .conversInItemList {
         width: 100%;
         height: 100%;
-    }
-
-    .converItemList {
-        height: auto;
-        width: auto;
-        min-width: 9vw;
-        max-width: 20vw;
-        -webkit-border-radius: 60px / 60px;
-        -moz-border-radius: 60px / 60px;
-        border-radius: 60px / 60px;
-        text-align: center;
-        padding-left: 0.5vw;
-        padding-right: 0.5vw;
-        word-wrap: break-word;
-        margin-top: 0.15rem;
-        margin-bottom: 0.15rem;
-    }
-
-    .converItemListMe {
-        color: black;
-        background-color: white;
-        border: #2E384E solid 2px;
-        margin-right: 0.3rem;
     }
 
     .converItemListCorrespondant {
