@@ -23,7 +23,7 @@ export default function Callback() {
 
     function turnOn2fa(value: string) {
         console.log('code: ' + value);
-        axiosConfig.get('http://localhost:5001/auth/2fa/verify/' + value)
+        axiosConfig.get('https://localhost:5001/auth/2fa/verify/' + value)
             .then((e) => {setTwoFactor(true), setTurnOn(true)})
             .catch((e) => {
                 setRes(e.response.status)
@@ -42,7 +42,7 @@ export default function Callback() {
 	  });
 
     if (persistantReducer.userReducer.user === null) {
-        axiosConfig.get("http://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
+        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
         console.log(cookie)
     }
 
@@ -57,7 +57,7 @@ export default function Callback() {
                     <img className="logo_transcendence" src={logo} alt="" />
                     <div className="bg">
                         <h1>Google Authenticator Code</h1>
-                        <PinInput 
+                        <PinInput
                             length={6}
                             focus
                             type="numeric"

@@ -159,14 +159,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -178,7 +178,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfOwner = async () => {
-        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -287,7 +287,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         console.log("users: ", users);
-        await axiosConfig.get('http://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
@@ -302,11 +302,11 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const getUsers = async () => {
         console.log("getUsers");
-        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
             let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
             res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('http://localhost:5001/user/id/' + item.id).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });

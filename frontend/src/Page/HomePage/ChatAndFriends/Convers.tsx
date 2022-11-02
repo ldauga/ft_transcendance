@@ -147,7 +147,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     // e.currentTarget.children[1].toggleAttribute("date")
 
     const getListItem = async () => {
-        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
             // console.log('res.data = ', res.data);

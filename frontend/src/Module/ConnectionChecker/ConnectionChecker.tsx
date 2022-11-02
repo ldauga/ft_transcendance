@@ -15,10 +15,10 @@ function ConnectionChecker(props: {
   const utilsData = useSelector((state: RootState) => state.utils)
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
-  
+
   if (!test) {
-      axios.get("http://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
-  
+      axios.get("https://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
+
       utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
       test = true;
   }

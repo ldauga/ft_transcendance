@@ -22,7 +22,7 @@ function InvitationChecker(props: { children: any }) {
 	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
-		axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
+		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
@@ -66,7 +66,7 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.on('start_spectate', function (arrClient: Client[]) {
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('http://localhost:3000/Pong')
+		window.location.replace('https://localhost:3000/Pong')
 	})
 
 	return (

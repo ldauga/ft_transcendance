@@ -22,7 +22,7 @@ function CreateRooms() {
         if (text.length <= 0 || text.length > 20 || ((password.length <= 0 || password.length > 20) && passwordOrNot))
             return; //gestion d'erreur
         let a = 1;
-        await axiosConfig.get('http://localhost:5001/rooms/check/' + text).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/check/' + text).then(async (res) => {
             if (res.data == true) {
                 console.log("room already exist");
             }
