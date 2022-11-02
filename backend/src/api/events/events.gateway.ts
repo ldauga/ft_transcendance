@@ -175,7 +175,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (this.pongInfo[room[0]].players[i].id == client.id) {
           this.pongInfo[room[0]].players[i].connected = false
           this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
-          if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
+          if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected && !this.pongInfo[room[0]].firstConnectionInviteProfie) {
             this.pongInfo.splice(room[0], 1)
             return;
           }
@@ -1584,7 +1584,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(3)
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
-      console.log(`${index}`)
       if (this.pongInfo[index].started) {
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
@@ -1800,8 +1799,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (room != null) {
       for (let index = 0; index < 2; index++)
         if (this.pongInfo[room[0]].players[index].id == client.id)
-          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready))
+          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready)) {
             this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
+            if (this.pongInfo[room[0]].players[index ? 0 : 1].ready && this.pongInfo[room[0]].firstConnectionInviteProfie)
+              this.pongInfo[room[0]].firstConnectionInviteProfie = false
+          }
     }
   }
 
@@ -1859,7 +1861,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         profile_pic: string
       },
       gameRoom: gameRoomClass,
-      userLoginToSend: string
+      userLoginToSend: string,
     }) {
     this.joinRoom(client, "custom" + client.id)
     info.gameRoom.roomID = "custom" + client.id
@@ -1926,13 +1928,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     var room = this.getRoomByID("custom" + info.inviteID)
 
+      console.log('room :', room, room[1].map.obstacles)
+
     this.joinRoom(client, room[1].roomID)
 
     this.pongInfo[room[0]].players[0].connected = true
     this.pongInfo[room[0]].started = true
     this.pongInfo[room[0]].setOponnent(client.id, info.user)
 
+    this.pongInfo[room[0]].players[1].connected = true
     this.pongInfo[room[0]].players[1].sendNotif = true
+
+    this.pongInfo[room[0]].firstConnectionInviteProfie = true
 
     this.server.to(room[1].roomID).emit('start', "custom" + info.inviteID)
 
@@ -2107,8 +2114,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.server.to(client.id).emit('changeNicknameError', 'too-short')
           break;
       }
-    }).then(() => {
-      this.server.to(client.id).emit('changeNicknameSuccess')
+    }).then((res) => {
+      if (res != undefined)
+        this.server.to(client.id).emit('changeNicknameSuccess')
     })
   }
 

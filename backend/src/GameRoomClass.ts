@@ -313,6 +313,7 @@ class gameRoomClass {
 	roomID: string
 
 	started: boolean
+	firstConnectionInviteProfie: boolean
 
 	map: Map
 
@@ -336,6 +337,7 @@ class gameRoomClass {
 		this.roomID = roomId
 
 		this.started = false
+		this.firstConnectionInviteProfie = false
 
 		this.canvas = new Canvas()
 
