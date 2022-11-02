@@ -6,31 +6,30 @@
 	right: 0px;
 	min-width: 25vw;
 	padding-bottom: 0;
-	height: calc(100% - 55px);
+	height: calc(100% - 50px);
 	width: 100%;
-	z-index: 2;
+	z-index: 1;
 
 	@media screen and (min-width: 768px) {
-		height: calc(100% - 88px);
+		height: calc(100% - 83px);
 		width: 50%;
 	}
 
 	@media screen and (min-width: 1024px) {
-		height: calc(100% - 100px);
+		height: calc(100% - 85px);
 		width: 40%;
 	}
 
 	@media screen and (min-width: 1250px) {
-		height: calc(100% - 100px);
 		width: 35%;
 	}
-
+	@media screen and (min-width: 1440px) {
+		height: calc(100% - 95px);
+	}
 	@media screen and (min-width: 1500px) {
-		height: calc(100% - 100px);
 		width: 25%;
 	}
 
-	// padding: 20px 10px;
 	#contentPopUpContainer {
 		height: 100%;
 		width: 100%;
@@ -68,7 +67,6 @@
 	.content::-webkit-scrollbar-thumb {
 		background-color: darkgrey;
 	}
-
 }
 
 .open {

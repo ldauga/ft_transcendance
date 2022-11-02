@@ -94,12 +94,12 @@ function PongHome(props: any) {
 
 	return (
 		<>
-			<NavBar />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
 			<Background />
 			{!inQueue ?
 				<>
 					<div className='pong'>
-					<div className="instruction">Select map and press JOIN QUEUE !</div>
+						<div className="instruction">Select map and press JOIN QUEUE !</div>
 						<div className='select-map'>
 							<button onClick={handleBack}><ArrowBackIosNew /></button>
 							<MapCarousel activeStep={activeStep} />
@@ -108,7 +108,7 @@ function PongHome(props: any) {
 						{
 							props.gameMap != 'createMap' ?
 								<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
-								<button className='create-map' onClick={() => props.setCreateMap(true)}>Create map</button>
+								<button className='join-queue' onClick={() => props.setCreateMap(true)}>Create map</button>
 						}
 					</div></> :
 				<div className='loadingScreen'>
@@ -119,86 +119,6 @@ function PongHome(props: any) {
 				</div>}
 		</>
 	)
-
-	// return (
-	// 	<>
-	// 		<NavBar />
-	// 		<Background />
-	// 		{!inQueue ?
-	// 			<>
-	// 				<div className='pong'>
-	// 					<Box sx={{ maxWidth: 400, flexGrow: 1 }}>
-	// 						<Paper
-	// 							square
-	// 							elevation={0}
-	// 							sx={{
-	// 								display: 'flex',
-	// 								alignItems: 'center',
-	// 								height: 50,
-	// 								pl: 2,
-	// 								bgcolor: 'background.default',
-	// 							}}
-	// 						>
-	// 							<Typography>{steps[activeStep].label}</Typography>
-	// 						</Paper>
-	// 						<Box
-	// 							component="img"
-	// 							sx={{
-	// 								height: 255,
-	// 								display: 'block',
-	// 								maxWidth: 400,
-	// 								overflow: 'hidden',
-	// 								width: '100%',
-	// 							}}
-	// 							src={steps[activeStep].description}
-	// 							alt={steps[activeStep].label}
-	// 						/>
-	// 						<MobileStepper
-	// 							variant="dots"
-	// 							steps={maxSteps}
-	// 							position="static"
-	// 							activeStep={activeStep}
-	// 							nextButton={
-	// 								<Button
-	// 									size="small"
-	// 									onClick={handleNext}
-	// 									disabled={activeStep === maxSteps - 1}
-	// 								>
-	// 									Next
-	// 									{theme.direction === 'rtl' ? (
-	// 										<KeyboardArrowLeft />
-	// 									) : (
-	// 										<KeyboardArrowRight />
-	// 									)}
-	// 								</Button>
-	// 							}
-	// 							backButton={
-	// 								<Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-	// 									{theme.direction === 'rtl' ? (
-	// 										<KeyboardArrowRight />
-	// 									) : (
-	// 										<KeyboardArrowLeft />
-	// 									)}
-	// 									Back
-	// 								</Button>
-	// 							}
-	// 						/>
-	// 					</Box>
-	// 					{
-	// 						props.gameMap != 'createMap' ?
-	// 							<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
-	// 							<button className='create-map' onClick={() => props.setCreateMap(true)}>Create map</button>
-	// 					}
-	// 				</div>
-	// 			</> :
-	// 			<div className='loadingScreen'>
-	// 				<CircularProgress className='circularProgress' />
-	// 				<span>Waiting for opponent...</span>
-	// 							{/* <button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> : */}
-	// 				<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Leave queue</button>
-	// 			</div>}
-	// 	</>
-	// );
 }
 
 export default PongHome;

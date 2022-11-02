@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from '../../Module/Navbar/Navbar';
+import NavBar from '../../Module/Navbar/Navbar';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 import { gameRoomClass } from './gameRoomClass';
@@ -423,7 +423,7 @@ const GamePage = (props: any) => {
 
     return (
         <div className="mainDiv">
-            <Navbar />
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }}/>
             <Background />
             {
                 !finishGame ?

@@ -367,18 +367,18 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         utilsData.socket.removeListener('removeParticipantReturn');
     })
 
-    utilsData.socket.removeAllListeners('demutedUserInRoom');
+    utilsData.socket.removeAllListeners('mutedUserInRoom');
 
-    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoom: boolean) {
-        console.log('demutedUserInRoom = ', demutedUserInRoom);
+    utilsData.socket.on('mutedUserInRoom', function (demutedUserInRoom: boolean) {
+        console.log('mutedUserInRoom = ', demutedUserInRoom);
         const length = itemListHistory.length;
         let secu = 0;
         while (length == itemListHistory.length && secu < constWhileSecu) {
             getListItem();
             secu++;
         }
-        utilsData.socket.off('demutedUserInRoom');
-        utilsData.socket.removeListener('demutedUserInRoom');
+        utilsData.socket.off('mutedUserInRoom');
+        utilsData.socket.removeListener('mutedUserInRoom');
     })
 
     const addInvitationRequest = () => {
@@ -458,7 +458,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         setAffBanned(true);
     };
 
-    function RightItem(item: { login: string, id: number, admin: boolean, participantAdmin: boolean }) {
+    function RightItem(item: { login: string, id: number, admin: boolean, participantAdmin: boolean, muted: boolean }) {
 
         const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
         const open = Boolean(anchorEl);
@@ -492,6 +492,30 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                                 <Person fontSize="small" />
                             </ListItemIcon>
                             Add admin
+                        </MenuItem>
+                    );
+                }
+            };
+
+            function MutedOrNot() {
+                console.log("admin: ", item.admin)
+                if (item.participantAdmin) {
+                    return (
+                        <MenuItem onClick={() => demute({ login: item.login, id: item.id, admin: item.admin })}>
+                            <ListItemIcon>
+                                <Person fontSize="small" />
+                            </ListItemIcon>
+                            Demute Participant
+                        </MenuItem>
+                    );
+                }
+                else {
+                    return (
+                        <MenuItem onClick={() => handleClickOpenDialogMute(item)}>
+                            <ListItemIcon>
+                                <Person fontSize="small" />
+                            </ListItemIcon>
+                            Mute Participant
                         </MenuItem>
                     );
                 }
@@ -536,12 +560,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 >
                     <AddOrRemoveAdmin />
                     <Divider />
-                    <MenuItem onClick={() => handleClickOpenDialogMute(item)}>
-                        <ListItemIcon>
-                            <Person fontSize="small" />
-                        </ListItemIcon>
-                        Mute Participant
-                    </MenuItem>
+                    <MutedOrNot />
                     <MenuItem onClick={() => handleClickOpenDialogBan(item)}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
@@ -696,13 +715,15 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 let tmpProfilePic = allUsers.find(obj => obj.id == item.id)?.profile_pic;
                 if (!tmpProfilePic)
                     tmpProfilePic = "";
+                let muted = false;
+                if (allUserMute.find(obj => obj.id_muted == item.id))
+                    muted = true;
                 if (allUserMute.find(obj => obj.id_muted == item.id)) {
                     itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
                         <div className="inItemFriendList">
                             <div className="inItemFriendList_left">
                                 <img src={tmpProfilePic}></img>
-                                <p>{item.login}</p>
-                                <p>Muted</p>
+                                <p>{item.login} (Muted)</p>
                             </div>
                             <RightItemMuted login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} />
                         </div>
@@ -715,7 +736,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                                 <img src={tmpProfilePic}></img>
                                 <p>{item.login}</p>
                             </div>
-                            <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} />
+                            <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={muted} />
                         </div>
                     </div>)
                 }

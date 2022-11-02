@@ -13,12 +13,14 @@ function AddFriend() {
 
     const [inputValue, setInputValue] = useState('');
 
-    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
+    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string, nickname: string }[]>(new Array());
 
     async function buttonAddFriend() {
         let test = false;
         console.log('addFriend');
-        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
+        const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
+        console.log("buttonAddFriend login: ", userToSend?.username);
+        await axiosConfig.get('http://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
             setInputValue("");
             console.log("axios.get");
             console.log(res.data);
@@ -85,7 +87,7 @@ function AddFriend() {
         const tmp: any[] = []
         data.forEach(client => {
             if (client.login != userData.userReducer.user?.login) {
-                const a = { id: client.id, username: client.login };
+                const a = { id: client.id, username: client.login, nickname: client.nickname };
                 tmp.push(a);
             }
         })
@@ -104,7 +106,7 @@ function AddFriend() {
         <div className="addFriendContainer">
             <Autocomplete
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
-                options={connectedClient.map((option) => option.username)}
+                options={connectedClient.map((option) => option.nickname)}
                 renderInput={(params) => <TextField {...params} label="Invite friend" />}
                 // onChange={(event: any, newValue: string | null) => {
                 //   setValue(newValue);

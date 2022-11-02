@@ -8,7 +8,7 @@ export const constWhileSecu = 10;
 function HomePage() {
     return (
         <>
-            <NavBar />
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
             <Background />
             <div className="homepage">
                 <div className="field">
@@ -17,7 +17,7 @@ function HomePage() {
                     <div className="pong-racket"></div>
                     <div className="ball"></div>
                 </div>
-                <button onClick={ () => location.href='/pong'}>Play !</button>
+                <button onClick={() => location.href = '/pong'}>Play !</button>
             </div>
         </>
     )

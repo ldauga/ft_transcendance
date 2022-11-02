@@ -73,6 +73,7 @@ export class FriendListService {
 	}
 
 	async removeFriendShip(id1: number, id2: number): Promise<boolean> {
+		console.log("removeFriendShip id1:", id1, ", id2: ", id2);
 		if (!this.checkExistRelation(id1, id2))
 			return false;
 		const check = await this.FriendListRepository.findOne({
@@ -81,7 +82,7 @@ export class FriendListService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
-		
+
 		const removeReturn = this.FriendListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
 		return true;

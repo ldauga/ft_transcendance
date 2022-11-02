@@ -112,21 +112,12 @@ $pong-color: #2e384e; //var
         
         .ia-ping-racket {
             left: 6%;
-            top: 0%;
             animation: ia-ping 15s infinite linear;
         }
         
         .ia-pong-racket {
-            top: 0%;
             right: 6%;
             animation: ia-pong 15s infinite linear;
-        }
-        
-        .test-racket {
-            top: 0%;
-            left: 6%;
-            background: red!important;
-            z-index: 2;
         }
         
         .basic-ball {
@@ -150,84 +141,105 @@ $pong-color: #2e384e; //var
 
         .ia-racket {
             right: 49.5%;
-            top: 10%;
             animation: ia-racket 15s infinite linear;
         }
     }
-    @media screen and (max-width: 768px) {
-        .basic-ping-racket, .basic-pong-racket {
-            --racket-bottom: 82%;
+}
+
+@media screen and (max-width: 768px) {
+    .basic-ping-racket, .basic-pong-racket {
+        --racket-bottom: 79%;
+    }
+    .ia-ping-racket, .ia-pong-racket, .ia-racket, .ia-ball, .expand-ball, .expand-middle, .expand-ping-racket, .expand-pong-racket {
+        animation: none!important;
+    }
+    .ia-ping-racket, .expand-ping-racket {
+        top: 11%;
+    }
+    .ia-pong-racket, .expand-pong-racket {
+        top: 36%;
+    }
+    .ia-ball, .expand-ball {
+        left: 20%;
+        top: 50%;
+    }
+    .expand-middle {
+        transform: scaleY(3.5);
+        top: 43% !important;
+        left: 49.2% !important;
+    }
+    .ia-racket {
+        top: 50%;
+    }
+    .basic-ball {
+        --bottom: 97%;
+        --left: 7%;
+        --right: 91%;
+    }
+    .map-carousel {
+        max-width: 600px;
+        .field {
+            width: 340px;
+            height: 192px;
         }
-        .basic-ball {
-            --bottom: 97%;
-            --left: 7%;
-            --right: 91%;
-        }
-        .homepage {
-            max-width: 600px;
-            padding: 35px 0 16px 0;
-            margin-top: 150px;
-            .field {
-                width: 418px;
-                height: 242px;
-            }
-            button {
-                margin-top: 30px;
-            }
+        button {
+            margin-top: 30px;
         }
     }
-    
-    @media screen and (max-width: 457px) {
-        .basic-ping-racket, .basic-pong-racket {
-            --racket-bottom: 80%;
-        }
-        .basic-ball {
-            --bottom: 97%;
-            --left: 7%;
-            --right: 91%;
-        }
-        .homepage {
-            margin-top: 144px;
-            .field {
-                width: 404px;
-                height: 215px;
-            }
+}
+
+@media screen and (max-width: 457px) {
+    .basic-ping-racket, .basic-pong-racket {
+        --racket-bottom: 75%;
+    }
+    .basic-ball {
+        --bottom: 97%;
+        --left: 7%;
+        --right: 91%;
+    }
+    .map-carousel {
+        .field {
+            width: 275px;
+            height: 162px;
         }
     }
-    
-    @media screen and (max-width: 433px) {
-        .basic-ping-racket, .basic-pong-racket {
-            --racket-bottom: 76%;
-        }
-        .basic-ball {
-            --bottom: 96%;
-            --left: 7%;
-            --right: 91%;
-        }
-        .homepage {
-            margin-top: 144px;
-            .field {
-                width: 345px;
-                height: 174px;
-            }
+}
+
+@media screen and (max-width: 433px) {
+    .basic-ping-racket, .basic-pong-racket {
+        --racket-bottom: 70%;
+    }
+    .expand-middle {
+        transform: scaleY(2.5);
+        top: 38%!important;
+        left: 48.7%!important;
+    }
+    .basic-ball {
+        --bottom: 95%;
+        --left: 7%;
+        --right: 91%;
+    }
+    .map-carousel {
+        .field {
+            width: 244px;
+            height: 135px;
         }
     }
-    
-    @media screen and (max-width: 374px) {
-        .basic-ping-racket, .basic-pong-racket {
-            --racket-bottom: 74%;
-        }
-        .basic-ball {
-            --bottom: 95%;
-            --left: 7%;
-            --right: 90%;
-        }
-        .homepage {
-            margin-top: 144px;
-            .field {
-                width: 283px;
-                height: 163px;
-            }
+}
+
+@media screen and (max-width: 374px) {
+    .basic-ping-racket, .basic-pong-racket {
+        --racket-bottom: 66%;
+    }
+    .basic-ball {
+        --bottom: 95%;
+        --left: 7%;
+        --right: 90%;
+    }
+    .map-carousel {
+        .field {
+            width: 210px;
+            height: 120px;
         }
     }
 }
