@@ -106,7 +106,7 @@ export class RoomsService {
 
 	async createRoom(body: { name: string, description: string, password: string, identifiant: number, owner_id: number, publicOrPrivate: boolean, passwordOrNot: boolean }): Promise<RoomsEntity> {
 		console.log("body: ", body);
-		const saltOrRounds = process.env.SALT;
+		const saltOrRounds = 10;
 		const hash = await bcrypt.hash(body.password, saltOrRounds);
 
 		const returnRoom = this.RoomsRepository.save({

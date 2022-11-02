@@ -627,9 +627,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             console.log("Send roomHasBeenDeleted to ", arrClient[i].username);
             i++;
           }
-          const index = arrRoom.indexOf(_room);
-          arrRoom.slice(index);
         }
+        const index = arrRoom.indexOf(_room);
+        arrRoom.slice(index);
       }
 
     };
@@ -2082,6 +2082,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'connected' })
     else
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline' })
+  }
+
+  @SubscribeMessage('AffNotistack')
+  async AffNotistack(client: Socket, info: { text: string, type: string }) {
+    this.server.to(client.id).emit('returnAffNotistack', { text: info.text, type: info.type })
   }
 
   ///////////////////////////////////////////////////////////

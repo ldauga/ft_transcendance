@@ -11,6 +11,9 @@ import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material
 import { Person, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
+import { SnackbarKey, withSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
+
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string } }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
@@ -202,6 +205,13 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 						<Settings fontSize="small" />
 					</ListItemIcon>
 					Invitation Request
+				</MenuItem>
+				<Divider />
+				<MenuItem onClick={handleClickBanUser}>
+					<ListItemIcon>
+						<Settings fontSize="small" />
+					</ListItemIcon>
+					Aff Ban
 				</MenuItem>
 			</Menu>
 		);

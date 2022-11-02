@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../State";
 import { Client, msg, Notif, NotifType } from "../../State/type";
 import axiosConfig from "../../Utils/axiosConfig";
+import ForNotistack from "./ForNotistack";
 
 import './InvitationChecker.css'
 
@@ -41,7 +42,7 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.on('notif', function (notif: Notif) {
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
-					return
+				return
 			if (persistantReducer.notifReducer.notifArray[index] == notif)
 				return;
 			if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
@@ -72,6 +73,7 @@ function InvitationChecker(props: { children: any }) {
 	return (
 		<>
 			{props.children}
+			<ForNotistack />
 		</>
 	);
 
