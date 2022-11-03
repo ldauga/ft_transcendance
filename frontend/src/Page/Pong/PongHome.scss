@@ -7,6 +7,7 @@
 	--racket-bottom: 87%;
 }
 
+
 .pong {
 	max-width: 736px;
 	padding: 60px 0 25px 0;
@@ -18,25 +19,35 @@
 	margin: auto;
 	display: flex;
 	flex-direction: column;
-	margin-top: 300px;
+	margin-top: 10%;
 	align-items: center;
+	
+	.instruction {
+		color: #2e384e;
+		font-family: 'Roboto', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+	}
 
 	.select-map {
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
 		width: 100%;
+
 		svg {
 			cursor: pointer;
 			height: 40px;
 			width: auto;
 			border: solid 3px #2e384e;
 			transition: all .3s ease-out;
+
 			&:hover {
 				color: white;
 				background: #2e384e;
 			}
 		}
+
 		button {
 			all: unset;
 		}
@@ -55,9 +66,30 @@
 		cursor: pointer;
 		text-transform: uppercase;
 		transition: all .3s ease-out;
+
 		&:hover {
 			color: #FFFF;
 			background: #2e384e;
+		}
+	}
+
+	.create-map {
+		color: #2e4e2f;
+		border-color: #2e4e2f;
+		background: unset;
+		letter-spacing: 1px;
+		border-width: 3px;
+		margin-top: 49px;
+		font-family: 'Roboto', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		cursor: pointer;
+		text-transform: uppercase;
+		transition: all .3s ease-out;
+
+		&:hover {
+			color: #FFFF;
+			background: #2e4e2f;
 		}
 	}
 }
@@ -94,11 +126,13 @@
 		cursor: pointer;
 		text-transform: uppercase;
 		transition: all .3s ease-out;
+
 		&:hover {
 			color: #FFFF;
 			background: #4e2e2e;
 		}
 	}
+
 	.join-queue {
 		color: #2e384e;
 		border-color: #2e384e;
@@ -112,6 +146,7 @@
 		cursor: pointer;
 		text-transform: uppercase;
 		transition: all .3s ease-out;
+
 		&:hover {
 			color: #FFFF;
 			background: #2e384e;
@@ -119,55 +154,112 @@
 	}
 }
 
-@media screen and (max-width: 768px) {
-	.pong {
-		.select-map {
-			svg {
-				height: 36px;
+.finishGameScreen {
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	.finishMsg {
+
+		margin: auto;
+		margin-top: 2.5%;
+
+		color: #2e384e;
+		font-family: 'Roboto', sans-serif;
+		font-size: 60px;
+		font-weight: 700;
+
+	}
+
+	.versusContainer {
+
+		display: flex;
+		justify-content: space-between;
+
+		margin: auto;
+		width: 60%;
+
+		.playerContainer {
+
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+
+			.profile_pic {
+				height: 30vh;
+
+				img {
+					height: 100%;
+				}
+
+			}
+
+			.winner {
+				border: 15px ridge #2FD500;
+			}
+
+			.looser {
+				border: 15px ridge #D50000;
+			}
+
+			.name {
+				margin: auto;
+				margin-top: 2.5%;
+
+				color: #2e384e;
+				font-family: 'Roboto', sans-serif;
+				font-size: 30px;
+				font-weight: 700;
+			}
+
+
+		}
+
+		.vs {
+			margin-block: auto;
+
+			color: #2e384e;
+			font-family: 'Roboto', sans-serif;
+			font-size: 90px;
+			font-weight: 700;
+		}
+
+
+	}
+
+	.buttonContainer {
+
+		margin: auto;
+
+		display: flex;
+		justify-content: space-evenly;
+
+		width: 80%;
+
+		button {
+			color: #2e384e;
+			border-color: #2e384e;
+			letter-spacing: 1px;
+			border-width: 3px;
+			margin-top: 49px;
+			font-family: 'Roboto', sans-serif;
+			font-size: 30px;
+			font-weight: 700;
+			cursor: pointer;
+			text-transform: uppercase;
+			transition: all .3s ease-out;
+
+			&:hover {
+				color: #FFFF;
+				background: #2e384e;
 			}
 		}
 	}
-}
 
-@media screen and (max-width: 457px) {
-	.pong {
-		.select-map {
-			svg {
-				height: 35px;
-				border-width: 2px;
-			}
-		}
-	}
-}
+	.match-stats {
+		height: 10vh;
 
-@media screen and (max-width: 433px) {
-	.pong {
-		.select-map {
-			svg {
-				height: 25px;
-				border-width: 2px;
-			}
-		}
-		.join-queue {
-			border-width: 2px;
-			margin-top: 42px;
-			font-size: 28px;
-		}
-	}
-}
-
-@media screen and (max-width: 374px) {
-	.pong {
-		.select-map{
-			svg {
-				height: 20px;
-				border-width: 2px;
-			}
-		}
-		.join-queue {
-			border-width: 2px;
-			margin-top: 36px;
-			font-size: 25px;
-		}
+		background-color: red;
 	}
 }

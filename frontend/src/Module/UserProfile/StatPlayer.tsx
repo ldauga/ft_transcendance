@@ -22,12 +22,17 @@ import { actionCreators, RootState } from '../../State'
 import { setUser } from '../../State/Action-Creators'
 import { red } from '@mui/material/colors'
 import Background from '../Background/Background'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Snackbar, TextField } from '@mui/material'
 import PinInput from 'react-pin-input'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import { sassFalse } from 'sass'
+import { SnackbarKey, withSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
+import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import MapCarousel from '../../Page/Pong/MapCarousel/MapCarousel'
+import { gameRoomClass } from '../../Page/Pong/gameRoomClass'
 
-export function StatPlayer() {
+function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -37,11 +42,13 @@ export function StatPlayer() {
 	const [userParameter2FACode, setUserParameter2FACode] = useState("");
 	const [userParameter2FARes, setUserParameter2FARes] = useState(0);
 	const [fullPinCode, setFullPinCode] = useState(0);
-	const [newNickname, setNewNickname] = useState(persistantReduceur.userReducer.user?.nickname);
+	const [newNickname, setNewNickname] = useState("");
 	const [rank, setRank] = useState({
 		label: '',
 		img: ''
 	})
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	const [update, setUpdate] = useState(true);
 	const [openConversFromProfile, setOpenConversFromProfile] = useState(false);
@@ -50,7 +57,7 @@ export function StatPlayer() {
 	const dispatch = useDispatch();
 	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
 
-	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>);
+	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
 		id: 0,
 		login: window.location.href.split('/')[window.location.href.split('/').length - 1],
@@ -59,23 +66,45 @@ export function StatPlayer() {
 		losses: '',
 		profile_pic: '',
 		loaded: false,
-		friendOrInvitation: 0
+		friendOrInvitation: 0,
+		status: ''
 	})
 
 	const login = persistantReduceur.userReducer.user?.login;
 
-	const changeNickname = () => {
-		console.log('newNickname: ' + newNickname)
-		if (newNickname != persistantReduceur.userReducer.user?.nickname) {
-			axiosConfig.post('https://localhost:5001/user/updateNickname', { nickname: newNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
-			if (newNickname) {
-				setProfile({ ...profile, nickname: newNickname });
-				fetchMatchHistory();
-			}
-		}
+	const changeNickname = async () => {
+		utilsData.socket.emit('CHANGE_NICKNAME', { newNickname: newNickname, user: persistantReduceur.userReducer.user })
 	}
 
 	utilsData.socket.removeAllListeners('returnCheckIfFriendOrInvit');
+
+	utilsData.socket.off('changeNicknameError')
+
+	utilsData.socket.on('changeNicknameError', function (error: string) {
+		switch (error) {
+			case 'too-short':
+				enqueueSnackbar('The new nickname must be between 3 and 8 char.', { variant: "warning", autoHideDuration: 2000 })
+				break;
+			case 'already-used':
+				enqueueSnackbar('Nickname already taken.', { variant: "warning", autoHideDuration: 2000 })
+				break;
+			case 'special-char':
+				enqueueSnackbar("Your nickname can only had alpha-numeric characters or \'_\'.", { variant: "warning", autoHideDuration: 2000 })
+				break;
+			case 'identical-nickname':
+				enqueueSnackbar('Do not put the same nickname.', { variant: "warning", autoHideDuration: 2000 })
+				break;
+		}
+	})
+
+	utilsData.socket.off('changeNicknameSuccess')
+
+	utilsData.socket.on('changeNicknameSuccess', function () {
+		enqueueSnackbar('Nickname changed !', { variant: "success", autoHideDuration: 2000 })
+		setProfile({ ...profile, nickname: newNickname })
+		fetchMatchHistory()
+		setOpen(false)
+	})
 
 	utilsData.socket.on('returnCheckIfFriendOrInvit', function (returnCheckIfFriendOrInvit: number) {
 		console.log('returnCheckIfFriendOrInvit = ', returnCheckIfFriendOrInvit);
@@ -99,7 +128,9 @@ export function StatPlayer() {
 		//console.log("check before: ", check);
 		await axiosConfig.get(url + profile.login)
 			.then(async (res) => {
-				await setProfile({
+				console.log(res.data)
+				setProfile({
+					...profile,
 					id: res.data.id,
 					login: res.data.login,
 					nickname: res.data.nickname,
@@ -109,7 +140,7 @@ export function StatPlayer() {
 					loaded: true,
 					friendOrInvitation: 0
 				})
-				if (res.data.wins == '0' && res.data.losses == '0') {
+				if (res.data.wins == 0 && res.data.losses == 0) {
 					setRank({ label: 'unranked', img: unranked })
 				}
 				else if (res.data.wins > 5) {
@@ -126,6 +157,7 @@ export function StatPlayer() {
 				} else {
 					setRank({ label: 'bronze', img: bronze_rank_img })
 				}
+				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			})
 	}
 
@@ -152,17 +184,23 @@ export function StatPlayer() {
 					)
 				})
 				if (!matches.length)
-				matches.push(<div key={'none'} className='no-match'>
-					<SentimentVeryDissatisfiedIcon />
-					<p>No match found</p>
-				</div>)
+					matches.push(<div key={'none'} className='no-match'>
+						<SentimentVeryDissatisfiedIcon />
+						<p>No match found</p>
+					</div>)
 
 				setProfileUserMatchHistory(matches.reverse())
 			})
 	}
 
+	utilsData.socket.off('getClientStatus')
+
+	utilsData.socket.on('getClientStatus', (info: { user: string, status: string }) => {
+		if (info.user == profile.login)
+			setProfile({ ...profile, status: info.status })
+	})
+
 	useEffect(() => {
-		console.log("useEffect() StatPlayer");
 		if (profile.id) {
 			console.log("emit CHECK_IF_FRIEND_OR_INVIT with id1: ", userData.userReducer.user?.id, ", id2: ", profile.id);
 			utilsData.socket.emit('CHECK_IF_FRIEND_OR_INVIT', { id1: userData.userReducer.user?.id, id2: profile.id });
@@ -173,14 +211,6 @@ export function StatPlayer() {
 		}
 		if (profile.loaded)
 			fetchMatchHistory();
-		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-		if (fullPinCode && userParameter2FARes === 401) {
-			if (wrongCode)
-				wrongCode.style.display = 'block';
-		} else {
-			if (wrongCode)
-				wrongCode.style.display = 'none';
-		}
 	}, [profile, userParameter2FARes, update])
 
 	const editAvatar = (e: any) => {
@@ -198,7 +228,7 @@ export function StatPlayer() {
 			withCredentials: true
 		};
 
-		axios(config).then((res) => setProfile({ ...profile, profile_pic: res.data.profile_pic }))
+		axios(config).then((res) => { setProfile({ ...profile, profile_pic: res.data.profile_pic }); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
 	}
 
 	const sendGetRequest = (value: string) => {
@@ -208,9 +238,10 @@ export function StatPlayer() {
 				setUserParameter2FACode('');
 				setUser(res.data);
 				setUserParameter2FARes(res.status);
+				enqueueSnackbar('2FA enable.', { variant: 'success', autoHideDuration: 2000 })
 			})
 			.catch(err => {
-				setUserParameter2FARes(err.response.status);
+				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
 			});
 	}
 
@@ -295,24 +326,88 @@ export function StatPlayer() {
 		setOpenConversFromProfile(true);
 	};
 
+	const [activeStep, setActiveStep] = useState(0);
+	const [inviteGameMap, setInviteGameMap] = useState('map1');
+
+	const handleNext = () => {
+		if (inviteGameMap == 'map1')
+			setInviteGameMap('map2')
+		else if (inviteGameMap == 'map2')
+			setInviteGameMap('map3')
+		else if (inviteGameMap == 'map3')
+			setInviteGameMap('map1')
+
+		setActiveStep((prevActiveStep) => (prevActiveStep + 1) % 3);
+	};
+
+	const handleBack = () => {
+		if (inviteGameMap == 'map1')
+			setInviteGameMap('map3')
+		else if (inviteGameMap == 'map3')
+			setInviteGameMap('map2')
+		else if (inviteGameMap == 'map2')
+			setInviteGameMap('map1')
+
+		setActiveStep((prevActiveStep) => (prevActiveStep + (3 - 1)) % 3);
+	};
+
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const openInviteGame = Boolean(anchorEl);
+
+	utilsData.socket.off('start')
+
+	utilsData.socket.on('start', function (roomID: string) {
+		history.pushState({}, '', window.URL.toString())
+		window.location.replace('https://localhost:3000/Pong')
+	});
+
 	function profile_btn() {
 		if (login != profile.login) {
-			if (profile.friendOrInvitation == 1)
-				return (
-					<div className='buttons'>
-						<button onClick={removeFriend}>Remove Friend</button>
-						<button>Invite Game</button>
-						<button onClick={sendMsg}>Send Message</button>
-					</div>
-				);
-			else
-				return (
-					<div className='buttons'>
-						<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
-						<button>Invite Game</button>
-						<button>Send Message</button>
-					</div>
-				);
+			return (
+				<div className='buttons'>
+					{profile.friendOrInvitation == 1 ?
+						<>
+							<button onClick={removeFriend}>Remove Friend</button>
+						</> :
+						<>
+							<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
+						</>}
+
+					{profile.status == 'connected' ?
+						<>
+							<button id="basic-button"
+								aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
+								aria-haspopup="true"
+								aria-expanded={openInviteGame ? 'true' : undefined}
+								onClick={e => setAnchorEl(e.currentTarget)}
+							>
+								Invite Game
+							</button>
+							<Menu
+								id="menu-invite-game"
+								anchorEl={anchorEl}
+								open={openInviteGame}
+								onClose={() => setAnchorEl(null)}
+								MenuListProps={{
+									'aria-labelledby': 'basic-button',
+								}}
+							>
+								<MenuItem onClick={() => { }}>
+									<div className='pong'>
+										<div className="instruction">Select map and press JOIN QUEUE !</div>
+										<div className='select-map'>
+											<button onClick={handleBack}><ArrowBackIosNew /></button>
+											<MapCarousel activeStep={activeStep} />
+											<button onClick={handleNext}> <ArrowForwardIos /> </button>
+										</div>
+										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }) }}>{'Invite ' + profile.nickname}</button>
+									</div>
+								</MenuItem>
+							</Menu>
+						</> : <></>}
+					<button onClick={sendMsg}>Send Message</button>
+				</div>
+			);
 		} else {
 			return (
 				<div className='buttons'>
@@ -331,14 +426,13 @@ export function StatPlayer() {
 								variant="standard"
 								onKeyUp={(e) => {
 									if (e.key === 'Enter') {
-										changeNickname();
-										setOpen(false);
+										changeNickname()
 									}
 								}}
 							/>
 						</DialogContent>
 						<DialogActions>
-							<button onClick={() => { changeNickname(); setOpen(false); }}>Edit</button>
+							<button onClick={changeNickname}>Edit</button>
 						</DialogActions>
 					</Dialog>
 					<label htmlFor="file-upload">
@@ -362,13 +456,14 @@ export function StatPlayer() {
 										onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
 										autoSelect={true}
 									/>
-									<p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
 								</DialogContent>
 							</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate 2FA</button>}
 				</div>
 			)
 		}
 	}
+
+	const [alertArray] = useState(Array<{ text: string, open: boolean }>())
 
 	return (
 		<>
@@ -381,7 +476,7 @@ export function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player'></span> online</p>
+							<p><span className='status-player' style={{ backgroundColor: profile.status == 'connected' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
 						</div>
 					</div>
 					{profile_btn()}
@@ -409,3 +504,5 @@ export function StatPlayer() {
 		</>
 	)
 }
+
+export default withSnackbar(StatPlayer)

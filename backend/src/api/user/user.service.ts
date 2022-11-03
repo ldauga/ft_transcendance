@@ -140,16 +140,21 @@ export class UserService {
 		}
 	}
 
-	async updateNickname(refreshToken: string, body): Promise<GetUserDto> {
-		const user = await this.getUserByRefreshToken(refreshToken)
+	async updateNickname(login: string, nickname: string): Promise<GetUserDto> {
+		console.log(nickname.search("^[a-zA-Z0-9_]*$"))
+		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;
-		if (user.nickname == body.nickname)
+		if (nickname.length < 3 || nickname.length > 8)
+			throw new BadRequestException('Nickname too short');
+		if (nickname.search("^[a-zA-Z0-9_]*$") == -1)
+			throw new BadRequestException('No special char');
+		if (user.nickname == nickname)
 			throw new BadRequestException('Cannot set identical nickname');
-		if (await this.getUserByNickname(body.nickname))
+		if (await this.getUserByNickname(nickname))
 			throw new UnauthorizedException('Nickname already used');
 
-		user.nickname = body.nickname;
+		user.nickname = nickname;
 		this.userRepository.save(user);
 
 		const retUser: GetUserDto = {

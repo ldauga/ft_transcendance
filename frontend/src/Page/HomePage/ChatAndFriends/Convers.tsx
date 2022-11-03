@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -110,7 +110,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
         return (
-            <div onMouseOver={e => { e.currentTarget.parentElement?.children[1].classList.add("date") }} onMouseOut={e => { e.currentTarget.parentElement?.children[1].classList.remove("date") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemList converItemListMe' : 'converItemList converItemListCorrespondant')}>
+            <div className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                 <p>{props.item.text}</p>
             </div>
         );
@@ -144,15 +144,12 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             );
     };
 
-    // e.currentTarget.children[1].toggleAttribute("date")
-
     const getListItem = async () => {
         await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
-            // console.log('res.data = ', res.data);
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : 'itemListConversContainerCorrespondant')}>
+                itemList.push(<div key={itemList.length.toString()} onMouseOver={e => { e.currentTarget.children[1].className = 'date' }} onMouseOut={e => { e.currentTarget.children[1].className = 'dateDisplayNone' }} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
                     <Item item={item} />
                     <AffDate item={item} />
                 </div>)
@@ -174,45 +171,78 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     function SendButton() {
         if (messageText.length <= 0) {
             return (
-                <Button className="sendButtonDisabled" variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                    <SendIcon id="sendIcon" />
-                </Button>
+                <button className="sendButtonDisabled" onClick={sendMessage} disabled={messageText.length <= 0}>
+                    send
+                </button>
             );
         }
         else {
             return (
-                <Button variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                    <SendIcon id="sendIcon" />
-                </Button>
+                <button onClick={sendMessage} disabled={messageText.length <= 0}>
+                    send
+                </button>
             );
         }
     };
 
+    // return (
+    //     <div className="mainAffGene">
+    //         <div id="header" className="mainHeader">
+    //             <div className="mainHeaderLeft mainHeaderSide">
+    //                 <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
+    //             </div>
+    //             <h3>{props.conversCorrespondantData.login}</h3>
+    //             <div className="mainHeaderRight mainHeaderSide">
+    //             </div>
+    //         </div>
+    //         <div className="conv">
+    //             <div className="messages">
+    //                 {itemListHistory}
+    //                 <div ref={messagesEndRef} />
+    //             </div>
+    //             <div className="send-message">
+    //                 <textarea
+    //                     value={messageText}
+    //                     onChange={e => setMessageText(e.target.value)}
+    //                     onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
+    //                     placeholder="Your message..."
+    //                 />
+                    // <SendButton />
+    //             </div>
+    //         </div>
+    //     </div>
+    // );
+
     return (
-        <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
-                </div>
-                <h3>{props.conversCorrespondantData.login}</h3>
-                <div className="mainHeaderRight mainHeaderSide">
+        <div className="chat">
+            <div className="header">
+                <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
+                <div className="profile">
+                    <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
+                    <div className="name">
+                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.login}</p>
+                        <p><div className='status'></div>online</p>
+                    </div>
                 </div>
             </div>
-            <div id="affConvers">
+            <div className="messages">
                 {itemListHistory}
                 <div ref={messagesEndRef} />
             </div>
-            <div className="sendZoneConvers">
-                <input
-                    value={messageText}
+            <div className="send-message">
+                <TextField value={messageText}
                     onChange={e => setMessageText(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
-                    placeholder="Your message..."
+                    placeholder='Your message...'
+                    multiline maxRows={5}
+                    onKeyDown={(e) => {if (e.keyCode == 13) {
+                        e.preventDefault();
+                        sendMessage();
+                    }}}
                 />
                 <SendButton />
             </div>
         </div>
-    );
+    )
 };
 
 export default Convers;
