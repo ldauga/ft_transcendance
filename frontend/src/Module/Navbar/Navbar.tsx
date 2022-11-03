@@ -1,5 +1,5 @@
-import { Leaderboard, Logout, Person, Settings } from '@mui/icons-material';
-import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Leaderboard, Logout, Person, Settings, Search } from '@mui/icons-material';
+import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,8 +7,11 @@ import { useLocation } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import ChatAndFriendAndNotif from '../../Page/HomePage/ChatAndFriends/ChatAndFriendAndNotif';
 import { actionCreators, RootState } from '../../State';
+import axiosConfig from '../../Utils/axiosConfig';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
+import { SnackbarKey, withSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
 
 function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string }, setOpenFriendConversFromProfile: Function }) {
 
@@ -22,12 +25,14 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
+	const [searchBarContent, setSearchBarContent] = useState('');
 
 	const [lastNbNotif, setLastNbNotif] = useState(0);
 
 	const [isChat, setChat] = useState(false);
 	const [isFriendList, setFriendList] = useState(false);
 	const [isNotif, setNotif] = useState(false);
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -44,6 +49,18 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		delAllNotif();
 		setTwoFactor(false);
 		window.location.replace('https://localhost:3000')
+	}
+
+	async function findUserProfile() {
+		if (searchBarContent) {
+			const ret = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
+			console.log(ret.data)
+			if (ret.data)
+				window.location.replace('https://localhost:3000/Profile/' + searchBarContent);
+			else
+				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
+		}
+		return true;
 	}
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -90,6 +107,15 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			<nav>
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
+				<div className='search-box'>
+      				<input className="search-text" type="text" placeholder = "Find user..." onChange={e => setSearchBarContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }}/>
+   					<a id="searchBar" className="search-btn">
+     				 	<Search
+							onClick={() => findUserProfile()}
+						/>
+    				</a>
+  				</div>
+
 					<button onClick={() => { //friendList
 						setOpenPopUp(!open);
 						if (isChat) {

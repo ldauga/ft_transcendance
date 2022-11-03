@@ -18,12 +18,12 @@ nav {
 		all: unset;
 	}
 
-	a {
+	a:not(#searchBar) {
 		all: unset;
 		margin-left: 10px;
 		cursor: pointer;
 		font-family: 'Titillium Web', cursive;
-		font-size: 16px;
+		font-size: 50px;
 	}
 
 	svg, div {
@@ -56,6 +56,62 @@ nav {
 			font-weight: 400;
 		}
 	}
+
+	.search-box {
+		// display: flex;
+		// position: sticky;
+		// position: right;
+		// left: 50%;
+		//transform: translate(0%,-50%);
+		background: #2e384e;
+		height: 35px;
+		border-radius: 50px;
+		padding: 10px;
+	  }
+
+	  .search-box:hover > .search-text{
+		width: 240px;
+		//padding: 0 6px;
+	  }
+
+	  .search-box:hover > .search-btn{
+		background: white;
+		color: #2e384e;
+	  }
+
+	  .search-btn {
+		color: #ffffff;
+		//float: right;
+		width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		background: #2e384e;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: 0.4s;
+		cursor: pointer;
+		text-decoration: none;
+	  }
+
+	  .search-btn > i {
+		font-size: 30px;
+	  }
+
+	  .search-text {
+		border: none;
+		background: none;
+		outline: none;
+		float: left;
+		//padding: 0;
+		color: white;
+		font-size: 16px;
+		font-weight: normal;
+		transition: 0.4s;
+		line-height: 40px;
+		width: 0px;
+	  }
+
 	@media screen and (min-width: 425px) {
 		a {
 			font-size: 20px;
@@ -68,7 +124,7 @@ nav {
 			}
 		}
 	}
-	
+
 	@media screen and (min-width: 768px) {
 		height: 83px;
 		a {
@@ -92,7 +148,7 @@ nav {
 			}
 		}
 	}
-	
+
 	@media screen and (min-width: 1024px) {
 		height: 85px;
 		a {
@@ -141,4 +197,3 @@ nav {
 		}
 	}
 }
-
