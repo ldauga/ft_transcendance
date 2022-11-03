@@ -356,7 +356,7 @@ function StatPlayer() {
 
 	utilsData.socket.off('start')
 
-	utilsData.socket.on('start', function (roomID: string) {
+	utilsData.socket.on('start', function (info: {roomID: string, spectate: boolean}) {
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('http://localhost:3000/Pong')
 	});

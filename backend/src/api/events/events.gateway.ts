@@ -176,6 +176,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.pongInfo[room[0]].players[i].connected = false
           this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
           if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected && !this.pongInfo[room[0]].firstConnectionInviteProfie) {
+            this.logger.log(`Room ${room[1].roomID} has been deleted.`)
             this.pongInfo.splice(room[0], 1)
             return;
           }
@@ -213,19 +214,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('storeClientInfo')
   async storeClientInfo(client: Socket, user: { login: string }) {
-    console.log("storeClientInfo");
 
     let tmp: number;
 
-    console.log(user)
 
     if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
       checkReconnexionArr.splice(tmp, 1)
     else if (user.login) {
-      console.log(user.login)
       const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
 
-      console.log(friendList)
 
       for (let i = 0; i < friendList.length; i++) {
         let loginTmp: string;
@@ -236,7 +233,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const _client = arrClient.find(obj => obj.username == loginTmp);
         if (_client) {
           this.server.to(_client.id).emit('friendConnection', true);
-          console.log("emit friendConnection to ", _client.username);
         }
       }
 
@@ -1405,8 +1401,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     return null
   }
 
+  getRoomBySpectateLogin(SpectateLogin: string): [number, gameRoomClass] | null {
+    for (let i = 0; i < this.pongInfo.length; i++)
+      for (let j = 0; j < this.pongInfo[i].spectate.length; j++)
+        if (this.pongInfo[i].spectate[j].user.login == SpectateLogin)
+          return [i, this.pongInfo[i]]
+    return null
+  }
+
   @SubscribeMessage('CHECK_RECONNEXION')
-  checkReconnexion(
+  async checkReconnexion(
     client: Socket,
     info: {
       user: {
@@ -1419,43 +1423,81 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         profile_pic: string
       }
     }) {
-    this.pongInfo.forEach((item) => {
-      item.players.forEach(async (player) => {
-        if (item.started && player.user.login == info.user.login) {
-          this.joinRoom(client, item.roomID)
-          player.id = client.id
-          player.connected = true
-          player.sendNotif = false
 
-          const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
+    const room = this.getRoomByClientLogin(info.user.login)
 
-          for (let i = 0; i < friendList.length; i++) {
-            let loginTmp: string;
-            if (friendList[i].login_user1 == player.user.login)
-              loginTmp = friendList[i].login_user2;
-            else
-              loginTmp = friendList[i].login_user1;
-            const _client = arrClient.find(obj => obj.username == loginTmp);
-            if (_client) {
-              this.server.to(_client.id).emit('friendConnection', true);
-              console.log("emit friendConnection to ", _client.username);
-            }
-          }
+    console.log('check reconnexion :', room)
 
+    if (room != null) {
+
+      this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].id = client.id
+      this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected = true
+      this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].sendNotif = false
+
+      const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
+      for (let i = 0; i < friendList.length; i++) {
+        let loginTmp: string;
+        if (friendList[i].login_user1 == this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login)
+          loginTmp = friendList[i].login_user2;
+        else
+          loginTmp = friendList[i].login_user1;
+        const _client = arrClient.find(obj => obj.username == loginTmp);
+        if (_client) {
+          this.server.to(_client.id).emit('friendConnection', true);
         }
+      }
 
-        this.server.to(client.id).emit('start', item.roomID)
+      this.server.to(client.id).emit('start', room[1].roomID)
 
-      })
-      item.spectate.forEach((spectator) => {
-        if (spectator.user.login == info.user.login) {
-          this.joinRoom(client, item.roomID)
-          spectator.id = client.id
-          spectator.user = info.user
-          this.server.to(client.id).emit('start', item.roomID)
-        }
-      })
-    })
+    } else {
+
+      const spectateRoom = this.getRoomBySpectateLogin(info.user.login)
+
+      if (spectateRoom != null) {
+        this.joinRoom(client, this.pongInfo[spectateRoom[0]].roomID)
+        this.pongInfo[spectateRoom[0]].spectate[this.pongInfo[spectateRoom[0]].spectate.findIndex(spectator => spectator.user.login == info.user.login)].id = client.id
+        this.pongInfo[spectateRoom[0]].spectate[this.pongInfo[spectateRoom[0]].spectate.findIndex(spectator => spectator.user.login == info.user.login)].user = info.user
+        this.server.to(client.id).emit('start', this.pongInfo[spectateRoom[0]].roomID)
+      }
+
+    }
+
+    // this.pongInfo.forEach((item) => {
+    //   item.players.forEach(async (player) => {
+    //     if (item.started && player.user.login == info.user.login) {
+    //       this.joinRoom(client, item.roomID)
+    //       player.id = client.id
+    //       player.connected = true
+    //       player.sendNotif = false
+
+    //       const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
+
+    //       for (let i = 0; i < friendList.length; i++) {
+    //         let loginTmp: string;
+    //         if (friendList[i].login_user1 == player.user.login)
+    //           loginTmp = friendList[i].login_user2;
+    //         else
+    //           loginTmp = friendList[i].login_user1;
+    //         const _client = arrClient.find(obj => obj.username == loginTmp);
+    //         if (_client) {
+    //           this.server.to(_client.id).emit('friendConnection', true);
+    //           console.log("emit friendConnection to ", _client.username);
+    //         }
+    //       }
+
+    //     }
+
+
+    // })
+    // item.spectate.forEach((spectator) => {
+    //   if (spectator.user.login == info.user.login) {
+    //     this.joinRoom(client, item.roomID)
+    //     spectator.id = client.id
+    //     spectator.user = info.user
+    //     this.server.to(client.id).emit('start', item.roomID)
+    //   }
+    // })
+    // })
   }
 
   @SubscribeMessage('JOIN_QUEUE')
@@ -1689,6 +1731,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     if (room != null) {
 
+      if (room[1].spectate.find(spectator => spectator.id == client.id, true) != undefined) {
+        this.server.to(client.id).emit('render', this.pongInfo[room[0]])
+        return
+      }
+
       if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
 
         this.pongInfo[room[0]].players.forEach((player, index, playersArr) => {
@@ -1812,13 +1859,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
-      for (let index = 0; index < 2; index++)
-        if (this.pongInfo[room[0]].players[index].id == client.id) {
-          if (info[1])
-            this.pongInfo[room[0]].players[index].speed = 2
-          else
-            this.pongInfo[room[0]].players[index].speed = 1
-        }
+      this.pongInfo[room[0]].ball.x = this.pongInfo[room[0]].canvas.width / 2
+      this.pongInfo[room[0]].ball.dx = 0
+      this.pongInfo[room[0]].ball.dy = 0.2
+
+      // for (let index = 0; index < 2; index++)
+      //   if (this.pongInfo[room[0]].players[index].id == client.id) {
+
+      //   }
 
     }
   }
@@ -1928,7 +1976,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     var room = this.getRoomByID("custom" + info.inviteID)
 
-      console.log('room :', room, room[1].map.obstacles)
+    console.log('room :', room, room[1].map.obstacles)
 
     this.joinRoom(client, room[1].roomID)
 

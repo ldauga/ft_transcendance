@@ -64,7 +64,7 @@ function InvitationChecker(props: { children: any }) {
 		}
 	})
 
-	utilsData.socket.on('start_spectate', function (arrClient: Client[]) {
+	utilsData.socket.on('start_spectate', function () {
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('http://localhost:3000/Pong')
 	})
