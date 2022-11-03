@@ -28,7 +28,7 @@ services:
     - "5432:5432"
     networks:
       - webapp
-  
+
   frontend:
     container_name: frontend
     depends_on:
@@ -40,7 +40,7 @@ services:
       DB_SERVER: ${POSTGRES_DB}
     restart: always
     ports:
-      - 3000:3000
+       - 3000:3000
     networks:
       - webapp
 

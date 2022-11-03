@@ -46,7 +46,7 @@ function SendChatMsg() {
             return;
         let test = false;
         console.log('sendMsg');
-        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + inputValue).then(async (res) => {
             setText("");
             console.log("axios.get");
             console.log(res.data);

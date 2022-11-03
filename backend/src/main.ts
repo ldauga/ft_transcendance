@@ -3,12 +3,23 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import * as fs from 'fs'
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule, { cors: {credentials: true, origin: process.env.CLIENT_URL} });
+	const httpsOptions = {
+		key: fs.readFileSync('./src/common/certs/key.pem', 'utf8'),
+		cert: fs.readFileSync('./src/common/certs/cert.pem', 'utf8'),
+		// cors: {credentials: true, origin: "*"},
+	};
+	const app = await NestFactory.create(AppModule, {httpsOptions}/* { cors: {credentials: true, origin: process.env.CLIENT_URL} }*/);
 	const config: ConfigService = app.get(ConfigService);
 	const port: number = config.get<number>('PORT');
-    
+	
+	app.enableCors({
+		origin: true,
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+		credentials: true
+	});
 	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 

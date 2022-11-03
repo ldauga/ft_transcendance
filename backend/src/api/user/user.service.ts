@@ -141,12 +141,13 @@ export class UserService {
 	}
 
 	async updateNickname(login: string, nickname: string): Promise<GetUserDto> {
+		console.log(nickname.search("^[a-zA-Z0-9_]*$"))
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;
 		if (nickname.length < 3 || nickname.length > 8)
 			throw new BadRequestException('Nickname too short');
-		if (nickname.search("#[\w]#") != -1)
+		if (nickname.search("^[a-zA-Z0-9_]*$") == -1)
 			throw new BadRequestException('No special char');
 		if (user.nickname == nickname)
 			throw new BadRequestException('Cannot set identical nickname');

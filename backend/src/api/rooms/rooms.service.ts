@@ -96,7 +96,7 @@ export class RoomsService {
 		console.log("check 1: ", check);
 		check.passwordOrNot = passwordOrNot;
 
-		const saltOrRounds = process.env.SALT;
+		const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
 		const hash = await bcrypt.hash(password, saltOrRounds);
 		check.password = hash;
 		console.log("check 2: ", check);
@@ -104,9 +104,8 @@ export class RoomsService {
 		return true;
 	}
 
-	async createRoom(body: { name: string, description: string, password: string, identifiant: number, owner_id: number, publicOrPrivate: boolean, passwordOrNot: boolean }): Promise<RoomsEntity> {
-		console.log("body: ", body);
-		const saltOrRounds = 10;
+	async createRoom(body: any): Promise<RoomsEntity> {
+		const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
 		const hash = await bcrypt.hash(body.password, saltOrRounds);
 
 		const returnRoom = this.RoomsRepository.save({

@@ -21,7 +21,7 @@ function MatchHistory() {
 
 	useEffect(() => {
 		if (!verif) {
-			let res = axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
+			let res = axiosConfig.get('https://localhost:5001/matchesHistory/parsedMatchesHistory/' + persistantReducer.userReducer.user?.id).then(res => setRows(res.data.reverse()))
 			setVerif(true);
 		}
 	})
@@ -36,11 +36,11 @@ function MatchHistory() {
 							<div className='card'>
 								<h3>{row.winner_nickname == persistantReducer.userReducer.user?.nickname ? 'Victory' : 'Defeat'}</h3>
 								<div className="opponent">
-									<span onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname_user1)}}>
+									<span onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.nickname_user1)}}>
 										{row.nickname_user1}
 									</span>
 									<span className='score'>{row.score_u1.toString() + '-' + row.score_u2.toString()}</span>
-									<span onClick={() =>{history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + row.nickname_user2)}}>
+									<span onClick={() =>{history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.nickname_user2)}}>
 										{row.nickname_user2}
 									</span>
 								</div>
