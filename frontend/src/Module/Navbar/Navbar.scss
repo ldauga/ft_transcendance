@@ -29,6 +29,10 @@ nav {
 	svg, div {
 		height: 31px;
 	}
+	
+	svg {
+		cursor: pointer;
+	}
 
 	.right {
 		display: flex;
@@ -161,12 +165,12 @@ nav {
 		svg, div {
 			height: 48px;
 		}
-		.avatar {
-			--avatar-size: 43px;
-			height: var(--avatar-size);
-			width: var(--avatar-size);
-		}
 		.profile {
+			.avatar {
+				--avatar-size: 43px;
+				height: var(--avatar-size);
+				width: var(--avatar-size);
+			}
 			span {
 				font-size: 18px;
 			}
@@ -185,12 +189,12 @@ nav {
 		svg, div {
 			height: 56px;
 		}
-		.avatar {
-			--avatar-size: 56px;
-			height: var(--avatar-size);
-			width: var(--avatar-size);
-		}
 		.profile {
+			.avatar {
+				--avatar-size: 56px;
+				// height: var(--avatar-size);
+				// width: var(--avatar-size);
+			}
 			span {
 				font-size: 20px;
 			}

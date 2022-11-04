@@ -5,11 +5,15 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/AddFriend.scss';
+import { SnackbarKey, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 function AddFriend() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -74,6 +78,7 @@ function AddFriend() {
                     }
                     console.log('emit');
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
+                    enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                 }
                 return;
             }
@@ -130,4 +135,4 @@ function AddFriend() {
     )
 }
 
-export default AddFriend;
+export default withSnackbar(AddFriend);

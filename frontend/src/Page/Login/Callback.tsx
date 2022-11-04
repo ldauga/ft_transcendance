@@ -8,11 +8,13 @@ import { bindActionCreators } from "redux";
 import { actionCreators } from "../../State";
 import { RootState } from "../../State/Reducers";
 import './Callback.scss';
-import logo from '../assets/logo_transcendence.png';
 import axiosConfig from "../../Utils/axiosConfig";
+import Background from "../../Module/Background/Background";
+import { useSnackbar } from "notistack";
 
 export default function Callback() {
 
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [cookie, setCookie] = useCookies(['auth-cookie']);
     const dispatch = useDispatch();
@@ -23,23 +25,12 @@ export default function Callback() {
 
     function turnOn2fa(value: string) {
         console.log('code: ' + value);
-        axiosConfig.get('https://localhost:5001/auth/2fa/verify/' + value)
+        axios.get('http://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
             .then((e) => {setTwoFactor(true), setTurnOn(true)})
             .catch((e) => {
-                setRes(e.response.status)
+                enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
             });
     }
-
-    useEffect(() => {
-		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-		if (fullPinCode && res === 401) {
-			if (wrongCode)
-				wrongCode.style.visibility = 'visible';
-			} else {
-			if (wrongCode)
-				wrongCode.style.visibility = 'hidden';
-		}
-	  });
 
     if (persistantReducer.userReducer.user === null) {
         axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
@@ -53,23 +44,22 @@ export default function Callback() {
         if (persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReducer.twoFactorReducer.verif)
 
             return (
+                <>
+                <Background />
                 <div className="login-2fa">
-                    <img className="logo_transcendence" src={logo} alt="" />
-                    <div className="bg">
-                        <h1>Google Authenticator Code</h1>
-                        <PinInput
-                            length={6}
-                            focus
-                            type="numeric"
-                            inputMode="number"
-                            style={{padding: '10px'}}
-                            onChange={() => setFullPinCode(false)}
-                            onComplete={(value, index) => {turnOn2fa(value); setFullPinCode(true)}}
-                            autoSelect={true}
-                        />
-                        <p className='wrong-code' style={{visibility: 'hidden'}}>Wrong Code</p>
-                    </div>
+                    <h1>Google Authenticator Code</h1>
+                    <PinInput 
+                        length={6}
+                        focus
+                        type="numeric"
+                        inputMode="number"
+                        style={{padding: '10px'}}
+                        onChange={() => setFullPinCode(false)}
+                        onComplete={(value, index) => {turnOn2fa(value); setFullPinCode(true)}}
+                        autoSelect={true}
+                    />
                 </div>
+                </>
             )
         else
             return (<Navigate to="/HomePage" />)

@@ -21,6 +21,7 @@ import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { valideInput } from '../../../Utils/utils';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -318,7 +319,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
-    }, [itemListHistory, isConversRooms])
+    }, [itemListHistory])
 
     useEffect(() => {
         setUpdate(false);
@@ -326,7 +327,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         getUsers();
         getListItem();
         bottom.current?.scrollIntoView();
-    }, [props, isConversRooms, update]);
+    }, [props, update]);
 
     const handleClickOpenDialogChangePassword = () => {
         setOpenDialogChangePassword(true);
@@ -339,6 +340,18 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const updateSettings = async () => {
+        if (password.length <= 0) {
+            console.log("password empty");
+            return;
+        }
+        if (password.length > 10) {
+            console.log("password too long");
+            return;
+        }
+        if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
+            console.log("valideInput false");
+            return;
+        }
         if (password.length >= 0) {
             console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
             const newPassword = {

@@ -547,10 +547,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log("room name already exist");
       return;
     }
+    console.log("data: ", data);
+    console.log("createChatRoom password: ", data.password, data.password.lenght);
+    let password = data.password;
+    if (password.lenght <= 0 || !password)
+      password = "NoPassword";
+    console.log("createChatRoom password: ", password, password.length);
     const newRooms = {
       name: data.name,
       description: data.description,
-      password: data.password,
+      password: password,
       identifiant: data.identifiant,
       owner_id: data.owner_id,
       publicOrPrivate: data.publicOrPrivate,
@@ -621,9 +627,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             console.log("Send roomHasBeenDeleted to ", arrClient[i].username);
             i++;
           }
-          const index = arrRoom.indexOf(_room);
-          arrRoom.slice(index);
         }
+        const index = arrRoom.indexOf(_room);
+        arrRoom.slice(index);
       }
 
     };
@@ -2083,6 +2089,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'connected' })
     else
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline' })
+  }
+
+  @SubscribeMessage('AffNotistack')
+  async AffNotistack(client: Socket, info: { text: string, type: string }) {
+    this.server.to(client.id).emit('returnAffNotistack', { text: info.text, type: info.type })
   }
 
   ///////////////////////////////////////////////////////////
