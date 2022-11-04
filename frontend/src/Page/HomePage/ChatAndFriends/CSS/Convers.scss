@@ -72,29 +72,44 @@
     .messages {
         height: 100%;
         overflow-y: auto;
+        overscroll-behavior: none;
         display: flex;
         flex-direction: column;
         gap: 10px;
         margin: 0 10px;
         padding-top: 10px;
 
+        .message {
+            padding: 10px 10px;
+        }
+        .sender {
+            border-radius: 1.125rem 1.125rem 0 1.125rem;
+            background: #2e384e;
+            color: white;
+            margin-left: 5px;
+        }
+        .receiver {
+            border-radius: 1.125rem 1.125rem 1.125rem 0;
+            border: 1px solid;
+            margin-right: 5px;
+        }
+        p {
+            margin: 0;
+        }
         .content-sender,
         .content-receiver {
             max-width: 242px;
             word-break: break-word;
             width: fit-content;
-            padding: 0 10px;
+            display: flex;
+            align-items: center;
         }
 
         .content-receiver {
-            border-radius: 1.125rem 1.125rem 1.125rem 0;
-            border: 1px solid;
+            flex-direction: row-reverse;
         }
 
         .content-sender {
-            border-radius: 1.125rem 1.125rem 0 1.125rem;
-            background: #2e384e;
-            color: white;
             align-self: flex-end;
         }
 

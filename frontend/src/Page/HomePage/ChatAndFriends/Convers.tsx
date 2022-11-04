@@ -165,9 +165,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             console.log("get List Item Conversation");
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} onMouseOver={e => { e.currentTarget.children[1].className = 'date' }} onMouseOut={e => { e.currentTarget.children[1].className = 'dateDisplayNone' }} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
-                    <Item item={item} />
+                itemList.push(<div key={itemList.length.toString()} onMouseOver={e => { e.currentTarget.children[0].className = 'date' }} onMouseOut={e => { e.currentTarget.children[0].className = 'dateDisplayNone' }} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
                     <AffDate item={item} />
+                    <Item item={item} />
                 </div>)
             });
             console.log('itemList : ', itemList);
@@ -201,34 +201,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             );
         }
     };
-
-    // return (
-    //     <div className="mainAffGene">
-    //         <div id="header" className="mainHeader">
-    //             <div className="mainHeaderLeft mainHeaderSide">
-    //                 <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
-    //             </div>
-    //             <h3>{props.conversCorrespondantData.login}</h3>
-    //             <div className="mainHeaderRight mainHeaderSide">
-    //             </div>
-    //         </div>
-    //         <div className="conv">
-    //             <div className="messages">
-    //                 {itemListHistory}
-    //                 <div ref={messagesEndRef} />
-    //             </div>
-    //             <div className="send-message">
-    //                 <textarea
-    //                     value={messageText}
-    //                     onChange={e => setMessageText(e.target.value)}
-    //                     onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
-    //                     placeholder="Your message..."
-    //                 />
-    // <SendButton />
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
 
     utilsData.socket.removeAllListeners('userBanned');
 
