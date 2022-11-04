@@ -24,7 +24,7 @@ export class FriendListService {
 				{ id_user2: id }
 			]
 		});
-		// console.log('matches', matches);
+		console.log('matches.length', matches.length);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;
@@ -85,6 +85,9 @@ export class FriendListService {
 
 		const removeReturn = this.FriendListRepository.delete(check);
 		console.log('removeReturn', removeReturn);
-		return true;
+		if (removeReturn)
+			return true;
+		else
+			return false;
 	}
 }

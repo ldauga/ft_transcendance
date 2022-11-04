@@ -8,7 +8,7 @@ import './CSS/AddFriend.scss';
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
-function AddFriend() {
+function AddFriend(props: { setNewAddFriend: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -80,6 +80,7 @@ function AddFriend() {
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                     enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                 }
+                props.setNewAddFriend(false);
                 return;
             }
         });
@@ -135,4 +136,4 @@ function AddFriend() {
     )
 }
 
-export default withSnackbar(AddFriend);
+export default AddFriend;

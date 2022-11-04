@@ -18,6 +18,8 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
+    const [correspondantIsBlocked, setCorrespondantIsBlocked] = useState(false);
+
     const closeConvers = () => {
         if (props.openFriendConversFromProfile)
             props.setOpenFriendConversFromProfile(false);
@@ -109,11 +111,20 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     //onMouseOut={e => { e.currentTarget.children[1].toggleAttribute('className') }}
 
     function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        return (
-            <div className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
-                <p>{props.item.text}</p>
-            </div>
-        );
+        if (props.item.id_sender == 0) {
+            return (
+                <div className="server_msg">
+                    <p>{props.item.text}</p>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
+                    <p>{props.item.text}</p>
+                </div>
+            );
+        }
     };
 
     function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
@@ -145,6 +156,11 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     const getListItem = async () => {
+        await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
+            console.log("checkIfRelationIsBlocked res.data: ", res.data);
+            if (res.data == true && correspondantIsBlocked == false)
+                setCorrespondantIsBlocked(true);
+        });
         await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
@@ -166,7 +182,8 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
         getListItem();
-    }, [props]);
+        console.log("correspondantIsBlocked: ", false);
+    }, [props, correspondantIsBlocked]);
 
     function SendButton() {
         if (messageText.length <= 0) {
@@ -207,11 +224,37 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     //                     onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
     //                     placeholder="Your message..."
     //                 />
-                    // <SendButton />
+    // <SendButton />
     //             </div>
     //         </div>
     //     </div>
     // );
+
+    utilsData.socket.removeAllListeners('userBanned');
+
+    utilsData.socket.on('userBanned', function (userBanned: boolean) {
+        console.log('userBanned = ', userBanned);
+        getListItem();
+        utilsData.socket.off('userBanned');
+        utilsData.socket.removeListener('userBanned');
+    })
+
+    utilsData.socket.removeAllListeners('debanedUser');
+
+    utilsData.socket.on('debanedUser', function (debanedUser: boolean) {
+        console.log('debanedUser = ', debanedUser);
+        getListItem();
+        utilsData.socket.off('debanedUser');
+        utilsData.socket.removeListener('debanedUser');
+    })
+
+    function AffBlocked() {
+        return (
+            <div className='relation_blocked'>
+                <p>Relation is Blocked</p>
+            </div>
+        );
+    };
 
     return (
         <div className="chat">
@@ -224,6 +267,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                         <p><div className='status'></div>online</p>
                     </div>
                 </div>
+                {correspondantIsBlocked && <AffBlocked />}
             </div>
             <div className="messages">
                 {itemListHistory}
@@ -234,10 +278,13 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     onChange={e => setMessageText(e.target.value)}
                     placeholder='Your message...'
                     multiline maxRows={5}
-                    onKeyDown={(e) => {if (e.keyCode == 13) {
-                        e.preventDefault();
-                        sendMessage();
-                    }}}
+                    onKeyDown={(e) => {
+                        if (e.keyCode == 13) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
+                    disabled={correspondantIsBlocked}
                 />
                 <SendButton />
             </div>

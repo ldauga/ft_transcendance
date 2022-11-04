@@ -1,5 +1,6 @@
 .itemListConvers {
     width: 100%;
+
     .itemConvers {
         padding-left: 0.5rem;
         padding-top: 8px;
@@ -7,6 +8,7 @@
         display: flex;
         align-items: center;
         gap: 5px;
+
         img {
             --avatar-size: 51px;
             border-radius: 50%;
@@ -14,11 +16,13 @@
             height: var(--avatar-size);
             object-fit: cover;
         }
+
         p {
             font-size: 1.5rem;
             margin: 0;
         }
     }
+
     &:hover {
         background: rgba($color: #efefef, $alpha: .5);
         cursor: pointer;
@@ -27,14 +31,17 @@
     @media screen and (min-width: 375px) {
         .itemConvers {
             gap: 7px;
+
             img {
                 --avatar-size: 59px;
             }
         }
     }
+
     @media screen and (min-width: 425px) {
         .itemConvers {
             gap: 11px;
+
             img {
                 --avatar-size: 66px;
             }
@@ -59,5 +66,5 @@
 
 #affConversItemChatSmall {
     overflow: scroll;
-    height: 77%;
+    height: 74%;
 }

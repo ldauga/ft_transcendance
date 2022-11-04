@@ -1,4 +1,4 @@
-import { Autocomplete, Button, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -7,11 +7,15 @@ import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/SendChatMsg.scss'
 import './CSS/Convers.scss'
+import { SnackbarKey, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 function SendChatMsg() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [text, setText] = useState('');
 
@@ -44,6 +48,17 @@ function SendChatMsg() {
     async function sendMsg() {
         if (text.length <= 0 || inputValue.length <= 0)
             return;
+        if (inputValue.length > 40) {
+            enqueueSnackbar('Message max size is 40 characters', { variant: "error", autoHideDuration: 3000 })
+            return;
+        }
+        await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + inputValue).then(async (res) => {
+            console.log("checkIfRelationIsBlocked res.data: ", res.data);
+            if (res.data == true) {
+                enqueueSnackbar('You can\'t send a message to ' + inputValue + ', your relation is blocked', { variant: "error", autoHideDuration: 6000 })
+                return;
+            }
+        });
         let test = false;
         console.log('sendMsg');
         await axiosConfig.get('https://localhost:5001/user/login/' + inputValue).then(async (res) => {
@@ -53,6 +68,7 @@ function SendChatMsg() {
             console.log(res);
             let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
+                enqueueSnackbar(inputValue + ' not found', { variant: "error", autoHideDuration: 2000 })
                 console.log("login not found");
                 return;
             }

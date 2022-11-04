@@ -339,7 +339,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     getAllBan.then(async item => {
       const a: { login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
       a.forEach(async item => {
-        console.log("date + timer = ", item.timer + item.date, ", time = ", time);
+        //console.log("date + timer = ", item.timer + item.date, ", time = ", time);
         if (item.timer + item.date <= time && !item.alwaysOrNot) {
           console.log("go remove");
           if (!item['userOrRoom']) {
@@ -1117,16 +1117,24 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       timer: data.timer
     }
     const returnBan = await this.BlacklistService.createBan(newBan);
-    if (returnBan)
+    if (returnBan) {
       this.server.to(client.id).emit('userBanned', true);
+      const _client = arrClient.find(obj => obj.username == data.login_banned);
+      if (_client)
+        this.server.to(_client.id).emit('userBanned', true);
+    }
   }
 
   @SubscribeMessage('removeUserBan')
   async removeUserBan(client: Socket, data: any) {
     this.logger.log(`${client.id} want deban: ${data.login_banned}`);
     const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
-    if (removeBanReturn)
+    if (removeBanReturn) {
       this.server.to(client.id).emit('debanedUser', true);
+      const _client = arrClient.find(obj => obj.username == data.login_banned);
+      if (_client)
+        this.server.to(_client.id).emit('debanedUser', true);
+    }
   }
 
   @SubscribeMessage('createRoomBan')
@@ -1934,7 +1942,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     var room = this.getRoomByID("custom" + info.inviteID)
 
-      console.log('room :', room, room[1].map.obstacles)
+    console.log('room :', room, room[1].map.obstacles)
 
     this.joinRoom(client, room[1].roomID)
 
@@ -1976,7 +1984,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     friendRes = friendList;
 
-    console.log("friendRes = ", friendRes);
+    console.log("friendRes.length = ", friendRes.length);
 
     for (let index = 0; index < friendRes.length; index++) {
       var user: any
