@@ -43,7 +43,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 		delAllNotif();
 		setTwoFactor(false);
-		window.location.replace('http://localhost:3000')
+		window.location.replace('https://localhost:3000')
 	}
 
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)

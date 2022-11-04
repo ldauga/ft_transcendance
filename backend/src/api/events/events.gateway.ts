@@ -272,7 +272,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async afterInit(server: any) {
     this.logger.log('Init');
-    //const getAllRoomsReturn = await this.http.get('http://localhost:5001/rooms'); 
+    //const getAllRoomsReturn = await this.http.get('https://localhost:5001/rooms');
     const getAllRoomsReturn = await this.RoomsService.getAllRooms();
     getAllRoomsReturn.forEach(async (item) => {
       console.log(item);
@@ -334,7 +334,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(1000)
   checkBanAndMute() {
     time = time + 1;
-    //const getAllBan = http.get('http://localhost:5001/blackList');
+    //const getAllBan = http.get('https://localhost:5001/blackList');
     const getAllBan = this.BlacklistService.getAllBanTimer();
     getAllBan.then(async item => {
       const a: { login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
@@ -343,7 +343,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (item.timer + item.date <= time && !item.alwaysOrNot) {
           console.log("go remove");
           if (!item['userOrRoom']) {
-            //const removeUserBanReturn = await http.post('http://localhost:5001/blackList/removeUserBan/' + item.id_sender + '/' + item.login_banned);
+            //const removeUserBanReturn = await http.post('https://localhost:5001/blackList/removeUserBan/' + item.id_sender + '/' + item.login_banned);
             const removeUserBanReturn = await this.BlacklistService.removeUserBan(item['id_sender'], item['login_banned'])
             console.log('removeUserBanReturn in eventgateway', removeUserBanReturn);
             if (removeUserBanReturn) {
@@ -355,7 +355,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             }
           }
           else {
-            //const removeRoomBanReturn = await http.post('http://localhost:5001/blackList/removeRoomBan/' + item.room_id + '/' + item.login_banned);
+            //const removeRoomBanReturn = await http.post('https://localhost:5001/blackList/removeRoomBan/' + item.room_id + '/' + item.login_banned);
             const removeRoomBanReturn = await this.BlacklistService.removeRoomBan(item['room_id'], item['login_banned'])
             console.log('removeRoomBanReturn in eventgateway', removeRoomBanReturn);
             if (removeRoomBanReturn) {
@@ -374,7 +374,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
       });
     });
-    //const getAllMute = http.get('http://localhost:5001/muteList');
+    //const getAllMute = http.get('https://localhost:5001/muteList');
     const getAllMute = this.MutelistService.getAllMuteTimer();
     getAllMute.then(async item => {
       const b: { login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
@@ -382,7 +382,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         console.log("date + timer = ", item.timer + item.date, ", time = ", time);
         if (item['timer'] + item['date'] <= time && !item.alwaysOrNot) {
           console.log("go remove");
-          //const removeUserMuteReturn = await http.post('http://localhost:5001/muteList/removeRoomMute/' + item['room_id'] + '/' + item['login_muted']);
+          //const removeUserMuteReturn = await http.post('https://localhost:5001/muteList/removeRoomMute/' + item['room_id'] + '/' + item['login_muted']);
           const removeUserMuteReturn = await this.MutelistService.removeRoomMute(item['room_id'], item['login_muted']);
           console.log('removeUserMuteReturn in eventgateway', removeUserMuteReturn);
           if (removeUserMuteReturn) {
@@ -467,7 +467,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.server.to(item.id).emit('notif', { type: 'PENDINGINVITATION' })
       })
 
-      //const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest', invitationRequest);
+      //const invitationRequestReturn = await this.http.post('https://localhost:5001/invitationRequest', invitationRequest);
       const invitationRequestReturn = await this.invitationRequestService.createInvitationRequest(invitationRequest)
       console.log(invitationRequestReturn)
       //  console.log(invitationRequestReturn.forEach(item => (console.log('invitationRequestReturn in eventgateway'))));
@@ -485,7 +485,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeInvitationRequest')
   async removeInvitationRequest(client: Socket, data: any) {
     this.logger.log(`${client.id} said : remove Invitation Request`);
-    //const invitationRequestReturn = await this.http.post('http://localhost:5001/invitationRequest/' + data.id_user1 + '/' + data.id_user2);
+    //const invitationRequestReturn = await this.http.post('https://localhost:5001/invitationRequest/' + data.id_user1 + '/' + data.id_user2);
     const invitationRequestReturn = await this.invitationRequestService.removeInvitationRequest(data.id_user1, data.id_user2)
     console.log('removeInvitationRequestReturn in eventgateway', invitationRequestReturn);
     this.server.to(client.id).emit('returnRemoveInvitationRequest', true);
@@ -502,7 +502,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       login_user1: data.login_user1,
       login_user2: data.login_user2
     }
-    //const addFriendReturn = await this.http.post('http://localhost:5001/friendList/', newFriend);
+    //const addFriendReturn = await this.http.post('https://localhost:5001/friendList/', newFriend);
     const addFriendReturn = await this.FriendListService.createFriendShip(newFriend);
     //console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
     console.log(addFriendReturn)
@@ -524,7 +524,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeFriend(client: Socket, data: any) {
     this.logger.log(`${client.id} remove Friend`);
     console.log("arrClient: ", arrClient);
-    //const removeFriendReturn = await this.http.post('http://localhost:5001/friendList/' + data.id_user1 + '/' + data.id_user2);
+    //const removeFriendReturn = await this.http.post('https://localhost:5001/friendList/' + data.id_user1 + '/' + data.id_user2);
     const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_user1, data.id_user2);
     console.log('removeFriendReturn in eventgateway', removeFriendReturn);
     if (removeFriendReturn) {
@@ -547,16 +547,22 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       console.log("room name already exist");
       return;
     }
+    console.log("data: ", data);
+    console.log("createChatRoom password: ", data.password, data.password.lenght);
+    let password = data.password;
+    if (password.lenght <= 0 || !password)
+      password = "NoPassword";
+    console.log("createChatRoom password: ", password, password.length);
     const newRooms = {
       name: data.name,
       description: data.description,
-      password: data.password,
+      password: password,
       identifiant: data.identifiant,
       owner_id: data.owner_id,
       publicOrPrivate: data.publicOrPrivate,
       passwordOrNot: data.passwordOrNot
     }
-    //const roomReturn = await this.http.post('http://localhost:5001/rooms', newRooms);
+    //const roomReturn = await this.http.post('https://localhost:5001/rooms', newRooms);
     const roomReturn = await this.RoomsService.createRoom(newRooms);
     console.log('chat room created');
     const newParticipant = {
@@ -567,7 +573,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       admin: true
     }
     const tmp_room_id = roomReturn.id;
-    //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
+    //const participantReturn = await this.http.post('https://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
     console.log('participantReturn in eventgateway', participantReturn);
     console.log('participant created');
@@ -592,7 +598,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeRoom')
   async removeRoom(client: Socket, data: any) {
     this.logger.log(`${client.id} remove Room`);
-    //const removeRoomReturn = await this.http.post('http://localhost:5001/rooms/' + data.id + '/' + data.room_name);
+    //const removeRoomReturn = await this.http.post('https://localhost:5001/rooms/' + data.id + '/' + data.room_name);
     const removeRoomReturn = await this.RoomsService.removeRoom(data.id, data.room_name);
     console.log("removeRoomReturn: ", removeRoomReturn);
     if (removeRoomReturn) {
@@ -602,7 +608,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         console.log(_room.name, " has been deleted");
         let i = 0;
         while (i < _room.users.length) {
-          //const removeParticipantReturn = await this.http.post('http://localhost:5001/participants/' + _room.users[i].username + '/' + _room.name);
+          //const removeParticipantReturn = await this.http.post('https://localhost:5001/participants/' + _room.users[i].username + '/' + _room.name);
           const removeParticipantReturn = await this.ParticipantsService.removeParticipant(_room.users[i].username, _room.name);
           console.log("delete members"), removeParticipantReturn;
           i++;
@@ -611,7 +617,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //  room_id: _room.id,
         //  room_name: _room.name
         //}
-        //const removeAllRoomMessagesReturn = await this.http.post('http://localhost:5001/messages/removeAllRoomMessages/', toRemoveMsg);
+        //const removeAllRoomMessagesReturn = await this.http.post('https://localhost:5001/messages/removeAllRoomMessages/', toRemoveMsg);
         const removeAllRoomMessagesReturn = await this.MessagesService.removeAllRoomMessages(_room.id, _room.name);
         console.log("delete members", removeAllRoomMessagesReturn);
         if (removeAllRoomMessagesReturn) {
@@ -621,9 +627,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             console.log("Send roomHasBeenDeleted to ", arrClient[i].username);
             i++;
           }
-          const index = arrRoom.indexOf(_room);
-          arrRoom.slice(index);
         }
+        const index = arrRoom.indexOf(_room);
+        arrRoom.slice(index);
       }
 
     };
@@ -635,7 +641,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     let tmpPassword: string = data.password;
     if (tmpPassword.length <= 0)
       tmpPassword = "noPassword";
-    //const tmp = 'http://localhost:5001/rooms/' + data.user_id + '/' + data.user_login + '/' + data.room_id + '/' + data.room_name + '/' + tmpPassword + '/';
+    //const tmp = 'https://localhost:5001/rooms/' + data.user_id + '/' + data.user_login + '/' + data.room_id + '/' + data.room_name + '/' + tmpPassword + '/';
     //const checkIfCanJoinReturn = await this.http.get(tmp);
     const checkIfCanJoinReturn = await this.RoomsService.checkIfCanJoin(data.user_id, data.user_login, data.room_id, data.room_name, tmpPassword);
     if (checkIfCanJoinReturn == "ok") {
@@ -649,7 +655,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         room_name: data.room_name,
         admin: adminTmp
       }
-      //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
+      //const participantReturn = await this.http.post('https://localhost:5001/participants', newParticipant);
       const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
       console.log('participantReturn in eventgateway', participantReturn);
       const newMsg = {
@@ -708,7 +714,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       return;
     }
     let verif = false;
-    //const checkIfAdmin = await http.get('http://localhost:5001/participants/checkAdmin/' + data.login + '/' + data.room_name);
+    //const checkIfAdmin = await http.get('https://localhost:5001/participants/checkAdmin/' + data.login + '/' + data.room_name);
     const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
     if (checkIfAdmin == true) {
       console.log("room_name: ", data.room_name);
@@ -717,7 +723,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         passwordOrNot: data.passwordOrNot,
         password: data.password
       }*/
-      //const changeMdpReturn = await http.post('http://localhost:5001/rooms/changePassword/', newMdp);
+      //const changeMdpReturn = await http.post('https://localhost:5001/rooms/changePassword/', newMdp);
       const changeMdpReturn = await this.RoomsService.changePassword(data.room_name, data.passwordOrNot, data.password);
       console.log('changeMdpReturn in eventgateway', changeMdpReturn);
       const newMsg = {
@@ -766,7 +772,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       admin: adminTmp,
       publicOrPrivate: checkIfPrivate
     }
-    //const participantReturn = await this.http.post('http://localhost:5001/participants', newParticipant);
+    //const participantReturn = await this.http.post('https://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
     console.log('participantReturn in eventgateway', participantReturn);
     const newMsg = {
@@ -882,15 +888,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createAdmin')
   async createAdmin(client: Socket, data: any) {
     let verif = false;
-    //const checkIfOwner = await this.http.get('http://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    //const checkIfOwner = await this.http.get('https://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
     const checkIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.login_sender);
     if (checkIfOwner == true)
       verif = true;
-    // const checkIfAdmin = await this.http.get('http://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
+    // const checkIfAdmin = await this.http.get('https://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
     const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login_sender, data.room_name);
     if (checkIfAdmin == true)
       verif = true;
-    //const checkParticipant = await this.http.get('http://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
+    //const checkParticipant = await this.http.get('https://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
     const checkParticipant = await this.ParticipantsService.checkIfAdminOrParticipant(data.login_admin, data.room_name);
     this.logger.log(`${checkParticipant} data`);
     console.log("verif : ", verif);
@@ -903,7 +909,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         room_name: data.room_name,
         admin: true
       };
-      //const participantReturn = await this.http.post('http://localhost:5001/participants/admin', newParticipant);
+      //const participantReturn = await this.http.post('https://localhost:5001/participants/admin', newParticipant);
       const participantReturn = await this.ParticipantsService.createAdmin(newParticipant);
       console.log('participantReturn in eventgateway', participantReturn);
       const newMsg = {
@@ -945,15 +951,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeAdmin(client: Socket, data: any) {
     let verif = false;
     console.log("remove admin");
-    //const checkIfOwner = await this.http.get('http://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    //const checkIfOwner = await this.http.get('https://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
     const checkIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.login_sender);
     if (checkIfOwner == true)
       verif = true;
-    // const checkIfAdmin = await this.http.get('http://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
+    // const checkIfAdmin = await this.http.get('https://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
     const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login_sender, data.room_name);
     if (checkIfAdmin == true)
       verif = true;
-    //const checkParticipant = await this.http.get('http://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
+    //const checkParticipant = await this.http.get('https://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
     const checkParticipant = await this.ParticipantsService.checkAdmin(data.login_admin, data.room_name);
     this.logger.log(`${checkParticipant} data`);
     console.log("verif : ", verif);
@@ -966,7 +972,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         room_name: data.room_name,
         admin: true
       };
-      //const participantReturn = await this.http.post('http://localhost:5001/participants/admin', newParticipant);
+      //const participantReturn = await this.http.post('https://localhost:5001/participants/admin', newParticipant);
       const participantReturn = await this.ParticipantsService.removeAdmin(newParticipant);
       console.log('participantReturn in eventgateway', participantReturn);
       const newMsg = {
@@ -1012,20 +1018,20 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     let verifBan = false;
     let verifMute = false;
     if (!data.userOrRoom) {
-      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
+      //const checkIfBanned = await http.get('https://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
       const checkIfBanned = await this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver);
       console.log("item.data: ", checkIfBanned);
       if (checkIfBanned == true)
         verifBan = true;
     }
     else {
-      //const checkIfBanned = await http.get('http://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+      //const checkIfBanned = await http.get('https://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
       const checkIfBanned = await this.BlacklistService.checkRoomBan(data.id_sender, data.login_sender, data.room_name);
       console.log("item.data: ", checkIfBanned);
       if (checkIfBanned == true)
         verifBan = true;
     }
-    //const checkIfMuted = await http.get('http://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
+    //const checkIfMuted = await http.get('https://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
     const checkIfMuted = await this.MutelistService.checkRoomMute(data.id_sender, data.login_sender, data.room_name);
 
     console.log("item.data: ", checkIfMuted);
@@ -1049,7 +1055,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         minute: getMinute()
       }
       //console.log("msg: ", newMsg);
-      //const returnMsg = this.http.post('http://localhost:5001/messages/', newMsg);
+      //const returnMsg = this.http.post('https://localhost:5001/messages/', newMsg);
       const returnMsg = await this.MessagesService.createMessages(newMsg);
       //console.log('returnMsg in eventgateway', returnMsg);
       //console.log("after post creqteMsg");
@@ -1081,11 +1087,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('createBan')
   async createBan(client: Socket, data: any) {
     this.logger.log(`${client.id} create newBan: ${data.login_banned}`);
-    //const checkFriendship = await this.http.get('http://localhost:5001/friendList/' + data.id_banned + '/' + data.id_sender);
+    //const checkFriendship = await this.http.get('https://localhost:5001/friendList/' + data.id_banned + '/' + data.id_sender);
     const checkFriendship = await this.FriendListService.checkExistRelation(data.id_banned, data.id_sender);
     if (checkFriendship == true) {
       this.logger.log(`${client.id} remove Friend`);
-      //const removeFriendReturn = await this.http.post('http://localhost:5001/friendList/' + data.id_banned + '/' + data.id_sender);
+      //const removeFriendReturn = await this.http.post('https://localhost:5001/friendList/' + data.id_banned + '/' + data.id_sender);
       const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_banned, data.id_sender);
       console.log('removeFriendReturn in eventgateway', removeFriendReturn);
       this.server.to(client.id).emit('returnRemoveFriend', true);
@@ -1129,7 +1135,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const checkParticipant = await this.ParticipantsService.checkIfAdminOrParticipant(data.login_banned, data.room_name);
     if (checkParticipant) {
       this.logger.log(`${client.id} remove Participant`);
-      //const removeParticipantReturn = await this.http.post('http://localhost:5001/participants/' + data.login_banned + '/' + data.room_name);
+      //const removeParticipantReturn = await this.http.post('https://localhost:5001/participants/' + data.login_banned + '/' + data.room_name);
       const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login_banned, data.room_name)
       console.log('removeParticipantReturn in eventgateway', removeParticipantReturn);
       const newMsg = {
@@ -1233,7 +1239,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createRoomMute')
   async createRoomMute(client: Socket, data: any) {
-    //const checkParticipant = await http.get('http://localhost:5001/participants/check/' + data.login_muted + '/' + data.room_name);
+    //const checkParticipant = await http.get('https://localhost:5001/participants/check/' + data.login_muted + '/' + data.room_name);
     const checkParticipant = await this.ParticipantsService.checkParticipant(data.login_muted, data.room_name);
     if (checkParticipant == true) {
       this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
@@ -1295,7 +1301,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeRoomMute')
   async removeRoomMute(client: Socket, data: any) {
     this.logger.log(`${client.id} want demute: ${data.login_muted} in : ${data.room_name}`);
-    const tmp = 'http://localhost:5001/muteList/removeRoomMute/' + data.room_id + '/' + data.login_muted;
+    const tmp = 'https://localhost:5001/muteList/removeRoomMute/' + data.room_id + '/' + data.login_muted;
     console.log(tmp);
     const removeMuteReturn = await this.MutelistService.removeRoomMute(data.room_id, data.login_muted);
     if (removeMuteReturn) {
@@ -1630,7 +1636,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
               }
 
-              //const match = http.post('http://localhost:5001/matchesHistory', data);
+              //const match = http.post('https://localhost:5001/matchesHistory', data);
               const match = this.MatchesHistoryService.createMatch(data);
 
               room[1].players.forEach((item, index) => {
@@ -1710,7 +1716,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
         }
 
-        //const match = http.post('http://localhost:5001/matchesHistory', data);
+        //const match = http.post('https://localhost:5001/matchesHistory', data);
         const match = this.MatchesHistoryService.createMatch(data);
 
         room[1].players.forEach((item, index) => {
@@ -2083,6 +2089,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'connected' })
     else
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline' })
+  }
+
+  @SubscribeMessage('AffNotistack')
+  async AffNotistack(client: Socket, info: { text: string, type: string }) {
+    this.server.to(client.id).emit('returnAffNotistack', { text: info.text, type: info.type })
   }
 
   ///////////////////////////////////////////////////////////

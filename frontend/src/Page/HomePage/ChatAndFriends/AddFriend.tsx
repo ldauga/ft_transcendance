@@ -5,11 +5,15 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/AddFriend.scss';
+import { SnackbarKey, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 function AddFriend() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -20,7 +24,7 @@ function AddFriend() {
         console.log('addFriend');
         const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
         console.log("buttonAddFriend login: ", userToSend?.username);
-        await axiosConfig.get('http://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
             setInputValue("");
             console.log("axios.get");
             console.log(res.data);
@@ -33,7 +37,7 @@ function AddFriend() {
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -45,7 +49,7 @@ function AddFriend() {
                         console.log('invitationRequest not exist');
                     }
                 })
-                await axiosConfig.get('http://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                     console.log('check friendList');
                     console.log(res.data);
                     console.log(res);
@@ -74,6 +78,7 @@ function AddFriend() {
                     }
                     console.log('emit');
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
+                    enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                 }
                 return;
             }
@@ -130,4 +135,4 @@ function AddFriend() {
     )
 }
 
-export default AddFriend;
+export default withSnackbar(AddFriend);

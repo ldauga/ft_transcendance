@@ -105,7 +105,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             return;
         }
         console.log("button mute");
-        await axiosConfig.get('http://localhost:5001/user/login/' + userToMute.login).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + userToMute.login).then(async (res) => {
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -117,7 +117,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -167,7 +167,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log("Wrong input for banUser in Room");
             return;
         }
-        await axiosConfig.get('http://localhost:5001/user/login/' + userToBan.login).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + userToBan.login).then(async (res) => {
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -179,7 +179,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -225,7 +225,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     async function buttonAddAdmin(item: { login: string, id: number, admin: boolean }) {
         let test = false;
         console.log('addFriend');
-        await axiosConfig.get('http://localhost:5001/user/login/' + item.login).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + item.login).then(async (res) => {
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -252,7 +252,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     async function buttonRemoveAdmin(item: { login: string, id: number, admin: boolean }) {
         let test = false;
         console.log('addFriend');
-        await axiosConfig.get('http://localhost:5001/user/login/' + item.login).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + item.login).then(async (res) => {
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
@@ -278,14 +278,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -688,24 +688,24 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         let allUserMute: { id_muted: number, name_muted: string }[] = [];
-        await axiosConfig.get('http://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log('res.data allUserMute = ', res.data);
             allUserMute = res.data;
             console.log('nameTmp allUserBan = ', allUserMute);
         });//récupère tous les user mute de la room
         let allUsers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
-        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
             let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
             res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('http://localhost:5001/user/id/' + item.id).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     allUsers.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
             console.log('itemList get Users: ', allUsers);
         })
         console.log("allUsers2: ", allUsers);
-        await axiosConfig.get('http://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             let itemList: any[] = []
             console.log('res.data = ', res.data);
             res.data.forEach((item: { login: string, id: number, admin: boolean }) => {

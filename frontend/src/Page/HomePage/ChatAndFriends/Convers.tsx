@@ -145,7 +145,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     const getListItem = async () => {
-        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             console.log("get List Item Conversation");
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
@@ -218,9 +218,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             <div className="header">
                 <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
                 <div className="profile">
-                    <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
+                    <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
-                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.login}</p>
+                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.login}</p>
                         <p><div className='status'></div>online</p>
                     </div>
                 </div>

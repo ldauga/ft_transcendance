@@ -33,7 +33,7 @@ export default function Callback() {
     }
 
     if (persistantReducer.userReducer.user === null) {
-        axiosConfig.get("http://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
+        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
         console.log(cookie)
     }
 

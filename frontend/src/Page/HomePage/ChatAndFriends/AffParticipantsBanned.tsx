@@ -25,14 +25,14 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('http://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('http://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
@@ -169,7 +169,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         const admin = await checkIfAdmin();
         console.log("getListItem admin: ", admin);
         let itemList: any[] = [];
-        await axiosConfig.get('http://localhost:5001/blackList/getAllRoomBan/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/blackList/getAllRoomBan/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach((item: { id_banned: number, login_banned: string }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login_banned}.jpg`;
                 itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
