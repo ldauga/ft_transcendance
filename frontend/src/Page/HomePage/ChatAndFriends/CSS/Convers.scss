@@ -3,19 +3,23 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+
     .header {
         display: flex;
         border-bottom: 1px solid rgba($color: #2e384e, $alpha: .5);
         margin-top: 10px;
         padding-bottom: 10px;
         align-items: flex-start;
+
         button {
             margin-left: 10px;
         }
+
         .profile {
             display: flex;
             align-items: center;
             gap: 5px;
+
             img {
                 cursor: pointer;
                 margin-left: 3px;
@@ -25,16 +29,20 @@
                 border-radius: 50%;
                 object-fit: cover;
             }
+
             .name {
                 display: flex;
                 align-items: center;
                 flex-direction: column;
+
                 p {
                     margin: 0;
                     font-size: 19px;
+
                     &:first-of-type {
                         cursor: pointer;
                     }
+
                     &:last-of-type {
                         display: flex;
                         align-items: baseline;
@@ -42,6 +50,7 @@
                         font-weight: 200;
                     }
                 }
+
                 .status {
                     --status-size: 8px;
                     width: 8px;
@@ -51,7 +60,15 @@
                 }
             }
         }
+
+        .relation_blocked {
+            margin-left: 35px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
     }
+
     .messages {
         height: 100%;
         overflow-y: auto;
@@ -60,31 +77,48 @@
         gap: 10px;
         margin: 0 10px;
         padding-top: 10px;
-        .content-sender, .content-receiver {
+
+        .content-sender,
+        .content-receiver {
             max-width: 242px;
             word-break: break-word;
             width: fit-content;
             padding: 0 10px;
         }
+
         .content-receiver {
             border-radius: 1.125rem 1.125rem 1.125rem 0;
             border: 1px solid;
         }
+
         .content-sender {
             border-radius: 1.125rem 1.125rem 0 1.125rem;
             background: #2e384e;
             color: white;
             align-self: flex-end;
         }
+
         .dateDisplayNone {
             display: none;
         }
+
         .date {
             display: block;
             font-weight: 300;
             font-size: 12px;
         }
+
+        .server_msg {
+            display: flex;
+            justify-content: center;
+        }
+
+        .server_msg p {
+            color: rgb(190, 190, 190);
+            font-size: 1rem;
+        }
     }
+
     .send-message {
         display: flex;
         align-items: center;
@@ -92,12 +126,15 @@
         margin: 10px;
         border: 1px solid;
         border-radius: 22px;
+
         .MuiFormControl-root {
             width: -webkit-fill-available;
+
             fieldset {
                 all: unset;
             }
         }
+
         button {
             margin-right: 10px;
             font-size: 22px;

@@ -13,6 +13,7 @@ import FriendListItem from "./FriendListItem";
 
 import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
+import { constWhileSecu } from "../HomePage";
 
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string } }) {
 
@@ -103,15 +104,18 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	utilsData.socket.on('getAllFriendConnected', function (data: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }[]) {
 		console.log('getAllFriendConnected = ', data);
-		getListItem(data);
-		const tmp: any[] = []
-		data.forEach(client => {
-			if (client.user.login != userData.userReducer.user?.login) {
-				const a = { id: client.user.id, username: client.user.login };
-				tmp.push(a);
-			}
-		})
-		setConnectedClient(tmp);
+		const oldLength = itemListHistory.length;
+		for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
+			getListItem(data);
+			const tmp: any[] = []
+			data.forEach(client => {
+				if (client.user.login != userData.userReducer.user?.login) {
+					const a = { id: client.user.id, username: client.user.login };
+					tmp.push(a);
+				}
+			})
+			setConnectedClient(tmp);
+		}
 		utilsData.socket.off('getAllFriendConnected');
 		utilsData.socket.removeListener('getAllFriendConnected');
 	})
@@ -211,7 +215,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 					<ListItemIcon>
 						<Settings fontSize="small" />
 					</ListItemIcon>
-					Aff Ban
+					Aff Blocked Users
 				</MenuItem>
 			</Menu>
 		);
@@ -232,7 +236,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				</button>
 				<MenuOptions />
 			</div>
-			{newAddFriend && <AddFriend />}
+			{newAddFriend && <AddFriend setNewAddFriend={setNewAddFriend} />}
 			<ItemsFriendList />
 		</div>
 	)

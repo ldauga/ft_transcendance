@@ -25,6 +25,14 @@ export class BlackListController {
     return this.BlackListService.getAllUserBan(id, login);
   }
 
+  @Get('/checkIfRelationIsBlocked/:login1/:login2')
+  @UseGuards(AuthGuard('jwt'))
+  public async checkIfRelationIsBlocked(@Param('login1') login1: string, @Param('login2') login2: string): Promise<boolean> {
+    const returnCheck = await this.BlackListService.checkIfRelationIsBlocked(login1, login2);
+    console.log('checkIfRelationIsBlockedReturn Check = ', returnCheck);
+    return returnCheck;
+  }
+
   @Get('/checkUserBan/:login/:loginReceiver')
   @UseGuards(AuthGuard('jwt'))
   public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<boolean> {
