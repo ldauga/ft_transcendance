@@ -441,7 +441,7 @@ function StatPlayer() {
 					<input id='file-upload' type='file' accept='.jpeg, .jpg, .png' onChange={editAvatar} />
 					{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
 						<>
-							<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('http://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
+							<button onClick={() => {console.log('Set 2FA'); setOpenEditZone2fa(true); axiosConfig.get('http://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
 							<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
 								<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
 								<DialogContent className='two-fa'>
@@ -457,7 +457,7 @@ function StatPlayer() {
 										autoSelect={true}
 									/>
 								</DialogContent>
-							</Dialog></> : <button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data); enqueueSnackbar('2FA disable.', { variant: 'success', autoHideDuration: 2000 }) }) }}>Desactivate 2FA</button>}
+							</Dialog></> : <button onClick={() => {console.log('Desactivate 2FA'); setOpenEditZone2fa(false); axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data); enqueueSnackbar('2FA disable.', { variant: 'success', autoHideDuration: 2000 }) }) }}>Desactivate 2FA</button>}
 				</div>
 			)
 		}

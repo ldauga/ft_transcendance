@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../State';
 import './Login.scss';
 import logo from '../assets/logo_transcendence.png';
+import Background from '../../Module/Background/Background';
 
 function Login(props: { user?: any }) {
 	const [login, setLogin] = useState('')
@@ -27,12 +28,12 @@ function Login(props: { user?: any }) {
 		<div className='login'>
 			<div className='container'>
 				<img className="logo_transcendence" src={logo} alt="" />
-				<button className="loginButton" onClick={onClick42Login}><span>SIGN IN WITH</span> <img src='https://stud.42lyon.fr/static/assets/images/42_logo_black.svg' className='logo42' /> <span>ACCOUNT</span></button>
+				<button onClick={onClick42Login}>Sign In</button>
 				
 				{/* TO REMOVE */}
 				<div className='dev'>
 					<input className="loginBar" value={login} onChange={(e) => { setLogin(e.target.value) }} onKeyDown={(event) => { if (event.key === 'Enter') onClickLoginSans42() }} placeholder='Enter valid login to connect' />
-					<button className="loginButton" onClick={onClickLoginSans42}><span>SIGN IN WITHOUT</span> <img src='https://stud.42lyon.fr/static/assets/images/42_logo_black.svg' className='logo42' /> <span>ACCOUNT</span></button>
+					<button onClick={onClickLoginSans42}>Sign in without 42</button>
 				</div>
 
 			</div>

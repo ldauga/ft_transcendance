@@ -1,7 +1,8 @@
 .leaderboard {
 	--nickname-size: 124px;
 	background: #FFFF;
-	margin-top: 10px;
+	margin: 0 auto;
+	margin-top: calc(50px + 7vh);
 	table {
 		border: 1px solid rgba(#2e384e, 0.5);
 		border-collapse: collapse;
@@ -91,6 +92,7 @@
 	
 	@media screen and (min-width: 768px) {
 		--nickname-size: 150px;
+		margin-top: calc(83px + 7vh);
 		table {
 			thead {
 				font-size: 21px;
@@ -115,8 +117,7 @@
 	@media screen and (min-width: 1024px) {
 		--nickname-size: 260px;
 		width: 1024px;
-		margin: 0 auto;
-		margin-top: 66px;
+		margin-top: calc(85px + 7vh);
 		table {
 			thead {
 				font-size: 24px;
@@ -136,5 +137,8 @@
 				--avatar-size: 54px;
 			}
 		}
+	}
+	@media screen and (min-width: 1440px) {
+		margin-top: calc(95px + 7vh);
 	}
 }

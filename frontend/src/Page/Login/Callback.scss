@@ -1,44 +1,56 @@
 .login-2fa {
     display: flex;
-    flex-direction: column;
-    // justify-content: center;
+    justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    color: #FFFF;
-    padding-top: 11.5vh;
-
-    img {
-        min-width: 470px;
+    flex-direction: column;
+    background: white;
+    margin: 127px 10px;
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border: 1px solid;
+    max-width: 484px;
+    padding-bottom: 11px;
+    h1 {
+        font-family: 'Roboto', sans-serif;
+        font-size: 23px;
     }
 
-    .bg {
-        margin: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: #2f3b52;
-        padding: 0 50px;
+    input {
+        font-family: 'Roboto', sans-serif;
+        border-color: rgba($color: #2e384e, $alpha: .8)!important;
+        color: #2e384e;
+        --input-size: 40px;
+        width: var(--input-size)!important;
+        height: var(--input-size)!important;
+    }
 
+    p {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        color: #cc0000;
+    }
+
+    @media screen and (min-width: 425px) {
+        padding-bottom: 15px;
         h1 {
-            font-family: 'Roboto', sans-serif;
-            font-size: 33px;
+            font-size: 28px;
         }
-
         input {
-            font-family: 'Roboto', sans-serif;
-            color: #FFFF!important;
-            border-color: rgba($color: #FFFF, $alpha: .8)!important;
-            
-            &:focus {
-                border-color: rgba($color: #edd2cb, $alpha: .8)!important;
-            }
+            --input-size: 49px;
         }
-
-        p {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 300;
-            color: #cc0000;
+    }
+    
+    @media screen and (min-width: 504px) {
+        margin: 127px auto;
+        padding-bottom: 28px;
+    }
+    
+    @media screen and (min-width: 768px) {
+        h1 {
+            font-size: 34px;
         }
+        input {
+            --input-size: 53px;
+        }
+        
     }
 }

@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -131,22 +132,6 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         props.setOldAffRoomConvers("Chat");
     }, [props]);
 
-    function AffConversChatItem() {
-        if (isSendChatMsg)
-            return (
-                <div id="affConversItemChatSmall">
-                    {itemListHistory}
-                </div>
-            );
-        else
-            return (
-                <div id="affConversItemChatBig">
-                    {itemListHistory}
-                </div>
-            );
-
-    };
-
     return (
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
@@ -155,12 +140,16 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 </div>
                 <h3>Chat</h3>
                 <div className="mainHeaderRight mainHeaderSide">
+                    <Tooltip title="Groups">
                     <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+                    </Tooltip>
+                    <Tooltip title="New Message">
                     <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
+                    </Tooltip>
                 </div>
             </div>
             {isSendChatMsg && <SendChatMsg />}
-            <AffConversChatItem />
+            {itemListHistory}
         </div>
     );
 };
