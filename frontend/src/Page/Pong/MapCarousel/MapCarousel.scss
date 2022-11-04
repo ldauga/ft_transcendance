@@ -146,7 +146,7 @@ $pong-color: #2e384e; //var
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
     .basic-ping-racket, .basic-pong-racket {
         --racket-bottom: 79%;
     }
