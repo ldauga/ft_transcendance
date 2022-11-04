@@ -9,6 +9,29 @@
         align-items: center;
         gap: 5px;
 
+        .profile-pic-group{
+            --group-pic-size: 51px;
+            width: var(--group-pic-size);
+            height: var(--group-pic-size);
+            display: flex;
+            img:first-of-type {
+              width: 50%;
+              height: 100%;
+              border-radius:  100% 0% 0% 100% / 50% 50% 50% 50%;
+              border: 0.5px solid #9b9b9b;
+              border-right: none;
+            }
+            img:last-of-type {
+              width: 50%;
+              height: 100%;
+              border-radius: 0% 100% 100% 0% / 50% 50% 50% 50%;
+              border: 0.5px solid #9b9b9b;
+              border-left: none;
+            }
+          }
+          
+          
+
         img {
             --avatar-size: 51px;
             border-radius: 50%;
@@ -32,6 +55,9 @@
         .itemConvers {
             gap: 7px;
 
+            .profile-pic-group {
+                --group-pic-size: 59px;
+            }
             img {
                 --avatar-size: 59px;
             }
@@ -42,6 +68,9 @@
         .itemConvers {
             gap: 11px;
 
+            .profile-pic-group {
+                --group-pic-size: 66px;
+            }
             img {
                 --avatar-size: 66px;
             }

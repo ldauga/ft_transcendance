@@ -476,7 +476,7 @@ function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player' style={{ backgroundColor: profile.status == 'connected' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
+							<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
 						</div>
 					</div>
 					{profile_btn()}

@@ -197,25 +197,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         if (props.item.id_sender == userData.userReducer.user?.id) {
             if (getYear() != props.item.year)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getMonth() != props.item.month)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getDay() != props.item.day)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
@@ -225,25 +225,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             const nickname = user?.nickname;
             if (getYear() != props.item.year)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getMonth() != props.item.month)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getDay() != props.item.day)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
@@ -256,8 +256,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             return (
                 <div className='inItem2'>
                     <AffDate item={props.item} />
-                    {/* <div>Yo</div> */}
-                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[0].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[0].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
+                    <div onMouseOver={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                         <p>{props.item.text}</p>
                     </div>
                 </div>
@@ -274,9 +273,11 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             const pp = users.find(obj => obj.id == props.item.id_sender)?.profile_pic;
             return (
                 <div className='inItem2'>
-                    <img src={pp}></img>
-                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[2].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[2].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
-                        <p>{props.item.text}</p>
+                    <div className="picture-message">
+                        <img src={pp}></img>
+                        <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
+                            <p>{props.item.text}</p>
+                        </div>
                     </div>
                     <AffDate item={props.item} />
                 </div>
@@ -292,7 +293,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'itemListConversContainerCorrespondant'))}>
+                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item item={item} />
                 </div>)
             });
@@ -500,7 +501,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         if (isOwner)
             return (
-                <div id="header" className="mainHeader">
+                <div className="header">
                     <div className="mainHeaderLeft mainHeaderSide">
                         <button onClick={closeConvers} className="bi bi-arrow-left"></button>
                     </div>
@@ -586,49 +587,46 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         function SendButton() {
             if (messageText.length <= 0) {
                 return (
-                    <Button className="sendButtonDisabled" variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                        <SendIcon id="sendIcon" />
-                    </Button>
+                    <button className="sendButtonDisabled" onClick={sendMessage} disabled={messageText.length <= 0}>
+                        send
+                    </button>
                 );
             }
             else {
                 return (
-                    <Button variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                        <SendIcon id="sendIcon" />
-                    </Button>
+                    <button onClick={sendMessage} disabled={messageText.length <= 0}>
+                        send
+                    </button>
                 );
             }
         };
 
         return (
-            <div id="roomsConvers">
+            <div className="chat">
                 <Header />
                 {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
                 <AffConvers />
-                <div className="sendZoneConvers">
-                    <input
-                        value={messageText}
-                        onChange={e => setMessageText(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
-                        placeholder="Your message..."
-                    />
-                    <SendButton />
-                </div>
+                <div className="send-message">
+                <TextField value={messageText}
+                    onChange={e => setMessageText(e.target.value)}
+                    placeholder='Your message...'
+                    multiline maxRows={5}
+                    onKeyDown={(e) => {
+                        if (e.keyCode == 13) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
+                />
+                <SendButton />
+            </div>
             </div>
         );
     };
 
     function AffConvers() {
-        if (!isChangeRoomPassword)
             return (
-                <div id="affConversBig" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-            );
-        else
-            return (
-                <div id="affConversSmall" ref={bottom}>
+                <div className="messages" ref={bottom}>
                     {itemListHistory}
                     <div ref={messagesEndRef} />
                 </div>
