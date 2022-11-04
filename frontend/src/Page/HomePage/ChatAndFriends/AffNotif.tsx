@@ -40,7 +40,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 				<div className="mainHeaderLeft mainHeaderSide">
 					<button onClick={close}><i className="bi bi-x"></i></button>
 				</div>
-				<h3>Notif</h3>
+				<h3>Notifications</h3>
 				<div className="mainHeaderRight mainHeaderSide">
 				</div>
 			</div>

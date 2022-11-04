@@ -110,20 +110,15 @@ function SendChatMsg() {
     };
 
     return (
-        <div id="sendChatMsgContainer">
+        <div className="new-message">
             <Autocomplete
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
                 options={connectedClient.map((option) => option.username)}
                 renderInput={(params) => <TextField {...params} label="Select a user" />}
-                // onChange={(event: any, newValue: string | null) => {
-                //   setValue(newValue);
-                // }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
-
-                // value={value}
                 onChange={(event: any, newValue: string | null) => {
                     setInputValue(newValue || "");
                 }}
@@ -139,24 +134,6 @@ function SendChatMsg() {
                 />
                 <SendButton />
             </div>
-            {/* <div id="sendChatMsgFirstContainer">
-                <input
-                    value={login}
-                    onChange={e => setLogin(e.target.value)}
-                    placeholder="Enter login"
-                />
-            </div>
-            <div id="sendChatMsgSecondContainer">
-                <input
-                    value={text}
-                    onChange={e => setText(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') sendMsg() }}
-                    placeholder="Enter message"
-                />
-                <button type="button" onClick={() => sendMsg()}>
-                    Add Friend
-                </button>
-            </div> */}
         </div>
     )
 }

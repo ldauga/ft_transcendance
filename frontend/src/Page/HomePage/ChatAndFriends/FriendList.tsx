@@ -8,7 +8,7 @@ import BanUser from "./BanUser";
 import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
-import { Person, Settings } from "@mui/icons-material";
+import { HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
 import { SnackbarKey, withSnackbar } from 'notistack'
@@ -199,14 +199,14 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 			>
 				<MenuItem onClick={handleClickAddFriend}>
 					<ListItemIcon>
-						<Person fontSize="small" />
+						<PersonAdd fontSize="small" />
 					</ListItemIcon>
 					Add Friend
 				</MenuItem>
 				<Divider />
 				<MenuItem onClick={handleClickInvitationRequest}>
 					<ListItemIcon>
-						<Settings fontSize="small" />
+						<HourglassBottom fontSize="small" />
 					</ListItemIcon>
 					Invitation Request
 				</MenuItem>
