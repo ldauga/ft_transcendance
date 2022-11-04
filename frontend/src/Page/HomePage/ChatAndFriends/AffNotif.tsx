@@ -29,7 +29,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 		props.openFriendList();
 		delNotif(persistantReducer.notifReducer.notifArray[index])
 	}
-	
+
 	useEffect(() => {
 		props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
 	}, [props]);
@@ -40,7 +40,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 				<div className="mainHeaderLeft mainHeaderSide">
 					<button onClick={close}><i className="bi bi-x"></i></button>
 				</div>
-				<h3>Notif</h3>
+				<h3>Notifications</h3>
 				<div className="mainHeaderRight mainHeaderSide">
 				</div>
 			</div>
@@ -65,7 +65,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://localhost:3000/pong'
+													window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -90,7 +90,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://localhost:3000/pong'
+													window.location.href = 'https://localhost:3000/pong'
 												}} >OK</button>
 											</div>
 										</div>
@@ -168,7 +168,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 											<div className="notifMain">
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
-													window.location.href = 'http://localhost:3000/pong'
+													window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -193,7 +193,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'http://localhost:3000/pong'
+													window.location.href = 'https://localhost:3000/pong'
 												}} >OK</button>
 											</div>
 										</div>

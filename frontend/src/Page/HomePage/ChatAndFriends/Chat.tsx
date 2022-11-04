@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -81,19 +82,19 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const getListItem = async () => {
         let relationList: any[] = [];
         let ChatList: { name: string, id: number, profile_pic: string, userOrRoom: boolean }[] = [];
-        await axiosConfig.get('http://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             relationList = res.data;
         });
         console.log("relationList: ", relationList);
         for (let i = 0; i < relationList.length; i++) {
             if (!relationList[i].userOrRoom) {
-                const user = await axiosConfig.get('http://localhost:5001/user/id/' + relationList[i].id);
+                const user = await axiosConfig.get('https://localhost:5001/user/id/' + relationList[i].id);
                 console.log("user.data: ", user.data, "i: ", i);
                 console.log("push 1");
                 ChatList.push({ name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
             }
             else {
-                const checkIfParticipant = await axiosConfig.get('http://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
+                const checkIfParticipant = await axiosConfig.get('https://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
                 console.log("checkIfParticipant: ", checkIfParticipant.data);
                 if (checkIfParticipant.data) {
                     console.log("push 2");
@@ -131,22 +132,6 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         props.setOldAffRoomConvers("Chat");
     }, [props]);
 
-    function AffConversChatItem() {
-        if (isSendChatMsg)
-            return (
-                <div id="affConversItemChatSmall">
-                    {itemListHistory}
-                </div>
-            );
-        else
-            return (
-                <div id="affConversItemChatBig">
-                    {itemListHistory}
-                </div>
-            );
-
-    };
-
     return (
         <div className="mainAffGene">
             <div id="header" className="mainHeader">
@@ -155,12 +140,16 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 </div>
                 <h3>Chat</h3>
                 <div className="mainHeaderRight mainHeaderSide">
+                    <Tooltip title="Groups">
                     <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+                    </Tooltip>
+                    <Tooltip title="New Message">
                     <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
+                    </Tooltip>
                 </div>
             </div>
             {isSendChatMsg && <SendChatMsg />}
-            <AffConversChatItem />
+            {itemListHistory}
         </div>
     );
 };

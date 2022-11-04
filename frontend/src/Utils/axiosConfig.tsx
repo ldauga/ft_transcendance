@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3000/';
+const baseURL = 'https://localhost:3000/';
 
 const axiosConfig = axios.create({
   baseURL,
@@ -10,11 +10,11 @@ const axiosConfig = axios.create({
 axiosConfig.interceptors.response.use(
   response => { return response; },
   error => {
-    axios.get('http://localhost:5001/auth/refresh', { withCredentials: true })
+    axios.get('https://localhost:5001/auth/refresh', { withCredentials: true })
       .catch((error) => {
         console.log('interceptor error', error)
         if (error.response.data['statusCode'] == 401)
-          window.open('http://localhost:3000', '_self')
+          window.open('https://localhost:3000', '_self')
       });
       return error;
   }

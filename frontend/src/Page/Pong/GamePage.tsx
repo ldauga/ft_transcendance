@@ -410,12 +410,12 @@ const GamePage = (props: any) => {
 
                 <div className="buttonContainer">
 
-                    <button onClick={() => {window.location.replace('http://localhost:3000/pong')}} >Replay</button>
-                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/')}} >Home Page</button>
+                    <button onClick={() => {window.location.replace('https://localhost:3000/pong')}} >Replay</button>
+                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/')}} >Home Page</button>
 
                 </div>
 
-            
+
             </div>
         )
 

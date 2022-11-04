@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../State";
 import { Client, msg, Notif, NotifType } from "../../State/type";
 import axiosConfig from "../../Utils/axiosConfig";
+import ForNotistack from "./ForNotistack";
 
 import './InvitationChecker.css'
 
@@ -22,7 +23,7 @@ function InvitationChecker(props: { children: any }) {
 	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
-		axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
+		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
@@ -41,7 +42,7 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.on('notif', function (notif: Notif) {
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
-					return
+				return
 			if (persistantReducer.notifReducer.notifArray[index] == notif)
 				return;
 			if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
@@ -66,12 +67,13 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.on('start_spectate', function () {
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('http://localhost:3000/Pong')
+		window.location.replace('https://localhost:3000/Pong')
 	})
 
 	return (
 		<>
 			{props.children}
+			<ForNotistack />
 		</>
 	);
 

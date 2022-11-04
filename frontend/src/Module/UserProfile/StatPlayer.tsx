@@ -57,7 +57,7 @@ function StatPlayer() {
 	const dispatch = useDispatch();
 	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
 
-	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>);
+	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
 		id: 0,
 		login: window.location.href.split('/')[window.location.href.split('/').length - 1],
@@ -162,7 +162,7 @@ function StatPlayer() {
 	}
 
 	const fetchMatchHistory = async () => {
-		await axiosConfig.get('http://localhost:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
+		await axiosConfig.get('https://localhost:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
 			.then((res) => {
 				let matches: any[] = []
 				res.data.forEach((item: { nickname_user1: string, login_user1: string, score_u1: number, nickname_user2: string, login_user2: string, score_u2: number, winner_nickname: string, date: Date }) => {
@@ -171,11 +171,11 @@ function StatPlayer() {
 							<div className="card">
 								<h3>{item.winner_nickname == profile.nickname ? 'Victory' : 'Defeat'}</h3>
 								<div className='opponent'>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + item.login_user1) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user1) }}>
 										{item.nickname_user1}
 									</span>
 									<span className='score'>{item.score_u1.toString() + '-' + item.score_u2.toString()}</span>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('http://localhost:3000/Profile/' + item.login_user2) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user2) }}>
 										{item.nickname_user2}
 									</span>
 								</div>
@@ -207,7 +207,7 @@ function StatPlayer() {
 		}
 		setUpdate(false);
 		if (!profile.loaded) {
-			fetchUser('http://localhost:5001/user/login/')
+			fetchUser('https://localhost:5001/user/login/')
 		}
 		if (profile.loaded)
 			fetchMatchHistory();
@@ -220,7 +220,7 @@ function StatPlayer() {
 
 		var config = {
 			method: 'post',
-			url: 'http://localhost:5001/user/upload',
+			url: 'https://localhost:5001/user/upload',
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
@@ -232,7 +232,7 @@ function StatPlayer() {
 	}
 
 	const sendGetRequest = (value: string) => {
-		axios.get('http://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
+		axios.get('https://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
 			.then(res => {
 				setTwoFactor(true);
 				setUserParameter2FACode('');
@@ -248,7 +248,7 @@ function StatPlayer() {
 	async function buttonAddFriend() {
 		let test = false;
 		console.log('addFriend');
-		await axiosConfig.get('http://localhost:5001/user/login/' + profile.login).then(async (res) => {
+		await axiosConfig.get('https://localhost:5001/user/login/' + profile.login).then(async (res) => {
 			console.log("axios.get");
 			console.log(res.data);
 			console.log(res);
@@ -260,7 +260,7 @@ function StatPlayer() {
 			else {
 				let a = 1;
 				let b = 1;
-				await axiosConfig.get('http://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					console.log('check invit');
 					console.log(res.data);
 					console.log(res);
@@ -272,7 +272,7 @@ function StatPlayer() {
 						console.log('invitationRequest not exist');
 					}
 				})
-				await axiosConfig.get('http://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					console.log('check friendList');
 					console.log(res.data);
 					console.log(res);
@@ -358,7 +358,7 @@ function StatPlayer() {
 
 	utilsData.socket.on('start', function (info: {roomID: string, spectate: boolean}) {
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('http://localhost:3000/Pong')
+		window.location.replace('https://localhost:3000/Pong')
 	});
 
 	function profile_btn() {
@@ -441,7 +441,7 @@ function StatPlayer() {
 					<input id='file-upload' type='file' accept='.jpeg, .jpg, .png' onChange={editAvatar} />
 					{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
 						<>
-							<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('http://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
+							<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
 							<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
 								<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
 								<DialogContent className='two-fa'>
@@ -457,7 +457,7 @@ function StatPlayer() {
 										autoSelect={true}
 									/>
 								</DialogContent>
-							</Dialog></> : <button onClick={() => { axiosConfig.get('http://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data); enqueueSnackbar('2FA disable.', { variant: 'success', autoHideDuration: 2000 }) }) }}>Desactivate 2FA</button>}
+							</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate 2FA</button>}
 				</div>
 			)
 		}
