@@ -5,11 +5,11 @@ import { RootState } from '../../State';
 import PongHome from './PongHome';
 import CreateMapTemp from './CreateMapTemp';
 
-let checkReconnexion = false
-
 const GameSwitch = () => {
     const [gameStart, setGameStart] = useState(false);
     const [createMap, setCreateMap] = useState(false);
+    const [verif, setVerif] = useState(false);
+    const [spectate, setSpectate] = useState(false);
     // const [checkReconnexion, setCheckReconnexion] = useState(false);
     const [specID, setSpecID] = useState("atourret");
     const [roomID, setRoomID] = useState("");
@@ -20,9 +20,8 @@ const GameSwitch = () => {
 
 
     // useEffect(() => {
-    if (!checkReconnexion) {
-        checkReconnexion = true
-        console.log('oui')
+    if (!verif) {
+        setVerif(true)
         utilsData.socket.emit('CHECK_RECONNEXION', { user: persistantReducer.userReducer.user })
     }
 
@@ -30,7 +29,7 @@ const GameSwitch = () => {
 
     if (gameStart)
         return (
-            <GamePage gameStart={gameStart} setGameStart={setGameStart} roomID={roomID} />
+            <GamePage gameStart={gameStart} spectate={spectate} setGameStart={setGameStart} roomID={roomID} />
         )
     if (createMap)
         return (
@@ -44,6 +43,7 @@ const GameSwitch = () => {
             <PongHome
                 gameStart={gameStart}
                 setGameStart={setGameStart}
+                setVerif={setVerif}
                 setRoomID={setRoomID}
                 specID={specID}
                 setSpecID={setSpecID}

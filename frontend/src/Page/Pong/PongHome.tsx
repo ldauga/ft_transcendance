@@ -9,11 +9,12 @@ import NavBar from '../../Module/Navbar/Navbar';
 import './PongHome.scss';
 import map1 from './../assets/map1.png'
 import map2 from './../assets/map2.png'
-import { useSelector } from 'react-redux';
-import { RootState } from '../../State';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../State';
 import Background from '../../Module/Background/Background';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import MapCarousel from './MapCarousel/MapCarousel';
+import { bindActionCreators } from 'redux';
 
 const steps = [
 	{
@@ -35,6 +36,10 @@ const steps = [
 ];
 
 function PongHome(props: any) {
+
+	const dispatch = useDispatch();
+	const { delNotif } = bindActionCreators(actionCreators, dispatch);
+
 	const theme = useTheme();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const nbMap = 4;
@@ -58,6 +63,10 @@ function PongHome(props: any) {
 	});
 
 	utilsData.socket.on('start', function (roomID: string) {
+		let tmp = -1;
+		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.data.roomId == roomID)) != -1)
+			delNotif(persistantReducer.notifReducer.notifArray[tmp])
+
 		props.setRoomID(roomID);
 		props.setGameStart(true);
 	});

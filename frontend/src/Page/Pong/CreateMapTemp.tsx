@@ -463,7 +463,7 @@ const CreateMapTemp = (props: any) => {
 		console.log(friendConnected)
 
 		friendConnected.forEach(friend => {
-			if (friend.status == 'connected')
+			if (friend.status == 'online')
 				tmp.push({ id: tmp.length, username: friend.user.nickname })
 
 		})

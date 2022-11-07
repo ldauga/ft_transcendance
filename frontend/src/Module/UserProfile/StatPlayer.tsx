@@ -99,7 +99,8 @@ function StatPlayer() {
 
 	utilsData.socket.off('changeNicknameSuccess')
 
-	utilsData.socket.on('changeNicknameSuccess', function () {
+	utilsData.socket.on('changeNicknameSuccess', function (param: any) {
+		setUser(param)
 		enqueueSnackbar('Nickname changed !', { variant: "success", autoHideDuration: 2000 })
 		setProfile({ ...profile, nickname: newNickname })
 		fetchMatchHistory()
@@ -228,7 +229,7 @@ function StatPlayer() {
 			withCredentials: true
 		};
 
-		axios(config).then((res) => { setProfile({ ...profile, profile_pic: res.data.profile_pic }); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
+		axios(config).then((res) => { setUser(res.data); setProfile({...profile, profile_pic: res.data.profile_pic}); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
 	}
 
 	const sendGetRequest = (value: string) => {
@@ -356,7 +357,7 @@ function StatPlayer() {
 
 	utilsData.socket.off('start')
 
-	utilsData.socket.on('start', function (roomID: string) {
+	utilsData.socket.on('start', function (info: {roomID: string, spectate: boolean}) {
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('https://localhost:3000/Pong')
 	});
@@ -373,7 +374,7 @@ function StatPlayer() {
 							<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
 						</>}
 
-					{profile.status == 'connected' ?
+					{profile.status == 'online' ?
 						<>
 							<button id="basic-button"
 								aria-controls={openInviteGame ? 'menu-invite-game' : undefined}

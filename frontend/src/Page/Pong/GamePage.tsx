@@ -92,6 +92,7 @@ const GamePage = (props: any) => {
             ctx.fillStyle = 'black';
             ctx.textAlign = "center";
 
+            if (currentPlayer != undefined)
             ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
 
             ctx.fillStyle = 'rgb(48, 56, 76)';
@@ -255,7 +256,7 @@ const GamePage = (props: any) => {
 
     const utilsData = useSelector((state: RootState) => state.utils);
 
-    var interval = setInterval(() => { if (!finishGame) utilsData.socket.emit('RENDER', props.roomID) }, 10);
+    var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
 
     function render(room: gameRoomClass) {
 
@@ -265,8 +266,6 @@ const GamePage = (props: any) => {
             if (ctx !== null) {
 
                 resetCanvas()
-
-                // drawSpectator(room)
 
                 drawFont(ctx, room)
 
@@ -286,9 +285,6 @@ const GamePage = (props: any) => {
                     drawText(ctx, room)
                     return
                 }
-
-
-                // drawBallParticles(ctx, room)
 
                 drawBall(ctx, room)
 
