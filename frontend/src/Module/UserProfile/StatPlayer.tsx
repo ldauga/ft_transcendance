@@ -374,7 +374,7 @@ function StatPlayer() {
 							<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
 						</>}
 
-					{profile.status == 'connected' ?
+					{profile.status == 'online' ?
 						<>
 							<button id="basic-button"
 								aria-controls={openInviteGame ? 'menu-invite-game' : undefined}

@@ -169,24 +169,35 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (indexOfClient !== -1)
       arrClient.splice(indexOfClient, 1);
 
-    var room: [number, gameRoomClass] | null = this.getRoomByClientID(client.id)
-    if (room != null) {
-      for (let i = 0; i < 2; i++)
-        if (this.pongInfo[room[0]].players[i].id == client.id) {
-          this.pongInfo[room[0]].players[i].connected = false
-          this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
-          if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected && !this.pongInfo[room[0]].firstConnectionInviteProfie) {
-            this.logger.log(`Room ${room[1].roomID} has been deleted.`)
-            this.pongInfo.splice(room[0], 1)
-            return;
-          }
+    var room: [number, gameRoomClass] | null
+
+    while ((room = this.getRoomByClientID(client.id)) != null) {
+      for (let index = 0; index < 2; index++) {
+        if (this.pongInfo[room[0]].players[index].id == client.id) {
+          this.pongInfo[room[0]].players[index].connected = false
+          this.pongInfo[room[0]].players[index].dateDeconnection = Date.now()
         }
+      }
+      if (this.pongInfo[room[0]].players.length == 1 || !this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
+        this.logger.log(`Room ${room[1].roomID} has been deleted.`)
+        this.pongInfo.splice(room[0], 1)
+      }
     }
-    room = this.getRoomBySpectateID(client.id)
-    if (room != null) {
-      let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
-      if (tmp != -1) this.pongInfo[room[0]].spectate.splice(tmp, 1)
-    }
+    //   for (let i = 0; i < 2; i++)
+    //     if (this.pongInfo[room[0]].players[i].id == client.id) {
+    //       this.pongInfo[room[0]].players[i].connected = false
+    //       this.pongInfo[room[0]].players[i].dateDeconnection = Date.now()
+    //       if (!this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected && !this.pongInfo[room[0]].firstConnectionInviteProfie) {
+    //         this.logger.log(`Room ${room[1].roomID} has been deleted.`)
+    //         this.pongInfo.splice(room[0], 1)
+    //         return;
+    //       }
+    //     }
+    // room = this.getRoomBySpectateID(client.id)
+    // if (room != null) {
+    //   let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
+    //   if (tmp != -1) this.pongInfo[room[0]].spectate.splice(tmp, 1)
+    // }
   }
 
   handleConnection(client: any, ...args: any[]) {
@@ -2153,12 +2164,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   @SubscribeMessage('CHECK_IF_IN_GAME')
-  async CheckIfInGame(client: Socket, info: { login: string}) {
+  async CheckIfInGame(client: Socket, info: { login: string }) {
     const room = this.getRoomByClientLogin(info.login);
     if (room == null)
       this.server.to(client.id).emit('client_not_playing')
     else
-    this.server.to(client.id).emit('start_spectate')
+      this.server.to(client.id).emit('start_spectate')
   }
 
   @SubscribeMessage('RENDER_SPECTATE')

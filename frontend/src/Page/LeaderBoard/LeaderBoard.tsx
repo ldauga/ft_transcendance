@@ -33,8 +33,6 @@ function LeaderBoard() {
 				setRows(tmp)
 			})
 		}
-
-		console.log('oui', rows)
 	})
 
 	return (
@@ -56,7 +54,7 @@ function LeaderBoard() {
 					<table>
 						<tbody>
 							{rows.map((row) => (
-								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.nickname) }} key={row.nickname}>
+								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.login) }} key={row.nickname}>
 									<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
 									<td><img src={
 										!row.wins ? unranked :
