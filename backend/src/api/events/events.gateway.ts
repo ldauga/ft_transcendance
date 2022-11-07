@@ -627,6 +627,24 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     for (let i = 0; i < arrClient.length; i++) {
       this.server.to(arrClient[i].id).emit('newRoomCreated', true);
     }
+    const newMsg = {
+      id_sender: data.owner_id,
+      id_receiver: 0,
+      login_sender: data.owner_login,
+      login_receiver: "",
+      userOrRoom: true,
+      serverMsg: true,
+      room_id: data.room_id,
+      room_name: data.room_name,
+      text: data.user_login + " created chat room",
+      year: getYear(),
+      month: getMonth(),
+      day: getDay(),
+      hour: getHour(),
+      minute: getMinute()
+    }
+    const createMsgReturn = await this.MessagesService.createMessages(newMsg);
+    console.log('createMsgReturn in eventgateway', createMsgReturn);
   };
 
   @SubscribeMessage('removeRoom')

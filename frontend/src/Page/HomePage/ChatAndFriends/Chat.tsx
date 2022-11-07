@@ -115,6 +115,29 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         console.log("ChatList.length = ", ChatList.length);
         await ChatList.forEach(async (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
             console.log("test2");
+            // let pp1 = "";
+            // let pp2 = "";
+            // let i = 0;
+            // if (item.userOrRoom) {
+            //     await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + item.name).then(async (res) => {
+            //         console.log("get List User: ", res.data);
+            //         res.data.forEach(async (item: { login: string, id: number }) => {
+            //             await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+            //                 if (i == 0) {
+            //                     pp1 = res.data.profile_pic;
+            //                     console.log("pp1 1: ", pp1);
+            //                     i++;
+            //                 }
+            //                 else if (i == 1) {
+            //                     pp2 = res.data.profile_pic;
+            //                     i++;
+            //                 }
+            //             });
+            //         });
+            //     });
+            //     console.log('pp1: ', pp1);
+            //     console.log("pp2: ", pp2);
+            // }
             if (!item.userOrRoom) {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
@@ -126,18 +149,21 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 </div>)
             }
             else {
+                console.log("push room");
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <div className='profile-pic-group'>
-                            <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
-                            <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
-                        </div>
+                        {/* {pp2 && pp1 ? <div className='profile-pic-group'>
+                            <img src={pp1} />
+                            <img src={pp2} />
+                        </div> : pp1 ?
+                            <img src={pp1} /> : <img src="" />} */}
                         <p>{item.name}</p>
                     </div>
-                </div>)
+                </div>);
             }
         });
         console.log("end");
+        console.log("itemList.length: ", itemList.length);
         setItemListHistory(itemList);
     }
 

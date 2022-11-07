@@ -33,6 +33,12 @@ export class ParticipantsController {
     return this.service.getAllUsersForOneRoom(name);
   }
 
+  @Get('/allUserForOneRoomWithMessages/:roomName')
+  @UseGuards(AuthGuard('jwt'))
+  public getAllUsersForOneRoomWithMessages(@Param('roomName') name: string): Promise<{ login: string, id: number, admin: boolean }[]> {
+    return this.service.getAllUsersForOneRoomWithMessages(name);
+  }
+
   // @Get('/allUsersForRoom/:roomName/:roomId')
   // @UseGuards(AuthGuard('jwt'))
   // public getAllUsersForRoom(@Param('roomName') name: string, @Param('roomId') id: number): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {

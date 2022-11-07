@@ -21,6 +21,12 @@ export class MessagesController {
     return this.service.getUserMessages(id);
   }
 
+  @Get('/getUsersRoomConversMessages/:name')
+  @UseGuards(AuthGuard('jwt'))
+  public getUsersRoomConversMessages(@Param('name') name: string): Promise<{ login: string, id: number }[]> {
+    return this.service.getUsersRoomConversMessages(name);
+  }
+
   @Get('/:id1/:id2')
   @UseGuards(AuthGuard('jwt'))
   public getConversMessages(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<MessagesEntity[]> {

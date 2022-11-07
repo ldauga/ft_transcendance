@@ -30,7 +30,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
-    const [update, setUpdate] = useState(false);
+    const [update, setUpdate] = useState(true);
     const [isAdmin, setAdmin] = useState(false);
     const [isOwner, setOwner] = useState(false);
 
@@ -51,6 +51,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [password, setPassword] = useState('');
 
     const [passwordOrNot, setPasswordOrNot] = useState(false);
+
+    const [pp1, setPp1] = useState("");
+    const [pp2, setPp2] = useState("");
 
     const dispatch = useDispatch();
 
@@ -85,12 +88,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
         console.log('newMsgReceived = ', data);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        // const length = itemListHistory.length;
+        // let secu = 0;
+        // while (length == itemListHistory.length && secu < constWhileSecu) {
+        //     getListItem();
+        //     secu++;
+        // }
+        setUpdate(true);
         if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
             delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         }
@@ -283,6 +287,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         }
         else {
             const pp = users.find(obj => obj.id == props.item.id_sender)?.profile_pic;
+            const nickname = users.find(obj => obj.id == props.item.id_sender)?.nickname;
             return (
                 <div className='inItem2'>
                     <div className="picture-message">
@@ -305,7 +310,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'content-receiver'))}>
+                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item item={item} />
                 </div>)
             });
@@ -316,18 +321,40 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const getUsers = async () => {
         console.log("getUsers");
+        let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
+        let i = 0;
+        setPp1("");
+        setPp2("");
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
-            let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
             res.data.forEach(async (item: { login: string, id: number }) => {
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                    if (i == 0) {
+                        console.log("setPp1 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
+                        setPp1(res.data.profile_pic);
+                        i++;
+                    }
+                    else if (i == 1) {
+                        console.log("setPp2 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
+                        setPp2(res.data.profile_pic);
+                        i++;
+                    }
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
             console.log('itemList get Users: ', itemList);
-            setUsers(itemList);
-            setUpdate(true);
         })
+        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
+            console.log("get List User 2: ", res.data);
+            res.data.forEach(async (item: { login: string, id: number }) => {
+                if (!itemList.find(obj => obj.login == item.login))
+                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                        itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
+                    });
+            });
+            console.log('itemList get Users 2: ', itemList);
+        })
+        setUsers(itemList);
     }
 
     useEffect(() => {
@@ -339,11 +366,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [itemListHistory])
 
     useEffect(() => {
-        setUpdate(false);
-        checkIfOwner();
-        getUsers();
-        getListItem();
-        bottom.current?.scrollIntoView();
+        console.log("update: ", update);
+        if (update) {
+            setUpdate(false);
+            checkIfOwner();
+            getUsers();
+            getListItem();
+            bottom.current?.scrollIntoView();
+        }
     }, [props, update]);
 
     const handleClickOpenDialogChangePassword = () => {
@@ -461,19 +491,27 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         };
 
         function HeaderPrint() {
+            let str_nickname = "";
+            for (let i = 0; i < users.length; i++) {
+                if (i + 1 < users.length)
+                    str_nickname = str_nickname + users[i].nickname + ", ";
+                else
+                    str_nickname = str_nickname + users[i].nickname;
+            }
             return (
                 <>
-                <ArrowBackIosNew onClick={closeConvers} />
-                <div className="group-profile">
-                    <div className='profile-pic-group'>
-                        <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
-                        <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
+                    <ArrowBackIosNew onClick={closeConvers} />
+                    <div className="group-profile">
+                        {pp2 && pp1 ? <div className='profile-pic-group'>
+                            <img src={pp1} />
+                            <img src={pp2} />
+                        </div> : pp1 ?
+                            <img src={pp1} /> : <img src="" />}
+                        <div className="group-name">
+                            <p>{props.roomsConversData.name}</p>
+                            <p className='name-participants' onClick={affParticipants}>{str_nickname}</p>
+                        </div>
                     </div>
-                    <div className="group-name">
-                        <p>{props.roomsConversData.name}</p>
-                        <p className='name-participants' onClick={affParticipants}>cgangaro, tsimon, ldauga, atourret, tcerdan, ketaouki</p>
-                    </div>
-                </div>
                 </>
             )
         }
@@ -565,8 +603,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             );
     };
 
-    function AffRoomConvers() {
-
+    function SendZone() {
         const [messageText, setMessageText] = useState('');
 
         function sendMessage() {
@@ -604,24 +641,30 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         };
 
         return (
+            <div className="send-message">
+                <TextField value={messageText}
+                    onChange={e => setMessageText(e.target.value)}
+                    placeholder='Your message...'
+                    multiline maxRows={5}
+                    onKeyDown={(e) => {
+                        if (e.keyCode == 13) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
+                />
+                <SendButton />
+            </div>
+        );
+    }
+
+    function AffRoomConvers() {
+        return (
             <div className="chat">
                 <Header />
                 {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
                 <AffConvers />
-                <div className="send-message">
-                    <TextField value={messageText}
-                        onChange={e => setMessageText(e.target.value)}
-                        placeholder='Your message...'
-                        multiline maxRows={5}
-                        onKeyDown={(e) => {
-                            if (e.keyCode == 13) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        }}
-                    />
-                    <SendButton />
-                </div>
+                <SendZone />
             </div>
         );
     };
