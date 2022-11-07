@@ -1,21 +1,96 @@
-#roomsConvers {
+.roomsConvers {
     display: block;
     height: 100%;
     width: 100%;
 
-    #affConversBig {
-        overflow: scroll;
-        height: 88%;
+    .header {
+        justify-content: space-around;
+        svg[data-testid="ArrowBackIosNewIcon"] {
+            margin-left: 5px;
+        }
+        .group-profile {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            width: 100%;
+            .profile-pic-group {
+                --group-pic-size: 77px;
+                width: var(--group-pic-size);
+                height: var(--group-pic-size);
+                display: flex;
+                img {
+                    object-fit: cover;
+                    width: 50%;
+                    height: 100%;
+                    border: 0.5px solid #9b9b9b;
+                    &:first-of-type {
+                        border-radius:  100% 0% 0% 100% / 50% 50% 50% 50%;
+                        border-right: none;
+                    }
+                    &:last-of-type {
+                        border-radius: 0% 100% 100% 0% / 50% 50% 50% 50%;
+                        border-left: none;
+                    }
+                }
+            }
+            .group-name {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                p {
+                    margin: 0;
+                    font-weight: 600;
+                    font-size: 16px;
+                }
+                .name-participants {
+                    width: 175px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    font-weight: 300;
+                    font-size: 12px;
+                    cursor: pointer;
+                }
+            }
+        }
+        button{
+            margin-right: 5px;
+        }
     }
 
-    #affConversSmall {
-        overflow: scroll;
-        height: 74%;
+    @media screen and (min-width: 375px) {
+        .header {
+            .group-profile {
+                margin-left: 8px;
+                gap: 8px;
+                .group-name {
+                    gap: 7px;
+                    p {
+                        font-size: 18px;
+                    }
+                    .name-participants {
+                        width: 231px;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
     }
-
-    #RoomsConversHeaderRight {
-        display: flex;
-        justify-content: flex-end;
+    
+    @media screen and (min-width: 425px) {
+        .header {
+            .group-profile {
+                .group-name {
+                    p {
+                        font-size: 20px;
+                    }
+                    .name-participants {
+                        width: 277px;
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
     }
 
     #RoomsConversHeaderRight .bi-plus-lg {

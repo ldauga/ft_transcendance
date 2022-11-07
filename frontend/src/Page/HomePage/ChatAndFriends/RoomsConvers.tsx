@@ -15,7 +15,7 @@ import axiosConfig from '../../../Utils/axiosConfig';
 import SendIcon from '@mui/icons-material/Send';
 import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Logout, Person, Settings } from "@mui/icons-material";
+import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -444,6 +444,24 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             );
         };
 
+        function HeaderPrint() {
+            return (
+                <>
+                <ArrowBackIosNew onClick={closeConvers} />
+                <div className="group-profile">
+                    <div className='profile-pic-group'>
+                        <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
+                        <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
+                    </div>
+                    <div className="group-name">
+                        <p>{props.roomsConversData.name}</p>
+                        <p className='name-participants' onClick={affParticipants}>cgangaro, tsimon, ldauga, atourret, tcerdan, ketaouki</p>
+                    </div>
+                </div>
+                </>
+            )
+        }
+
         function MenuOptionsAdmin() {
             return (
                 <Menu
@@ -473,6 +491,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                                 right: 14,
                                 width: 10,
                                 height: 10,
+                                backgroundColor: "transparent",
                                 bgcolor: 'background.paper',
                                 transform: 'translateY(-50%) rotate(45deg)',
                                 zIndex: 0,
@@ -502,63 +521,30 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         if (isOwner)
             return (
                 <div className="header">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
-                        <IconButton onClick={handleClickOpenOptions}>
-                            <MoreVertIcon />
-                        </IconButton>
-                        <MenuOptionsOwner />
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={removeRoom} className="bi bi-x-lg"></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
-                    </div>
+                    <HeaderPrint />
+                    <IconButton onClick={handleClickOpenOptions}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <MenuOptionsOwner />
                 </div>
             );
         else if (isAdmin)
             return (
-                <div id="header" className="mainHeader">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
-                        <IconButton onClick={handleClickOpenOptions}>
-                            <MoreVertIcon />
-                        </IconButton>
-                        <MenuOptionsAdmin />
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
-                    </div>
+                <div className="header">
+                    <HeaderPrint />
+                    <IconButton onClick={handleClickOpenOptions}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <MenuOptionsAdmin />
                 </div>
             );
         else
             return (
-                <div id="header" className="mainHeader">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
-                        <IconButton onClick={quitConvers}>
-                            <BabyChangingStationIcon />
-                        </IconButton>
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button> */}
-                    </div>
+                <div className="header">
+                    <HeaderPrint />
+                    <IconButton onClick={quitConvers}>
+                        <BabyChangingStationIcon />
+                    </IconButton>
                 </div>
             );
     };
@@ -634,7 +620,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     return (
-        <div id="roomsConvers">
+        <div className="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
             {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
             <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>
