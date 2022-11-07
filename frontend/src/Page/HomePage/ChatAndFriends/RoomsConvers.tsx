@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createRef, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../../State';
 import './CSS/RoomsConvers.scss'
 import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
@@ -22,8 +22,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
+import { bindActionCreators } from 'redux';
 
-function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
+function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function, setRoomsConversData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -37,6 +38,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isConversRooms, setConversRooms] = useState(true);
     const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
 
+    const [oldChatNotifTotal, setOldChatNotifTotal] = useState(0);
+
     const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
     const bottom = useRef<null | HTMLDivElement>(null);
@@ -48,6 +51,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [password, setPassword] = useState('');
 
     const [passwordOrNot, setPasswordOrNot] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     // const scrollToBottom = useScrollToBottom();
 
@@ -83,6 +90,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         while (length == itemListHistory.length && secu < constWhileSecu) {
             getListItem();
             secu++;
+        }
+        if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
+            delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         }
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
@@ -126,6 +136,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }
 
     const closeConvers = () => {
+        //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
+        props.setRoomsConversData({ name: "", id: 0 });
         props.setRoomsConvers(false);
         if (props.oldAffRoomConvers == "Rooms")
             props.setRooms(true);
@@ -251,8 +263,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     };
 
-    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        if (props.item.id_sender == userData.userReducer.user?.id) {
+    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        if (props.item.id_sender == userData.userReducer.user?.id && !props.item.serverMsg) {
             return (
                 <div className='inItem2'>
                     <AffDate item={props.item} />
@@ -262,7 +274,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                 </div>
             );
         }
-        else if (props.item.id_sender == 0) {
+        else if (props.item.serverMsg) {
             return (
                 <div className="server_msg">
                     <p>{props.item.text}</p>
@@ -292,7 +304,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
+            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item item={item} />
                 </div>)
@@ -320,6 +332,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
+        // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
+        //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
+        //     setOldChatNotifTotal(userData.chatNotifReducer.total);
+        // }
     }, [itemListHistory])
 
     useEffect(() => {
@@ -607,30 +623,30 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                 {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
                 <AffConvers />
                 <div className="send-message">
-                <TextField value={messageText}
-                    onChange={e => setMessageText(e.target.value)}
-                    placeholder='Your message...'
-                    multiline maxRows={5}
-                    onKeyDown={(e) => {
-                        if (e.keyCode == 13) {
-                            e.preventDefault();
-                            sendMessage();
-                        }
-                    }}
-                />
-                <SendButton />
-            </div>
+                    <TextField value={messageText}
+                        onChange={e => setMessageText(e.target.value)}
+                        placeholder='Your message...'
+                        multiline maxRows={5}
+                        onKeyDown={(e) => {
+                            if (e.keyCode == 13) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }}
+                    />
+                    <SendButton />
+                </div>
             </div>
         );
     };
 
     function AffConvers() {
-            return (
-                <div className="messages" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-            );
+        return (
+            <div className="messages" ref={bottom}>
+                {itemListHistory}
+                <div ref={messagesEndRef} />
+            </div>
+        );
     };
 
     return (

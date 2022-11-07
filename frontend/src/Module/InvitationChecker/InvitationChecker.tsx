@@ -20,7 +20,7 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setNotif, delNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
 		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {

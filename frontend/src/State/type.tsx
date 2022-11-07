@@ -42,13 +42,19 @@ export interface User2 {
 }
 
 export interface Notif {
-	type: NotifType,
-	data: any
+    type: NotifType,
+    data: any
 }
 
 export enum NotifType {
-    GAMEINVITE="GAMEINVITE",
-    DISCONNECTGAME="DISCONNECTGAME",
-    LOOSEGAMEDISCONECT="LOOSEGAMEDISCONECT",
-    PENDINGINVITATION="PENDINGINVITATION"
+    GAMEINVITE = "GAMEINVITE",
+    DISCONNECTGAME = "DISCONNECTGAME",
+    LOOSEGAMEDISCONECT = "LOOSEGAMEDISCONECT",
+    PENDINGINVITATION = "PENDINGINVITATION"
+}
+
+export interface ChatNotif {
+    name: string;
+    userOrRoom: boolean;
+    nb: number;
 }

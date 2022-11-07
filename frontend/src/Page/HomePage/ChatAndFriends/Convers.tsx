@@ -2,12 +2,14 @@ import { Button, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Convers.scss'
+import { bindActionCreators } from 'redux';
+import { initChatNotif, initOneConversChatNotif } from '../../../State/Action-Creators';
 
-function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function }) {
+function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -20,7 +22,13 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const [correspondantIsBlocked, setCorrespondantIsBlocked] = useState(false);
 
+    const dispatch = useDispatch();
+
+    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
+
     const closeConvers = () => {
+        //setConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
+        props.setConversCorrespondantData({ login: "", id: 0 });
         if (props.openFriendConversFromProfile)
             props.setOpenFriendConversFromProfile(false);
         props.setConvers(false);
@@ -32,6 +40,18 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
     };
+
+    //utilsData.socket.removeAllListeners('newChatNotif');
+
+    // utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
+    //     console.log("newChatNotif convers");
+    //     console.log("total: ", userData.chatNotifReducer.total);
+    //     console.log("persistantReducer.chatNotifReducer.convers.name: ", userData.chatNotifReducer.convers.name, ", newNotif.name: ", newNotif.name);
+    //     if (newNotif.name == props.conversCorrespondantData.login && newNotif.userOrRoom == false)
+    //         initOneConversChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom });
+    //     utilsData.socket.off('newChatNotif');
+    //     utilsData.socket.removeListener('newChatNotif');
+    // })
 
     function sendMessage() {
         if (messageText.length <= 0)
@@ -59,6 +79,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         console.log('newMsgReceived = ', data);
         for (let i = 0; i < 4; i++) {
             getListItem();
+        }
+        if (!data.userOrRoom && data.login_sender == props.conversCorrespondantData.login) {
+            delChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
         }
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
@@ -173,6 +196,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             console.log('itemList : ', itemList);
             setItemListHistory(itemList);
         })
+        initOneConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
     }
 
     useEffect(() => {

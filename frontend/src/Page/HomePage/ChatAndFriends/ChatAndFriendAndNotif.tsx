@@ -13,7 +13,7 @@ import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
 import AffUsersBanned from "./AffUsersBanned";
 
-function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string }, setOpenFriendConversFromProfile: Function }) {
+function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {
 
     const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
@@ -52,6 +52,23 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
     }
 
     useEffect(() => {
+        console.log("useEffect chatandfriend 2");
+        if (conversCorrespondantData.login.length == 0) {
+            if (roomsConversData.name.length == 0) {
+                props.setConversNotif({ name: "", userOrRoom: false })
+            }
+            else {
+                console.log("setConversNotif")
+                props.setConversNotif({ name: roomsConversData.name, userOrRoom: true })
+            }
+        }
+        else {
+            console.log("setConversNotif")
+            props.setConversNotif({ name: conversCorrespondantData.login, userOrRoom: false })
+        }
+    }, [conversCorrespondantData, roomsConversData]);
+
+    useEffect(() => {
         console.log("useEffect() ChatAndFriednAndNotif");
         closeAll();
         if (props.isNavChat)
@@ -76,10 +93,10 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
             {isFriendList && <FriendList setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setRooms={setRooms} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setOldAff={setOldAff} closeFriendList={props.closeFriendList} setBannedUsers={setBannedUsers} openFriendConversFromProfile={props.openFriendConversFromProfile} dataFriendConversFromProfile={props.dataFriendConversFromProfile} />}
             {isNotif && <AffNotif setLastNbNotif={props.setLastNbNotif} setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
-            {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} openFriendConversFromProfile={props.openFriendConversFromProfile} setOpenFriendConversFromProfile={props.setOpenFriendConversFromProfile} />}
+            {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} openFriendConversFromProfile={props.openFriendConversFromProfile} setOpenFriendConversFromProfile={props.setOpenFriendConversFromProfile} setConversCorrespondantData={setConversCorrespondantData} />}
             {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setRooms={setRooms} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
             {isRooms && <Rooms setChat={setChat} setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} setRoomsList={setRoomsList} />}
-            {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} />}
+            {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} setRoomsConversData={setroomsConversData} />}
             {isRoomsList && <RoomsList setRooms={setRooms} setRoomsList={setRoomsList} />}
             {isBannedUsers && <AffUsersBanned setFriendList={setFriendList} setBannedUsers={setBannedUsers} />}
         </div>

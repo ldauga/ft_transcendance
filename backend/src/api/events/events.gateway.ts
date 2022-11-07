@@ -30,6 +30,7 @@ import { MuteListService } from '../muteList/muteList.service';
 import { UserService } from '../user/user.service';
 import { freemem } from 'os';
 import { info } from 'console';
+import { stringify } from 'querystring';
 
 interface Client {
   id: string;
@@ -47,7 +48,20 @@ interface Room {
   users: Client[];
 }
 
+interface Notif {
+  nb: number;
+  name: string;
+  userOrRoom: boolean;
+}
+
+interface NotifClient {
+  username: string;
+  notifs: Notif[];
+}
+
 let arrClient: Client[] = [];
+
+let arrNotifs: NotifClient[] = [];
 
 let arrRoom: Room[] = [];
 
@@ -259,6 +273,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           }
           else
             i++;
+        }
+        const _notif = arrNotifs.find(obj => obj.username == user.login);
+        this.logger.log("ClientStore _notif = ", _notif);
+        if (!_notif) {
+          let newNotifClient: NotifClient = {
+            username: user.login,
+            notifs: []
+          }
+          arrNotifs.push(newNotifClient);
+        }
+        else {
+          this.logger.log("ClientStore _notif.notifs.length = ", _notif.notifs.length);
+          this.server.to(client.id).emit('ChatNotifsInit', _notif.notifs);
         }
         //console.log("test");
         //this.server.to(client.id).emit('friendsList', arrClient);
@@ -659,11 +686,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
       console.log('participantReturn in eventgateway', participantReturn);
       const newMsg = {
-        id_sender: 0,
+        id_sender: data.user_id,
         id_receiver: 0,
-        login_sender: "server",
+        login_sender: data.user_login,
         login_receiver: "",
         userOrRoom: true,
+        serverMsg: true,
         room_id: data.room_id,
         room_name: data.room_name,
         text: data.user_login + " join chat room",
@@ -732,6 +760,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         login_sender: "server",
         login_receiver: "",
         userOrRoom: true,
+        serverMsg: true,
         room_id: data.room_id,
         room_name: data.room_name,
         text: "password has been changed",
@@ -776,11 +805,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
     console.log('participantReturn in eventgateway', participantReturn);
     const newMsg = {
-      id_sender: 0,
+      id_sender: data.user_id,
       id_receiver: 0,
-      login_sender: "server",
+      login_sender: data.user_login,
       login_receiver: "",
       userOrRoom: true,
+      serverMsg: true,
       room_id: data.room_id,
       room_name: data.room_name,
       text: data.user_login + " join chat room",
@@ -853,6 +883,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           login_sender: "server",
           login_receiver: "",
           userOrRoom: true,
+          serverMsg: true,
           room_id: data.room_id,
           room_name: data.room_name,
           text: data.login + " quit chat room",
@@ -918,6 +949,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         login_sender: "server",
         login_receiver: "",
         userOrRoom: true,
+        serverMsg: true,
         room_id: data.room_id,
         room_name: data.room_name,
         text: data.login_admin + " is admin",
@@ -981,6 +1013,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         login_sender: "server",
         login_receiver: "",
         userOrRoom: true,
+        serverMsg: true,
         room_id: data.room_id,
         room_name: data.room_name,
         text: data.login_admin + " is not longer admin",
@@ -1011,6 +1044,65 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   //NEW CHAT EVENTS
+
+  NewMsgNotif = (receiver_name: string, sender_name: string, userOrRoom: boolean) => {
+    let _notifClient = arrNotifs.find(obj => obj.username == receiver_name);
+    console.log("_notifClient.notifs.length", _notifClient.notifs.length)
+    if (_notifClient) {
+      let _notif;
+      if (!userOrRoom) {
+        _notif = _notifClient.notifs.find(obj => (obj.name == sender_name && !obj.userOrRoom));
+      }
+      else {
+        console.log("sender_name: ", sender_name, ", userOrRoom: ", userOrRoom);
+        _notif = _notifClient.notifs.find(obj => (obj.name == sender_name && obj.userOrRoom));
+      }
+      console.log("_notif: ", _notif);
+      if (_notif) {
+        _notif.nb += 1;
+      }
+      else {
+        let newNotif = {
+          id: 0,
+          nb: 1,
+          name: sender_name,
+          userOrRoom: false
+        }
+        _notifClient.notifs.push(newNotif);
+      }
+      const _client = arrClient.find(obj => obj.username == receiver_name);
+      if (_client) {
+        this.logger.log("emit newChatNotif to ", _client.username);
+        this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
+      }
+      const tmp = _notifClient.notifs.find(obj => obj.name == sender_name);
+      if (tmp)
+        this.logger.log("NewMsgNotif _notifClient.sender_name.nb = ", tmp.nb);
+      else
+        this.logger.log("NewMsgNotif tmp not found");
+    }
+    else {
+      console.log("NewMsgNotif notifClient not found");
+      return;
+    }
+  };
+
+  @SubscribeMessage('delChatNotifs')
+  async delChatNotifs(client: Socket, data: any) {
+    const _notif = arrNotifs.find(obj => obj.username == data.loginOwner);
+    if (_notif) {
+      const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
+      if (_notifToReset) {
+        _notifToReset.nb = 0;
+      }
+      else {
+        this.logger.log("delChatNotifs _notifToReset not found");
+      }
+    }
+    else {
+      this.logger.log("delChatNotifs _notif not found");
+    }
+  }
 
   @SubscribeMessage('createMsg')
   async createMsg(client: Socket, data: any) {
@@ -1045,6 +1137,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         login_sender: data.login_sender,
         login_receiver: data.login_receiver,
         userOrRoom: data.userOrRoom,
+        serverMsg: false,
         room_id: data.room_id,
         room_name: data.room_name,
         text: data.text,
@@ -1064,7 +1157,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (_client_receiver != null) {
           //console.log("newMsgReceived to ", _client_receiver.username);
           this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+          // this.logger.log("arrNotif.length : ", arrNotifs.length);
+          // this.logger.log("arrNotif[0] : ", arrNotifs[0].notifs[0].nb);
         }
+        this.NewMsgNotif(data.login_receiver, data.login_sender, false);
       }
       else {
         //console.log("arrRoom ", arrRoom);
@@ -1076,6 +1172,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         while (i < room.users.length) {
           console.log('new Msg to ', room.users[i].username);
           this.server.to(room.users[i].id).emit('newMsgReceived', data);
+          this.NewMsgNotif(room.users[i].username, data.room_name, true);
           i++;
         }
       }
@@ -1152,6 +1249,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         login_sender: "server",
         login_receiver: "",
         userOrRoom: true,
+        serverMsg: true,
         room_id: data.room_id,
         room_name: data.room_name,
         text: data.login_banned + " was banned",
@@ -1274,6 +1372,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           login_sender: "server",
           login_receiver: "",
           userOrRoom: true,
+          serverMsg: true,
           room_id: data.room_id,
           room_name: data.room_name,
           text: data.login_muted + " was muted",

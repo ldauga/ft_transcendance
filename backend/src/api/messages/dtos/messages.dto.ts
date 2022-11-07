@@ -16,6 +16,9 @@ export class MessagesDto {
 	@IsBoolean()
 	public userOrRoom: boolean;
 
+	@IsBoolean()
+	public serverMsg: boolean;
+
 	@IsNumber()
 	public room_id: number;
 

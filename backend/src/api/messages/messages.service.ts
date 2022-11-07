@@ -108,6 +108,7 @@ export class MessagesService {
 			login_sender: body.login_sender,
 			login_receiver: body.login_receiver,
 			userOrRoom: body.userOrRoom,
+			serverMsg: body.serverMsg,
 			room_id: body.room_id,
 			room_name: body.room_name,
 			text: body.text,

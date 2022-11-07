@@ -29,7 +29,7 @@ export class BlackListController {
   @UseGuards(AuthGuard('jwt'))
   public async checkIfRelationIsBlocked(@Param('login1') login1: string, @Param('login2') login2: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkIfRelationIsBlocked(login1, login2);
-    console.log('checkIfRelationIsBlockedReturn Check = ', returnCheck);
+    //console.log('checkIfRelationIsBlockedReturn Check = ', returnCheck);
     return returnCheck;
   }
 

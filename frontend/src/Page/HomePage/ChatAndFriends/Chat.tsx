@@ -1,9 +1,10 @@
-import { Tooltip } from '@mui/material';
+import { Badge, Tooltip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { isJSDocTemplateTag } from 'typescript';
-import { RootState } from '../../../State';
+import { actionCreators, RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
@@ -15,6 +16,10 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [isSendChatMsg, setSendChatMsg] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     const closeChat = () => {
         props.closeChat();
@@ -56,12 +61,16 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const openConvers = (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
         if (!item.userOrRoom) {
+            //setConversChatNotif({ name: item.name, userOrRoom: false });
             props.setConversCorrespondantData({ id: item.id, login: item.name });
+            delChatNotif({ name: item.name, userOrRoom: false });
             props.setChat(false);
             props.setConvers(true);
         }
         else {
+            //setConversChatNotif({ name: item.name, userOrRoom: true });
             props.setroomsConversData({ name: item.name, id: item.id });
+            delChatNotif({ name: item.name, userOrRoom: true });
             props.setChat(false);
             props.setRoomsConvers(true);
         }
@@ -109,7 +118,9 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             if (!item.userOrRoom) {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <img src={item.profile_pic}></img>
+                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb)}>
+                            <img src={item.profile_pic}></img>
+                        </Badge>
                         <p>{item.name}</p>
                     </div>
                 </div>)
@@ -145,10 +156,10 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 <h3>Chat</h3>
                 <div className="mainHeaderRight mainHeaderSide">
                     <Tooltip title="Groups">
-                    <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+                        <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
                     </Tooltip>
                     <Tooltip title="New Message">
-                    <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
+                        <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
                     </Tooltip>
                 </div>
             </div>

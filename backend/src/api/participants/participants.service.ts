@@ -194,4 +194,17 @@ export class ParticipantsService {
 		participants.forEach(item => (arrRooms.push({ name: item.room_name, id: item.room_id })));
 		return arrRooms;
 	}
+
+	public async getAllRoomUserWithId(id: number): Promise<{ name: string, id: number }[]> {
+		const participants = await this.ParticipantsRepository.find({
+			where: [
+				{ user_id: id }
+			]
+		});
+		let arrRooms: { name: string, id: number }[] = [];
+		if (!participants)
+			return arrRooms;
+		participants.forEach(item => (arrRooms.push({ name: item.room_name, id: item.room_id })));
+		return arrRooms;
+	}
 }

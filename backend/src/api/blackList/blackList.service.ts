@@ -83,7 +83,7 @@ export class BlackListService {
 	}
 
 	async checkIfRelationIsBlocked(login1: string, login2: string): Promise<boolean> {
-		console.log("login1: ", login1, ", login2: ", login2);
+		//console.log("login1: ", login1, ", login2: ", login2);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ login_banned: login1, login_sender: login2, userOrRoom: false },

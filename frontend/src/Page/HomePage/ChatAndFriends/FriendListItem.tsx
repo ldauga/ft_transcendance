@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../State";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
 import BanUser from "./BanUser";
@@ -10,6 +10,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { Person, Settings } from "@mui/icons-material";
 import ChatIcon from '@mui/icons-material/Chat';
+import { bindActionCreators } from "redux";
+import { delChatNotif } from "../../../State/Action-Creators";
 
 function FriendListItem(props: { setFriendList: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }, setUpdate: Function }) {
 
@@ -18,6 +20,10 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     // <button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
     // <button onClick={() => openChat(item)} className="bi bi-chat"></button>
@@ -37,8 +43,9 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     };
 
     const openChat = async () => {
-
+        //setConversChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setConversCorrespondantData({ id: props.item.user.id, login: props.item.user.login });
+        delChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setFriendList(false);
         props.setConvers(true);
     };
