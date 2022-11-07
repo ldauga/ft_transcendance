@@ -2045,7 +2045,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (this.getRoomByClientLogin(user.login) != null && this.getRoomByClientLogin(user.login)[1].players.find(player => player.user != null && player.user.login == user.login).connected)
         retArr.push({ user: user, status: "in-game" })
       else if (arrClient.find(client => client.username == user.login) != undefined)
-        retArr.push({ user: user, status: "connected" })
+        retArr.push({ user: user, status: "online" })
       else
         retArr.push({ user: user, status: "offline" })
     }
@@ -2142,7 +2142,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (this.getRoomByClientLogin(info.user.login))
       this.server.to(client.id).emit('getClientStatus', { login: info.user.login, status: 'in-game' })
     else if (arrClient.find((item) => item.username == info.user.login))
-      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'connected' })
+      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'online' })
     else
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline' })
   }

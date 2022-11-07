@@ -117,6 +117,10 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             else {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
+                        <div className='profile-pic-group'>
+                            <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
+                            <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
+                        </div>
                         <p>{item.name}</p>
                     </div>
                 </div>)
