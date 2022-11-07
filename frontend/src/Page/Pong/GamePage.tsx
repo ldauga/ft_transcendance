@@ -338,7 +338,10 @@ const GamePage = (props: any) => {
     function affFinishScreen() {
 
         let U, H;
-
+        setTimeout(function() {
+            window.location.replace('https://localhost:3000');
+          }, 5000);
+        
         if (finishRoom?.players[0].user?.login == persistantReducer.userReducer.user?.login) {
             U = finishRoom?.players[0]
             H = finishRoom?.players[1]
@@ -351,18 +354,8 @@ const GamePage = (props: any) => {
             <div className='game-finished'>
                 <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
                 <div className='result'>
-                    <span>{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}</span>
+                    <span><img src={U?.user?.profile_pic}/>{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}<img src={H?.user?.profile_pic}/></span>
                 </div>
-                <button>Home</button>
-
-                {/* <div className="buttonContainer">
-
-                    <button onClick={() => {window.location.replace('https://localhost:3000/pong')}} >Replay</button>
-                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/')}} >Home Page</button>
-
-                </div> */}
-
-
             </div>
         )
 

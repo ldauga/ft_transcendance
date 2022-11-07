@@ -1,7 +1,109 @@
 .game-finished {
-    background: white;
-    width: 100%;
-    margin: 0 auto;
+    background: #FDFEFE;
+    padding-bottom: 24px;
+    margin: 0 10px;
+    margin-top: calc(50px + 17vh);
+    box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
+    border: 1px solid;
+    max-width: 437px;
+    h1 {
+        font-family: 'Roboto';
+        font-weight: 800;
+        font-size: 37px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin: 0;
+        margin-top: 14px;
+    }
+    .result {
+        margin-top: 12px;
+        font-family: 'Roboto';
+        font-size: 21px;
+        font-weight: 400;
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        span {
+            &:nth-child(1), &:nth-child(3) {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                img {
+                    --avatar-size: 31px;
+                    height: var(--avatar-size);
+                    width: var(--avatar-size);
+                    border-radius: 50%;
+                    position: relative;
+                    object-fit: cover;
+                    border: 1px solid;
+                }
+            }
+            &:nth-child(2) {
+                font-weight: 500;
+                font-size: 27px;
+            }
+        }
+    }
+    @media screen and (min-width: 375px) {
+        h1 {
+            font-size: 47px;
+        }
+        .result {
+            font-size: 23px;
+            span {
+                &:nth-child(1), &:nth-child(3) {
+                    gap: 9px;
+                    img {
+                        --avatar-size: 36px;
+                    }
+                }
+                &:nth-child(2) {
+                    font-size: 33px;
+                    letter-spacing: -1px;
+                }
+            }
+        }
+    }
+    @media screen and (min-width: 425px) {
+        h1 {
+            font-size: 52px;
+            margin-top: 17px;
+        }
+        .result {
+            font-size: 26px;
+            gap: 11px;
+            span {
+                &:nth-child(1), &:nth-child(3) {
+                    img {
+                        --avatar-size: 44px;
+                    }
+                }
+                &:nth-child(2) {
+                    font-size: 36px;
+                    letter-spacing: -2px;
+                }
+            }
+        }
+    }
+    @media screen and (min-width: 437px) {
+        margin: 0 auto;
+        margin-top: calc(50px + 17vh);
+    }
+    @media screen and (min-width: 768px) {
+        margin-top: calc(83px + 17vh);
+        padding-bottom: 36px;
+        .result {
+            span {
+                &:nth-child(1), &:nth-child(3) {
+                    img {
+                        --avatar-size: 66px;
+                    }
+                }
+            }
+        }
+    }
 }
