@@ -5,7 +5,7 @@ import { RootState } from '../../State';
 import { gameRoomClass } from './gameRoomClass';
 
 import './CSS/GamePage/GamePage.css';
-import './CSS/GamePage/Board.css';
+import './CSS/GamePage/GameFinished.scss';
 import './CSS/Utils.css';
 import Background from '../../Module/Background/Background';
 import { Tab } from '@mui/material';
@@ -348,68 +348,19 @@ const GamePage = (props: any) => {
         }
 
         return (
-            <div className='finishGameScreen'>
-
-                <div className="finishMsg">
-                    <span>
-                        {U?.score == 3 ? 'VICTORY' : 'DEFEAT'}
-                    </span>
+            <div className='game-finished'>
+                <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
+                <div className='result'>
+                    <span>{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}</span>
                 </div>
+                <button>Home</button>
 
-                <div className="versusContainer">
-
-                    <div className="playerContainer">
-
-                        <div className={U?.score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
-                            <img src={U?.user?.profile_pic} />
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {U?.user?.nickname}
-                            </span>
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {U?.score}
-                            </span>
-                        </div>
-
-                    </div>
-
-                    <div className="vs">
-                        <span>VS</span>
-                    </div>
-
-                    <div className="playerContainer">
-
-                        <div className={H?.score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
-                            <img src={H?.user?.profile_pic} />
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {H?.user?.nickname}
-                            </span>
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {H?.score}
-                            </span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="buttonContainer">
+                {/* <div className="buttonContainer">
 
                     <button onClick={() => {window.location.replace('https://localhost:3000/pong')}} >Replay</button>
                     <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/')}} >Home Page</button>
 
-                </div>
+                </div> */}
 
 
             </div>
