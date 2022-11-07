@@ -12,6 +12,7 @@ import Settings from './Page/Settings/Settings';
 import LeaderBoard from './Page/LeaderBoard/LeaderBoard';
 import { SnackbarProvider } from 'notistack';
 import StatPlayer from './Module/UserProfile/StatPlayer';
+import Spectate from './Page/Pong/Spectate';
 
 function App() {
 
@@ -38,7 +39,10 @@ function App() {
 
           <Route path='/Settings' element={<ConnectionChecker component={<Settings />} />} />
 
-          <Route path='/NotFound' element={<NotFound />} />
+          <Route path='/Spectate/*' element={<ConnectionChecker component={<Spectate />} />} />
+
+
+          <Route path='/NotFound' element={<ConnectionChecker component={<NotFound />} />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>
         

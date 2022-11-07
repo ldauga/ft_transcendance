@@ -145,7 +145,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const tmp = arrClient.find(item => item.id == client.id)
 
     if (tmp != undefined && tmp.username != "" && tmp.username != undefined) {
-      console.log(arrClient.find(item => item.id == client.id))
+      // console.log(arrClient.find(item => item.id == client.id))
       checkReconnexionArr.push({ username: tmp.username, date: new Date() })
     }
 
@@ -185,7 +185,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     room = this.getRoomBySpectateID(client.id)
     if (room != null) {
       let tmp = this.pongInfo[room[0]].spectate.findIndex(obj => obj.id == client.id)
-      if (tmp != -1) this.pongInfo[room[0]].spectate
+      if (tmp != -1) this.pongInfo[room[0]].spectate.splice(tmp, 1)
     }
   }
 
@@ -208,7 +208,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //   console.log(tmp);
     //   this.server.to(_client.id).emit('debanedUser', true);
     // }
-    console.log(arrClient[0].id);
+    // console.log(arrClient[0].id);
     this.server.to(arrClient[0].id).emit('debanedUser');
   };
 
@@ -271,7 +271,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //const getAllRoomsReturn = await this.http.get('https://localhost:5001/rooms');
     const getAllRoomsReturn = await this.RoomsService.getAllRooms();
     getAllRoomsReturn.forEach(async (item) => {
-      console.log(item);
+      // console.log(item);
       //const a: { id: number; name: string; publicOrPrivate: boolean; }[] = item;
       //let i = 0;
       //while (i < a.length) {
@@ -301,7 +301,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(1000)
   tmpFunction() {
     checkReconnexionArr.forEach(async (user, index) => {
-      console.log(new Date().getSeconds() - user.date.getSeconds())
+      //console.log(new Date().getSeconds() - user.date.getSeconds())
       if (new Date().getSeconds() - user.date.getSeconds() != 0) {
         const friendList = await this.FriendListService.getUserFriendListWithLogin(user.username);
         for (let i = 0; i < friendList.length; i++) {
@@ -1394,9 +1394,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   getRoomByClientLogin(ClientLogin: string): [number, gameRoomClass] | null {
     for (let i = 0; i < this.pongInfo.length; i++) {
-      console.log('this.pongInfo[i] :', this.pongInfo[i])
+      //console.log('this.pongInfo[i] :', this.pongInfo[i])
       for (let j = 0; j < 2; j++) {
-        console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
+        //console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
 
         if (this.pongInfo[i].players[j].user.login == ClientLogin) {
 
@@ -1440,7 +1440,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const room = this.getRoomByClientLogin(info.user.login)
 
-    console.log('check reconnexion :', room)
+    //console.log('check reconnexion :', room)
 
     if (room != null) {
 
@@ -1561,7 +1561,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               const _client = arrClient.find(obj => obj.username == loginTmp);
               if (_client) {
                 this.server.to(_client.id).emit('friendConnection', true);
-                console.log("emit friendConnection to ", _client.username);
+                //console.log("emit friendConnection to ", _client.username);
               }
             }
 
@@ -1657,7 +1657,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 const _client = arrClient.find(obj => obj.username == loginTmp);
                 if (_client) {
                   this.server.to(_client.id).emit('friendConnection', true);
-                  console.log("emit friendConnection to ", _client.username);
+                  //console.log("emit friendConnection to ", _client.username);
                 }
               }
 
@@ -1714,7 +1714,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                   const _client = arrClient.find(obj => obj.username == loginTmp);
                   if (_client) {
                     this.server.to(_client.id).emit('friendConnection', true);
-                    console.log("emit friendConnection to ", _client.username);
+                    //console.log("emit friendConnection to ", _client.username);
                   }
                 }
 
@@ -1759,7 +1759,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
           var newElo = player.user.rank + (K * (player.score == 3 ? 1 : 0 - winChance))
 
-          console.log('K :', K, 'winChance :', winChance, 'newElo :', newElo)
+          //console.log('K :', K, 'winChance :', winChance, 'newElo :', newElo)
 
         })
 
@@ -1799,7 +1799,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             const _client = arrClient.find(obj => obj.username == loginTmp);
             if (_client) {
               this.server.to(_client.id).emit('friendConnection', true);
-              console.log("emit friendConnection to ", _client.username);
+              //console.log("emit friendConnection to ", _client.username);
             }
           }
 
@@ -1990,7 +1990,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     var room = this.getRoomByID("custom" + info.inviteID)
 
-    console.log('room :', room, room[1].map.obstacles)
+    //console.log('room :', room, room[1].map.obstacles)
 
     this.joinRoom(client, room[1].roomID)
 
@@ -2009,10 +2009,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('CHECK_IF_FRIEND_OR_INVIT')
   async checkIfFriendOrInvit(client: Socket, data: { id1: number, id2: number }) {
-    console.log("CHECK_IF_FRIEND_OR_INVIT id1: ", data.id1, ", id2: ", data.id2);
+    //console.log("CHECK_IF_FRIEND_OR_INVIT id1: ", data.id1, ", id2: ", data.id2);
     const checkFriend = await this.FriendListService.checkExistRelation(data.id1, data.id2);
     const checkInvit = await this.invitationRequestService.checkInvitationRequest(data.id1, data.id2);
-    console.log("checkFriend: ", checkFriend, ", checkInvit: ", checkInvit);
+    //console.log("checkFriend: ", checkFriend, ", checkInvit: ", checkInvit);
     if (checkFriend)
       this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 1);
     else if (checkInvit)
@@ -2032,11 +2032,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     friendRes = friendList;
 
-    console.log("friendRes.length = ", friendRes.length);
+    //console.log("friendRes.length = ", friendRes.length);
 
     for (let index = 0; index < friendRes.length; index++) {
       var user: any
-      console.log("friendRes-index: ", friendRes[index]);
+      //console.log("friendRes-index: ", friendRes[index]);
       if (friendRes[index].id_user1 != info.user.id)
         user = await this.UserService.getUserById(friendRes[index].id_user1);
       else
@@ -2072,7 +2072,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS')
   async getAllClientConnectedNotFriend(client: Socket) {
-    console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS :');
     const _client = arrClient.find(obj => obj.id == client.id);
     if (_client) {
       const friendList = await this.FriendListService.getUserFriendListWithLogin(_client.username);
@@ -2090,7 +2090,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             retArr.push(toPush);
           }
         }
-        console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
+        //console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
         this.server.to(client.id).emit("getAllClientConnectedWithoutFriend", retArr);
       }
     }
@@ -2098,7 +2098,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS')
   async getAllClientConnectedNotParticipants(client: Socket, data: { room_id: number, room_name: string }) {
-    console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
     const _room = arrRoom.find(obj => obj.id == data.room_id);
     if (_room) {
       const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
@@ -2112,7 +2112,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             retArr.push(toPush);
           }
         }
-        console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
         this.server.to(client.id).emit("getAllClientConnectedWithoutParticipants", retArr);
       }
     }
@@ -2131,7 +2131,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             retArr.push(toPush);
           }
         }
-        console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
+        //console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
         this.server.to(client.id).emit("getAllClientConnectedWithoutFriend", retArr);
       }
     }
@@ -2150,6 +2150,22 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('AffNotistack')
   async AffNotistack(client: Socket, info: { text: string, type: string }) {
     this.server.to(client.id).emit('returnAffNotistack', { text: info.text, type: info.type })
+  }
+
+  @SubscribeMessage('CHECK_IF_IN_GAME')
+  async CheckIfInGame(client: Socket, info: { login: string}) {
+    const room = this.getRoomByClientLogin(info.login);
+    if (room == null)
+      this.server.to(client.id).emit('client_not_playing')
+    else
+    this.server.to(client.id).emit('start_spectate')
+  }
+
+  @SubscribeMessage('RENDER_SPECTATE')
+  async RenderSpectate(client: Socket, info: { login: string }) {
+    const room = this.getRoomByClientLogin(info.login);
+    if (room != null)
+      this.server.to(client.id).emit('render_spectate', room[1])
   }
 
   ///////////////////////////////////////////////////////////
@@ -2183,7 +2199,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
     }).then((res) => {
       if (res != undefined)
-        this.server.to(client.id).emit('changeNicknameSuccess')
+        this.server.to(client.id).emit('changeNicknameSuccess', res)
     })
   }
 

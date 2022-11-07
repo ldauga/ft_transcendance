@@ -92,6 +92,7 @@ const GamePage = (props: any) => {
             ctx.fillStyle = 'black';
             ctx.textAlign = "center";
 
+            if (currentPlayer != undefined)
             ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
 
             ctx.fillStyle = 'rgb(48, 56, 76)';
@@ -266,8 +267,6 @@ const GamePage = (props: any) => {
 
                 resetCanvas()
 
-                // drawSpectator(room)
-
                 drawFont(ctx, room)
 
                 drawLimitsMove(ctx)
@@ -286,9 +285,6 @@ const GamePage = (props: any) => {
                     drawText(ctx, room)
                     return
                 }
-
-
-                // drawBallParticles(ctx, room)
 
                 drawBall(ctx, room)
 

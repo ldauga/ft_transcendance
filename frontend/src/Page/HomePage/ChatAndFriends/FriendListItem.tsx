@@ -83,7 +83,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
             >
                 {props.item.status == 'in-game' ?
                     <>
-                        <MenuItem onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: props.item.user.login }) }}>
+                        <MenuItem onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -119,7 +119,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     function AffStatus() {
         return (
             <div className="itemFriendListStatus">
-                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'connected' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
+                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'online' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
                 <p>{props.item.status}</p>
             </div>
         );
