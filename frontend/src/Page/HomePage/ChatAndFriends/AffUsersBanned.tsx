@@ -70,7 +70,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
             utilsData.socket.emit('AffNotistack', { text: "Wrong input for banUser", type: "error" });
             return;
         }
-        await axiosConfig.get('http://localhost:5001/user/login/' + inputValue).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + inputValue).then(async (res) => {
             setInputValue("");
             console.log("axios.get");
             console.log(res.data);
@@ -83,7 +83,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('http://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
