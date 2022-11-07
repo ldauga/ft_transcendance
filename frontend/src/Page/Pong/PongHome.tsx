@@ -120,11 +120,11 @@ function PongHome(props: any) {
 								<button className='join-queue' onClick={() => props.setCreateMap(true)}>Create map</button>
 						}
 					</div></> :
-				<div className='loadingScreen'>
-					<CircularProgress className='circularProgress' />
-					<span>Waiting for opponent...</span>
-					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
-					<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Leave queue</button>
+				<div className='loading-screen'>
+					<div className="pong-loader"></div>
+					<h3>Searching</h3>
+					{/* <button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> */}
+					<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
 				</div>}
 		</>
 	)
