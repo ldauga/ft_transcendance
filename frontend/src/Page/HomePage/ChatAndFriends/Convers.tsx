@@ -8,6 +8,7 @@ import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Convers.scss'
 import { bindActionCreators } from 'redux';
 import { initChatNotif, initOneConversChatNotif } from '../../../State/Action-Creators';
+import { ArrowBackIosNew } from '@mui/icons-material';
 
 function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {
 
@@ -255,7 +256,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     return (
         <div className="chat">
             <div className="header">
-                <button onClick={closeConvers} className="bi bi-arrow-left-short"></button>
+                <ArrowBackIosNew onClick={closeConvers} />
                 <div className="profile">
                     <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">

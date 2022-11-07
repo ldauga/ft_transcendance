@@ -14,7 +14,7 @@ import AffParticipantsBanned from './AffParticipantsBanned';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from 'react';
-import { Person, Settings } from '@mui/icons-material';
+import { ArrowBackIosNew, Person, Settings } from '@mui/icons-material';
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
@@ -527,8 +527,9 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     anchorEl={anchorEl}
                     id="account-menu"
                     open={open}
-                    onClose={handleCloseOptions}
-                    onClick={handleCloseOptions}
+                    className='setting-participant'
+                    // onClose={(e) => { e.stopPropagation(); handleCloseOptions()}}
+                    onClick={(e) => { e.stopPropagation(); handleCloseOptions()}}
                     PaperProps={{
                         elevation: 0,
                         sx: {
@@ -582,7 +583,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             return (
                 <div className="inItemFriendList_right">
                     {/* <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button> */}
-                    <IconButton onClick={handleClickOpenOptions}>
+                    <IconButton onClick={(e) => { e.stopPropagation(); console.log('menu'); handleClickOpenOptions(e)}}>
                         <MoreVertIcon />
                     </IconButton>
                     <MenuOptions />
@@ -616,7 +617,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     id="account-menu"
                     open={open}
                     onClose={handleCloseOptions}
-                    onClick={handleCloseOptions}
+                    onClick={() => {console.log('menu'); handleCloseOptions}}
                     PaperProps={{
                         elevation: 0,
                         sx: {
@@ -719,27 +720,19 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 if (allUserMute.find(obj => obj.id_muted == item.id))
                     muted = true;
                 if (allUserMute.find(obj => obj.id_muted == item.id)) {
-                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                        <div className="inItemFriendList">
-                            <div className="inItemFriendList_left">
-                                <img src={tmpProfilePic}></img>
-                                <p>{item.login} (Muted)</p>
-                            </div>
-                            <RightItemMuted login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} />
-                        </div>
-                    </div>)
-                }
+                    itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }} >
+                        <img src={tmpProfilePic}></img>
+                        <p>{item.login} (Muted)</p>
+                        <RightItemMuted login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} />
+                    </div>
+                    )}
                 else {
-                    itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                        <div className="inItemFriendList">
-                            <div className="inItemFriendList_left">
-                                <img src={tmpProfilePic}></img>
-                                <p>{item.login}</p>
-                            </div>
-                            <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={muted} />
-                        </div>
-                    </div>)
-                }
+                    itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+                        <img src={tmpProfilePic}></img>
+                        <p className='test'>{item.login}</p>
+                        <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={muted} />
+                    </div>
+                    )}
             })
             setItemListHistory(itemList);
         })
@@ -752,21 +745,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         }
     });
 
-    function AffList() {
-        if (isCreateInvitation == true)
-            return (
-                <div id="affSmall">
-                    {itemListHistory}
-                </div>
-            );
-        else
-            return (
-                <div id="affBig">
-                    {itemListHistory}
-                </div>
-            );
-    };
-
     function MainAff() {
         if (isAffBanned) {
             return (
@@ -777,19 +755,27 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         }
         else {
             return (
-                <div className="mainAffGene">
-                    <div id="header" className="mainHeader">
-                        <div className="mainHeaderLeft mainHeaderSide">
-                            <button onClick={closeAffParticipantsRooms} className="bi bi-arrow-left"></button>
+                <div className="chat">
+                    <div className="header">
+                        <ArrowBackIosNew onClick={closeAffParticipantsRooms} />
+                        <div className="group-profile">
+                            <div className='profile-pic-group'>
+                                <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
+                                <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
+                            </div>
+                            <div className="group-name">
+                                <p>{props.roomsConversData.name}</p>
+                            </div>
                         </div>
-                        <h3>{props.roomsConversData.name}</h3>
                         <RightHeader />
                     </div>
                     {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
                     {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
                     {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
                     {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
-                    <AffList />
+                    <div className="participants">
+                        {itemListHistory}
+                    </div>
                 </div>
             );
         }
