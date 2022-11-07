@@ -310,7 +310,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
+                itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item item={item} />
                 </div>)
             });

@@ -28,12 +28,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
-    const [update, setUpdate] = useState(false);
     const [isAdmin, setAdmin] = useState(false);
 
     const [banRoomParticipant, setBanRoomParticipant] = useState(false);
     const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
+
+    const [pp1, setPp1] = useState("");
+    const [pp2, setPp2] = useState("");
 
     const [isAffBanned, setAffBanned] = useState(false);
 
@@ -301,12 +303,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     utilsData.socket.on('refreshParticipants', function (refreshParticipants: boolean) {
         console.log('refreshParticipants = ', refreshParticipants);
         if (refreshParticipants == true) {
-            const length = itemListHistory.length;
-            let secu = 0;
-            while (length == itemListHistory.length && secu < constWhileSecu) {
-                getListItem();
-                secu++;
-            }
+            utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         }
         utilsData.socket.off('refreshParticipants');
         utilsData.socket.removeListener('refreshParticipants');
@@ -340,15 +337,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
         console.log('newParticipant = ', newParticipantReturn);
-        if (newParticipantReturn == true) {
-            console.log("New participant in ", props.roomsConversData.name);//NOTIF à ajouter
-            const length = itemListHistory.length;
-            let secu = 0;
-            while (length == itemListHistory.length && secu < constWhileSecu) {
-                getListItem();
-                secu++;
-            }
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
     })
@@ -357,12 +346,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
         console.log('removeParticipantReturn = ', roomHasBeenDeletedReturn);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -371,12 +355,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.on('mutedUserInRoom', function (demutedUserInRoom: boolean) {
         console.log('mutedUserInRoom = ', demutedUserInRoom);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('mutedUserInRoom');
         utilsData.socket.removeListener('mutedUserInRoom');
     })
@@ -431,7 +410,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             room_name: props.roomsConversData.name
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
-        setUpdate(false);
     }
 
     function demute(item: { login: string, id: number, admin: boolean }) {
@@ -529,7 +507,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     open={open}
                     className='setting-participant'
                     // onClose={(e) => { e.stopPropagation(); handleCloseOptions()}}
-                    onClick={(e) => { e.stopPropagation(); handleCloseOptions()}}
+                    onClick={(e) => { e.stopPropagation(); handleCloseOptions() }}
                     PaperProps={{
                         elevation: 0,
                         sx: {
@@ -583,7 +561,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             return (
                 <div className="inItemFriendList_right">
                     {/* <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button> */}
-                    <IconButton onClick={(e) => { e.stopPropagation(); console.log('menu'); handleClickOpenOptions(e)}}>
+                    <IconButton onClick={(e) => { e.stopPropagation(); console.log('menu'); handleClickOpenOptions(e) }}>
                         <MoreVertIcon />
                     </IconButton>
                     <MenuOptions />
@@ -617,7 +595,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     id="account-menu"
                     open={open}
                     onClose={handleCloseOptions}
-                    onClick={() => {console.log('menu'); handleCloseOptions}}
+                    onClick={() => { console.log('menu'); handleCloseOptions }}
                     PaperProps={{
                         elevation: 0,
                         sx: {
@@ -685,65 +663,44 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
-    const getListItem = async () => {
+    utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
+        console.log('getAllParticipantsReturn = ', data);
+        const oldLength = itemListHistory.length;
+        getListItem(data);
+        utilsData.socket.off('getAllParticipantsReturn');
+        utilsData.socket.removeListener('getAllParticipantsReturn');
+    })
+
+    const getListItem = async (data: any) => {
         const admin = await checkIfAdmin();
-        console.log("getListItem admin: ", admin);
-        let allUserMute: { id_muted: number, name_muted: string }[] = [];
-        await axiosConfig.get('https://localhost:5001/muteList/getAllRoomMute/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log('res.data allUserMute = ', res.data);
-            allUserMute = res.data;
-            console.log('nameTmp allUserBan = ', allUserMute);
-        });//récupère tous les user mute de la room
-        let allUsers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
-        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
-            console.log("get List User: ", res.data);
-            let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
-            res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
-                    allUsers.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
-                });
-            });
-            console.log('itemList get Users: ', allUsers);
+        console.log("get affParticipantsRooms");
+        let itemList: any[] = []
+        console.log('data = ', data);
+        let i = 0;
+        data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }) => {
+            console.log("item: ", item);
+            if (i == 0) {
+                setPp1(item.profile_pic);
+                i++;
+            }
+            else if (i == 1) {
+                setPp2(item.profile_pic);
+                i++;
+            }
+            itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+                <img src={item.profile_pic}></img>
+                {item.mute ? <p>{item.nickname} (Mute)</p> : <p>{item.nickname}</p>}
+                <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={item.mute} />
+            </div>
+            )
         })
-        console.log("allUsers2: ", allUsers);
-        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
-            let itemList: any[] = []
-            console.log('res.data = ', res.data);
-            res.data.forEach((item: { login: string, id: number, admin: boolean }) => {
-                const profile_pic = `https://cdn.intra.42.fr/users/${item.login}.jpg`;
-                console.log("test1: ", allUserMute);
-                console.log("test: ", allUserMute.find(obj => obj.id_muted == item.id));
-                let tmpProfilePic = allUsers.find(obj => obj.id == item.id)?.profile_pic;
-                if (!tmpProfilePic)
-                    tmpProfilePic = "";
-                let muted = false;
-                if (allUserMute.find(obj => obj.id_muted == item.id))
-                    muted = true;
-                if (allUserMute.find(obj => obj.id_muted == item.id)) {
-                    itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }} >
-                        <img src={tmpProfilePic}></img>
-                        <p>{item.login} (Muted)</p>
-                        <RightItemMuted login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} />
-                    </div>
-                    )}
-                else {
-                    itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
-                        <img src={tmpProfilePic}></img>
-                        <p className='test'>{item.login}</p>
-                        <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={muted} />
-                    </div>
-                    )}
-            })
-            setItemListHistory(itemList);
-        })
+        setItemListHistory(itemList);
     }
 
     useEffect(() => {
-        if (!update) {
-            getListItem();
-            setUpdate(true);
-        }
-    });
+        console.log("useEffect AffParticipantsRooms");
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+    }, [props]);
 
     function MainAff() {
         if (isAffBanned) {
@@ -759,10 +716,11 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     <div className="header">
                         <ArrowBackIosNew onClick={closeAffParticipantsRooms} />
                         <div className="group-profile">
-                            <div className='profile-pic-group'>
-                                <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' />
-                                <img src='https://cdn.intra.42.fr/users/fdf27bb2b99e4868868e8dc74cabd562/ldauga.jpg' />
-                            </div>
+                            {pp2 && pp1 ? <div className='profile-pic-group'>
+                                <img src={pp1} />
+                                <img src={pp2} />
+                            </div> : pp1 ?
+                                <img src={pp1} /> : <img src="" />}
                             <div className="group-name">
                                 <p>{props.roomsConversData.name}</p>
                             </div>

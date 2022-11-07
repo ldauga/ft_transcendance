@@ -2265,6 +2265,30 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('GET_ALL_PARTICIPANTS')
+  async getAllParticipants(client: Socket, data: { room_id: number, room_name: string }) {
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
+      const userList = await this.UserService.getAllUsers();
+      if (roomParticipants && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomParticipants.find(obj => obj.user_login == userList[index].login);
+          if (search) {
+            const tmpMute = await this.MutelistService.checkRoomMute(userList[index].id, userList[index].login, data.room_name);
+            const tmpAdmin = await this.ParticipantsService.checkAdmin(userList[index].login, data.room_name);
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic, admin: tmpAdmin, mute: tmpMute };
+            retArr.push(toPush);
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllParticipantsReturn", retArr);
+      }
+    }
+  }
+
   @SubscribeMessage('GET_CLIENT_STATUS')
   async getClientStatus(client: Socket, info: { user: any }) {
     if (this.getRoomByClientLogin(info.user.login))
