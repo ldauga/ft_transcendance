@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,7 +6,6 @@ import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getEnvPath } from './common/helper/env.helper';
-import { EventsGateway } from './api/events/events.gateway';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { FriendListModule } from './api/friendsList/friendList.module';
 import { InvitationRequestModule } from './api/invitationRequest/invitationRequest.module';
@@ -17,7 +16,6 @@ import { MatchesHistoryModule } from './api/matchesHistory/matchesHistory.module
 import { BlackListModule } from './api/blackList/blackList.module';
 import { MuteListModule } from './api/muteList/muteList.module';
 import { EventsModule } from './api/events/events.module';
-//import { AppLoggerMiddleware } from './app.middleware';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
