@@ -103,12 +103,12 @@ function PongHome(props: any) {
 
 	return (
 		<>
-			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
 			<Background />
 			{!inQueue ?
 				<>
 					<div className='pong'>
-						<h1>Select Map</h1> 
+						<h1>Select Map</h1>
 						<div className='select-map'>
 							<button onClick={handleBack}><ArrowBackIosNew /></button>
 							<MapCarousel activeStep={activeStep} />

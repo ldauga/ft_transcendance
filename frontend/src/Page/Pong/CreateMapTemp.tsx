@@ -532,7 +532,7 @@ const CreateMapTemp = (props: any) => {
 
 	return (
 		<>
-			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
 			<Background />
 			<div className="create-map">
 				<div className="canvas">

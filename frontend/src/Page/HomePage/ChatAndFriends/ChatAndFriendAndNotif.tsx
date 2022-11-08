@@ -13,7 +13,7 @@ import RoomsList from "./RoomsList";
 import BanUser from "./BanUser";
 import AffUsersBanned from "./AffUsersBanned";
 
-function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {
+function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {
 
     const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
@@ -23,7 +23,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
     const [isChat, setChat] = useState(false);
     const [isRooms, setRooms] = useState(false);
     const [isRoomsConvers, setRoomsConvers] = useState(false);
-    const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "" });
+    const [conversCorrespondantData, setConversCorrespondantData] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
     const [roomsConversData, setroomsConversData] = useState({ name: "", id: 0 });
     const [oldAff, setOldAff] = useState("");
     const [oldAffRoomsConvers, setOldAffRoomConvers] = useState("");
@@ -42,7 +42,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
         setChat(false);
         setRooms(false);
         setRoomsConvers(false);
-        setConversCorrespondantData({ id: 0, login: "" });
+        setConversCorrespondantData({ id: 0, login: "", nickname: "", profile_pic: "" });
         setroomsConversData({ name: "", id: 0 });
         setOldAff("");
         setOldAffRoomConvers("");

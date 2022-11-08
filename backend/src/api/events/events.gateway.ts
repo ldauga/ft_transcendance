@@ -634,9 +634,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       login_receiver: "",
       userOrRoom: true,
       serverMsg: true,
-      room_id: data.room_id,
-      room_name: data.room_name,
-      text: data.user_login + " created chat room",
+      room_id: tmp_room_id,
+      room_name: data.name,
+      text: data.owner_login + " created chat room",
       year: getYear(),
       month: getMonth(),
       day: getDay(),
@@ -1119,6 +1119,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
       if (_notifToReset) {
         _notifToReset.nb = 0;
+        console.log("_notifToReset.nb: ", _notifToReset.nb);
       }
       else {
         this.logger.log("delChatNotifs _notifToReset not found");

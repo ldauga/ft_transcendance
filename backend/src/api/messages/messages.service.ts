@@ -25,7 +25,7 @@ export class MessagesService {
 			]
 		});
 		let users: { login: string, id: number }[] = [];
-		console.log("messagesReturn: ", messagesReturn);
+		//console.log("messagesReturn: ", messagesReturn);
 		if (!messagesReturn)
 			return users;
 		messagesReturn.forEach(element => {

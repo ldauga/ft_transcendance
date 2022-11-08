@@ -10,7 +10,7 @@ import { actionCreators, RootState } from '../../State';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
 
-function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string }, setOpenFriendConversFromProfile: Function }) {
+function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 
@@ -95,8 +95,21 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	})
 
 	useEffect(() => {
-		if (props.openFriendConversFromProfile)
-			openFriendList();
+		if (props.openFriendConversFromProfile) {
+			if (isChat) {
+				closeChat();
+				openFriendList();
+			}
+			else if (isNotif) {
+				closeNotif();
+				openFriendList();
+			}
+			else if (isFriendList) {
+
+			}
+			else
+				openFriendList();
+		}
 	}, [props]);
 
 	const closeFriendList = () => {

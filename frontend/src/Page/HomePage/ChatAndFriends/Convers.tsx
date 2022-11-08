@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { initChatNotif, initOneConversChatNotif } from '../../../State/Action-Creators';
 import { ArrowBackIosNew } from '@mui/icons-material';
 
-function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {
+function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string, nickname: string, profile_pic: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -29,7 +29,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const closeConvers = () => {
         //setConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
-        props.setConversCorrespondantData({ login: "", id: 0 });
+        props.setConversCorrespondantData({ id: 0, login: "", nickname: "", profile_pic: "" });
         if (props.openFriendConversFromProfile)
             props.setOpenFriendConversFromProfile(false);
         props.setConvers(false);
@@ -84,6 +84,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         if (!data.userOrRoom && data.login_sender == props.conversCorrespondantData.login) {
             delChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
         }
+        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.conversCorrespondantData.login, userOrRoom: false });
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
     })
@@ -258,9 +259,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             <div className="header">
                 <ArrowBackIosNew onClick={closeConvers} />
                 <div className="profile">
-                    <img src='https://cdn.intra.42.fr/users/2e1946910199ba1fb50a70b7ab192fe0/cgangaro.jpg' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
+                    <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
-                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.login}</p>
+                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
                         <p><div className='status'></div>online</p>
                     </div>
                 </div>

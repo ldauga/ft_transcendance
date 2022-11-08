@@ -93,7 +93,7 @@ const GamePage = (props: any) => {
             ctx.textAlign = "center";
 
             if (currentPlayer != undefined)
-            ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
+                ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
 
             ctx.fillStyle = 'rgb(48, 56, 76)';
 
@@ -338,10 +338,10 @@ const GamePage = (props: any) => {
     function affFinishScreen() {
 
         let U, H;
-        setTimeout(function() {
+        setTimeout(function () {
             window.location.replace('https://localhost:3000');
-          }, 5000);
-        
+        }, 5000);
+
         if (finishRoom?.players[0].user?.login == persistantReducer.userReducer.user?.login) {
             U = finishRoom?.players[0]
             H = finishRoom?.players[1]
@@ -354,7 +354,7 @@ const GamePage = (props: any) => {
             <div className='game-finished'>
                 <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
                 <div className='result'>
-                    <span><img src={U?.user?.profile_pic}/>{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}<img src={H?.user?.profile_pic}/></span>
+                    <span><img src={U?.user?.profile_pic} />{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}<img src={H?.user?.profile_pic} /></span>
                 </div>
             </div>
         )
@@ -363,7 +363,7 @@ const GamePage = (props: any) => {
 
     return (
         <div className="mainDiv">
-            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }}/>
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
             <Background />
             {
                 !finishGame ?

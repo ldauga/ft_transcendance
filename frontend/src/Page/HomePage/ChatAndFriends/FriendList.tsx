@@ -15,7 +15,7 @@ import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
 import { constWhileSecu } from "../HomePage";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string } }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string } }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -145,7 +145,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 		console.log("useEffect friendList");
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		if (props.openFriendConversFromProfile) {
-			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login });
+			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login, nickname: props.dataFriendConversFromProfile.nickname, profile_pic: props.dataFriendConversFromProfile.profile_pic });
 			props.setFriendList(false);
 			props.setConvers(true);
 		}

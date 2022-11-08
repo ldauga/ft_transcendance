@@ -59,11 +59,11 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         utilsData.socket.removeListener('roomHasBeenDeleted');
     })
 
-    const openConvers = (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
+    const openConvers = (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
         if (!item.userOrRoom) {
             //setConversChatNotif({ name: item.name, userOrRoom: false });
-            props.setConversCorrespondantData({ id: item.id, login: item.name });
-            delChatNotif({ name: item.name, userOrRoom: false });
+            props.setConversCorrespondantData({ id: item.id, login: item.login, nickname: item.name, profile_pic: item.profile_pic });
+            delChatNotif({ name: item.login, userOrRoom: false });
             props.setChat(false);
             props.setConvers(true);
         }
@@ -90,7 +90,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const getListItem = async () => {
         let relationList: any[] = [];
-        let ChatList: { name: string, id: number, profile_pic: string, userOrRoom: boolean }[] = [];
+        let ChatList: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }[] = [];
         await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             relationList = res.data;
         });
@@ -100,20 +100,20 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 const user = await axiosConfig.get('https://localhost:5001/user/id/' + relationList[i].id);
                 console.log("user.data: ", user.data, "i: ", i);
                 console.log("push 1");
-                ChatList.push({ name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
+                ChatList.push({ login: user.data.login, name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
             }
             else {
                 const checkIfParticipant = await axiosConfig.get('https://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
                 console.log("checkIfParticipant: ", checkIfParticipant.data);
                 if (checkIfParticipant.data) {
                     console.log("push 2");
-                    ChatList.push({ name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
+                    ChatList.push({ login: "", name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
                 }
             }
         }
         let itemList: any[] = [];
         console.log("ChatList.length = ", ChatList.length);
-        await ChatList.forEach(async (item: { name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
+        await ChatList.forEach(async (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
             console.log("test2");
             // let pp1 = "";
             // let pp2 = "";

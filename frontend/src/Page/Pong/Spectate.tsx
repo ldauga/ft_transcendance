@@ -38,12 +38,12 @@ function Spectate() {
             }
         }
     })
-    
+
     // useEffect(() => { if (room != null) render(room) }, [room])
-    
+
     utilsData.socket.on('client_not_playing', function () {
         history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/NotFound')
+        window.location.replace('https://localhost:3000/NotFound')
     })
 
     utilsData.socket.on('start_spectate', function () {
@@ -266,11 +266,11 @@ function Spectate() {
 
     utilsData.socket.on('render_spectate', render)
 
-        
+
 
     return (
         <>
-            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
             <Background />
             <canvas
                 id='pongBoard'

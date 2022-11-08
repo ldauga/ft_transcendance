@@ -84,7 +84,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
 
-    utilsData.socket.removeAllListeners('newMsgReceived');
+    // utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
         console.log('newMsgReceived = ', data);
@@ -95,11 +95,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         //     secu++;
         // }
         setUpdate(true);
+        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
         if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
             delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         }
-        utilsData.socket.off('newMsgReceived');
-        utilsData.socket.removeListener('newMsgReceived');
     })
 
     function getYear() {
@@ -347,6 +346,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User 2: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
+                console.log("login = ", item.login, "itemList: ", itemList)
                 if (!itemList.find(obj => obj.login == item.login))
                     await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                         itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
@@ -367,6 +367,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     useEffect(() => {
         console.log("update: ", update);
+        utilsData.socket.off('newMsgReceived');
+        utilsData.socket.removeListener('newMsgReceived');
         if (update) {
             setUpdate(false);
             checkIfOwner();
@@ -492,6 +494,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         function HeaderPrint() {
             let str_nickname = "";
+            console.log("users: ", users);
             for (let i = 0; i < users.length; i++) {
                 if (i + 1 < users.length)
                     str_nickname = str_nickname + users[i].nickname + ", ";
@@ -506,7 +509,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                             <img src={pp1} />
                             <img src={pp2} />
                         </div> : pp1 ?
-                            <img src={pp1} /> : <img src="" />}
+                            <div className='profile-pic-group'><img src={pp1} /></div> :
+                            <div className='profile-pic-group'><img src="" /></div>}
                         <div className="group-name">
                             <p>{props.roomsConversData.name}</p>
                             <p className='name-participants' onClick={affParticipants}>{str_nickname}</p>

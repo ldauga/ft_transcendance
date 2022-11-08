@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/AffParticipantsRooms.scss'
+import './CSS/FriendList.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import BanRoomParticipant from './BanRoomParticipant';
@@ -11,13 +12,14 @@ import CreateInvitationRooms from './CreateInvitationRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import MuteRoomParticipant from './MuteRoomParticipant';
 import AffParticipantsBanned from './AffParticipantsBanned';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from 'react';
 import { ArrowBackIosNew, Person, Settings } from '@mui/icons-material';
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
+import TempleBuddhistIcon from '@mui/icons-material/TempleBuddhist';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -367,27 +369,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             setCreateInvitation(true);
     };
 
-    const handleClickMuteRoomParticipant = () => {
-        if (muteRoomParticipant)
-            setMuteRoomParticipant(false);
-        else
-            setMuteRoomParticipant(true);
-    }
-
-    const handleClickBanRoomParticipant = () => {
-        if (banRoomParticipant)
-            setBanRoomParticipant(false);
-        else
-            setBanRoomParticipant(true);
-    }
-
-    const handleClickAddAdmin = () => {
-        if (addAdmin)
-            setAddAdmin(false);
-        else
-            setAddAdmin(true);
-    }
-
     const closeAffParticipantsRooms = () => {
         props.setAffParticipantsRooms(false);
         props.setConversRooms(true);
@@ -414,22 +395,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     function demute(item: { login: string, id: number, admin: boolean }) {
         utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login });
-    };
-
-    function RightItemMuted(item: { login: string, id: number, admin: boolean, participantAdmin: boolean }) {
-        console.log("RightItemMuted isAdmin: ", isAdmin, ", admin: ", item.admin);
-        if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
-            return (
-                <div className="inItemFriendList_right">
-                    <button onClick={() => demute(item)} className="bi bi-mic-fill"></button>
-                    <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button>
-                </div>
-            );
-        else
-            return (
-                <div className="inItemFriendList_right">
-                </div>
-            );
     };
 
     const affBanned = async () => {
@@ -559,7 +524,12 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
         if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
             return (
-                <div className="inItemFriendList_right">
+                <div className="inItemParticipant_right">
+                    {item.participantAdmin || (item.admin && item.login == userData.userReducer.user?.login) ?
+                        <div className='icon_admin'>
+                            <Tooltip title="Admin"><TempleBuddhistIcon /></Tooltip>
+                        </div> :
+                        <></>}
                     {/* <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button> */}
                     <IconButton onClick={(e) => { e.stopPropagation(); console.log('menu'); handleClickOpenOptions(e) }}>
                         <MoreVertIcon />
@@ -569,7 +539,12 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
         else
             return (
-                <div className="inItemFriendList_right">
+                <div className="inItemParticipant_right">
+                    {item.participantAdmin || (item.admin && item.login == userData.userReducer.user?.login) ?
+                        <div className='icon_admin'>
+                            <Tooltip title="Admin"><TempleBuddhistIcon /></Tooltip>
+                        </div> :
+                        <></>}
                 </div>
             );
     };

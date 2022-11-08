@@ -2,6 +2,7 @@
     .chat {
         .participants {
             height: 100%;
+
             .participant {
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
@@ -11,6 +12,7 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 5px;
+
                 img {
                     --avatar-size: 51px;
                     border-radius: 50%;
@@ -18,14 +20,27 @@
                     height: var(--avatar-size);
                     object-fit: cover;
                 }
+
                 p {
                     width: 100%;
                 }
+
                 &:hover {
                     background: rgba($color: #efefef, $alpha: .5);
                     cursor: pointer;
                 }
             }
         }
+    }
+}
+
+.inItemParticipant_right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 30%;
+
+    .icon_admin {
+        margin-right: 10px;
     }
 }
