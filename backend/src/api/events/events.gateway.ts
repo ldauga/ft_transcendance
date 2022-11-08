@@ -919,6 +919,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i2++;
         }
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
+        if (_client_sender.username != data.login)
+          this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
         arrRoom.find(obj => obj.name == data.room_name).users.slice(index);
         const room = arrRoom.find(obj => obj.name == data.room_name);
@@ -1292,6 +1294,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_client != null) {
         console.log(_client.username, " quit ", data.room_name);
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
+        this.server.to(_client.id).emit('notif', { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
         arrRoom.find(obj => obj.name == data.room_name).users.slice(index);
         const room = arrRoom.find(obj => obj.name == data.room_name);

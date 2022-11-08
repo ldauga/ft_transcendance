@@ -150,7 +150,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const quitConvers = () => {
         const participantToRemove = {
+            id_sender: userData.userReducer.user?.id,
+            login_sender: userData.userReducer.user?.login,
             login: userData.userReducer.user?.login,
+            id: userData.userReducer.user?.id,
             room_name: props.roomsConversData.name,
             room_id: props.roomsConversData.id
         }

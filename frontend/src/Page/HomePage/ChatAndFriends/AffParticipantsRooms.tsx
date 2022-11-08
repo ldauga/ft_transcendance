@@ -387,8 +387,11 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const removeParticipant = (item: { login: string, id: number, admin: boolean, participantAdmin: boolean }) => {
         const participantToRemove = {
             id_sender: userData.userReducer.user?.id,
+            login_sender: userData.userReducer.user?.login,
             login: item.login,
-            room_name: props.roomsConversData.name
+            id: item.id,
+            room_name: props.roomsConversData.name,
+            room_id: props.roomsConversData.id
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
     }
