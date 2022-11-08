@@ -40,26 +40,6 @@ export class MessagesController {
     return returnCheck;
   }
 
-  //TROUVER SOLUTION POUR METTRE LE GUARD
-  /*@Post()
-  @UseGuards(AuthGuard('jwt'))
-  public createMessages(@Body() body: MessagesDto): Promise<MessagesEntity> {
-    console.log('body createMessages: ', body);
-    const newMessage = this.service.createMessages(body);
-    if (!newMessage)
-      return null;
-    return newMessage;
-  }*/
-
-  @Post('/removeAllRoomMessages/')
-  public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<boolean> {
-    console.log('body removeAllRoomMessages: ', body);
-    const newMessage = this.service.removeAllRoomMessages(body.room_id, body.room_name);
-    if (!newMessage)
-      return null;
-    return newMessage;
-  }
-
   @Get()
   @UseGuards(AuthGuard('jwt'))
   public getAllMessages(): Promise<MessagesEntity[]> {

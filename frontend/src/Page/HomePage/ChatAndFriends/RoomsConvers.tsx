@@ -1,22 +1,16 @@
-import axios from 'axios';
-import { createRef, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../../State';
 import './CSS/RoomsConvers.scss'
 import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
 import '../Homepage.scss'
-import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
-import { constWhileSecu } from '../HomePage';
-import ChangeRoomPassword from './ChangeRoomPassword';
 import axiosConfig from '../../../Utils/axiosConfig';
-import SendIcon from '@mui/icons-material/Send';
-import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
+import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
-import BathtubIcon from '@mui/icons-material/Bathtub';
 import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -669,7 +663,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         return (
             <div className="chat">
                 <Header />
-                {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
                 <AffConvers />
                 <SendZone />
             </div>

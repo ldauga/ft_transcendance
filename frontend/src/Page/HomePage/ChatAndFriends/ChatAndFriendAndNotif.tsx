@@ -10,7 +10,6 @@ import RoomsConvers from "./RoomsConvers";
 import './CSS/ChatAndFriends.scss'
 import AffNotif from "./AffNotif";
 import RoomsList from "./RoomsList";
-import BanUser from "./BanUser";
 import AffUsersBanned from "./AffUsersBanned";
 
 function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {

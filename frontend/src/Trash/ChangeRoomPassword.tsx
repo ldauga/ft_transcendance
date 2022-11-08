@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
-import './CSS/Rooms.scss'
-import '../Homepage.scss'
+import { RootState } from '../State';
 import { Checkbox } from '@mui/material';
-import { valideInput } from '../../../Utils/utils';
+import { valideInput } from '../Utils/utils';
 
 function ChangeRoomPassword(props: { roomsConversData: { name: string, id: number } }) {
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
-import BanUser from "./BanUser";
+import BanUser from "../../../Trash/BanUser";
 import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, ListItemIcon, Menu, MenuItem, TextField } from "@mui/material";

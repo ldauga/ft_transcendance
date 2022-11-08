@@ -1,13 +1,11 @@
-import { Button, TextField } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import axios from 'axios';
+import { TextField } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
 import './CSS/Convers.scss'
 import { bindActionCreators } from 'redux';
-import { initChatNotif, initOneConversChatNotif } from '../../../State/Action-Creators';
+import { initOneConversChatNotif } from '../../../State/Action-Creators';
 import { ArrowBackIosNew } from '@mui/icons-material';
 
 function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string, nickname: string, profile_pic: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {

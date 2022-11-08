@@ -4,15 +4,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
-import BanUser from "./BanUser";
-import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
-import { SnackbarKey, withSnackbar } from 'notistack'
-import { useSnackbar } from 'notistack';
 import { constWhileSecu } from "../HomePage";
 
 function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string } }) {

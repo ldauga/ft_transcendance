@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from "@mui/material";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
@@ -13,7 +12,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 

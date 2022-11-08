@@ -38,35 +38,4 @@ export class RoomsController {
     // console.log('checkIfOwner Check = ', returnCheck);
     return returnCheck;
   }
-
-  @Post('/changePassword/')
-  @UseGuards(AuthGuard('jwt'))
-  public async changePassword(@Body() body: { room_name: string, passwordOrNot: boolean, password: string }): Promise<boolean> {
-    console.log('changePassword Controller');
-    const changeReturn = await this.service.changePassword(body.room_name, body.passwordOrNot, body.password);
-    console.log('changePassword Controller', changeReturn);
-    return changeReturn;
-  }
-
-  @Post()
-  @UseGuards(AuthGuard('jwt'))
-  public async createRoom(@Body() body: RoomsDto): Promise<RoomsEntity> {
-    // console.log('body', body);
-    const newRoom = await this.service.createRoom(body);
-    return newRoom;
-  }
-
-  @Post('/:id/:roomName')
-  @UseGuards(AuthGuard('jwt'))
-  public async removeRoom(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<boolean> {
-    console.log('removeRoom Controller');
-    const removeReturn = await this.service.removeRoom(id, roomName);
-    console.log('removeRoom Controller', removeReturn);
-    return true;
-  }
-
-  // @Get('/:id')
-  // public getParticipantsRoom(@Param('id', ParseIntPipe) id: number): Promise<number[]> {
-  //   return this.service.getParticipantsRoom(id);
-  // }
 }
