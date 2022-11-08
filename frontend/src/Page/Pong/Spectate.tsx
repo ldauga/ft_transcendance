@@ -38,12 +38,12 @@ function Spectate() {
             }
         }
     })
-    
+
     // useEffect(() => { if (room != null) render(room) }, [room])
-    
+
     utilsData.socket.on('client_not_playing', function () {
         history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/NotFound')
+        window.location.replace('https://localhost:3000/NotFound')
     })
 
     utilsData.socket.on('start_spectate', function () {
@@ -266,18 +266,105 @@ function Spectate() {
 
     utilsData.socket.on('render_spectate', render)
 
-        
+    const [finishGame, setFinishGame] = useState(false);
+    const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
+
+    utilsData.socket.on('finish', (room: gameRoomClass) => {
+        setFinishGame(true)
+
+        setFinishRoom(room)
+    });
+
+    function affFinishScreen() {
+
+        return (
+            <div className='finishGameScreen'>
+
+                <div className="finishMsg">
+                    <span>
+                        {finishRoom?.players[0].score == 3 ? 'VICTORY' : 'DEFEAT'}
+                    </span>
+                </div>
+
+                <div className="versusContainer">
+
+                    <div className="playerContainer">
+
+                        <div className={finishRoom?.players[0].score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
+                            <img src={finishRoom?.players[0].user?.profile_pic} />
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {finishRoom?.players[0].user?.nickname}
+                            </span>
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {finishRoom?.players[0].score}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div className="vs">
+                        <span>VS</span>
+                    </div>
+
+                    <div className="playerContainer">
+
+                        <div className={finishRoom?.players[1].score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
+                            <img src={finishRoom?.players[1].user?.profile_pic} />
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {finishRoom?.players[1].user?.nickname}
+                            </span>
+                        </div>
+
+                        <div className="name">
+                            <span>
+                                {finishRoom?.players[1].score}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div className="buttonContainer">
+
+                    <button onClick={() => {window.location.replace('https://localhost:3000/pong')}} >Replay</button>
+                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/')}} >Home Page</button>
+
+                </div>
+
+
+            </div>
+        )
+
+    }
 
     return (
         <>
-            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
-            <Background />
-            <canvas
-                id='pongBoard'
-                className='pongBoard'
-                height={canvas.height}
-                width={canvas.width}
-            />
+            {
+                !finishGame ?
+                    <>
+                        <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
+                        <Background />
+                        <canvas
+                            id='pongBoard'
+                            className='pongBoard'
+                            height={canvas.height}
+                            width={canvas.width}
+                        />
+                    </> :
+                    <>
+                        {}
+                    </>
+            }
         </>
     )
 }

@@ -8,28 +8,18 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { Interval, SchedulerRegistry } from '@nestjs/schedule';
+import { Interval } from '@nestjs/schedule';
 import { HttpService } from '@nestjs/axios';
 import { gameRoomClass } from '../../GameRoomClass';
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { HighlightSpanKind, isIdentifierOrPrivateIdentifier } from 'typescript';
-import { Observable } from 'rxjs';
-import { AxiosResponse, AxiosRequestConfig } from "axios";
-import axios from 'axios';
 import { FriendListService } from '../friendsList/friendList.service';
 import { InvitationRequestService } from '../invitationRequest/invitationRequest.service';
 import { RoomsService } from '../rooms/rooms.service';
 import { MessagesService } from '../messages/messages.service';
 import { ParticipantsService } from '../participants/participants.service';
-import { MatchesHistoryModule } from '../matchesHistory/matchesHistory.module';
 import { MatchesHistoryService } from '../matchesHistory/matchesHistory.service';
 import { BlackListService } from '../blackList/blackList.service';
-import { isInt16Array } from 'util/types';
 import { MuteListService } from '../muteList/muteList.service';
 import { UserService } from '../user/user.service';
-import { freemem } from 'os';
-import { info } from 'console';
 
 interface Client {
   id: string;
@@ -169,18 +159,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (indexOfClient !== -1)
       arrClient.splice(indexOfClient, 1);
 
-    var room: [number, gameRoomClass] | null
-
-    while ((room = this.getRoomByClientID(client.id)) != null) {
+    const allRoom = this.getAllRoomByClientID(client.id)
+    for (let i = 0; i < allRoom.length; i++) {
       for (let index = 0; index < 2; index++) {
-        if (this.pongInfo[room[0]].players[index].id == client.id) {
-          this.pongInfo[room[0]].players[index].connected = false
-          this.pongInfo[room[0]].players[index].dateDeconnection = Date.now()
+        if (this.pongInfo[allRoom[i].index].players[index].id == client.id) {
+          this.pongInfo[allRoom[i].index].players[index].connected = false
+          this.pongInfo[allRoom[i].index].players[index].dateDeconnection = Date.now()
         }
       }
-      if (this.pongInfo[room[0]].players.length == 1 || !this.pongInfo[room[0]].players[0].connected && !this.pongInfo[room[0]].players[1].connected) {
-        this.logger.log(`Room ${room[1].roomID} has been deleted.`)
-        this.pongInfo.splice(room[0], 1)
+      if (this.pongInfo[allRoom[i].index].players.length == 1 || (!this.pongInfo[allRoom[i].index].players[0].connected && !this.pongInfo[allRoom[i].index].players[1].connected && !this.pongInfo[allRoom[i].index].firstConnectionInviteProfie)) {
+        this.logger.log(`Room ${allRoom[i].index.roomID} has been deleted.`)
+        this.pongInfo.splice(allRoom[i].index, 1)
       }
     }
     //   for (let i = 0; i < 2; i++)
@@ -1418,6 +1407,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     return null
   }
 
+  getAllRoomByClientID(ClientID: string) {
+    const tmp = []
+    this.pongInfo.forEach((room, index) => {
+      if (room.players.find(player => player.id == ClientID) != undefined)
+        tmp.push({ index: index, room: room });
+    })
+
+    console.log(tmp)
+    return tmp
+  }
+
   getRoomBySpectateID(SpectateLogin: string): [number, gameRoomClass] | null {
     for (let i = 0; i < this.pongInfo.length; i++)
       for (let j = 0; j < this.pongInfo[i].spectate.length; j++)
@@ -1455,6 +1455,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     if (room != null) {
 
+      this.joinRoom(client, this.pongInfo[room[0]].roomID)
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].id = client.id
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected = true
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].sendNotif = false
@@ -1763,16 +1764,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
       if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
 
-        this.pongInfo[room[0]].players.forEach((player, index, playersArr) => {
-          var K = ((player.user.rank < 1000) ? 80 : ((player.user.rank < 1500) ? 50 : ((player.user.rank < 2000) ? 30 : 20)))
-
-          var winChance = (1 / (1 + (10 * ((playersArr[(index ? 0 : 1)].user.rank - player.user.rank) / 400))))
-
-          var newElo = player.user.rank + (K * (player.score == 3 ? 1 : 0 - winChance))
-
-          //console.log('K :', K, 'winChance :', winChance, 'newElo :', newElo)
-
-        })
+        console.log('ouioui')
 
         const data = {
           id_user1: room[1].players[0].user.id,
@@ -1782,7 +1774,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
         }
 
-        //const match = http.post('https://localhost:5001/matchesHistory', data);
         const match = this.MatchesHistoryService.createMatch(data);
 
         room[1].players.forEach((item, index) => {

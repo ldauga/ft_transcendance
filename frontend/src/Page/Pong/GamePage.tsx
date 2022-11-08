@@ -297,11 +297,9 @@ const GamePage = (props: any) => {
     utilsData.socket.on('render', render);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
-        utilsData.socket.emit('RENDER', props.roomID)
         setFinishGame(true)
 
         setFinishRoom(room)
-
     });
 
     let verifKey = false
