@@ -5,6 +5,7 @@ import { RootState } from '../../State';
 import { gameRoomClass } from './gameRoomClass';
 
 import './CSS/GamePage/GamePage.css';
+import './CSS/GamePage/Board.css';
 import './CSS/GamePage/GameFinished.scss';
 import './CSS/Utils.css';
 import Background from '../../Module/Background/Background';
@@ -297,11 +298,9 @@ const GamePage = (props: any) => {
     utilsData.socket.on('render', render);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
-        utilsData.socket.emit('RENDER', props.roomID)
         setFinishGame(true)
 
         setFinishRoom(room)
-
     });
 
     let verifKey = false
@@ -354,7 +353,17 @@ const GamePage = (props: any) => {
             <div className='game-finished'>
                 <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
                 <div className='result'>
-                    <span><img src={U?.user?.profile_pic} />{U?.user?.nickname}</span><span>{U?.score} - {H?.score}</span><span>{H?.user?.nickname}<img src={H?.user?.profile_pic} /></span>
+                    <span>
+                        <img src={U?.user?.profile_pic} />
+                        {U?.user?.nickname}
+                    </span>
+                    <span>
+                        {U?.score} - {H?.score}
+                    </span>
+                    <span>
+                        {H?.user?.nickname}
+                        <img src={H?.user?.profile_pic} />
+                    </span>
                 </div>
             </div>
         )
@@ -369,21 +378,11 @@ const GamePage = (props: any) => {
                 !finishGame ?
                     <div className="boardDiv">
                         <div className="blocksContainerCenter">
-                            <canvas id='spectate1'
-                                className='spectate'
-                                height='1000'
-                                width='400'
-                            />
                             <canvas
                                 id='pongBoard'
                                 className='pongBoard'
                                 height={canvas.height}
                                 width={canvas.width}
-                            />
-                            <canvas id='spectate2'
-                                className='spectate'
-                                height='1000'
-                                width='400'
                             />
                         </div>
                     </div>
