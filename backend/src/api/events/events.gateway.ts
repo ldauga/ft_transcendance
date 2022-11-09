@@ -2286,6 +2286,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('GET_ALL_PARTICIPANTS_BANNED')
+  async getAllParticipantsBanned(client: Socket, data: { room_id: number, room_name: string }) {
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomBanned = await this.BlacklistService.getAllRoomBan(data.room_id, data.room_name);
+      const userList = await this.UserService.getAllUsers();
+      if (roomBanned && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomBanned.find(obj => obj.login_banned == userList[index].login);
+          if (search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllParticipantsBannedReturn", retArr);
+      }
+    }
+  }
+
   @SubscribeMessage('GET_CLIENT_STATUS')
   async getClientStatus(client: Socket, info: { user: any }) {
     if (this.getRoomByClientLogin(info.user.login))

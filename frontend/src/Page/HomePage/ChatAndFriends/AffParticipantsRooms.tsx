@@ -10,14 +10,14 @@ import CreateInvitationRooms from './CreateInvitationRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import MuteRoomParticipant from './MuteRoomParticipant';
 import AffParticipantsBanned from './AffParticipantsBanned';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from 'react';
 import { ArrowBackIosNew, Person, Settings } from '@mui/icons-material';
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
-import TempleBuddhistIcon from '@mui/icons-material/TempleBuddhist';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
@@ -528,7 +528,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 <div className="inItemParticipant_right">
                     {item.participantAdmin || (item.admin && item.login == userData.userReducer.user?.login) ?
                         <div className='icon_admin'>
-                            <Tooltip title="Admin"><TempleBuddhistIcon /></Tooltip>
+                            <Tooltip title="Admin"><ManageAccountsIcon /></Tooltip>
                         </div> :
                         <></>}
                     {/* <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button> */}
@@ -543,7 +543,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 <div className="inItemParticipant_right">
                     {item.participantAdmin || (item.admin && item.login == userData.userReducer.user?.login) ?
                         <div className='icon_admin'>
-                            <Tooltip title="Admin"><TempleBuddhistIcon /></Tooltip>
+                            <Tooltip title="Admin"><ManageAccountsIcon /></Tooltip>
                         </div> :
                         <></>}
                 </div>
@@ -705,7 +705,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     </div>
                     {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
                     {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
-                    {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
+                    {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} setCreateInvitation={setCreateInvitation} />}
                     <div className="participants">
                         {itemListHistory}
                     </div>
@@ -720,6 +720,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             <Dialog open={openDialogMute} onClose={handleCloseDialogMute}>
                 <DialogTitle>Mute Participant</DialogTitle>
                 <DialogContent>
+                    <Box sx={{ mt: 2 }} />
                     <Grid container direction={"column"} spacing={5}>
                         <Grid item>
                             <FormControl className="FormControlDialog" fullWidth>
@@ -823,6 +824,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             <Dialog open={openDialogBan} onClose={handleCloseDialogBan}>
                 <DialogTitle>Ban Participant</DialogTitle>
                 <DialogContent>
+                    <Box sx={{ mt: 2 }} />
                     <Grid container direction={"column"} spacing={5}>
                         <Grid item>
                             <FormControl className="FormControlDialog" fullWidth>

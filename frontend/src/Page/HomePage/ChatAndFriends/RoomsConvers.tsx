@@ -8,10 +8,9 @@ import '../Homepage.scss'
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
+import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
-import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -597,9 +596,11 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             return (
                 <div className="header">
                     <HeaderPrint />
-                    <IconButton onClick={quitConvers}>
-                        <BabyChangingStationIcon />
-                    </IconButton>
+                    <Tooltip title="Quit chat room">
+                        <IconButton onClick={quitConvers}>
+                            <LogoutIcon />
+                        </IconButton>
+                    </Tooltip>
                 </div>
             );
     };

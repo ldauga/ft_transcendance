@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/AffParticipantsRooms.scss'
+import './CSS/BanRoomParticipant.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import axiosConfig from "../../../Utils/axiosConfig";
@@ -69,12 +69,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
         console.log('removeParticipantReturn = ', roomHasBeenDeletedReturn);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -83,12 +78,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     utilsData.socket.on('debanedUserInRoom', function (debanedUserInRoom: boolean) {
         console.log('debanedUserInRoom = ', debanedUserInRoom);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('debanedUserInRoom');
         utilsData.socket.removeListener('debanedUserInRoom');
     })
@@ -97,22 +87,10 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     utilsData.socket.on('newRoomBan', function (newRoomBan: boolean) {
         console.log('newRoomBan = ', newRoomBan);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newRoomBan');
         utilsData.socket.removeListener('newRoomBan');
     })
-
-    const handleClickBanRoomParticipant = () => {
-        if (banRoomParticipant)
-            setBanRoomParticipant(false);
-        else
-            setBanRoomParticipant(true);
-    }
 
     const closeAffBanned = () => {
         props.setAffBanned(false);
@@ -161,33 +139,32 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
             );
     };
 
-    const getListItem = async () => {
+    utilsData.socket.on('getAllParticipantsBannedReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log('getAllParticipantsBannedReturn = ', data);
+        getListItem(data);
+    })
+
+    const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
         const admin = await checkIfAdmin();
-        console.log("getListItem admin: ", admin);
-        let itemList: any[] = [];
-        await axiosConfig.get('https://localhost:5001/blackList/getAllRoomBan/' + props.roomsConversData.id + '/' + props.roomsConversData.name).then(async (res) => {
-            res.data.forEach((item: { id_banned: number, login_banned: string }) => {
-                const profile_pic = `https://cdn.intra.42.fr/users/${item.login_banned}.jpg`;
-                itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                    <div className="inItemFriendList">
-                        <div className="inItemFriendList_left">
-                            <img src={profile_pic}></img>
-                            <p>{item.login_banned}</p>
-                        </div>
-                        <RightItem login={item.login_banned} id={item.id_banned} admin={admin} />
-                    </div>
-                </div>)
-            })
-        });
+        console.log("get affParticipantsRooms");
+        let itemList: any[] = []
+        console.log('data = ', data);
+        let i = 0;
+        data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string }) => {
+            itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+                <img src={item.profile_pic}></img>
+                <p>{item.nickname}</p>
+                <RightItem login={item.login} id={item.id} admin={admin} />
+            </div>
+            )
+        })
         setItemListHistory(itemList);
     }
 
     useEffect(() => {
-        if (!update) {
-            getListItem();
-            setUpdate(true);
-        }
-    });
+        console.log("useEffect AffParticipantsBanned");
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+    }, [props]);
 
     function AffList() {
         if (banRoomParticipant == true)

@@ -7,7 +7,7 @@ import '../Homepage.scss'
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Autocomplete, TextField } from '@mui/material';
 
-function CreateInvitationRooms(props: { roomsConversData: { name: string, id: number } }) {
+function CreateInvitationRooms(props: { roomsConversData: { name: string, id: number }, setCreateInvitation: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -89,6 +89,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                     }
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                 }
+                props.setCreateInvitation(false);
                 return;
             }
         });
