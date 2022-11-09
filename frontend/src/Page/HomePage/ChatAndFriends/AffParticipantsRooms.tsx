@@ -826,8 +826,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialogMute}>Cancel</Button>
-                    <Button onClick={buttonMuteRoomParticipant}>Enter</Button>
+                    <button onClick={handleCloseDialogMute}>Cancel</button>
+                    <button onClick={buttonMuteRoomParticipant}>Enter</button>
                 </DialogActions>
             </Dialog>
             <Dialog open={openDialogBan} onClose={handleCloseDialogBan}>
@@ -930,8 +930,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialogBan}>Cancel</Button>
-                    <Button onClick={buttonBanRoomParticipant}>Enter</Button>
+                    <button onClick={handleCloseDialogBan}>Cancel</button>
+                    <button onClick={buttonBanRoomParticipant}>Enter</button>
                 </DialogActions>
             </Dialog>
         </div >

@@ -522,6 +522,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                                         variant="outlined"
                                         disabled={!passwordOrNot}
                                         value={password} onChange={e => setPassword(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.keyCode == 13) {
+                                                e.preventDefault();
+                                                updateSettings();
+                                            }
+                                        }}
                                     />
                                 </Grid>
                             </Grid>
@@ -529,8 +535,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     </Grid>
                 </Grid>
                 <DialogActions>
-                    <Button onClick={handleCloseDialogChangePassword}>Cancel</Button>
-                    <Button onClick={updateSettings}>Enter</Button>
+                    <button onClick={handleCloseDialogChangePassword}>Cancel</button>
+                    <button onClick={updateSettings}>Enter</button>
                 </DialogActions>
             </Dialog>
         </div>

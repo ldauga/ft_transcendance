@@ -216,20 +216,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     arrClient.push(newClient);
   }
 
-  async sendToOneClient(username: string, eventName: string) {
-    // const _client = arrClient.find(obj => obj.username == username);
-    // console.log("client: ", _client);
-    // if (_client) {
-    //   console.log(_client.id);
-    //   console.log(eventName);
-    //   const tmp = _client.id;
-    //   console.log(tmp);
-    //   this.server.to(_client.id).emit('debanedUser', true);
-    // }
-    // console.log(arrClient[0].id);
-    this.server.to(arrClient[0].id).emit('debanedUser');
-  };
-
   @SubscribeMessage('storeClientInfo')
   async storeClientInfo(client: Socket, user: { login: string }) {
 
@@ -950,7 +936,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
       }
       else
-        arrNotifInWait.push({ login: data.login, notif: { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } }})
+        arrNotifInWait.push({ login: data.login, notif: { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } } })
     }
   }
 
@@ -1257,10 +1243,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const returnBan = await this.BlacklistService.createBan(newBan);
     if (returnBan) {
+      const tmp = arrClient.find(obj => obj.id == client.id);
+      if (tmp)
+        console.log("userBanned to ", tmp.username);
+      else
+        console.log("userBanned to ", client.id);
       this.server.to(client.id).emit('userBanned', true);
       const _client = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client)
+      if (_client) {
+        console.log("userBanned to ", _client.username);
         this.server.to(_client.id).emit('userBanned', true);
+      }
     }
   }
 
@@ -1269,10 +1262,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`${client.id} want deban: ${data.login_banned}`);
     const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
     if (removeBanReturn) {
+      const tmp = arrClient.find(obj => obj.id == client.id);
+      if (tmp)
+        console.log("debanedUser to ", tmp.username);
+      else
+        console.log("debanedUser to ", client.id);
       this.server.to(client.id).emit('debanedUser', true);
       const _client = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client)
+      if (_client) {
+        console.log("debanedUser to ", _client.username);
         this.server.to(_client.id).emit('debanedUser', true);
+      }
     }
   }
 
@@ -2176,9 +2176,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //console.log("CHECK_IF_FRIEND_OR_INVIT id1: ", data.id1, ", id2: ", data.id2);
     const checkFriend = await this.FriendListService.checkExistRelation(data.id1, data.id2);
     const checkInvit = await this.invitationRequestService.checkInvitationRequest(data.id1, data.id2);
+    const checkBan = await this.BlacklistService.checkUserBanWithId(data.id1, data.id2);
     //console.log("checkFriend: ", checkFriend, ", checkInvit: ", checkInvit);
     if (checkFriend)
       this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 1);
+    else if (checkBan) {
+      this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 3);
+    }
     else if (checkInvit)
       this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 2);
     else

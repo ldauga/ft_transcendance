@@ -80,6 +80,56 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         props.setUpdate(true);
     };
 
+    async function buttonBanUser() {
+        let test = false;
+        await axiosConfig.get('https://localhost:5001/user/login/' + props.item.user.login).then(async (res) => {
+            console.log("axios.get");
+            console.log(res.data);
+            console.log(res);
+            let receiver_login_tmp: string = res.data.login;
+            if (res.data == "") {
+                console.log("login not found");
+                return;
+            }
+            else {
+                let a = 1;
+                let b = 1;
+                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                    console.log('check invit');
+                    console.log(res.data);
+                    console.log(res);
+                    if (res.data == true) {
+                        console.log("ban already exist");
+                    }
+                    else {
+                        a = 2;
+                        console.log('ban not exist');
+                    }
+                })
+                if (a == 2) {
+                    console.log('test == true');
+                    console.log(receiver_login_tmp);
+                    const newBan = {
+                        id_sender: userData.userReducer.user?.id,
+                        id_banned: res.data.id,
+                        login_sender: userData.userReducer.user?.login,
+                        login_banned: res.data.login,
+                        userOrRoom: false,
+                        receiver_login: "",
+                        room_id: 0,
+                        room_name: "",
+                        cause: "",
+                        date: 0,
+                        alwaysOrNot: true,
+                        timer: 0
+                    }
+                    utilsData.socket.emit('createBan', newBan);
+                    enqueueSnackbar('User banned', { variant: "success", autoHideDuration: 2000 })
+                }
+            }
+        });
+    }
+
     const openChat = async () => {
         //setConversChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setConversCorrespondantData({ id: props.item.user.id, login: props.item.user.login, nickname: props.item.user.nickname, profile_pic: props.item.user.profile_pic });
@@ -155,7 +205,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                     </ListItemIcon>
                     Remove Friend
                 </MenuItem>
-                <MenuItem onClick={() => { }}>
+                <MenuItem onClick={buttonBanUser}>
                     <ListItemIcon>
                         <Settings fontSize="small" />
                     </ListItemIcon>
