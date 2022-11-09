@@ -272,6 +272,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           else
             i++;
         }
+        arrRoom.forEach((item) => {
+          const _participantInRoom = item.users.find(obj => obj.username == user.login);
+          if (_participantInRoom)
+            _participantInRoom.id = client.id;
+        });
         const _notif = arrNotifs.find(obj => obj.username == user.login);
         this.logger.log("ClientStore _notif = ", _notif);
         if (!_notif) {
@@ -283,6 +288,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
         else {
           this.logger.log("ClientStore _notif.notifs.length = ", _notif.notifs.length);
+          if (_notif.notifs[0])
+            this.logger.log("ClientStore _notif.notifs[0].nb = ", _notif.notifs[0].nb);
+          // for (let i =0; i < arrNotifs.length; )
           this.server.to(client.id).emit('ChatNotifsInit', _notif.notifs);
         }
         //console.log("test");
@@ -1064,6 +1072,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   //NEW CHAT EVENTS
 
   NewMsgNotif = (receiver_name: string, sender_name: string, userOrRoom: boolean) => {
+    console.log("NewMsgNotif arrNotif.length: ", arrNotifs.length);
     let _notifClient = arrNotifs.find(obj => obj.username == receiver_name);
     console.log("_notifClient.notifs.length", _notifClient.notifs.length)
     if (_notifClient) {
@@ -1084,7 +1093,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           id: 0,
           nb: 1,
           name: sender_name,
-          userOrRoom: false
+          userOrRoom: userOrRoom
         }
         _notifClient.notifs.push(newNotif);
       }
@@ -1107,6 +1116,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('delChatNotifs')
   async delChatNotifs(client: Socket, data: any) {
+    console.log("delChatNotifs, data.name: ", data.name, ", data.userOrRoom: ", data.userOrRoom);
     const _notif = arrNotifs.find(obj => obj.username == data.loginOwner);
     if (_notif) {
       const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
@@ -1121,6 +1131,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     else {
       this.logger.log("delChatNotifs _notif not found");
     }
+    console.log("DELCHATNOTIFS arrNotif.length: ", arrNotifs.length);
   }
 
   @SubscribeMessage('createMsg')
@@ -1189,7 +1200,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //console.log("room.users ", room.users);
         console.log("room.users.length: ", room.users.length);
         while (i < room.users.length) {
-          console.log('new Msg to ', room.users[i].username);
+          console.log('new Msg to ', room.users[i].username, room.users[i].id);
           this.server.to(room.users[i].id).emit('newMsgReceived', data);
           this.NewMsgNotif(room.users[i].username, data.room_name, true);
           i++;

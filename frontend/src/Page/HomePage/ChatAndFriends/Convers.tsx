@@ -36,21 +36,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             props.setChat(true);
         else
             props.setFriendList(true);
-        utilsData.socket.off('newMsgReceived');
-        utilsData.socket.removeListener('newMsgReceived');
+        // utilsData.socket.off('newMsgReceived');
+        // utilsData.socket.removeListener('newMsgReceived');
     };
-
-    //utilsData.socket.removeAllListeners('newChatNotif');
-
-    // utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
-    //     console.log("newChatNotif convers");
-    //     console.log("total: ", userData.chatNotifReducer.total);
-    //     console.log("persistantReducer.chatNotifReducer.convers.name: ", userData.chatNotifReducer.convers.name, ", newNotif.name: ", newNotif.name);
-    //     if (newNotif.name == props.conversCorrespondantData.login && newNotif.userOrRoom == false)
-    //         initOneConversChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom });
-    //     utilsData.socket.off('newChatNotif');
-    //     utilsData.socket.removeListener('newChatNotif');
-    // })
 
     function sendMessage() {
         if (messageText.length <= 0)
@@ -79,9 +67,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         for (let i = 0; i < 4; i++) {
             getListItem();
         }
-        if (!data.userOrRoom && data.login_sender == props.conversCorrespondantData.login) {
-            delChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
-        }
+        // if (!data.userOrRoom && data.login_sender == props.conversCorrespondantData.login) {
+        //     delChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
+        // }
         utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.conversCorrespondantData.login, userOrRoom: false });
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');

@@ -15,11 +15,14 @@ import { delChatNotif } from "../../../State/Action-Creators";
 import MapCarousel from "../../Pong/MapCarousel/MapCarousel";
 import { gameRoomClass } from "../../Pong/gameRoomClass";
 import '../../Pong/PongHome.scss'
+import { useSnackbar } from 'notistack';
 
 function FriendListItem(props: { setFriendList: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }, setUpdate: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -73,6 +76,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     const removeFriend = () => {
         utilsData.socket.emit('removeFriend', { id_user1: userData.userReducer.user?.id, id_user2: props.item.user.id, login_user1: userData.userReducer.user?.login, login_user2: props.item.user.login });
+        enqueueSnackbar('Friend was removed', { variant: "success", autoHideDuration: 2000 })
         props.setUpdate(true);
     };
 
@@ -181,6 +185,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);
         utilsData.socket.emit('INVITE_CUSTOM', { user: userData.userReducer.user, userLoginToSend: props.item.user.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) });
+        enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
     };
 
     return (

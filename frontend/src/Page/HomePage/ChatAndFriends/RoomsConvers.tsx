@@ -16,16 +16,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
 import { bindActionCreators } from 'redux';
+import AffConvers from './AffRoomConvers';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function, setRoomsConversData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
-    const [update, setUpdate] = useState(true);
-    const [isAdmin, setAdmin] = useState(false);
     const [isOwner, setOwner] = useState(false);
+    const [isAdmin, setAdmin] = useState(false);
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
@@ -34,10 +33,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [oldChatNotifTotal, setOldChatNotifTotal] = useState(0);
 
     const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
+    const [participants, setParticipants] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
     const bottom = useRef<null | HTMLDivElement>(null);
-
-    const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
 
@@ -47,10 +45,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const [pp1, setPp1] = useState("");
     const [pp2, setPp2] = useState("");
-
-    const dispatch = useDispatch();
-
-    const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     // const scrollToBottom = useScrollToBottom();
 
@@ -76,53 +70,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.off('kickedOutOfTheGroup');
         utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
-
-    // utilsData.socket.removeAllListeners('newMsgReceived');
-
-    utilsData.socket.on('newMsgReceived', function (data: any) {
-        console.log('newMsgReceived = ', data);
-        // const length = itemListHistory.length;
-        // let secu = 0;
-        // while (length == itemListHistory.length && secu < constWhileSecu) {
-        //     getListItem();
-        //     secu++;
-        // }
-        setUpdate(true);
-        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
-        if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
-            delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        }
-    })
-
-    function getYear() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[3])
-            return ("");
-        return (tmp[3]);
-    }
-
-    function getMonth() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[1])
-            return ("");
-        return (tmp[1]);
-    }
-
-    function getDay() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[2])
-            return ("");
-        return (tmp[2]);
-    }
 
     const handleClickChangePassword = () => {
         if (isChangeRoomPassword)
@@ -151,7 +98,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             room_id: props.roomsConversData.id
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
-        setUpdate(false);
         closeConvers();
     };
 
@@ -169,150 +115,24 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         setAffParticipantsRooms(true);
     };
 
-    const checkIfAdmin = async () => {
-        let ifAdmin = false;
-        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log("check ifOwner = ", res.data);
-            if (res.data == true) {
-                setAdmin(true);
-                ifAdmin = true;
-            }
-        })
-        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log("check ifAdmin = ", res.data);
-            if (res.data == true) {
-                setAdmin(true);
-                ifAdmin = true;
-            }
-        })
-        console.log("return: ", ifAdmin);
-        return ifAdmin;
-    };
-
     const checkIfOwner = async () => {
         await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log("check ifOwner = ", res.data);
+            //console.log("check ifOwner = ", res.data);
             if (res.data == true) {
-                setAdmin(true);
                 setOwner(true);
             }
             else {
-                setAdmin(false);
                 setOwner(false);
             }
         })
     };
 
-    function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        console.log("Date: ", Date());
-        if (props.item.id_sender == userData.userReducer.user?.id) {
-            if (getYear() != props.item.year)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getMonth() != props.item.month)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getDay() != props.item.day)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-        }
-        else {
-            const user = users.find(obj => obj.id == props.item.id_sender);
-            const nickname = user?.nickname;
-            if (getYear() != props.item.year)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getMonth() != props.item.month)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getDay() != props.item.day)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-        }
-
-    };
-
-    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        if (props.item.id_sender == userData.userReducer.user?.id && !props.item.serverMsg) {
-            return (
-                <div className='inItem2'>
-                    <AffDate item={props.item} />
-                    <div onMouseOver={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
-                        <p>{props.item.text}</p>
-                    </div>
-                </div>
-            );
-        }
-        else if (props.item.serverMsg) {
-            return (
-                <div className="server_msg">
-                    <p>{props.item.text}</p>
-                </div>
-            );
-        }
-        else {
-            const pp = users.find(obj => obj.id == props.item.id_sender)?.profile_pic;
-            const nickname = users.find(obj => obj.id == props.item.id_sender)?.nickname;
-            return (
-                <div className='inItem2'>
-                    <div className="picture-message">
-                        <img src={pp}></img>
-                        <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
-                            <p>{props.item.text}</p>
-                        </div>
-                    </div>
-                    <AffDate item={props.item} />
-                </div>
-            );
-        }
-    };
-
-    const getListItem = async () => {
-        const admin = await checkIfAdmin();
-        console.log("getListItem admin: ", admin);
-        console.log("users: ", users);
-        await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
-            console.log("get List Item Room Conversation", res.data);
-            let itemList: any[] = []
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
-                    <Item item={item} />
-                </div>)
-            });
-            console.log('itemList : ', itemList);
-            setItemListHistory(itemList);
-        })
-    }
+    useEffect(() => {
+        console.log("useEffect RoomsConvers");
+        checkIfOwner();
+        checkIfAdmin();
+        getUsers();
+    }, []);
 
     const getUsers = async () => {
         console.log("getUsers");
@@ -320,6 +140,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         let i = 0;
         setPp1("");
         setPp2("");
+        setUsers([]);
+        setParticipants([]);
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
@@ -339,6 +161,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             });
             console.log('itemList get Users: ', itemList);
         })
+        setParticipants(itemList);
         await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User 2: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
@@ -352,27 +175,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
         setUsers(itemList);
     }
-
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView();
-        // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
-        //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        //     setOldChatNotifTotal(userData.chatNotifReducer.total);
-        // }
-    }, [itemListHistory])
-
-    useEffect(() => {
-        console.log("update: ", update);
-        utilsData.socket.off('newMsgReceived');
-        utilsData.socket.removeListener('newMsgReceived');
-        if (update) {
-            setUpdate(false);
-            checkIfOwner();
-            getUsers();
-            getListItem();
-            bottom.current?.scrollIntoView();
-        }
-    }, [props, update]);
 
     const handleClickOpenDialogChangePassword = () => {
         setOpenDialogChangePassword(true);
@@ -490,12 +292,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         function HeaderPrint() {
             let str_nickname = "";
-            console.log("users: ", users);
-            for (let i = 0; i < users.length; i++) {
-                if (i + 1 < users.length)
-                    str_nickname = str_nickname + users[i].nickname + ", ";
+            console.log("participants: ", participants);
+            for (let i = 0; i < participants.length; i++) {
+                if (i + 1 < participants.length)
+                    str_nickname = str_nickname + participants[i].nickname + ", ";
                 else
-                    str_nickname = str_nickname + users[i].nickname;
+                    str_nickname = str_nickname + participants[i].nickname;
             }
             return (
                 <>
@@ -661,22 +463,39 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }
 
     function AffRoomConvers() {
+
+        console.log("AffRoomConvers");
+
+        useEffect(() => {
+            console.log("useEffect() AffRoomConvers");
+        })
+
         return (
             <div className="chat">
                 <Header />
-                <AffConvers />
+                <AffConvers roomsConversData={props.roomsConversData} />
                 <SendZone />
             </div>
         );
     };
 
-    function AffConvers() {
-        return (
-            <div className="messages" ref={bottom}>
-                {itemListHistory}
-                <div ref={messagesEndRef} />
-            </div>
-        );
+    const checkIfAdmin = async () => {
+        let ifAdmin = false;
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+            //console.log("check ifOwner = ", res.data);
+            if (res.data == true) {
+                setAdmin(true);
+                ifAdmin = true;
+            }
+        })
+        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+            //console.log("check ifAdmin = ", res.data);
+            if (res.data == true) {
+                setAdmin(true);
+                ifAdmin = true;
+            }
+        })
+        //console.log("return: ", ifAdmin);
     };
 
     return (

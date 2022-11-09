@@ -20,7 +20,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -116,6 +116,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createBan', newBan);
+                    enqueueSnackbar('User banned', { variant: "success", autoHideDuration: 2000 })
                 }
             }
         });
@@ -163,6 +164,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     const debanUser = (item: { id_banned: number, login_banned: string }) => {
         console.log("button debanUser");
         utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login_banned });
+        enqueueSnackbar('User debanned', { variant: "success", autoHideDuration: 2000 })
     }
 
     const getListItem = async () => {

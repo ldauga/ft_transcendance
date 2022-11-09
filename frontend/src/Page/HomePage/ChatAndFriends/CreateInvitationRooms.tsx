@@ -6,11 +6,14 @@ import './CSS/Rooms.scss'
 import '../Homepage.scss'
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Autocomplete, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
 
 function CreateInvitationRooms(props: { roomsConversData: { name: string, id: number }, setCreateInvitation: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -88,6 +91,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                         room_name: props.roomsConversData.name
                     }
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
+                    enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                 }
                 props.setCreateInvitation(false);
                 return;

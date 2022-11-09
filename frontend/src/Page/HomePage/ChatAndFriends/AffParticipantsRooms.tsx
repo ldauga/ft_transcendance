@@ -18,11 +18,14 @@ import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent 
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { useSnackbar } from 'notistack';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [isCreateInvitation, setCreateInvitation] = useState(false);
 
@@ -149,6 +152,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomMute', newMuted);
+                    enqueueSnackbar('Participant muted', { variant: "success", autoHideDuration: 2000 })
                 }
                 return;
             }
@@ -211,6 +215,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomBan', newBan);
+                    enqueueSnackbar('Participant banned', { variant: "success", autoHideDuration: 2000 })
                 }
                 return;
             }
@@ -246,6 +251,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     room_name: props.roomsConversData.name
                 }
                 utilsData.socket.emit('createAdmin', newAdmin);
+                enqueueSnackbar('Admin added', { variant: "success", autoHideDuration: 2000 })
             }
             return;
         });
@@ -273,6 +279,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     room_name: props.roomsConversData.name
                 }
                 utilsData.socket.emit('removeAdmin', removeAdmin);
+                enqueueSnackbar('Admin removed', { variant: "success", autoHideDuration: 2000 })
             }
             return;
         });
@@ -392,10 +399,12 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             room_id: props.roomsConversData.id
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
+        enqueueSnackbar('Participant removed', { variant: "success", autoHideDuration: 2000 })
     }
 
     function demute(item: { login: string, id: number, admin: boolean }) {
         utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login });
+        enqueueSnackbar('Participant demuted', { variant: "success", autoHideDuration: 2000 })
     };
 
     const affBanned = async () => {

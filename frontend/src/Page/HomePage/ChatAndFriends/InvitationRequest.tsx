@@ -13,7 +13,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     const utilsData = useSelector((state: RootState) => state.utils);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
@@ -106,11 +106,13 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
             admin: item.admin
         }
         utilsData.socket.emit('createParticipant', newParticipant);
+        enqueueSnackbar('You have accepted a room request', { variant: "success", autoHideDuration: 2000 })
         setUpdate(true);
     };
 
     const declineRoomInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
         utilsData.socket.emit('removeInvitationRequest', item);
+        enqueueSnackbar('Invitation declined', { variant: "info", autoHideDuration: 2000 })
         setUpdate(true);
     };
 
@@ -129,6 +131,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
 
     const declineFriendInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
         utilsData.socket.emit('removeInvitationRequest', item);
+        enqueueSnackbar('Invitation declined', { variant: "info", autoHideDuration: 2000 })
         setUpdate(true);
     };
 

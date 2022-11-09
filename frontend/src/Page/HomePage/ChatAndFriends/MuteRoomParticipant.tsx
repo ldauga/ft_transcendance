@@ -5,11 +5,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/BanRoomParticipant.scss';
+import { useSnackbar } from 'notistack';
 
 function MuteRoomParticipant(props: { roomsConversData: { name: string, id: number } }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [text, setText] = useState('');
 
@@ -73,6 +76,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createRoomMute', newMuted);
+                    enqueueSnackbar('Participant muted', { variant: "info", autoHideDuration: 2000 })
                 }
                 return;
             }
