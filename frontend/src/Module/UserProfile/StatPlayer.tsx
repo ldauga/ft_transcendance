@@ -243,18 +243,19 @@ function StatPlayer() {
 		})
 	}
 
-	const sendGetRequest = (value: string) => {
-		axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
-			.then(res => {
+	const sendGetRequest =  async (value: string) => {
+		const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
+		if (res.request.status === 200) {
+			console.log('la')
 				setTwoFactor(true);
 				setUserParameter2FACode('');
 				setUser(res.data);
 				setUserParameter2FARes(res.status);
 				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
-			})
-			.catch(err => {
-				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
-			});
+		} else {
+			console.log('ici')
+			enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
+		};
 	}
 
 	async function buttonAddFriend() {
