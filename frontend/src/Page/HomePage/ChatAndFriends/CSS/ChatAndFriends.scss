@@ -101,6 +101,12 @@
         }
     }
 
+    .header-user-banned, .header-invitation-request {
+        .cross, .icons {
+            width: unset;
+        }
+    }
+
     .mainHeaderSide {
         width: 50%;
         display: flex;
