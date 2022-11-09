@@ -21,7 +21,8 @@ export enum userActionType {
 export enum notifActionType {
     SETNOTIF = "SETNOTIF",
     DELNOTIF = "DELNOTIF",
-    DELALLNOTIF = "DELALLNOTIF"
+    DELALLNOTIF = "DELALLNOTIF",
+    SETALLNOTIFSEEN = "SETALLNOTIFSEEN"
 }
 
 export enum chatNotifActionType {

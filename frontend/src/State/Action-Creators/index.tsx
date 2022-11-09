@@ -88,6 +88,14 @@ export const setNotif = (item: any) => {
     }
 }
 
+export const setAllNotifSeen = () => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.SETALLNOTIFSEEN,
+        })
+    }
+}
+
 export const delNotif = (item: Notif) => {
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({

@@ -10,21 +10,25 @@ import { actionCreators, RootState } from '../../State';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
 
+let tmp = 0
+let verif = false
+
 function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function }) {
 
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
 	const utilsData = useSelector((state: RootState) => state.utils);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	let location = useLocation();
 	const dispatch = useDispatch();
-	const { setUser, delAllNotif, setTwoFactor, setConversChatNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setUser, setAllNotifSeen, delAllNotif, setTwoFactor, setConversChatNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
 	const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
 	const [conversNotif, setConversNotif] = useState({ name: "", userOrRoom: false });
 
-	const [lastNbNotif, setLastNbNotif] = useState(0);
+	const [lastNbNotif, setLastNbNotif] = useState(tmp);
 
 	const [isChat, setChat] = useState(false);
 	const [isFriendList, setFriendList] = useState(false);
@@ -47,7 +51,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		window.location.replace('https://localhost:3000')
 	}
 
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReducer.userReducer.user?.nickname;
 	const avatar = persistantReducer.userReducer.user?.profile_pic;
 
@@ -174,8 +177,9 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						</Tooltip>
 					</button>
 					<button onClick={() => { //notifs
-						setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
+						// setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
 						setOpenPopUp(!open);
+						setAllNotifSeen()
 						if (isChat) {
 							setChat(false);
 							setNotif(true);
@@ -191,7 +195,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						else
 							setNotif(true);
 					}}>
-						<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - lastNbNotif >= 0 ? persistantReducer.notifReducer.notifArray.length - lastNbNotif : 0)}>
+						<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - persistantReducer.notifReducer.notifArray.map(notif => notif.seen).filter(Boolean).length)}>
 							<Tooltip title="Notifications">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 									<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />

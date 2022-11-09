@@ -7,13 +7,20 @@ export interface NotifArray {
 }
 
 export const initialState: NotifArray = {
-	notifArray: new Array<Notif>,
+	notifArray: new Array<Notif>(),
 }
 
 export const notifReducer = (state: NotifArray = initialState, action: notifAction) => {
 	switch (action.type) {
 		case notifActionType.SETNOTIF: {
 			state.notifArray.push(action.payload)
+			return {
+				...state,
+				notifArray: state.notifArray
+			};
+		}
+		case notifActionType.SETALLNOTIFSEEN: {
+			state.notifArray.forEach(notif => notif.seen = true)
 			return {
 				...state,
 				notifArray: state.notifArray
