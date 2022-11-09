@@ -5,8 +5,8 @@ import { RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
-import { HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
+import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
+import { Cancel, Close, HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
 import { constWhileSecu } from "../HomePage";
@@ -199,19 +199,17 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 					</ListItemIcon>
 					Add Friend
 				</MenuItem>
-				<Divider />
 				<MenuItem onClick={handleClickInvitationRequest}>
 					<ListItemIcon>
-						<HourglassBottom fontSize="small" />
+						<Person fontSize="small" />
 					</ListItemIcon>
 					Invitation Request
 				</MenuItem>
-				<Divider />
 				<MenuItem onClick={handleClickBanUser}>
 					<ListItemIcon>
-						<Settings fontSize="small" />
+						<Cancel fontSize="small" />
 					</ListItemIcon>
-					Aff Blocked Users
+					Blocked Users
 				</MenuItem>
 			</Menu>
 		);
@@ -225,12 +223,18 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	return (
 		<div className="mainAffGene">
 			<div className="mainHeader">
-				<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
+				<div className="cross">
+					<button onClick={handleClickClose}><Close /></button>
+				</div>
 				<h3>Friends</h3>
-				<button onClick={handleClickOpenOptions}>
-					<MoreVertIcon />
-				</button>
-				<MenuOptions />
+				<div className="icons">
+					<Tooltip title='More'>
+					<button onClick={handleClickOpenOptions}>
+						<MoreVertIcon />
+					</button>
+					</Tooltip>
+					<MenuOptions />
+				</div>
 			</div>
 			{newAddFriend && <AddFriend setNewAddFriend={setNewAddFriend} />}
 			<ItemsFriendList />

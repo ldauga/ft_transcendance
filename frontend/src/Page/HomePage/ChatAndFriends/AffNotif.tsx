@@ -1,3 +1,4 @@
+import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -37,12 +38,12 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	return (
 		<div className="mainAffGeneNotif">
 			<div className="notif">
-				<div id="header" className="mainHeader">
-					<div className="mainHeaderLeft mainHeaderSide">
-						<button onClick={close}><i className="bi bi-x"></i></button>
+				<div className="mainHeader">
+					<div className="cross">
+						<button onClick={close}><Close /></button>
 					</div>
 					<h3>Notifications</h3>
-					<div className="mainHeaderRight mainHeaderSide">
+					<div className="icons">
 					</div>
 				</div>
 				<div className="ListItemNotif">
@@ -53,10 +54,10 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													utilsData.socket.emit("DECLINE_INVITATION", { sendTo: persistantReducer.notifReducer.notifArray[index].data.inviteUserID, user: persistantReducer.userReducer.user })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p> {notif.data.inviteUser.login + " wants to play with you"} </p>
@@ -74,9 +75,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p>{"You have disconnected a pong game"}</p>
@@ -97,9 +98,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p>{"You gave up against " + persistantReducer.notifReducer.notifArray[index].data.opponentLogin}</p>
@@ -115,9 +116,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p>Check your invitation request</p>
@@ -133,9 +134,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p>You were kicked out {persistantReducer.notifReducer.notifArray[index].data.room_name} by {persistantReducer.notifReducer.notifArray[index].data.login_sender}</p>
@@ -149,9 +150,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 									return (
 										<div className='notifContainer' key={index}>
 											<div className="notifTopContainer">
-												<button className="bi bi-x" onClick={(e) => {
+												<button onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-												}} />
+												}}><Close /></button>
 											</div>
 											<div className="notifHeader">
 												<p>You were ban from {persistantReducer.notifReducer.notifArray[index].data.room_name} group by {persistantReducer.notifReducer.notifArray[index].data.login_sender}</p>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
-import './CSS/InvitationRequest.scss';
 import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
+import './CSS/InvitationRequest.scss'
 import axiosConfig from "../../../Utils/axiosConfig";
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
+import { ArrowBackIosNew, Check, Close } from "@mui/icons-material";
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
@@ -31,8 +32,8 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
                 <div className="inItem">
                     <p>{props.item.sender_login} sent a invitation to join {props.item.room_name}</p>
                     <div>
-                        <button onClick={() => acceptRoomInvit(props.item)} className="bi bi-check-lg"></button>
-                        <button onClick={() => declineRoomInvit(props.item)} className="bi bi-x-lg"></button>
+                        <button onClick={() => acceptRoomInvit(props.item)}><Check /></button>
+                        <button onClick={() => declineRoomInvit(props.item)}><Close /></button>
                     </div>
                 </div>
             );
@@ -43,8 +44,8 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
                 <div className="inItem">
                     <p>{props.item.sender_login} sent a invitation</p>
                     <div>
-                        <button onClick={() => acceptFriendInvit(props.item)} className="bi bi-check-lg"></button>
-                        <button onClick={() => declineFriendInvit(props.item)} className="bi bi-x-lg"></button>
+                        <button onClick={() => acceptFriendInvit(props.item)}><Check /></button>
+                        <button onClick={() => declineFriendInvit(props.item)}><Close /></button>
                     </div>
                 </div>
             );
@@ -141,24 +142,24 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
 
     function ItemsInvitationsRequests() {
         return (
-            <div id="ListItemsInvitationsRequests">
+            <div className="ListItemsInvitationsRequests">
                 {itemListHistory}
             </div>
         );
     };
 
     return (
-        <div id="mainInvitationRequest" className="mainAffGene">
-            <div className="mainHeader">
-                <div className="mainHeaderSide">
-                    <button onClick={handleClick}><i className="bi bi-arrow-left"></i></button>
+        <div className="mainAffGene mainInvitationRequest">
+            <div className="mainHeader header-invitation-request">
+                <div className="cross">
+                    <button onClick={handleClick}><ArrowBackIosNew /></button>
                 </div>
-                <h3>Pending Invitation</h3>
-                <div className="mainHeaderSide">
+                <h3>Invitation Request</h3>
+                <div className="icons">
 
                 </div>
             </div>
-            <ItemsInvitationsRequests />
+            {<ItemsInvitationsRequests />}
         </div>
     )
 }
