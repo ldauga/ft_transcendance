@@ -1,0 +1,27 @@
+.participant_ban {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+
+    img {
+        --avatar-size: 51px;
+        border-radius: 50%;
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        object-fit: cover;
+    }
+
+    p {
+        width: 100%;
+    }
+
+    &:hover {
+        background: rgba($color: #efefef, $alpha: .5);
+        cursor: pointer;
+    }
+}

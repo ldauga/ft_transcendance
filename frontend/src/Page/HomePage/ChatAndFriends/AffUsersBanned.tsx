@@ -2,13 +2,16 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
-import './CSS/AffParticipantsRooms.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
-import BanUser from './BanUser';
+import BanUser from '../../../Trash/BanUser';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import PersonOffIcon from '@mui/icons-material/PersonOff';
+import './CSS/AffUserBanned.scss';
+import { SnackbarKey, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Function }) {
 
@@ -17,13 +20,13 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
     const [inputValue, setInputValue] = useState('');
 
     const [connectedClient, setConnectedClient] = useState<{ id: string, username: string, nickname: string }[]>(new Array());
 
     const [update, setUpdate] = useState(false);
-
-    const [banUser, setBanUser] = useState(false);
 
     const [openDialogBan, setOpenDialogBan] = useState(false);
 
@@ -67,7 +70,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
         console.log("text.length = ", inputValue.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
         if (inputValue.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
             console.log("Wrong input for banUser");
-            utilsData.socket.emit('AffNotistack', { text: "Wrong input for banUser", type: "error" });
+            enqueueSnackbar('Wrong input for banUser', { variant: "error", autoHideDuration: 2000 })
             return;
         }
         await axiosConfig.get('https://localhost:5001/user/login/' + inputValue).then(async (res) => {
@@ -152,13 +155,6 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
         utilsData.socket.removeListener('debanedUser');
     })
 
-    const handleClickBanRoomParticipant = () => {
-        if (banUser)
-            setBanUser(false);
-        else
-            setBanUser(true);
-    }
-
     const closeAffBanned = () => {
         props.setBannedUsers(false);
         props.setFriendList(true);
@@ -174,13 +170,13 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
         await axiosConfig.get('https://localhost:5001/blackList/getAllUserBan/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login).then(async (res) => {
             res.data.forEach((item: { id_banned: number, login_banned: string }) => {
                 const profile_pic = `https://cdn.intra.42.fr/users/${item.login_banned}.jpg`;
-                itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
-                    <div className="inItemFriendList">
-                        <div className="inItemFriendList_left">
+                itemList.push(<div key={itemList.length.toString()} className='itemBanUser'>
+                    <div className="inItemBanUser">
+                        <div className="inItemBanUser_left">
                             <img src={profile_pic}></img>
                             <p>{item.login_banned}</p>
                         </div>
-                        <div className="inItemFriendList_right">
+                        <div className="inItemBanUser_right">
                             <button onClick={() => debanUser(item)} className="bi bi-x-lg"></button>
                         </div>
                     </div>
@@ -215,18 +211,11 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     });
 
     function AffList() {
-        if (banUser == true)
-            return (
-                <div id="affSmall">
-                    {itemListHistory}
-                </div>
-            );
-        else
-            return (
-                <div id="affBig">
-                    {itemListHistory}
-                </div>
-            );
+        return (
+            <div className="ListItemBanUser">
+                {itemListHistory}
+            </div>
+        );
     };
 
     return (
@@ -235,17 +224,20 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                 <div className="mainHeaderLeft mainHeaderSide">
                     <button onClick={closeAffBanned} className="bi bi-arrow-left"></button>
                 </div>
-                <h3>Banned Users</h3>
+                <h3>Blocked Users</h3>
                 <div className="mainHeaderRight mainHeaderSide">
-                    <button onClick={handleClickOpenDialogBan}><i className="bi bi-person-x-fill"></i></button>
+                    <button onClick={handleClickOpenDialogBan}>
+                        <PersonOffIcon />
+                    </button>
                 </div>
             </div>
             <AffList />
             <Dialog open={openDialogBan} onClose={handleCloseDialogBan}>
-                <DialogTitle>Ban Participant</DialogTitle>
+                <DialogTitle>Block a User</DialogTitle>
                 <DialogContent>
                     <Grid container direction={"column"} spacing={5}>
                         <Grid item>
+                            <Box sx={{ m: 2 }} />
                             <Autocomplete
                                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
                                 options={connectedClient.map((option) => option.nickname)}
@@ -348,21 +340,20 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item>
-                            <div className='dialogContainerAlwaysOrNot'>
-                                <p>Always</p>
-                                <Checkbox
-                                    value={alwaysOrNot}
-                                    onChange={e => setAlwaysOrNot(!alwaysOrNot)}
-                                    id="checkBoxBan"
-                                />
-                            </div>
-                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialogBan}>Cancel</Button>
-                    <Button onClick={buttonBanUser}>Enter</Button>
+                    <div className='dialogContainerAlwaysOrNot'>
+                        <p>Always</p>
+                        <Checkbox
+                            value={alwaysOrNot}
+                            onChange={e => setAlwaysOrNot(!alwaysOrNot)}
+                            id="checkBoxBan"
+                        />
+                    </div>
+                    <Box sx={{ mr: 6 }} />
+                    <button onClick={handleCloseDialogBan}>Cancel</button>
+                    <button onClick={buttonBanUser}>Enter</button>
                 </DialogActions>
             </Dialog>
         </div>

@@ -1,15 +1,20 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../State";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
-import BanUser from "./BanUser";
+import BanUser from "../../../Trash/BanUser";
 import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
-import { Person, Settings } from "@mui/icons-material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, ListItemIcon, Menu, MenuItem, TextField } from "@mui/material";
+import { ArrowBackIosNew, ArrowForwardIos, Person, Settings } from "@mui/icons-material";
 import ChatIcon from '@mui/icons-material/Chat';
+import { bindActionCreators } from "redux";
+import { delChatNotif } from "../../../State/Action-Creators";
+import MapCarousel from "../../Pong/MapCarousel/MapCarousel";
+import { gameRoomClass } from "../../Pong/gameRoomClass";
+import '../../Pong/PongHome.scss'
 
 function FriendListItem(props: { setFriendList: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }, setUpdate: Function }) {
 
@@ -17,7 +22,42 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const [openDialogInviteGame, setOpenDialogInviteGame] = useState(false);
+
+    const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
+    const openInviteGame = Boolean(anchorEl2);
+
+    const [activeStep, setActiveStep] = useState(0);
+    const [inviteGameMap, setInviteGameMap] = useState('map1');
+
+    const handleNext = () => {
+        if (inviteGameMap == 'map1')
+            setInviteGameMap('map2')
+        else if (inviteGameMap == 'map2')
+            setInviteGameMap('map3')
+        else if (inviteGameMap == 'map3')
+            setInviteGameMap('map1')
+
+        setActiveStep((prevActiveStep) => (prevActiveStep + 1) % 3);
+    };
+
+    const handleBack = () => {
+        if (inviteGameMap == 'map1')
+            setInviteGameMap('map3')
+        else if (inviteGameMap == 'map3')
+            setInviteGameMap('map2')
+        else if (inviteGameMap == 'map2')
+            setInviteGameMap('map1')
+
+        setActiveStep((prevActiveStep) => (prevActiveStep + (3 - 1)) % 3);
+    };
+
     const open = Boolean(anchorEl);
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     // <button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
     // <button onClick={() => openChat(item)} className="bi bi-chat"></button>
@@ -37,8 +77,9 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     };
 
     const openChat = async () => {
-
-        props.setConversCorrespondantData({ id: props.item.user.id, login: props.item.user.login });
+        //setConversChatNotif({ name: props.item.user.login, userOrRoom: false });
+        props.setConversCorrespondantData({ id: props.item.user.id, login: props.item.user.login, nickname: props.item.user.nickname, profile_pic: props.item.user.profile_pic });
+        delChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setFriendList(false);
         props.setConvers(true);
     };
@@ -83,15 +124,27 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
             >
                 {props.item.status == 'in-game' ?
                     <>
-                        <MenuItem onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: props.item.user.login }) }}>
+                        <MenuItem
+                            onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
                             Spectate Friend
                         </MenuItem>
                         <Divider />
-                    </> :
-                    <></>}
+                    </> : (props.item.status == 'online' ?
+                        <><MenuItem
+                            // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
+                            // aria-haspopup="true"
+                            // aria-expanded={openInviteGame ? 'true' : undefined}
+                            onClick={() => { setOpenDialogInviteGame(true) }}>
+                            <ListItemIcon>
+                                <Person fontSize="small" />
+                            </ListItemIcon>
+                            Invite Game
+                        </MenuItem>
+                            <Divider /></> :
+                        <></>)}
                 <MenuItem onClick={removeFriend}>
                     <ListItemIcon>
                         <Person fontSize="small" />
@@ -119,10 +172,15 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     function AffStatus() {
         return (
             <div className="itemFriendListStatus">
-                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'connected' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
+                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'online' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
                 <p>{props.item.status}</p>
             </div>
         );
+    };
+
+    const inviteGame = async () => {
+        setOpenDialogInviteGame(false);
+        utilsData.socket.emit('INVITE_CUSTOM', { user: userData.userReducer.user, userLoginToSend: props.item.user.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) });
     };
 
     return (
@@ -143,6 +201,20 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 </button>
                 <FriendOptions />
             </div>
+            <Dialog open={openDialogInviteGame} onClose={() => { setOpenDialogInviteGame(false) }}>
+                <DialogTitle>Select map and press JOIN QUEUE !</DialogTitle>
+                <DialogContent>
+                    <div className='select-map'>
+                        <button onClick={handleBack}><ArrowBackIosNew /></button>
+                        <MapCarousel activeStep={activeStep} />
+                        <button onClick={handleNext}> <ArrowForwardIos /> </button>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <button className='join-queue' type='button' onClick={() => { setOpenDialogInviteGame(false) }}>Cancel</button>
+                    <button className='join-queue' type='button' onClick={inviteGame}>{'Invite ' + props.item.user.nickname}</button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }

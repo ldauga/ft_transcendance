@@ -1,15 +1,48 @@
-#affBig {
-    overflow: scroll;
-    height: 85%;
+.mainAffGene {
+    .chat {
+        .participants {
+            height: 100%;
+
+            .participant {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 5px;
+
+                img {
+                    --avatar-size: 51px;
+                    border-radius: 50%;
+                    width: var(--avatar-size);
+                    height: var(--avatar-size);
+                    object-fit: cover;
+                }
+
+                p {
+                    width: 100%;
+                }
+
+                &:hover {
+                    background: rgba($color: #efefef, $alpha: .5);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
 
-#affSmall {
-    overflow: scroll;
-    height: 79%;
-}
+.inItemParticipant_right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 30%;
 
-.FormControlDialog {
-    margin-top: 1rem;
+    .icon_admin {
+        margin-right: 10px;
+    }
 }
 
 .dialogContainerAlwaysOrNot {

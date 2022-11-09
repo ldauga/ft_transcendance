@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { MessagesService } from "../messages/messages.service";
 import { UserService } from "../user/user.service";
 import { ParticipantsDto } from "./dtos/participants.dto";
 import { ParticipantsEntity } from "./participants.entity";
@@ -15,6 +16,7 @@ export class ParticipantsService {
 	private logger: Logger = new Logger('participants');
 
 	private readonly UserService: UserService
+	private readonly MessagesService: MessagesService
 
 	public async getAllParticipants(): Promise<{ login: string, room_name: string }[]> {
 		let arrReturn: { login: string, room_name: string }[] = [];
@@ -160,6 +162,28 @@ export class ParticipantsService {
 		return arrParticipants;
 	}
 
+	public async getAllUsersForOneRoomWithMessages(name: string): Promise<{ login: string, id: number, admin: boolean }[]> {
+		const participants = await this.ParticipantsRepository.find({
+			where: [
+				{ room_name: name }
+			]
+		});
+		console.log("name: ", name);
+		// const usersWithMessages = await this.MessagesService.getUsersRoomConversMessages(name);
+		const usersWithMessages = await this.MessagesService.getUserMessages(0);
+		let arrParticipants: { login: string, id: number, admin: boolean }[] = [];
+		if (!participants && !usersWithMessages)
+			return arrParticipants;
+		if (participants)
+			participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id, admin: item.admin })));
+		// if (usersWithMessages)
+		// 	usersWithMessages.forEach(item => {
+		// 		if (!arrParticipants.find(obj => obj.login == item.login))
+		// 			arrParticipants.push({ login: item.login, id: item.id, admin: false })
+		// 	});
+		return arrParticipants;
+	}
+
 	// public async getAllUsersForRoom(name: string): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {
 	// 	const participants = await this.ParticipantsRepository.find({
 	// 		where: [
@@ -186,6 +210,19 @@ export class ParticipantsService {
 		const participants = await this.ParticipantsRepository.find({
 			where: [
 				{ user_login: login }
+			]
+		});
+		let arrRooms: { name: string, id: number }[] = [];
+		if (!participants)
+			return arrRooms;
+		participants.forEach(item => (arrRooms.push({ name: item.room_name, id: item.room_id })));
+		return arrRooms;
+	}
+
+	public async getAllRoomUserWithId(id: number): Promise<{ name: string, id: number }[]> {
+		const participants = await this.ParticipantsRepository.find({
+			where: [
+				{ user_id: id }
 			]
 		});
 		let arrRooms: { name: string, id: number }[] = [];

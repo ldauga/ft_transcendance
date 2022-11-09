@@ -1,5 +1,5 @@
-import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType } from "../Action-Types"
-import { Client, msg, msgList, Notif } from "../type"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType } from "../Action-Types"
+import { ChatNotif, Client, msg, msgList, Notif } from "../type"
 
 
 
@@ -72,7 +72,37 @@ type DelAllNotifAction = {
     type: notifActionType.DELALLNOTIF
 }
 
-export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction
+type SetAllNotifSeen = {
+    type: notifActionType.SETALLNOTIFSEEN
+}
+
+export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction | SetAllNotifSeen
+
+type AddChatNotifAction = {
+    type: chatNotifActionType.ADDCHATNOTIF
+    payload: { name: string, userOrRoom: boolean, nb: number };
+}
+
+type DelChatNotifAction = {
+    type: chatNotifActionType.DELCHATNOTIF
+    payload: { name: string, userOrRoom: boolean };
+}
+
+type InitChatNotifAction = {
+    type: chatNotifActionType.INITCHATNOTIF
+}
+
+type InitOneChatChatNotifAction = {
+    type: chatNotifActionType.INITONECONVERSCHATNOTIF
+    payload: { name: string, userOrRoom: boolean };
+}
+
+type SetConversChatChatNotifAction = {
+    type: chatNotifActionType.SETCONVERS
+    payload: { name: string, userOrRoom: boolean };
+}
+
+export type chatNotifAction = AddChatNotifAction | DelChatNotifAction | InitChatNotifAction | InitOneChatChatNotifAction | SetConversChatChatNotifAction
 
 
 type SetTwoFactor = {

@@ -94,7 +94,7 @@ function Settings() {
 
 	return (
 		<>
-			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "" }} setOpenFriendConversFromProfile={() => { }} />
+			<NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
 			<div className='settings'>
 				<div className="content">
 					<div className='nick'>
@@ -112,7 +112,7 @@ function Settings() {
 										label="New nickname"
 										fullWidth
 										variant="standard"
-										onChange={e => { if (e.target.value.length < 30) setUserParameterNewNickname(e.target.value)}}
+										onChange={e => { if (e.target.value.length < 30) setUserParameterNewNickname(e.target.value) }}
 									/>
 								</DialogContent>
 								<DialogActions>

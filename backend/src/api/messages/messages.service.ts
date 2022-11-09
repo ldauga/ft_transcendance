@@ -17,6 +17,25 @@ export class MessagesService {
 
 	private logger: Logger = new Logger('Messages');
 
+	async getUsersRoomConversMessages(name: string): Promise<{ login: string, id: number }[]> {
+		console.log("getUsersRoomConversMessages");
+		const messagesReturn = await this.MessagesRepository.find({
+			where: [
+				{ room_name: name }
+			]
+		});
+		let users: { login: string, id: number }[] = [];
+		//console.log("messagesReturn: ", messagesReturn);
+		if (!messagesReturn)
+			return users;
+		messagesReturn.forEach(element => {
+			if (!users.find(obj => obj.id == element.id_sender) && !(element.id_sender == 0 && element.login_sender == "server"))
+				users.push({ login: element.login_sender, id: element.id_sender });
+		});
+		console.log("users: ", users);
+		return users;
+	}
+
 	public getAllMessages(): Promise<MessagesEntity[]> {
 		return this.MessagesRepository.find();
 	}
@@ -108,6 +127,7 @@ export class MessagesService {
 			login_sender: body.login_sender,
 			login_receiver: body.login_receiver,
 			userOrRoom: body.userOrRoom,
+			serverMsg: body.serverMsg,
 			room_id: body.room_id,
 			room_name: body.room_name,
 			text: body.text,

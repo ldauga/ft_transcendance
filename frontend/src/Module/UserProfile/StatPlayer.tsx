@@ -53,7 +53,7 @@ function StatPlayer() {
 
 	const [update, setUpdate] = useState(true);
 	const [openConversFromProfile, setOpenConversFromProfile] = useState(false);
-	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "" });
+	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
 
 	const dispatch = useDispatch();
 	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
@@ -100,7 +100,8 @@ function StatPlayer() {
 
 	utilsData.socket.off('changeNicknameSuccess')
 
-	utilsData.socket.on('changeNicknameSuccess', function () {
+	utilsData.socket.on('changeNicknameSuccess', function (param: any) {
+		setUser(param)
 		enqueueSnackbar('Nickname changed !', { variant: "success", autoHideDuration: 2000 })
 		setProfile({ ...profile, nickname: newNickname })
 		fetchMatchHistory()
@@ -232,7 +233,7 @@ function StatPlayer() {
 			withCredentials: true
 		};
 
-		axios(config).then((res) => { setProfile({ ...profile, profile_pic: res.data.profile_pic }); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
+		axios(config).then((res) => { setUser(res.data); setProfile({ ...profile, profile_pic: res.data.profile_pic }); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
 	}
 
 	const sendGetRequest = (value: string) => {
@@ -326,7 +327,7 @@ function StatPlayer() {
 	};
 
 	const sendMsg = () => {
-		setDataOpenConversFromProfile({ id: profile.id, login: profile.login, nickname: profile.nickname });
+		setDataOpenConversFromProfile({ id: profile.id, login: profile.login, nickname: profile.nickname, profile_pic: profile.profile_pic });
 		setOpenConversFromProfile(true);
 	};
 
@@ -360,7 +361,7 @@ function StatPlayer() {
 
 	utilsData.socket.off('start')
 
-	utilsData.socket.on('start', function (roomID: string) {
+	utilsData.socket.on('start', function (info: { roomID: string, spectate: boolean }) {
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('https://localhost:3000/Pong')
 	});
@@ -377,7 +378,7 @@ function StatPlayer() {
 							<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
 						</>}
 
-					{profile.status == 'connected' ?
+					{profile.status == 'online' ?
 						<>
 							<button id="basic-button"
 								aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
@@ -480,7 +481,7 @@ function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player' style={{ backgroundColor: profile.status == 'connected' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
+							<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
 						</div>
 					</div>
 					{profile_btn()}

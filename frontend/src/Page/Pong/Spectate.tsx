@@ -1,30 +1,59 @@
-import React, { useState } from 'react';
-import NavBar from '../../Module/Navbar/Navbar';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../State';
-import { gameRoomClass } from './gameRoomClass';
-
-import './CSS/GamePage/GamePage.css';
+import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import Background from "../../Module/Background/Background";
+import NavBar from "../../Module/Navbar/Navbar";
+import { RootState } from "../../State";
+import { gameRoomClass } from "./gameRoomClass";
 import './CSS/GamePage/Board.css';
 import './CSS/GamePage/GameFinished.scss';
-import './CSS/Utils.css';
-import Background from '../../Module/Background/Background';
-import { Tab } from '@mui/material';
-
 
 var canvas = {
     "width": 800,
     "height": 600
 }
 
-
-const GamePage = (props: any) => {
+function Spectate() {
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
-    const [finishGame, setFinishGame] = useState(false);
-    const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
+    const utilsData = useSelector((state: RootState) => state.utils);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    // drawFont : desine le fond du jeu
+
+    // const [room, setRoom] = useState<gameRoomClass | null>(null)
+    const [verif, setVerif] = useState(false)
+    const [start, setStart] = useState(false)
+
+    useEffect(() => {
+        if (!verif) {
+            console.log('window.location.href.toString().split(\'/\').reverse()[0] :', window.location.href.toString().split('/').reverse()[0])
+            if (window.location.href.toString().split('/').reverse()[0] == 'Spectate') {
+
+
+                history.pushState({}, '', window.URL.toString())
+                window.location.replace('https://localhost:3000/NotFound')
+            }
+            else {
+                utilsData.socket.emit('CHECK_IF_IN_GAME', { login: window.location.href.toString().split('/').reverse()[0] })
+                setVerif(true)
+            }
+        }
+    })
+
+    // useEffect(() => { if (room != null) render(room) }, [room])
+
+    utilsData.socket.on('client_not_playing', function () {
+        history.pushState({}, '', window.URL.toString())
+        window.location.replace('https://localhost:3000/NotFound')
+    })
+
+    utilsData.socket.on('start_spectate', function () {
+        setStart(true)
+    })
+
+    if (start) setInterval(() => { utilsData.socket.emit('RENDER_SPECTATE', { login: window.location.href.toString().split('/').reverse()[0] }) }, 16)
+
     function drawFont(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -45,23 +74,6 @@ const GamePage = (props: any) => {
                 ctx.fillStyle = 'rgb(48, 56, 76)';
 
                 ctx.fillRect(element.x, element.y, element.width, element.height);
-            }
-        }
-    }
-
-    function drawBallParticles(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
-        if (ctx !== null) {
-
-            for (var index = room.ball.particle_x.length - 1; index >= 0; index--) {
-
-                ctx.beginPath();
-
-                ctx.fillStyle = '#00' + ((255 - ((index) * (256 / 16))).toString(16).length == 1 ? "0" + (255 - ((index) * (256 / 16))).toString(16) : (255 - ((index) * (256 / 16))).toString(16)) + '00';
-
-                ctx.arc(room.ball.particle_x[index], room.ball.particle_y[index], room.ball.radius, 0, Math.PI * 2);
-
-                ctx.fill();
-
             }
         }
     }
@@ -87,14 +99,9 @@ const GamePage = (props: any) => {
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
-            const currentPlayer = room.players.find(item => item.user?.login == persistantReducer.userReducer.user?.login)
-
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'black';
             ctx.textAlign = "center";
-
-            if (currentPlayer != undefined)
-                ctx.fillText("YOU", currentPlayer!.x + currentPlayer!.width / 2, currentPlayer!.y - 10);
 
             ctx.fillStyle = 'rgb(48, 56, 76)';
 
@@ -175,7 +182,7 @@ const GamePage = (props: any) => {
             ctx.textAlign = "center";
 
             if (!room.players[0].connected || !room.players[1].connected) {
-                ctx.fillText("Opponent disconected.", canvas.width / 2, canvas.height / 3);
+                ctx.fillText("Oponent disconected.", canvas.width / 2, canvas.height / 3);
                 ctx.fillText((15 - Math.floor((Date.now() - room.players[room.players[0].connected ? 1 : 0].dateDeconnection) / 1000)).toString(), canvas.width / 2, canvas.height / 2);
             }
             else
@@ -213,38 +220,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    function drawSpectator(room: gameRoomClass) {
-
-        room.spectate.forEach((item: any) => {
-            var canvas: HTMLCanvasElement | null
-            if (item.pannel)
-                canvas = document.getElementById('spectate1') as HTMLCanvasElement
-            else
-                canvas = document.getElementById('spectate2') as HTMLCanvasElement
-            if (canvas !== null) {
-                var ctx = canvas.getContext('2d')
-                if (ctx !== null) {
-                    const img = new Image();
-
-                    img.onload = function () {
-                        if (ctx) {
-
-                            ctx.save()
-                            ctx.beginPath()
-                            ctx.arc(item.x, item.y, 40, 0, Math.PI * 2, false)
-                            ctx.stroke()
-                            ctx.clip()
-                            ctx.drawImage(img, item.x - 40, item.y - 40, 80, 80)
-                            ctx.restore()
-                        }
-                    };
-                    img.src = item.user.profile_pic
-                }
-            }
-        })
-    }
-
-
     function resetCanvas() {
         var canvas = document.getElementById('pongBoard') as HTMLCanvasElement
         if (canvas !== null) {
@@ -254,10 +229,6 @@ const GamePage = (props: any) => {
             }
         }
     }
-
-    const utilsData = useSelector((state: RootState) => state.utils);
-
-    var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
 
     function render(room: gameRoomClass) {
 
@@ -295,44 +266,17 @@ const GamePage = (props: any) => {
         }
     }
 
-    utilsData.socket.on('render', render);
+    utilsData.socket.on('render_spectate', render)
+
+    const [finishGame, setFinishGame] = useState(false);
+    const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
+        console.log('on.(\'finish\')')
         setFinishGame(true)
 
         setFinishRoom(room)
     });
-
-    let verifKey = false
-
-    function onKeyDown(e: any) {
-        if (e.key === 'ArrowUp')
-            utilsData.socket.emit('ARROW_UP', [props.roomID, true]);
-        if (e.key === 'ArrowDown')
-            utilsData.socket.emit('ARROW_DOWN', [props.roomID, true]);
-        if (e.key === 'Enter') {
-            utilsData.socket.emit('ENTER', [props.roomID, true]);
-        }
-        if (e.key === ' ')
-            utilsData.socket.emit('SPACE', [props.roomID, true]);
-    }
-
-    // Lance la fonction onKeyDown chaque fois qu'une touche est appuyée
-    document.addEventListener("keydown", (e) => onKeyDown(e));
-
-    function onKeyUp(e: any) {
-        if (e.key === 'ArrowUp')
-            utilsData.socket.emit('ARROW_UP', [props.roomID, false]);
-        if (e.key === 'ArrowDown')
-            utilsData.socket.emit('ARROW_DOWN', [props.roomID, false]);
-        if (e.key === ' ')
-            utilsData.socket.emit('SPACE', [props.roomID, false]);
-    }
-
-    // Lance la fonction onKeyDown chaque fois qu'une touche est relachée
-    document.addEventListener("keyup", onKeyUp);
-
-    const [tabValue, setTabValue] = useState('1')
 
     function affFinishScreen() {
 
@@ -341,17 +285,12 @@ const GamePage = (props: any) => {
             window.location.replace('https://localhost:3000');
         }, 5000);
 
-        if (finishRoom?.players[0].user?.login == persistantReducer.userReducer.user?.login) {
-            U = finishRoom?.players[0]
-            H = finishRoom?.players[1]
-        } else {
-            U = finishRoom?.players[1]
-            H = finishRoom?.players[0]
-        }
+        U = finishRoom?.players[0]
+        H = finishRoom?.players[1]
 
         return (
             <div className='game-finished'>
-                <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
+                <h1>Match Result</h1>
                 <div className='result'>
                     <span>
                         <img src={U?.user?.profile_pic} />
@@ -371,7 +310,7 @@ const GamePage = (props: any) => {
     }
 
     return (
-        <div className="mainDiv">
+        <>
             <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
             <Background />
             {
@@ -385,12 +324,13 @@ const GamePage = (props: any) => {
                                 width={canvas.width}
                             />
                         </div>
-                    </div>
-                    :
-                    <>{affFinishScreen()}</>
+                    </div> :
+                    <>
+                        {affFinishScreen()}
+                    </>
             }
-        </div>
-    );
-};
+        </>
+    )
+}
 
-export default GamePage;
+export default Spectate;

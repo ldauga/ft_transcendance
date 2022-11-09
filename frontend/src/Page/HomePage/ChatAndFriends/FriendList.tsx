@@ -4,17 +4,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
-import BanUser from "./BanUser";
-import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
-import { SnackbarKey, withSnackbar } from 'notistack'
-import { useSnackbar } from 'notistack';
+import { constWhileSecu } from "../HomePage";
 
-function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string } }) {
+function FriendList(props: { setFriendList: Function, setInvitationRequest: Function, setRooms: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, setBannedUsers: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string } }) {
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -103,15 +100,18 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	utilsData.socket.on('getAllFriendConnected', function (data: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }[]) {
 		console.log('getAllFriendConnected = ', data);
-		getListItem(data);
-		const tmp: any[] = []
-		data.forEach(client => {
-			if (client.user.login != userData.userReducer.user?.login) {
-				const a = { id: client.user.id, username: client.user.login };
-				tmp.push(a);
-			}
-		})
-		setConnectedClient(tmp);
+		const oldLength = itemListHistory.length;
+		for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
+			getListItem(data);
+			const tmp: any[] = []
+			data.forEach(client => {
+				if (client.user.login != userData.userReducer.user?.login) {
+					const a = { id: client.user.id, username: client.user.login };
+					tmp.push(a);
+				}
+			})
+			setConnectedClient(tmp);
+		}
 		utilsData.socket.off('getAllFriendConnected');
 		utilsData.socket.removeListener('getAllFriendConnected');
 	})
@@ -141,7 +141,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 		console.log("useEffect friendList");
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		if (props.openFriendConversFromProfile) {
-			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login });
+			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login, nickname: props.dataFriendConversFromProfile.nickname, profile_pic: props.dataFriendConversFromProfile.profile_pic });
 			props.setFriendList(false);
 			props.setConvers(true);
 		}
@@ -211,7 +211,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 					<ListItemIcon>
 						<Settings fontSize="small" />
 					</ListItemIcon>
-					Aff Ban
+					Aff Blocked Users
 				</MenuItem>
 			</Menu>
 		);
@@ -232,7 +232,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				</button>
 				<MenuOptions />
 			</div>
-			{newAddFriend && <AddFriend />}
+			{newAddFriend && <AddFriend setNewAddFriend={setNewAddFriend} />}
 			<ItemsFriendList />
 		</div>
 	)

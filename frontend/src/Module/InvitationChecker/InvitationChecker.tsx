@@ -1,3 +1,4 @@
+import { Dictionary } from "@reduxjs/toolkit";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +21,7 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setNotif, delNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setNotif, delNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
 
 	function verifInvitationRequest() {
 		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
@@ -39,19 +40,19 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.removeAllListeners('notif');
 
-	utilsData.socket.on('notif', function (notif: Notif) {
+	utilsData.socket.on('notif', function (notif: {type: NotifType, data?: Dictionary<any>}) {
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
 				return
 			if (persistantReducer.notifReducer.notifArray[index] == notif)
 				return;
-			if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
+			if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data?.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
 				delNotif(persistantReducer.notifReducer.notifArray[index])
-				setNotif(notif)
+				setNotif({...notif, seen: false})
 				return;
 			}
 		}
-		setNotif(notif)
+		setNotif({...notif, seen: false})
 
 		utilsData.socket.off('notif');
 		utilsData.socket.removeListener('notif');
@@ -63,11 +64,6 @@ function InvitationChecker(props: { children: any }) {
 			verifInvitationRequest()
 			test = true
 		}
-	})
-
-	utilsData.socket.on('start_spectate', function (arrClient: Client[]) {
-		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/Pong')
 	})
 
 	return (

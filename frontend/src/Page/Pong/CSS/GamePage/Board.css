@@ -1,13 +1,9 @@
 .boardDiv {
-	margin-top: 5vw;
+	margin-top: 10vw;
 }
 
 .pongBoard {
     border: 10px rgb(48, 56, 76) solid;
 
-    width: 40%;
-}
-
-.spectate {
-    width: calc(15% - 0.8vw);
+    width: 70%;
 }

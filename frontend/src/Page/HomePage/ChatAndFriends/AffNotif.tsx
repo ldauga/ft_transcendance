@@ -31,7 +31,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	}
 
 	useEffect(() => {
-		props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
+		// props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
 	}, [props]);
 
 	return (
@@ -91,7 +91,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
 													window.location.href = 'https://localhost:3000/pong'
-												}} >OK</button>
+												}} >RECONNECT</button>
 											</div>
 										</div>
 									</div>
@@ -118,27 +118,63 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 								);
 							case NotifType.PENDINGINVITATION:
 								return (
-								<div className='notifContainer' key={index}>
-									<div className="notifElement">
-										<div className="notifTopContainer">
-											<button className="bi bi-x" onClick={(e) => {
-												delNotif(persistantReducer.notifReducer.notifArray[index])
-											}} />
-										</div>
-										<div className="notifHeader">
-											<h3>Check your invitation request</h3>
-										</div>
-										<div className="notifMain">
-											<button className='inviteButton accept' onClick={(e) => {
-												goToInvitationRequest(index);
-											}} >More details</button>
+									<div className='notifContainer' key={index}>
+										<div className="notifElement">
+											<div className="notifTopContainer">
+												<button className="bi bi-x" onClick={(e) => {
+													delNotif(persistantReducer.notifReducer.notifArray[index])
+												}} />
+											</div>
+											<div className="notifHeader">
+												<h3>Check your invitation request</h3>
+											</div>
+											<div className="notifMain">
+												<button className='inviteButton accept' onClick={(e) => {
+													goToInvitationRequest(index);
+												}} >More details</button>
+											</div>
 										</div>
 									</div>
-								</div>
+								);
+							case NotifType.YOUWEREKICKEDOUTTHEGROUP:
+								return (
+									<div className='notifContainer' key={index}>
+										<div className="notifElement">
+											<div className="notifTopContainer">
+												<button className="bi bi-x" onClick={(e) => {
+													delNotif(persistantReducer.notifReducer.notifArray[index])
+												}} />
+											</div>
+											<div className="notifHeader">
+												<h3>You were kicked out {persistantReducer.notifReducer.notifArray[index].data.room_name} by {persistantReducer.notifReducer.notifArray[index].data.login_sender}</h3>
+											</div>
+											<div className="notifMain">
+
+											</div>
+										</div>
+									</div>
+								);
+							case NotifType.YOUWEREBANFROMTHEGROUP:
+								return (
+									<div className='notifContainer' key={index}>
+										<div className="notifElement">
+											<div className="notifTopContainer">
+												<button className="bi bi-x" onClick={(e) => {
+													delNotif(persistantReducer.notifReducer.notifArray[index])
+												}} />
+											</div>
+											<div className="notifHeader">
+												<h3>You were ban from {persistantReducer.notifReducer.notifArray[index].data.room_name} group by {persistantReducer.notifReducer.notifArray[index].data.login_sender}</h3>
+											</div>
+											<div className="notifMain">
+
+											</div>
+										</div>
+									</div>
 								);
 							default:
 								return (
-								<></>
+									<></>
 								);
 						}
 					});

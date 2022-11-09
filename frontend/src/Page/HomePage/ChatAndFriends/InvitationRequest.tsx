@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
@@ -6,11 +5,15 @@ import './CSS/InvitationRequest.scss';
 import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
 import axiosConfig from "../../../Utils/axiosConfig";
+import { SnackbarKey, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
@@ -120,6 +123,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
             login_user2: item.receiver_login
         }
         utilsData.socket.emit('addFriend', newFriend);
+        enqueueSnackbar('You have accepted a friend request', { variant: "success", autoHideDuration: 2000 })
         setUpdate(true);
     };
 

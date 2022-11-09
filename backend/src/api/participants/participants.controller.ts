@@ -33,13 +33,6 @@ export class ParticipantsController {
     return this.service.getAllUsersForOneRoom(name);
   }
 
-  // @Get('/allUsersForRoom/:roomName/:roomId')
-  // @UseGuards(AuthGuard('jwt'))
-  // public getAllUsersForRoom(@Param('roomName') name: string, @Param('roomId') id: number): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {
-  //   console.log("controller getusers");
-  //   return this.service.getAllUsersForRoom(name);
-  // }
-
   @Get('/check/:login/:name')
   @UseGuards(AuthGuard('jwt'))
   public async checkParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
@@ -54,38 +47,5 @@ export class ParticipantsController {
     const returnCheck = await this.service.checkAdmin(login, name);
     // console.log('checkAdmin Check = ', returnCheck);
     return returnCheck;
-  }
-
-  @Get('/checkIfAdminOrParticipant/:login/:name')
-  @UseGuards(AuthGuard('jwt'))
-  public async checkIfAdminOrParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
-    const returnCheck = await this.service.checkIfAdminOrParticipant(login, name);
-    console.log('checkIfAdminOrParticipant Check = ', returnCheck);
-    return returnCheck;
-  }
-
-  @Post('/admin')
-  @UseGuards(AuthGuard('jwt'))
-  public async createAdmin(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
-    console.log('body', body);
-    const newParticipant = await this.service.createAdmin(body);
-    return newParticipant;
-  }
-
-  @Post()
-  @UseGuards(AuthGuard('jwt'))
-  public async createParticipant(@Body() body: ParticipantsDto): Promise<ParticipantsEntity> {
-    console.log('body', body);
-    const newParticipant = await this.service.createParticipant(body);
-    return newParticipant;
-  }
-
-  @Post('/:login/:roomName')
-  @UseGuards(AuthGuard('jwt'))
-  public async removeParticipant(@Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
-    console.log('removeParticipant Controller login: ', login, ", roomName: ", roomName);
-    const removeReturn = await this.service.removeParticipant(login, roomName);
-    console.log('removeRParticipanteturn Controller', removeReturn);
-    return true;
   }
 }

@@ -21,6 +21,12 @@ export class MessagesController {
     return this.service.getUserMessages(id);
   }
 
+  @Get('/getUsersRoomConversMessages/:name')
+  @UseGuards(AuthGuard('jwt'))
+  public getUsersRoomConversMessages(@Param('name') name: string): Promise<{ login: string, id: number }[]> {
+    return this.service.getUsersRoomConversMessages(name);
+  }
+
   @Get('/:id1/:id2')
   @UseGuards(AuthGuard('jwt'))
   public getConversMessages(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<MessagesEntity[]> {
@@ -32,26 +38,6 @@ export class MessagesController {
   public getUser(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number, @Param('id3', ParseIntPipe) id3: number): Promise<any[]> {
     const returnCheck = this.service.getRelationMessages(id1);
     return returnCheck;
-  }
-
-  //TROUVER SOLUTION POUR METTRE LE GUARD
-  /*@Post()
-  @UseGuards(AuthGuard('jwt'))
-  public createMessages(@Body() body: MessagesDto): Promise<MessagesEntity> {
-    console.log('body createMessages: ', body);
-    const newMessage = this.service.createMessages(body);
-    if (!newMessage)
-      return null;
-    return newMessage;
-  }*/
-
-  @Post('/removeAllRoomMessages/')
-  public removeAllRoomMessages(@Body() body: { room_id: number, room_name: string }): Promise<boolean> {
-    console.log('body removeAllRoomMessages: ', body);
-    const newMessage = this.service.removeAllRoomMessages(body.room_id, body.room_name);
-    if (!newMessage)
-      return null;
-    return newMessage;
   }
 
   @Get()

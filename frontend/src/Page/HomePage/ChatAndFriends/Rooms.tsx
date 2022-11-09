@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
-import './CSS/Rooms.scss'
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../../State';
+import './CSS/Convers.scss'
 import '../Homepage.scss'
 import CreateRooms from './CreateRooms';
 import { constWhileSecu } from '../HomePage';
 import axiosConfig from '../../../Utils/axiosConfig';
 import GroupIcon from '@mui/icons-material/Group';
+import { bindActionCreators } from 'redux';
 
 function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, setRoomsList: Function }) {
 
@@ -19,6 +20,10 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
     const [itemListMyRooms, setitemListMyRooms] = useState(Array<{ name: string, id: number }>);
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     const affCreateGroup = async () => {
         if (isCreateGroup)
@@ -39,7 +44,9 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     };
 
     const openConvers = (item: { name: string, id: number }) => {
+        //setConversChatNotif({ name: item.name, userOrRoom: true });
         props.setroomsConversData({ name: item.name, id: item.id });
+        delChatNotif({ name: item.name, userOrRoom: true });
         props.setRooms(false);
         props.setOldAffRoomConvers("Rooms");
         props.setRoomsConvers(true);

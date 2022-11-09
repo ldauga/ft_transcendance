@@ -7,10 +7,9 @@
 	--racket-bottom: 87%;
 }
 
-
 .pong {
 	max-width: 736px;
-	padding: 60px 0 25px 0;
+	padding-bottom: 25px;
 	border: solid;
 	background: #FDFEFE;
 	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -19,13 +18,11 @@
 	margin: auto;
 	display: flex;
 	flex-direction: column;
-	margin-top: 10%;
+	margin: 0 5px;
+    margin-top: calc(50px + 7vh);
 	align-items: center;
-	
-	.instruction {
-		color: #2e384e;
-		font-family: 'Roboto', sans-serif;
-		font-size: 30px;
+
+	h1 {
 		font-weight: 700;
 	}
 
@@ -35,231 +32,233 @@
 		justify-content: space-evenly;
 		width: 100%;
 
-		svg {
-			cursor: pointer;
-			height: 40px;
-			width: auto;
-			border: solid 3px #2e384e;
-			transition: all .3s ease-out;
+		.map-carousel {
+			.field {
+				border-width: 2px;
+			}
+		}
 
+		svg {
+			height: 25px;
+			width: auto;
+		}
+		
+		button {
+			all: unset;
+			cursor: pointer;
+			border: solid 2px #2e384e;
+			transition: all .3s ease-out;
 			&:hover {
 				color: white;
 				background: #2e384e;
 			}
 		}
-
-		button {
-			all: unset;
-		}
 	}
 
-	.join-queue {
+	button {
 		color: #2e384e;
 		border-color: #2e384e;
 		background: unset;
-		letter-spacing: 1px;
-		border-width: 3px;
-		margin-top: 49px;
-		font-family: 'Roboto', sans-serif;
-		font-size: 30px;
+		letter-spacing: 0px;
+		border-width: 2px;
+		margin-top: 35px;
+		font-family: "Roboto", sans-serif;
+		font-size: 27px;
 		font-weight: 700;
 		cursor: pointer;
 		text-transform: uppercase;
-		transition: all .3s ease-out;
+		transition: all 0.3s ease-out;
 
 		&:hover {
 			color: #FFFF;
 			background: #2e384e;
 		}
 	}
-
-	.create-map {
-		color: #2e4e2f;
-		border-color: #2e4e2f;
-		background: unset;
-		letter-spacing: 1px;
-		border-width: 3px;
-		margin-top: 49px;
-		font-family: 'Roboto', sans-serif;
-		font-size: 30px;
-		font-weight: 700;
-		cursor: pointer;
-		text-transform: uppercase;
-		transition: all .3s ease-out;
-
-		&:hover {
-			color: #FFFF;
-			background: #2e4e2f;
-		}
-	}
-}
-
-
-
-.loadingScreen {
-
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-
-	.circularProgress {
-		margin-top: 30vh;
-	}
-
-	span {
-		margin-top: 5vh;
-		font-size: 25px;
-		font-weight: 700;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.leave-queue {
-		color: #4e2e2e;
-		border-color: #4e2e2e;
-		background: unset;
-		letter-spacing: 2.5px;
-		border-width: 3px;
-		margin-top: 49px;
-		font-family: 'Roboto', sans-serif;
-		font-size: 40px;
-		font-weight: 700;
-		cursor: pointer;
-		text-transform: uppercase;
-		transition: all .3s ease-out;
-
-		&:hover {
-			color: #FFFF;
-			background: #4e2e2e;
-		}
-	}
-
-	.join-queue {
-		color: #2e384e;
-		border-color: #2e384e;
-		background: unset;
-		letter-spacing: 1px;
-		border-width: 3px;
-		margin-top: 49px;
-		font-family: 'Roboto', sans-serif;
-		font-size: 30px;
-		font-weight: 700;
-		cursor: pointer;
-		text-transform: uppercase;
-		transition: all .3s ease-out;
-
-		&:hover {
-			color: #FFFF;
-			background: #2e384e;
-		}
-	}
-}
-
-.finishGameScreen {
-
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-
-	.finishMsg {
-
-		margin: auto;
-		margin-top: 2.5%;
-
-		color: #2e384e;
-		font-family: 'Roboto', sans-serif;
-		font-size: 60px;
-		font-weight: 700;
-
-	}
-
-	.versusContainer {
-
-		display: flex;
-		justify-content: space-between;
-
-		margin: auto;
-		width: 60%;
-
-		.playerContainer {
-
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-
-			.profile_pic {
-				height: 30vh;
-
-				img {
-					height: 100%;
+	@media screen and (min-width: 425px) {
+		margin: 0 10px;
+    	margin-top: calc(50px + 7vh);
+		.select-map {
+			.map-carousel {
+				.field {
+					border-width: 3px;
 				}
-
 			}
-
-			.winner {
-				border: 15px ridge #2FD500;
+			svg {
+				height: 32px;
 			}
-
-			.looser {
-				border: 15px ridge #D50000;
+			button {
+				border-width: 3px;
 			}
-
-			.name {
-				margin: auto;
-				margin-top: 2.5%;
-
-				color: #2e384e;
-				font-family: 'Roboto', sans-serif;
-				font-size: 30px;
-				font-weight: 700;
-			}
-
-
 		}
-
-		.vs {
-			margin-block: auto;
-
-			color: #2e384e;
-			font-family: 'Roboto', sans-serif;
-			font-size: 90px;
-			font-weight: 700;
-		}
-
-
-	}
-
-	.buttonContainer {
-
-		margin: auto;
-
-		display: flex;
-		justify-content: space-evenly;
-
-		width: 80%;
-
 		button {
-			color: #2e384e;
-			border-color: #2e384e;
-			letter-spacing: 1px;
+			margin-top: 35px;
 			border-width: 3px;
-			margin-top: 49px;
-			font-family: 'Roboto', sans-serif;
-			font-size: 30px;
-			font-weight: 700;
-			cursor: pointer;
-			text-transform: uppercase;
-			transition: all .3s ease-out;
-
-			&:hover {
-				color: #FFFF;
-				background: #2e384e;
+			font-size: 29px;
+			letter-spacing: 1px;
+		}
+	}
+	@media screen and (min-width: 756px) {
+		margin: 0 auto;
+		margin-top: calc(50px + 7vh);
+	}
+	@media screen and (min-width: 768px) {
+		margin-top: calc(83px + 7vh);
+		h1 {
+			font-size: 40px;
+			margin-bottom: 33px;
+			letter-spacing: 1px;
+		}
+		.select-map {
+			svg {
+				height: 47px;
 			}
+		}
+		button {
+			margin-top: 57px;
+			font-size: 32px;
+			letter-spacing: 2px;
+		}
+	}
+	@media screen and (min-width: 1024px) {
+		margin-top: calc(85px + 7vh);
+	}
+	@media screen and (min-width: 1440px) {
+		margin-top: calc(95px + 7vh);
+	}
+}
+
+
+
+.loading-screen {
+	background: #FDFEFE;
+	margin: 0 10px;
+	margin-top: calc(50px + 17vh);
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+	border: 1px solid;
+	max-width: 355px;
+	padding-top: 25px;
+	padding-bottom: 20px;
+	.pong-loader {
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+		top: 50%;
+		height: 40px;
+		width: 6px;
+		animation: paddles 0.75s ease-out infinite;
+		transform: translate3d(0, 0, 0);
+	}
+
+	.pong-loader:before {
+		content: "";
+		position: absolute;
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+		top: 15px;
+		width: 10px;
+		height: 10px;
+		background-color: #2e384e;
+		border-radius: 50%;
+		animation: ballbounce 0.6s ease-out infinite;
+	  }
+
+	  h3 {
+		font-family: 'Roboto';
+		text-transform: uppercase;
+		font-weight: 500;
+		font-size: 16px;
+		letter-spacing: 1px;
+		margin-top: 53px;
+		transform: scale(0.9);
+		animation: bop 1s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards
+      infinite alternate;
+	  }
+
+	  button {
+		color: #2e384e;
+		border-color: #2e384e;
+		background: unset;
+		letter-spacing: 0px;
+		border-width: 2px;
+		font-family: "Roboto", sans-serif;
+		font-size: 27px;
+		font-weight: 700;
+		cursor: pointer;
+		text-transform: uppercase;
+		transition: all 0.3s ease-out;
+
+		&:hover {
+			color: #FFFF;
+			background: #2e384e;
 		}
 	}
 
-	.match-stats {
-		height: 10vh;
+	@media screen and (min-width: 355px) {
+		margin: 0 auto;
+		margin-top: calc(50px + 17vh);
+	}
 
-		background-color: red;
+	@media screen and (min-width: 375px) {
+		h3 {
+			font-size: 23px;
+			letter-spacing: 2px;
+		}
+		button {
+			font-size: 34px;
+			border-width: 3px;
+			letter-spacing: 2px;
+		}
+	}
+	@media screen and (min-width: 768px) {
+		margin-top: calc(83px + 7vh);
+	}
+	@media screen and (min-width: 1024px) {
+		margin-top: calc(85px + 17vh);
+	}
+	@media screen and (min-width: 1440px) {
+		margin-top: calc(95px + 17vh);
+	}
+	  
+	  @keyframes paddles {
+		0% {
+		  box-shadow: -25px -10px 0px #2e384e, 25px 10px 0px #2e384e;
+		}
+		50% {
+		  box-shadow: -25px 8px 0px #2e384e, 25px -10px 0px #2e384e;
+		}
+		100% {
+		  box-shadow: -25px -10px 0px #2e384e, 25px 10px 0px #2e384e;
+		}
+	  }
+	  
+	  @keyframes ballbounce {
+		0% {
+		  transform: translateX(-20px) scale(1, 1.2);
+		}
+		25% {
+		  transform: scale(1.2, 1);
+		}
+		50% {
+		  transform: translateX(15px) scale(1, 1.2);
+		}
+		75% {
+		  transform: scale(1.2, 1);
+		}
+		100% {
+		  transform: translateX(-20px);
+		}
+	}
+
+	@keyframes bop {
+		0% {
+		  transform: scale(0.9);
+		}
+		80%,
+		100% {
+		  transform: scale(1) rotateZ(-3deg);
+		}
 	}
 }

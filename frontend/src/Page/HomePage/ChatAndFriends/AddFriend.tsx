@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from "@mui/material";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
@@ -8,12 +7,12 @@ import './CSS/AddFriend.scss';
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
-function AddFriend() {
+function AddFriend(props: { setNewAddFriend: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -80,6 +79,7 @@ function AddFriend() {
                     utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                     enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                 }
+                props.setNewAddFriend(false);
                 return;
             }
         });
@@ -135,4 +135,4 @@ function AddFriend() {
     )
 }
 
-export default withSnackbar(AddFriend);
+export default AddFriend;

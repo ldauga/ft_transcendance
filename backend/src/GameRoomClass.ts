@@ -243,6 +243,8 @@ class Obstacle {
 	speed: number
 	initialSpeed: number
 
+	verif: number
+
 	id: number
 
 	constructor(color: string, x: number, y: number, width: number, height: number, state: number, speed: number = 0) {
@@ -261,6 +263,8 @@ class Obstacle {
 
 		this.speed = speed
 		this.initialSpeed = speed
+
+		this.verif = 0
 
 		this.id = 0;
 	}
@@ -283,7 +287,7 @@ class Map {
 		}
 		if (gameMap == 'map1')
 			this.mapColor = 'black'
-		else if (gameMap == 'map2'){
+		else if (gameMap == 'map2') {
 			this.mapColor = 'black'
 			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, MOTION, 0.4))
 		}
@@ -299,6 +303,7 @@ class Map {
 			this.obstacles[index].y = this.obstacles[index].initialY
 			this.obstacles[index].height = this.obstacles[index].initialHeight
 			this.obstacles[index].speed = this.obstacles[index].initialSpeed
+			this.obstacles[index].verif = 0
 		}
 	}
 
@@ -471,17 +476,39 @@ class gameRoomClass {
 
 	checkCollisionObstacle(obstacle: Obstacle): boolean {
 
-		var ptop = obstacle.y
-		var pbottom = obstacle.y + obstacle.height
-		var pleft = obstacle.x
-		var pright = obstacle.x + obstacle.width
+		const distX = Math.abs(this.ball.x - obstacle.x - obstacle.width / 2);
+		const distY = Math.abs(this.ball.y - obstacle.y - obstacle.height / 2);
+	  
+		if (distX > (obstacle.width / 2 + this.ball.radius)) {
+		  return false;
+		}
+		if (distY > (obstacle.height / 2 + this.ball.radius)) {
+		  return false;
+		}
+	  
+		if (distX <= (obstacle.width / 2)) {
+		  return true;
+		}
+		if (distY <= (obstacle.height / 2)) {
+		  return true;
+		}
+	  
+		const Δx = distX - obstacle.width / 2;
+		const Δy = distY - obstacle.height / 2;
+		return Δx * Δx + Δy * Δy <= this.ball.radius * this.ball.radius;
 
-		var btop = this.ball.y - this.ball.radius
-		var bbottom = this.ball.y + this.ball.radius
-		var bleft = this.ball.x - this.ball.radius
-		var bright = this.ball.x + this.ball.radius
 
-		return pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop
+		// var ptop = obstacle.y
+		// var pbottom = obstacle.y + obstacle.height
+		// var pleft = obstacle.x
+		// var pright = obstacle.x + obstacle.width
+
+		// var btop = this.ball.y - this.ball.radius
+		// var bbottom = this.ball.y + this.ball.radius
+		// var bleft = this.ball.x - this.ball.radius
+		// var bright = this.ball.x + this.ball.radius
+
+		// return pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop
 	}
 
 	moveBall() {
@@ -546,15 +573,27 @@ class gameRoomClass {
 
 		for (let index = 0; index < this.map.obstacles.length; index++) {
 
-			if (this.checkCollisionObstacle(this.map.obstacles[index])) {
+			if (this.checkCollisionObstacle(this.map.obstacles[index]) && !this.map.obstacles[index].verif) {
 
-				if (this.ball.x - this.ball.radius < this.map.obstacles[index].x ||
-					this.ball.x + this.ball.radius > this.map.obstacles[index].x + this.map.obstacles[index].width)
-					this.ball.dx *= -1
-				if (this.ball.y - this.ball.radius < this.map.obstacles[index].y ||
-					this.ball.y + this.ball.radius > this.map.obstacles[index].y + this.map.obstacles[index].height)
-					this.ball.dy *= -1
+				this.map.obstacles[index].verif = 30
 
+				if (this.ball.x + this.ball.radius < this.map.obstacles[index].x + this.map.obstacles[index].width) {
+					console.log('colision left')
+					this.ball.dx *= -1;
+				}
+
+				if (this.ball.x - this.ball.radius > this.map.obstacles[index].x) {
+					console.log('colision right')
+					this.ball.dx *= -1;
+				}
+				if (this.ball.y + this.ball.radius < this.map.obstacles[index].y + this.map.obstacles[index].height) {
+					console.log('colision top')
+					this.ball.dy *= -1;
+				}
+					if (this.ball.y - this.ball.radius > this.map.obstacles[index].y) {
+					console.log('colision bottom')
+					this.ball.dy *= -1;
+				}
 			}
 		}
 
@@ -566,8 +605,11 @@ class gameRoomClass {
 	moveObstacle() {
 		for (let index = 0; index < this.map.obstacles.length; index++) {
 			if (this.map.obstacles[index].state == MOTION) {
-				if (this.checkCollisionObstacle(this.map.obstacles[index]))
+				if (this.checkCollisionObstacle(this.map.obstacles[index]) || this.map.obstacles[index].verif) {
+					if (this.map.obstacles[index].verif)
+						this.map.obstacles[index].verif--;
 					return
+				}
 				if (this.map.obstacles[index].y + this.map.obstacles[index].height / 2 < this.ball.y)
 					if (this.map.obstacles[index].y + this.map.obstacles[index].height < this.canvas.height - this.ball.radius * 2 - this.map.obstacles[index].speed)
 						this.map.obstacles[index].y += this.map.obstacles[index].speed
@@ -576,11 +618,14 @@ class gameRoomClass {
 						this.map.obstacles[index].y -= this.map.obstacles[index].speed
 			}
 			else if (this.map.obstacles[index].state == EXPAND) {
+				this.map.obstacles[index].verif = 0
 				this.map.obstacles[index].height += this.map.obstacles[index].speed
 				this.map.obstacles[index].y -= this.map.obstacles[index].speed / 2
 				if (this.map.obstacles[index].height == this.map.obstacles[index].initialHeight || this.map.obstacles[index].height == this.canvas.height)
 					this.map.obstacles[index].speed *= -1
 			}
+			else if (this.map.obstacles[index].verif)
+				this.map.obstacles[index].verif = 0
 		}
 	}
 

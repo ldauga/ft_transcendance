@@ -24,6 +24,9 @@ export class MessagesEntity {
   @Column({ default: false })
   public userOrRoom: boolean;
 
+  @Column({ default: false })
+  public serverMsg: boolean;
+
   @Column()
   @Index()
   public room_id: number;

@@ -2,11 +2,10 @@ import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../State";
-import axiosConfig from "../../../Utils/axiosConfig";
-import './CSS/BanUser.css';
+import { RootState } from "../State";
+import axiosConfig from "../Utils/axiosConfig";
 
-function BanUser() {
+function BanRoomParticipant(props: { roomsConversData: { name: string, id: number } }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -20,11 +19,12 @@ function BanUser() {
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
 
-    async function buttonBanUser() {
+
+    async function buttonBanRoomParticipant() {
         let test = false;
         console.log("text.length = ", text.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
         if (text.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
-            console.log("Wrong input for banUser");
+            console.log("Wrong input for banUser in Room");
             return;
         }
         await axiosConfig.get('https://localhost:5001/user/login/' + text).then(async (res) => {
@@ -40,7 +40,7 @@ function BanUser() {
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
                     console.log(res);
@@ -60,16 +60,16 @@ function BanUser() {
                         id_banned: res.data.id,
                         login_sender: userData.userReducer.user?.login,
                         login_banned: res.data.login,
-                        userOrRoom: false,
+                        userOrRoom: true,
                         receiver_login: "",
-                        room_id: 0,
-                        room_name: "",
+                        room_id: props.roomsConversData.id,
+                        room_name: props.roomsConversData.name,
                         cause: "",
                         date: 0,
                         alwaysOrNot: alwaysOrNot,
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
-                    utilsData.socket.emit('createBan', newBan);
+                    utilsData.socket.emit('createRoomBan', newBan);
                 }
                 return;
             }
@@ -183,11 +183,11 @@ function BanUser() {
                     id="checkBoxBan"
                 />
             </div>
-            <button type="button" onClick={() => buttonBanUser()}>
+            <button type="button" onClick={() => buttonBanRoomParticipant()}>
                 Ban User
             </button>
         </div>
     )
 }
 
-export default BanUser;
+export default BanRoomParticipant;

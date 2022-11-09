@@ -1,0 +1,52 @@
+.ListItemBanUser {
+    display: flex;
+
+    .itemBanUser {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        .inItemBanUser {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 0.25vw;
+            margin-right: 0.25vw;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+
+            .inItemBanUser_left {
+                display: flex;
+                align-items: baseline;
+                width: 70%;
+                align-items: center;
+
+                img {
+                    --avatar-size: 51px;
+                    width: var(--avatar-size);
+                    height: var(--avatar-size);
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+
+                p {
+                    font-size: 1.5rem;
+                    color: #2E384E;
+                    margin: 0;
+                    margin-left: 10px;
+                }
+            }
+
+            .inItemBanUser_right {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                width: 30%;
+            }
+        }
+
+    }
+
+}

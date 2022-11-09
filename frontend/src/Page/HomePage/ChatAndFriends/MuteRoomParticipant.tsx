@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
-import './CSS/BanRoomParticipant.css';
+import './CSS/BanRoomParticipant.scss';
 
 function MuteRoomParticipant(props: { roomsConversData: { name: string, id: number } }) {
 

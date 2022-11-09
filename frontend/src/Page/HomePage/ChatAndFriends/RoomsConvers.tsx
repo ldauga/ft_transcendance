@@ -1,41 +1,37 @@
-import axios from 'axios';
-import { createRef, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../State';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../../State';
 import './CSS/RoomsConvers.scss'
 import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
 import '../Homepage.scss'
-import CreateInvitationRooms from './CreateInvitationRooms';
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
-import { constWhileSecu } from '../HomePage';
-import ChangeRoomPassword from './ChangeRoomPassword';
 import axiosConfig from '../../../Utils/axiosConfig';
-import SendIcon from '@mui/icons-material/Send';
-import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField } from "@mui/material";
+import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Logout, Person, Settings } from "@mui/icons-material";
-import BathtubIcon from '@mui/icons-material/Bathtub';
-import BabyChangingStationIcon from '@mui/icons-material/BabyChangingStation';
+import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
+import { bindActionCreators } from 'redux';
 
-function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function }) {
+function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function, setRoomsConversData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
-    const [update, setUpdate] = useState(false);
+    const [update, setUpdate] = useState(true);
     const [isAdmin, setAdmin] = useState(false);
     const [isOwner, setOwner] = useState(false);
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
     const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
+
+    const [oldChatNotifTotal, setOldChatNotifTotal] = useState(0);
 
     const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
@@ -48,6 +44,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [password, setPassword] = useState('');
 
     const [passwordOrNot, setPasswordOrNot] = useState(false);
+
+    const [pp1, setPp1] = useState("");
+    const [pp2, setPp2] = useState("");
+
+    const dispatch = useDispatch();
+
+    const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
     // const scrollToBottom = useScrollToBottom();
 
@@ -74,18 +77,21 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
 
-    utilsData.socket.removeAllListeners('newMsgReceived');
+    // utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
         console.log('newMsgReceived = ', data);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
+        // const length = itemListHistory.length;
+        // let secu = 0;
+        // while (length == itemListHistory.length && secu < constWhileSecu) {
+        //     getListItem();
+        //     secu++;
+        // }
+        setUpdate(true);
+        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
+        if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
+            delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         }
-        utilsData.socket.off('newMsgReceived');
-        utilsData.socket.removeListener('newMsgReceived');
     })
 
     function getYear() {
@@ -126,6 +132,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }
 
     const closeConvers = () => {
+        //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
+        props.setRoomsConversData({ name: "", id: 0 });
         props.setRoomsConvers(false);
         if (props.oldAffRoomConvers == "Rooms")
             props.setRooms(true);
@@ -135,7 +143,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const quitConvers = () => {
         const participantToRemove = {
+            id_sender: userData.userReducer.user?.id,
+            login_sender: userData.userReducer.user?.login,
             login: userData.userReducer.user?.login,
+            id: userData.userReducer.user?.id,
             room_name: props.roomsConversData.name,
             room_id: props.roomsConversData.id
         }
@@ -197,25 +208,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         if (props.item.id_sender == userData.userReducer.user?.id) {
             if (getYear() != props.item.year)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getMonth() != props.item.month)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getDay() != props.item.day)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
@@ -225,25 +236,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             const nickname = user?.nickname;
             if (getYear() != props.item.year)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getMonth() != props.item.month)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else if (getDay() != props.item.day)
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
             else
                 return (
-                    <div className='dateDisplayNoneRoomConvers'>
+                    <div className='dateDisplayNone'>
                         <p>{nickname} - {props.item.hour}:{props.item.minute}</p>
                     </div>
                 );
@@ -251,19 +262,18 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     };
 
-    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        if (props.item.id_sender == userData.userReducer.user?.id) {
+    function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
+        if (props.item.id_sender == userData.userReducer.user?.id && !props.item.serverMsg) {
             return (
                 <div className='inItem2'>
                     <AffDate item={props.item} />
-                    {/* <div>Yo</div> */}
-                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[0].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[0].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
+                    <div onMouseOver={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                         <p>{props.item.text}</p>
                     </div>
                 </div>
             );
         }
-        else if (props.item.id_sender == 0) {
+        else if (props.item.serverMsg) {
             return (
                 <div className="server_msg">
                     <p>{props.item.text}</p>
@@ -272,11 +282,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         }
         else {
             const pp = users.find(obj => obj.id == props.item.id_sender)?.profile_pic;
+            const nickname = users.find(obj => obj.id == props.item.id_sender)?.nickname;
             return (
                 <div className='inItem2'>
-                    <img src={pp}></img>
-                    <div onMouseOver={e => { e.currentTarget.parentElement?.children[2].classList.add("dateRoomConvers") }} onMouseOut={e => { e.currentTarget.parentElement?.children[2].classList.remove("dateRoomConvers") }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'converItemListRoomConvers converItemListMeRoomConvers' : 'converItemListRoomConvers converItemListCorrespondantRoomConvers')}>
-                        <p>{props.item.text}</p>
+                    <div className="picture-message">
+                        <img src={pp}></img>
+                        <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
+                            <p>{props.item.text}</p>
+                        </div>
                     </div>
                     <AffDate item={props.item} />
                 </div>
@@ -291,8 +304,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'itemListConversContainerMe' : (item.id_sender == 0 ? 'itemListConversContainerServer' : 'itemListConversContainerCorrespondant'))}>
+            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
+                itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item item={item} />
                 </div>)
             });
@@ -303,30 +316,62 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const getUsers = async () => {
         console.log("getUsers");
+        let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
+        let i = 0;
+        setPp1("");
+        setPp2("");
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
-            let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = []
             res.data.forEach(async (item: { login: string, id: number }) => {
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                    if (i == 0) {
+                        console.log("setPp1 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
+                        setPp1(res.data.profile_pic);
+                        i++;
+                    }
+                    else if (i == 1) {
+                        console.log("setPp2 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
+                        setPp2(res.data.profile_pic);
+                        i++;
+                    }
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
             console.log('itemList get Users: ', itemList);
-            setUsers(itemList);
-            setUpdate(true);
         })
+        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
+            console.log("get List User 2: ", res.data);
+            res.data.forEach(async (item: { login: string, id: number }) => {
+                console.log("login = ", item.login, "itemList: ", itemList)
+                if (!itemList.find(obj => obj.login == item.login))
+                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                        itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
+                    });
+            });
+            console.log('itemList get Users 2: ', itemList);
+        })
+        setUsers(itemList);
     }
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
+        // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
+        //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
+        //     setOldChatNotifTotal(userData.chatNotifReducer.total);
+        // }
     }, [itemListHistory])
 
     useEffect(() => {
-        setUpdate(false);
-        checkIfOwner();
-        getUsers();
-        getListItem();
-        bottom.current?.scrollIntoView();
+        console.log("update: ", update);
+        utilsData.socket.off('newMsgReceived');
+        utilsData.socket.removeListener('newMsgReceived');
+        if (update) {
+            setUpdate(false);
+            checkIfOwner();
+            getUsers();
+            getListItem();
+            bottom.current?.scrollIntoView();
+        }
     }, [props, update]);
 
     const handleClickOpenDialogChangePassword = () => {
@@ -443,6 +488,34 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             );
         };
 
+        function HeaderPrint() {
+            let str_nickname = "";
+            console.log("users: ", users);
+            for (let i = 0; i < users.length; i++) {
+                if (i + 1 < users.length)
+                    str_nickname = str_nickname + users[i].nickname + ", ";
+                else
+                    str_nickname = str_nickname + users[i].nickname;
+            }
+            return (
+                <>
+                    <ArrowBackIosNew onClick={closeConvers} />
+                    <div className="group-profile">
+                        {pp2 && pp1 ? <div className='profile-pic-group'>
+                            <img src={pp1} />
+                            <img src={pp2} />
+                        </div> : pp1 ?
+                            <div className='profile-pic-group'><img src={pp1} /></div> :
+                            <div className='profile-pic-group'><img src="" /></div>}
+                        <div className="group-name">
+                            <p>{props.roomsConversData.name}</p>
+                            <p className='name-participants' onClick={affParticipants}>{str_nickname}</p>
+                        </div>
+                    </div>
+                </>
+            )
+        }
+
         function MenuOptionsAdmin() {
             return (
                 <Menu
@@ -472,6 +545,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                                 right: 14,
                                 width: 10,
                                 height: 10,
+                                backgroundColor: "transparent",
                                 bgcolor: 'background.paper',
                                 transform: 'translateY(-50%) rotate(45deg)',
                                 zIndex: 0,
@@ -500,70 +574,38 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         if (isOwner)
             return (
-                <div id="header" className="mainHeader">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
-                        <IconButton onClick={handleClickOpenOptions}>
-                            <MoreVertIcon />
-                        </IconButton>
-                        <MenuOptionsOwner />
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={removeRoom} className="bi bi-x-lg"></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
-                    </div>
+                <div className="header">
+                    <HeaderPrint />
+                    <IconButton onClick={handleClickOpenOptions}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <MenuOptionsOwner />
                 </div>
             );
         else if (isAdmin)
             return (
-                <div id="header" className="mainHeader">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
-                        <IconButton onClick={handleClickOpenOptions}>
-                            <MoreVertIcon />
-                        </IconButton>
-                        <MenuOptionsAdmin />
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button>
-                        <button onClick={handleClickChangePassword}><i className="bi bi-gear-fill"></i></button> */}
-                    </div>
+                <div className="header">
+                    <HeaderPrint />
+                    <IconButton onClick={handleClickOpenOptions}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <MenuOptionsAdmin />
                 </div>
             );
         else
             return (
-                <div id="header" className="mainHeader">
-                    <div className="mainHeaderLeft mainHeaderSide">
-                        <button onClick={closeConvers} className="bi bi-arrow-left"></button>
-                    </div>
-                    <h3>{props.roomsConversData.name}</h3>
-                    <div id="RoomsConversHeaderRight" className="mainHeaderRight mainHeaderSide">
-                        <IconButton onClick={affParticipants}>
-                            <BathtubIcon />
-                        </IconButton>
+                <div className="header">
+                    <HeaderPrint />
+                    <Tooltip title="Quit chat room">
                         <IconButton onClick={quitConvers}>
-                            <BabyChangingStationIcon />
+                            <LogoutIcon />
                         </IconButton>
-                        {/* <button onClick={affParticipants}><i className="bi bi-people-fill"></i></button>
-                        <button onClick={quitConvers}><i className="bi bi-box-arrow-left"></i></button> */}
-                    </div>
+                    </Tooltip>
                 </div>
             );
     };
 
-    function AffRoomConvers() {
-
+    function SendZone() {
         const [messageText, setMessageText] = useState('');
 
         function sendMessage() {
@@ -586,57 +628,59 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         function SendButton() {
             if (messageText.length <= 0) {
                 return (
-                    <Button className="sendButtonDisabled" variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                        <SendIcon id="sendIcon" />
-                    </Button>
+                    <button className="sendButtonDisabled" onClick={sendMessage} disabled={messageText.length <= 0}>
+                        send
+                    </button>
                 );
             }
             else {
                 return (
-                    <Button variant="contained" onClick={sendMessage} disabled={messageText.length <= 0}>
-                        <SendIcon id="sendIcon" />
-                    </Button>
+                    <button onClick={sendMessage} disabled={messageText.length <= 0}>
+                        send
+                    </button>
                 );
             }
         };
 
         return (
-            <div id="roomsConvers">
+            <div className="send-message">
+                <TextField value={messageText}
+                    onChange={e => setMessageText(e.target.value)}
+                    placeholder='Your message...'
+                    multiline maxRows={5}
+                    onKeyDown={(e) => {
+                        if (e.keyCode == 13) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
+                />
+                <SendButton />
+            </div>
+        );
+    }
+
+    function AffRoomConvers() {
+        return (
+            <div className="chat">
                 <Header />
-                {isChangeRoomPassword && <ChangeRoomPassword roomsConversData={props.roomsConversData} />}
                 <AffConvers />
-                <div className="sendZoneConvers">
-                    <input
-                        value={messageText}
-                        onChange={e => setMessageText(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') sendMessage() }}
-                        placeholder="Your message..."
-                    />
-                    <SendButton />
-                </div>
+                <SendZone />
             </div>
         );
     };
 
     function AffConvers() {
-        if (!isChangeRoomPassword)
-            return (
-                <div id="affConversBig" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-            );
-        else
-            return (
-                <div id="affConversSmall" ref={bottom}>
-                    {itemListHistory}
-                    <div ref={messagesEndRef} />
-                </div>
-            );
+        return (
+            <div className="messages" ref={bottom}>
+                {itemListHistory}
+                <div ref={messagesEndRef} />
+            </div>
+        );
     };
 
     return (
-        <div id="roomsConvers">
+        <div className="roomsConvers">
             {isConversRooms && <AffRoomConvers />}
             {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
             <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>

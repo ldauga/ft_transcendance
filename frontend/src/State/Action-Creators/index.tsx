@@ -1,7 +1,7 @@
 import { Dispatch } from "redux"
-import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType } from "../Action-Types"
-import { clientListAction, logAction, userAction, notifAction, twoFactorAction } from "../Actions"
-import { Client, msg, Notif } from "../type"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType } from "../Action-Types"
+import { clientListAction, logAction, userAction, notifAction, twoFactorAction, chatNotifAction } from "../Actions"
+import { ChatNotif, Client, msg, Notif } from "../type"
 
 //ClientList
 export const addClient = (item: Client) => {
@@ -60,7 +60,7 @@ export const setId = (item: string) => {
 }
 
 //User
-export const setUser = (item:{
+export const setUser = (item: {
     id: number,
     login: string,
     nickname: string,
@@ -88,6 +88,14 @@ export const setNotif = (item: any) => {
     }
 }
 
+export const setAllNotifSeen = () => {
+    return (dispatch: Dispatch<notifAction>) => {
+        dispatch({
+            type: notifActionType.SETALLNOTIFSEEN,
+        })
+    }
+}
+
 export const delNotif = (item: Notif) => {
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({
@@ -101,6 +109,51 @@ export const delAllNotif = () => {
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({
             type: notifActionType.DELALLNOTIF,
+        })
+    }
+}
+
+//Chat Notif
+export const addChatNotif = (item: { name: string, userOrRoom: boolean, nb: number }) => {
+    return (dispatch: Dispatch<chatNotifAction>) => {
+        dispatch({
+            type: chatNotifActionType.ADDCHATNOTIF,
+            payload: item
+        })
+    }
+}
+
+export const delChatNotif = (item: { name: string, userOrRoom: boolean }) => {
+    return (dispatch: Dispatch<chatNotifAction>) => {
+        dispatch({
+            type: chatNotifActionType.DELCHATNOTIF,
+            payload: item
+        })
+    }
+}
+
+export const initChatNotif = () => {
+    return (dispatch: Dispatch<chatNotifAction>) => {
+        dispatch({
+            type: chatNotifActionType.INITCHATNOTIF
+        })
+    }
+}
+
+export const initOneConversChatNotif = (item: { name: string, userOrRoom: boolean }) => {
+    return (dispatch: Dispatch<chatNotifAction>) => {
+        dispatch({
+            type: chatNotifActionType.INITONECONVERSCHATNOTIF,
+            payload: item
+        })
+    }
+}
+
+export const setConversChatNotif = (item: { name: string, userOrRoom: boolean }) => {
+    return (dispatch: Dispatch<chatNotifAction>) => {
+        dispatch({
+            type: chatNotifActionType.SETCONVERS,
+            payload: item
         })
     }
 }
