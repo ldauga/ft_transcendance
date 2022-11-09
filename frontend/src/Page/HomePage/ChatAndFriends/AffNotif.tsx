@@ -31,7 +31,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	}
 
 	useEffect(() => {
-		props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
+		// props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
 	}, [props]);
 
 	return (

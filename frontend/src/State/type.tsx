@@ -43,7 +43,8 @@ export interface User2 {
 
 export interface Notif {
     type: NotifType,
-    data: any
+    data: any,
+    seen: boolean
 }
 
 export enum NotifType {

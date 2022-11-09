@@ -72,7 +72,11 @@ type DelAllNotifAction = {
     type: notifActionType.DELALLNOTIF
 }
 
-export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction
+type SetAllNotifSeen = {
+    type: notifActionType.SETALLNOTIFSEEN
+}
+
+export type notifAction = SetNotifAction | DelNotifAction | DelAllNotifAction | SetAllNotifSeen
 
 type AddChatNotifAction = {
     type: chatNotifActionType.ADDCHATNOTIF
