@@ -2328,8 +2328,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const room = this.getRoomByClientLogin(info.login);
     if (room == null)
       this.server.to(client.id).emit('client_not_playing')
-    else
+    else {
+      this.joinRoom(client, room[1].roomID)
       this.server.to(client.id).emit('start_spectate')
+    }
   }
 
   @SubscribeMessage('RENDER_SPECTATE')
