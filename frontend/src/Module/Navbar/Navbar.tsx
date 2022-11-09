@@ -1,4 +1,4 @@
-import { Leaderboard, Logout, Person, Settings, Search } from '@mui/icons-material';
+import { Leaderboard, Logout, Person, Settings, Search, RemoveCircleOutlineSharp } from '@mui/icons-material';
 import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -24,7 +24,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const { setUser, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 	const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 	const [openPopup, setOpenPopUp] = useState(false);
-	const [content, setContent] = useState('');
+	const [isNavBar, setIsNavBar] = useState(false);
 	const [searchBarContent, setSearchBarContent] = useState('');
 
 	const [lastNbNotif, setLastNbNotif] = useState(0);
@@ -107,15 +107,15 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			<nav>
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
-				<div className='search-box' onMouseLeave={() => {console.log('ici'); setSearchBarContent('')}}>
-      				<input className="search-text" type="text" placeholder = "Find user..." onChange={e => setSearchBarContent(e.target.value)} value={searchBarContent} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }}/>
-   					<a id="searchBar" className="search-btn">
-     				 	<Search
-							onClick={() => findUserProfile()}
-						/>
-    				</a>
-  				</div>
-
+					<div className='search-box'>
+						<svg onClick={(e) => {setIsNavBar(true); findUserProfile();}} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+							<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
+							<path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clip-rule="evenodd" />
+						</svg>
+						<input className="search-text" type="text" placeholder = "Find user..." onChange={e => setSearchBarContent(e.target.value)} value={searchBarContent} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }}/>
+					</div>
+					{!isNavBar ?
+					<>
 					<button onClick={() => { //friendList
 						setOpenPopUp(!open);
 						if (isChat) {
@@ -252,6 +252,8 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							Logout
 						</MenuItem>
 					</Menu>
+				</> : <input />}
+					
 				</div>
 			</nav>
 			<PopupContainer open={openPopup} setClose={() => setOpenPopUp(false)}>

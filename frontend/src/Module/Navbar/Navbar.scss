@@ -18,12 +18,12 @@ nav {
 		all: unset;
 	}
 
-	a:not(#searchBar) {
+	a {
 		all: unset;
 		margin-left: 10px;
 		cursor: pointer;
 		font-family: 'Titillium Web', cursive;
-		font-size: 50px;
+		font-size: 16px;
 	}
 
 	svg, div {
@@ -62,54 +62,60 @@ nav {
 	}
 
 	.search-box {
-		display: flex;
-		background: #2e384e;
-		height: 33px;
-		border-radius: 50px;
-		padding: 8px;
-		margin-top: 5px;
-	  }
+		input {
+			display: none;
+		}
+	}
 
-	  .search-box:hover > .search-text{
-		width: 240px;
-	  }
+	// .search-box {
+	// 	display: flex;
+	// 	background: #2e384e;
+	// 	height: 33px;
+	// 	border-radius: 50px;
+	// 	padding: 8px;
+	// 	margin-top: 5px;
+	//   }
 
-	  .search-box:hover > .search-btn{
-		background: white;
-		color: #2e384e;
-	  }
+	//   .search-box:hover > .search-text{
+	// 	width: 240px;
+	//   }
 
-	  .search-btn {
-		color: #ffffff;
-		width: 35px;
-		height: 35px;
-		border-radius: 50%;
-		background: #2e384e;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		transition: 0.4s;
-		cursor: pointer;
-		text-decoration: none;
-	  }
+	//   .search-box:hover > .search-btn{
+	// 	background: white;
+	// 	color: #2e384e;
+	//   }
 
-	  .search-btn > i {
-		font-size: 30px;
-	  }
+	//   .search-btn {
+	// 	color: #ffffff;
+	// 	width: 35px;
+	// 	height: 35px;
+	// 	border-radius: 50%;
+	// 	background: #2e384e;
+	// 	display: flex;
+	// 	justify-content: center;
+	// 	align-items: center;
+	// 	transition: 0.4s;
+	// 	cursor: pointer;
+	// 	text-decoration: none;
+	//   }
 
-	  .search-text {
-		border: none;
-		background: none;
-		outline: none;
-		float: left;
-		color: white;
-		font-size: 16px;
-		font-weight: normal;
-		transition: 0.4s;
-		line-height: 35px;
-		width: 0px;
-		margin-block: auto;
-	  }
+	//   .search-btn > i {
+	// 	font-size: 30px;
+	//   }
+
+	//   .search-text {
+	// 	border: none;
+	// 	background: none;
+	// 	outline: none;
+	// 	float: left;
+	// 	color: white;
+	// 	font-size: 16px;
+	// 	font-weight: normal;
+	// 	transition: 0.4s;
+	// 	line-height: 35px;
+	// 	width: 0px;
+	// 	margin-block: auto;
+	//   }
 
 	@media screen and (min-width: 425px) {
 		a {
