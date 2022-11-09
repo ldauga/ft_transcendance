@@ -66,7 +66,7 @@ export class UserController {
 
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
-  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {//CHECK SI ON ANNULE L UPLOAD
+  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
     return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 
