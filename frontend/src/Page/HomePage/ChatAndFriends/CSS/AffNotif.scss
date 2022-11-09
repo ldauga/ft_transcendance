@@ -1,0 +1,110 @@
+.notif {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    .ListItemNotif {
+        display: flex;
+        flex-direction: column;
+        font-family: 'Roboto';
+        gap: 5px;
+        overflow-y: auto;
+        overscroll-behavior: none;
+        height: 100%;
+        padding-top: 10px;
+        .notifContainer {
+            margin: 0 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 3px solid;
+            .notifTopContainer {
+                display: flex;
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .notifHeader {
+                padding: 0 10px;
+                p {
+                    margin: 0;
+                    margin-bottom: 10px;
+                    font-size: 21px;
+                    font-weight: 500;
+                }
+            }
+            .notifMain {
+                display: flex;
+                gap: 5px;
+                margin-bottom: 10px;
+                button {
+                    color: #2e384e;
+                    border: 2px solid;
+                    border-color: #2e384e;
+                    background: unset;
+                    font-size: 22px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    text-transform: uppercase;
+                    transition: all 0.3s ease-out;
+                    letter-spacing: 1px;
+                    padding: 0 3px;
+                    &:hover {
+                        color: #FFFF;
+                        background: #2e384e;
+                    }
+                }
+            }
+        }
+    }
+    .delete-all-notifs {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        button {
+            color: #2e384e;
+            border: 2px solid;
+            border-color: #2e384e;
+            background: unset;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease-out;
+            letter-spacing: 1px;
+            padding: 0 3px;
+            &:hover {
+                color: #FFFF;
+                background: #2e384e;
+            }
+        }
+    }
+    @media screen and (min-width: 425px) {
+        .ListItemNotif {
+            gap: 12px;
+            .notifContainer {
+                .notifHeader {
+                    p {
+                        margin-bottom: 21px;
+                    }
+                }
+                .notifMain {
+                    gap: 13px;
+                    margin-bottom: 15px;
+                    button {
+                        font-size: 24px;
+                        letter-spacing: 2px;
+                        padding: 3px 6px;
+                    }
+                }
+            }
+        }
+        .delete-all-notifs {
+            button {
+                border-width: 3px;
+                font-size: 32px;
+                letter-spacing: 3px;
+                padding: 3px 6px;
+            }
+        }
+    }
+}

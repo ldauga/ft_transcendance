@@ -30,9 +30,11 @@
             }
           }
           
-          
+        svg {
+            border: 1px solid;
+        }
 
-        img {
+        img, svg {
             --avatar-size: 51px;
             border-radius: 50%;
             width: var(--avatar-size);
@@ -58,7 +60,7 @@
             .profile-pic-group {
                 --group-pic-size: 59px;
             }
-            img {
+            img, svg {
                 --avatar-size: 59px;
             }
         }
@@ -71,7 +73,7 @@
             .profile-pic-group {
                 --group-pic-size: 66px;
             }
-            img {
+            img, svg {
                 --avatar-size: 66px;
             }
         }
