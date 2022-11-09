@@ -401,7 +401,7 @@ function StatPlayer() {
 											<MapCarousel activeStep={activeStep} />
 											<button onClick={handleNext}> <ArrowForwardIos /> </button>
 										</div>
-										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }) }}>{'Invite ' + profile.nickname}</button>
+										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, {variant: 'success', autoHideDuration: 2000}) }}>{'Invite ' + profile.nickname}</button>
 									</div>
 								</MenuItem>
 							</Menu>
