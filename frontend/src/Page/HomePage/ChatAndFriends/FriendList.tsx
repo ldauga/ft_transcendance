@@ -6,7 +6,7 @@ import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
-import { HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
+import { Close, HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
 import { constWhileSecu } from "../HomePage";
@@ -225,12 +225,16 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	return (
 		<div className="mainAffGene">
 			<div className="mainHeader">
-				<button onClick={handleClickClose}><i className="bi bi-x"></i></button>
+				<div className="cross">
+					<button onClick={handleClickClose}><Close /></button>
+				</div>
 				<h3>Friends</h3>
-				<button onClick={handleClickOpenOptions}>
-					<MoreVertIcon />
-				</button>
-				<MenuOptions />
+				<div className="icons">
+					<button onClick={handleClickOpenOptions}>
+						<MoreVertIcon />
+					</button>
+					<MenuOptions />
+				</div>
 			</div>
 			{newAddFriend && <AddFriend setNewAddFriend={setNewAddFriend} />}
 			<ItemsFriendList />

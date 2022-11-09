@@ -1,3 +1,4 @@
+import { AddComment, Close, Group, GroupAdd } from '@mui/icons-material';
 import { Badge, Tooltip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -6,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { isJSDocTemplateTag } from 'typescript';
 import { actionCreators, RootState } from '../../../State';
 import axiosConfig from '../../../Utils/axiosConfig';
+import CreateRooms from './CreateRooms';
 import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
 
@@ -16,6 +18,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [isSendChatMsg, setSendChatMsg] = useState(false);
+    const [isCreateGroup, setCreateGroup] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -79,9 +82,19 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const openSendChatMsg = () => {
         if (isSendChatMsg)
             setSendChatMsg(false);
-        else
+        else {
+            setCreateGroup(false)
             setSendChatMsg(true);
+        }
     }
+    const affCreateGroup = async () => {
+        if (isCreateGroup)
+            setCreateGroup(false);
+        else {
+            setSendChatMsg(false);
+            setCreateGroup(true);
+        }
+    };
 
     const handleClickRooms = () => {
         props.setChat(false);
@@ -152,11 +165,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 console.log("push room");
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        {/* {pp2 && pp1 ? <div className='profile-pic-group'>
-                            <img src={pp1} />
-                            <img src={pp2} />
-                        </div> : pp1 ?
-                            <img src={pp1} /> : <img src="" />} */}
+                        <Group />
                         <p>{item.name}</p>
                     </div>
                 </div>);
@@ -175,20 +184,24 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     return (
         <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeChat} className="bi bi-x"></button>
+            <div className="mainHeader">
+                <div className="cross">
+                    <button onClick={closeChat}> <Close /></button>
                 </div>
                 <h3>Chat</h3>
-                <div className="mainHeaderRight mainHeaderSide">
-                    <Tooltip title="Groups">
-                        <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
+                <div className="icons">
+                    <Tooltip title="Group List">
+                        <button onClick={handleClickRooms}><Group /></button>
+                    </Tooltip>
+                    <Tooltip title="Create Group">
+                        <button onClick={affCreateGroup}><GroupAdd /></button>
                     </Tooltip>
                     <Tooltip title="New Message">
-                        <button onClick={openSendChatMsg} id="openSendChatMsg" className="bi bi-send-fill"></button>
+                        <button onClick={openSendChatMsg}><AddComment /></button>
                     </Tooltip>
                 </div>
             </div>
+            {isCreateGroup && <CreateRooms />}
             {isSendChatMsg && <SendChatMsg />}
             {itemListHistory}
         </div>

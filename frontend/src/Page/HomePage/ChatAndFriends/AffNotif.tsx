@@ -1,3 +1,4 @@
+import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -14,9 +15,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 
 	const dispatch = useDispatch();
 	const { delNotif } = bindActionCreators(actionCreators, dispatch);
-
-	const [verif, setVerif] = useState(false)
-	const [notifArr, setNotifArr] = useState<any[]>([])
+	const { delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
 	const close = () => {
 		props.closeNotif();
@@ -37,12 +36,12 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	return (
 		<div className="mainAffGeneNotif">
 			<div className="notif">
-				<div id="header" className="mainHeader">
-					<div className="mainHeaderLeft mainHeaderSide">
-						<button onClick={close}><i className="bi bi-x"></i></button>
+				<div className="mainHeader">
+					<div className="cross">
+						<button onClick={close}><Close /></button>
 					</div>
 					<h3>Notifications</h3>
-					<div className="mainHeaderRight mainHeaderSide">
+					<div className="icons">
 					</div>
 				</div>
 				<div className="ListItemNotif">
@@ -169,8 +168,9 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 						});
 					})()}
 				</div>
+				{}
 				<div className="delete-all-notifs">
-					<button>Clear</button>
+					<button onClick={delAllNotif}>Clear</button>
 				</div>
 			</div>
 		</div>
