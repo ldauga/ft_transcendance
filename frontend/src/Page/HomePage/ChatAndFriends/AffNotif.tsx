@@ -13,7 +13,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	const utilsData = useSelector((state: RootState) => state.utils);
 
 	const dispatch = useDispatch();
-	const { delNotif } = bindActionCreators(actionCreators, dispatch);
+	const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
 	const [verif, setVerif] = useState(false)
 	const [notifArr, setNotifArr] = useState<any[]>([])
@@ -65,7 +65,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'https://localhost:3000/pong'
+													// window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -169,9 +169,12 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 						});
 					})()}
 				</div>
-				<div className="delete-all-notifs">
-					<button>Clear</button>
-				</div>
+				{
+					persistantReducer.notifReducer.notifArray.length ?
+						<div className="delete-all-notifs">
+							<button onClick={delAllNotif}>Clear</button>
+						</div> : <></>
+				}
 			</div>
 		</div>
 	)
