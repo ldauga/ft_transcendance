@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
-import BanUser from './BanUser';
+import BanUser from '../../../Trash/BanUser';
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";

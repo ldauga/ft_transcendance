@@ -15,7 +15,7 @@ export class BlackListController {
     return this.BlackListService.getAllBanTimer();
   }
 
-  @Get('/getAllRoomBan/:roomId/:roomName')
+  @Get('/getAllRoomBan/:roomId/:roomName') //used
   public getAllRoomBan(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_banned: number, login_banned: string }[]> {
     return this.BlackListService.getAllRoomBan(roomId, roomName);
   }
@@ -54,26 +54,6 @@ export class BlackListController {
   public async createBan(@Body() body: BlackListDto): Promise<BlackListEntity> {
     const newBan = await this.BlackListService.createBan(body);
     return newBan;
-  }
-
-  @Post('/removeUserBan/:id/:login')
-  @UseGuards(AuthGuard('jwt'))
-  public async removeUserBan(@Param('id', ParseIntPipe) id_sender: number, @Param('login') login_banned: string): Promise<boolean> {
-    // console.log('body', body);
-    console.log('removeUserBan Controller');
-    const removeReturn = await this.BlackListService.removeUserBan(id_sender, login_banned);
-    console.log('removeReturn Controller', removeReturn);
-    return true;
-  }
-
-  @Post('/removeRoomBan/:id/:login')
-  @UseGuards(AuthGuard('jwt'))
-  public async removeRoomBan(@Param('id', ParseIntPipe) room_id: number, @Param('login') login_banned: string): Promise<boolean> {
-    // console.log('body', body);
-    console.log('removeUserBan Controller');
-    const removeReturn = await this.BlackListService.removeRoomBan(room_id, login_banned);
-    console.log('removeReturn Controller', removeReturn);
-    return true;
   }
 
 }

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
@@ -6,8 +5,7 @@ import './CSS/AffParticipantsRooms.scss'
 import './CSS/FriendList.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
-import BanRoomParticipant from './BanRoomParticipant';
-import AddAdmin from './AddAdmin';
+import BanRoomParticipant from '../../../Trash/BanRoomParticipant';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import MuteRoomParticipant from './MuteRoomParticipant';
@@ -387,8 +385,11 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const removeParticipant = (item: { login: string, id: number, admin: boolean, participantAdmin: boolean }) => {
         const participantToRemove = {
             id_sender: userData.userReducer.user?.id,
+            login_sender: userData.userReducer.user?.login,
             login: item.login,
-            room_name: props.roomsConversData.name
+            id: item.id,
+            room_name: props.roomsConversData.name,
+            room_id: props.roomsConversData.id
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
     }
@@ -704,7 +705,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     </div>
                     {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />}
                     {muteRoomParticipant && <MuteRoomParticipant roomsConversData={props.roomsConversData} />}
-                    {addAdmin && <AddAdmin roomsConversData={props.roomsConversData} />}
                     {isCreateInvitation && <CreateInvitationRooms roomsConversData={props.roomsConversData} />}
                     <div className="participants">
                         {itemListHistory}

@@ -37,22 +37,4 @@ export class InvitationRequestController {
     console.log('checkInvitationRequestForRooms Check = ', returnCheck);
     return returnCheck;
   }
-
-  @Post()
-  @UseGuards(AuthGuard('jwt'))
-  public async createInvitationRequest(@Body() body: InvitationRequestDto): Promise<InvitationRequestEntity> {
-    // console.log('body', body);
-    const newInvit = await this.invitationRequestService.createInvitationRequest(body);
-    return newInvit;
-  }
-
-  @Post('/:id1/:id2')
-  @UseGuards(AuthGuard('jwt'))
-  public async removeInvitationRequest(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<boolean> {
-    // console.log('body', body);
-    console.log('removeInvitationRequest Controller');
-    const removeReturn = await this.invitationRequestService.removeInvitationRequest(id1, id2);
-    console.log('removeReturn Controller', removeReturn);
-    return true;
-  }
 }

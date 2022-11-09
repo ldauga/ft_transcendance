@@ -5,11 +5,7 @@ import { RootState } from '../../../State';
 import './CSS/AffParticipantsRooms.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
-import BanRoomParticipant from './BanRoomParticipant';
 import axiosConfig from "../../../Utils/axiosConfig";
-import AddAdmin from './AddAdmin';
-import CreateInvitationRooms from './CreateInvitationRooms';
-import MuteRoomParticipant from './MuteRoomParticipant';
 
 function AffParticipantsBanned(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function, setAffBanned: Function }) {
 
