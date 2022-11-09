@@ -355,13 +355,6 @@ function StatPlayer() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openInviteGame = Boolean(anchorEl);
 
-	utilsData.socket.off('start')
-
-	utilsData.socket.on('start', function (info: { roomID: string, spectate: boolean }) {
-		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/Pong')
-	});
-
 	function profile_btn() {
 		if (login != profile.login) {
 			return (

@@ -45,7 +45,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 				</div>
 			</div>
 			<div className="ListItemNotif">
-				{(() => {
+				{(() => { console.log('persistantReducer.notifReducer.notifArray :', persistantReducer.notifReducer.notifArray)
 					return persistantReducer.notifReducer.notifArray.reverse().map((notif, index) => {
 						switch (notif.type) {
 							case NotifType.GAMEINVITE:
@@ -65,7 +65,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'https://localhost:3000/pong'
+													// window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
