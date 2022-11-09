@@ -1,9 +1,8 @@
-import { BadRequestException, Body, ConsoleLogger, Controller, Get, Param, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { isConstructorDeclaration } from 'typescript';
 
 @Controller('auth')
 export class AuthController {
@@ -71,7 +70,7 @@ export class AuthController {
 		);
 
 		if (!isCodeValid) {
-			throw new UnauthorizedException('Wrong authentication code');
+			throw new BadRequestException('Wrong authentication code');
 		}
 
 		return isCodeValid;

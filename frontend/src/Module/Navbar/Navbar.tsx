@@ -169,7 +169,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			<nav>
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
-				<div className='search-box' onMouseLeave={() => {console.log('ici'); setSearchBarContent('')}}>
+				<div className='search-box' onMouseLeave={() => {setSearchBarContent('')}}>
       				<input className="search-text" type="text" placeholder = "Find user..." onChange={e => setSearchBarContent(e.target.value)} value={searchBarContent} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }}/>
    					<a id="searchBar" className="search-btn">
      				 	<Search

@@ -19,12 +19,12 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
-	const [itemListHistory, setItemListHistory] = useState(Array<any>);
+	const [itemListHistory, setItemListHistory] = useState(Array<any>());
 	const [update, setUpdate] = useState(false);
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
-	const [friendArr, setFriendArr] = useState(Array<any>);
+	const [friendArr, setFriendArr] = useState(Array<any>());
 
 	const info = { user: userData.userReducer.user };
 
@@ -193,7 +193,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 			>
-				<MenuItem onClick={handleClickAddFriend}>
+				<MenuItem onClick={handleClickAddFriend} >
 					<ListItemIcon>
 						<PersonAdd fontSize="small" />
 					</ListItemIcon>
@@ -202,12 +202,12 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				<Divider />
 				<MenuItem onClick={handleClickInvitationRequest}>
 					<ListItemIcon>
-						<HourglassBottom fontSize="small" />
+						<HourglassBottom fontSize="small"/>
 					</ListItemIcon>
 					Invitation Request
 				</MenuItem>
 				<Divider />
-				<MenuItem onClick={handleClickBanUser}>
+				<MenuItem onClick={handleClickBanUser} >
 					<ListItemIcon>
 						<Settings fontSize="small" />
 					</ListItemIcon>

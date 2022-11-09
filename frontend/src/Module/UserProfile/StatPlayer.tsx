@@ -233,17 +233,24 @@ function StatPlayer() {
 			withCredentials: true
 		};
 
-		axios(config).then((res) => { setUser(res.data); setProfile({ ...profile, profile_pic: res.data.profile_pic }); enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 }) })
+		axios(config).then((res) => {
+			setUser(res.data);
+			setProfile({ ...profile, profile_pic: res.data.profile_pic });
+			enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 })
+		}).catch((err) => {
+			setProfile({ ...profile, profile_pic: '' });
+			enqueueSnackbar('Unable to update avatar.', { variant: 'warning', autoHideDuration: 2000 })
+		})
 	}
 
 	const sendGetRequest = (value: string) => {
-		axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value/*, { withCredentials: true }*/)
+		axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
 			.then(res => {
 				setTwoFactor(true);
 				setUserParameter2FACode('');
 				setUser(res.data);
 				setUserParameter2FARes(res.status);
-				enqueueSnackbar('2FA enable.', { variant: 'success', autoHideDuration: 2000 })
+				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
 			})
 			.catch(err => {
 				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })

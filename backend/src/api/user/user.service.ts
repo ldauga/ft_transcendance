@@ -47,9 +47,8 @@ export class UserService {
 	}
 
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
-		//console.log('signedRefreshToken', signedRefreshToken)
 		if (signedRefreshToken === undefined)
-			throw new UnauthorizedException('Token not found.');
+			throw new UnauthorizedException('Token not found');
 		var user: any;
 		if (signedRefreshToken.refreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken.refreshToken });
@@ -148,7 +147,7 @@ export class UserService {
 		if (nickname.length < 3 || nickname.length > 8)
 			throw new BadRequestException('Nickname too short');
 		if (nickname.search("^[a-zA-Z0-9_]*$") == -1)
-			throw new BadRequestException('No special char');
+			throw new BadRequestException('No special character');
 		if (user.nickname == nickname)
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(nickname))

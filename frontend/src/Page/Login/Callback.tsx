@@ -33,18 +33,18 @@ export default function Callback() {
     }
 
     if (persistantReducer.userReducer.user === null) {
-        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
-        console.log(cookie)
+        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); }).catch((err) => {setUser(null)})
     }
 
     if (persistantReducer.userReducer.user !== null) {
 
         console.log(persistantReducer.userReducer.user)
+		if (persistantReducer.userReducer.user?.isTwoFactorAuthenticationEnabled === undefined) {
 
-        if (persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReducer.twoFactorReducer.verif)
+			if (persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReducer.twoFactorReducer.verif)
 
             return (
-                <>
+				<>
                 <Background />
                 <div className="login-2fa">
                     <h1>Google Authenticator Code</h1>
@@ -57,16 +57,15 @@ export default function Callback() {
                         onChange={() => setFullPinCode(false)}
                         onComplete={(value, index) => {turnOn2fa(value); setFullPinCode(true)}}
                         autoSelect={true}
-                    />
+						/>
                 </div>
                 </>
             )
+		}
         else
             return (<Navigate to="/HomePage" />)
     }
     return (
         <></>
     )
-
-
 }
