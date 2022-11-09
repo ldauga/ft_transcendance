@@ -6,6 +6,8 @@ import Background from "../../Module/Background/Background";
 import NavBar from "../../Module/Navbar/Navbar";
 import { RootState } from "../../State";
 import { gameRoomClass } from "./gameRoomClass";
+import './CSS/GamePage/Board.css';
+import './CSS/GamePage/GameFinished.scss';
 
 var canvas = {
     "width": 800,
@@ -270,6 +272,7 @@ function Spectate() {
     const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
+        console.log('on.(\'finish\')')
         setFinishGame(true)
 
         setFinishRoom(room)
@@ -277,71 +280,30 @@ function Spectate() {
 
     function affFinishScreen() {
 
-        return (
-            <div className='finishGameScreen'>
+        let U, H;
+        setTimeout(function () {
+            window.location.replace('https://localhost:3000');
+        }, 5000);
 
-                <div className="finishMsg">
+        U = finishRoom?.players[0]
+        H = finishRoom?.players[1]
+
+        return (
+            <div className='game-finished'>
+                <h1>Match Result</h1>
+                <div className='result'>
                     <span>
-                        {finishRoom?.players[0].score == 3 ? 'VICTORY' : 'DEFEAT'}
+                        <img src={U?.user?.profile_pic} />
+                        {U?.user?.nickname}
+                    </span>
+                    <span>
+                        {U?.score} - {H?.score}
+                    </span>
+                    <span>
+                        {H?.user?.nickname}
+                        <img src={H?.user?.profile_pic} />
                     </span>
                 </div>
-
-                <div className="versusContainer">
-
-                    <div className="playerContainer">
-
-                        <div className={finishRoom?.players[0].score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
-                            <img src={finishRoom?.players[0].user?.profile_pic} />
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {finishRoom?.players[0].user?.nickname}
-                            </span>
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {finishRoom?.players[0].score}
-                            </span>
-                        </div>
-
-                    </div>
-
-                    <div className="vs">
-                        <span>VS</span>
-                    </div>
-
-                    <div className="playerContainer">
-
-                        <div className={finishRoom?.players[1].score == 3 ? 'profile_pic winner' : 'profile_pic looser'}>
-                            <img src={finishRoom?.players[1].user?.profile_pic} />
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {finishRoom?.players[1].user?.nickname}
-                            </span>
-                        </div>
-
-                        <div className="name">
-                            <span>
-                                {finishRoom?.players[1].score}
-                            </span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="buttonContainer">
-
-                    <button onClick={() => {window.location.replace('https://localhost:3000/pong')}} >Replay</button>
-                    <button onClick={() => {history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/')}} >Home Page</button>
-
-                </div>
-
-
             </div>
         )
 
@@ -349,20 +311,22 @@ function Spectate() {
 
     return (
         <>
+            <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
+            <Background />
             {
                 !finishGame ?
+                    <div className="boardDiv">
+                        <div className="blocksContainerCenter">
+                            <canvas
+                                id='pongBoard'
+                                className='pongBoard'
+                                height={canvas.height}
+                                width={canvas.width}
+                            />
+                        </div>
+                    </div> :
                     <>
-                        <NavBar openFriendConversFromProfile={false} dataFriendConversFromProfile={{ id: 0, login: "", nickname: "", profile_pic: "" }} setOpenFriendConversFromProfile={() => { }} />
-                        <Background />
-                        <canvas
-                            id='pongBoard'
-                            className='pongBoard'
-                            height={canvas.height}
-                            width={canvas.width}
-                        />
-                    </> :
-                    <>
-                        {}
+                        {affFinishScreen()}
                     </>
             }
         </>
