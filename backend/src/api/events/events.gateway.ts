@@ -408,7 +408,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     getAllMute.then(async item => {
       const b: { login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
       b.forEach(async item => {
-        console.log("date + timer = ", item.timer + item.date, ", time = ", time);
+        //console.log("date + timer = ", item.timer + item.date, ", time = ", time);
         if (item['timer'] + item['date'] <= time && !item.alwaysOrNot) {
           console.log("go remove");
           //const removeUserMuteReturn = await http.post('https://localhost:5001/muteList/removeRoomMute/' + item['room_id'] + '/' + item['login_muted']);
@@ -640,6 +640,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const createMsgReturn = await this.MessagesService.createMessages(newMsg);
     console.log('createMsgReturn in eventgateway', createMsgReturn);
+    const room = arrRoom.find(obj => obj.name == data.name);
+    console.log("room: ", room);
+    let i = 0;
+    while (i < room.users.length) {
+      console.log("newMsgReceived to ", room.users[i].username);
+      this.server.to(room.users[i].id).emit('newMsgReceived', true);
+      i++;
+    }
   };
 
   @SubscribeMessage('removeRoom')
@@ -2305,6 +2313,27 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('GET_ALL_CLIENT_CONNECTED_WITHOUT_BANNED')
+  async getAllClientConnectedWithoutBanned(client: Socket, data: { id: number, login: string }) {
+    const _client = arrClient.find(obj => obj.id == client.id);
+    if (_client) {
+      const blackList = await this.BlacklistService.getAllUserBan(data.id, data.login);
+      const userList = await this.UserService.getAllUsers();
+      if (blackList && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search1 = blackList.find(obj => obj.login_banned == userList[index].login);
+          if (!search1 && userList[index].login != data.login) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
+        this.server.to(client.id).emit("getAllClientConnectedWithoutBanned", retArr);
+      }
+    }
+  }
+
   @SubscribeMessage('GET_ALL_PARTICIPANTS')
   async getAllParticipants(client: Socket, data: { room_id: number, room_name: string }) {
     //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
@@ -2347,6 +2376,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
         //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
         this.server.to(client.id).emit("getAllParticipantsBannedReturn", retArr);
+      }
+    }
+  }
+
+  @SubscribeMessage('GET_ALL_USERS_BANNED')
+  async getAllUsersBanned(client: Socket, data: { id: number, login: string }) {
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _client = arrClient.find(obj => obj.username == data.login);
+    if (_client) {
+      const userBanned = await this.BlacklistService.getAllUserBan(data.id, data.login);
+      const userList = await this.UserService.getAllUsers();
+      if (userBanned && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = userBanned.find(obj => obj.login_banned == userList[index].login);
+          if (search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllUsersBannedReturn", retArr);
       }
     }
   }

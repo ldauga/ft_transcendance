@@ -11,7 +11,7 @@ import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
 import { valideInput } from '../../../Utils/utils';
 
-function CreateRooms() {
+function CreateRooms(props: { setCreateGroup: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -76,6 +76,7 @@ function CreateRooms() {
             enqueueSnackbar('Your chat room is created', { variant: "success", autoHideDuration: 2000 })
             setText("");
             setPassword("");
+            props.setCreateGroup(false);
         }
     };
 
@@ -137,4 +138,4 @@ function CreateRooms() {
     );
 };
 
-export default withSnackbar(CreateRooms);
+export default CreateRooms;

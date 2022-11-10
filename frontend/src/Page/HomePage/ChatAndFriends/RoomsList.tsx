@@ -35,6 +35,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
             publicOrPrivate: item.publicOrPrivate
         }
         utilsData.socket.emit('joinChatRoom', checkIfCanJoinRoom);
+        props.setRoomsList(false);
     };
 
     utilsData.socket.removeAllListeners('newRoomCreated');

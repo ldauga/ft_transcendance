@@ -25,6 +25,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const [isOwner, setOwner] = useState(false);
     const [isAdmin, setAdmin] = useState(false);
+    const [isMute, setMute] = useState(false);
+    const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
@@ -71,12 +73,23 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.removeListener('kickedOutOfTheGroup');
     })
 
-    const handleClickChangePassword = () => {
-        if (isChangeRoomPassword)
-            setChangeRoomPassword(false);
-        else
-            setChangeRoomPassword(true);
-    }
+    utilsData.socket.removeAllListeners('mutedUserInRoom');
+
+    utilsData.socket.on('mutedUserInRoom', function (mutedUserInRoomReturn: boolean) {
+        console.log('mutedUserInRoom = ', mutedUserInRoomReturn);
+        checkIfMute();
+        utilsData.socket.off('mutedUserInRoom');
+        utilsData.socket.removeListener('mutedUserInRoom');
+    })
+
+    utilsData.socket.removeAllListeners('demutedUserInRoom');
+
+    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoomReturn: boolean) {
+        console.log('demutedUserInRoom = ', demutedUserInRoomReturn);
+        checkIfMute();
+        utilsData.socket.off('demutedUserInRoom');
+        utilsData.socket.removeListener('demutedUserInRoom');
+    })
 
     const closeConvers = () => {
         //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
@@ -131,6 +144,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         console.log("useEffect RoomsConvers");
         checkIfOwner();
         checkIfAdmin();
+        checkIfMute();
         getUsers();
     }, []);
 
@@ -411,7 +425,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const [messageText, setMessageText] = useState('');
 
         function sendMessage() {
-            if (messageText.length <= 0)
+            if (messageText.length <= 0 || isMute)
                 return;
             const newMsg = {
                 id_sender: userData.userReducer.user?.id,
@@ -448,7 +462,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             <div className="send-message">
                 <TextField value={messageText}
                     onChange={e => setMessageText(e.target.value)}
-                    placeholder='Your message...'
+                    placeholder={textPlaceHolder}
                     multiline maxRows={5}
                     onKeyDown={(e) => {
                         if (e.keyCode == 13) {
@@ -456,6 +470,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                             sendMessage();
                         }
                     }}
+                    disabled={isMute}
                 />
                 <SendButton />
             </div>
@@ -496,6 +511,19 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             }
         })
         //console.log("return: ", ifAdmin);
+    };
+
+    const checkIfMute = async () => {
+        await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+            if (res.data == true) {
+                setMute(true);
+                setTextPlaceHolder("You are mute");
+            }
+            else {
+                setMute(false);
+                setTextPlaceHolder("Your message...");
+            }
+        })
     };
 
     return (

@@ -151,7 +151,7 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
                     <button onClick={affCreateGroup} className="bi bi-plus-lg"></button>
                 </div>
             </div>
-            {isCreateGroup && <CreateRooms />}
+            {isCreateGroup && <CreateRooms setCreateGroup={setCreateGroup} />}
             <MainAffRoomsItems />
         </div>
     );
