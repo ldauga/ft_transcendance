@@ -8,6 +8,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } 
 import axiosConfig from '../../../Utils/axiosConfig';
 import NoEncryptionIcon from '@mui/icons-material/NoEncryption';
 import LockIcon from '@mui/icons-material/Lock';
+import { ArrowBackIosNew } from '@mui/icons-material';
 
 function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat: Function }) {
 
@@ -161,12 +162,12 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
 
     return (
         <div id="roomsAff">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeftWithTitle mainHeaderSideWithTitle">
-                    <button onClick={exit} className="bi bi-arrow-left"></button>
+            <div className="mainHeader header-group-list">
+                <div className="cross">
+                    <button onClick={exit}><ArrowBackIosNew /></button>
                 </div>
                 <h3>Groups List</h3>
-                <div id="roomsHeaderRight" className="mainHeaderRightWithTitle mainHeaderSideWithTitle">
+                <div className="icons">
                 </div>
             </div>
             <div id="mainAffRoomsLIst">

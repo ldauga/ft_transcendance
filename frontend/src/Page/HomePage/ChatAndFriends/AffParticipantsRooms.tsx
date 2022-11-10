@@ -705,7 +705,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                                 <img src={pp1} />
                                 <img src={pp2} />
                             </div> : pp1 ?
-                                <img src={pp1} /> : <img src="" />}
+                                <div className="profile"><img src={pp1} /></div> : <img src="" />}
                             <div className="group-name">
                                 <p>{props.roomsConversData.name}</p>
                             </div>
