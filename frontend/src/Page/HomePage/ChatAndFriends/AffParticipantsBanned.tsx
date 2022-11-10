@@ -143,9 +143,13 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
             );
     };
 
+    utilsData.socket.removeAllListeners('getAllParticipantsBannedReturn');
+
     utilsData.socket.on('getAllParticipantsBannedReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
         console.log('getAllParticipantsBannedReturn = ', data);
         getListItem(data);
+        utilsData.socket.off('getAllParticipantsBannedReturn');
+        utilsData.socket.removeListener('getAllParticipantsBannedReturn');
     })
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
@@ -155,7 +159,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         console.log('data = ', data);
         let i = 0;
         data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-            itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+            itemList.push(<div key={itemList.length.toString()} className='participant_ban' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
                 <img src={item.profile_pic}></img>
                 <p>{item.nickname}</p>
                 <RightItem login={item.login} id={item.id} admin={admin} />
