@@ -4,10 +4,11 @@
     width: 100%;
 
     .header {
-        justify-content: space-around;
-        svg[data-testid="ArrowBackIosNewIcon"] {
-            margin-left: 5px;
-        }
+        display: flex;
+        border-bottom: 1px solid rgba(46, 56, 78, 0.5);
+        margin-top: 10px;
+        padding-bottom: 10px;
+        align-items: flex-start;
         .group-profile {
             display: flex;
             gap: 5px;
