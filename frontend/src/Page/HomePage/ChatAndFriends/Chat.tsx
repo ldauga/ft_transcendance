@@ -11,7 +11,7 @@ import CreateRooms from './CreateRooms';
 import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
 
-function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setRooms: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
+function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setRooms: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function, setRoomsList: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -27,6 +27,12 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const closeChat = () => {
         props.closeChat();
         props.setChat(false);
+    };
+
+    const affRoomsList = async () => {
+        console.log("affRoomsList");
+        props.setChat(false);
+        props.setRoomsList(true);
     };
 
     utilsData.socket.removeListener('newMsgReceived');
@@ -174,7 +180,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         console.log("end");
         console.log("itemList.length: ", itemList.length);
         setItemListHistory(itemList);
-    }
+    };
 
     useEffect(() => {
         getListItem();
@@ -191,7 +197,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 <h3>Chat</h3>
                 <div className="icons">
                     <Tooltip title="Group List">
-                        <button onClick={handleClickRooms}><Group /></button>
+                        <button onClick={affRoomsList}><Group /></button>
                     </Tooltip>
                     <Tooltip title="Create Group">
                         <button onClick={affCreateGroup}><GroupAdd /></button>
