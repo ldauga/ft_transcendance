@@ -15,11 +15,14 @@ import { delChatNotif } from "../../../State/Action-Creators";
 import MapCarousel from "../../Pong/MapCarousel/MapCarousel";
 import { gameRoomClass } from "../../Pong/gameRoomClass";
 import '../../Pong/PongHome.scss'
+import { useSnackbar } from 'notistack';
 
 function FriendListItem(props: { setFriendList: Function, setConvers: Function, setConversCorrespondantData: Function, setOldAff: Function, closeFriendList: Function, item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }, setUpdate: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -73,8 +76,59 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     const removeFriend = () => {
         utilsData.socket.emit('removeFriend', { id_user1: userData.userReducer.user?.id, id_user2: props.item.user.id, login_user1: userData.userReducer.user?.login, login_user2: props.item.user.login });
+        enqueueSnackbar('Friend was removed', { variant: "success", autoHideDuration: 2000 })
         props.setUpdate(true);
     };
+
+    async function buttonBanUser() {
+        let test = false;
+        await axiosConfig.get('https://localhost:5001/user/login/' + props.item.user.login).then(async (res) => {
+            console.log("axios.get");
+            console.log(res.data);
+            console.log(res);
+            let receiver_login_tmp: string = res.data.login;
+            if (res.data == "") {
+                console.log("login not found");
+                return;
+            }
+            else {
+                let a = 1;
+                let b = 1;
+                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                    console.log('check invit');
+                    console.log(res.data);
+                    console.log(res);
+                    if (res.data == true) {
+                        console.log("ban already exist");
+                    }
+                    else {
+                        a = 2;
+                        console.log('ban not exist');
+                    }
+                })
+                if (a == 2) {
+                    console.log('test == true');
+                    console.log(receiver_login_tmp);
+                    const newBan = {
+                        id_sender: userData.userReducer.user?.id,
+                        id_banned: res.data.id,
+                        login_sender: userData.userReducer.user?.login,
+                        login_banned: res.data.login,
+                        userOrRoom: false,
+                        receiver_login: "",
+                        room_id: 0,
+                        room_name: "",
+                        cause: "",
+                        date: 0,
+                        alwaysOrNot: true,
+                        timer: 0
+                    }
+                    utilsData.socket.emit('createBan', newBan);
+                    enqueueSnackbar('User banned', { variant: "success", autoHideDuration: 2000 })
+                }
+            }
+        });
+    }
 
     const openChat = async () => {
         //setConversChatNotif({ name: props.item.user.login, userOrRoom: false });
@@ -151,7 +205,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                     </ListItemIcon>
                     Remove Friend
                 </MenuItem>
-                <MenuItem onClick={() => { }}>
+                <MenuItem onClick={buttonBanUser}>
                     <ListItemIcon>
                         <Settings fontSize="small" />
                     </ListItemIcon>
@@ -181,6 +235,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);
         utilsData.socket.emit('INVITE_CUSTOM', { user: userData.userReducer.user, userLoginToSend: props.item.user.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) });
+        enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
     };
 
     return (

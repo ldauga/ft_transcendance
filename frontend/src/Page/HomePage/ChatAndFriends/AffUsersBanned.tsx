@@ -6,12 +6,13 @@ import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import BanUser from '../../../Trash/BanUser';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import './CSS/AffUserBanned.scss';
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
+import { ArrowBackIosNew, Close } from '@mui/icons-material';
 
 function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Function }) {
 
@@ -20,7 +21,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -116,6 +117,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                         timer: (seconds + minutes * 60 + hours * 3600 + days * 3600 * 24)
                     }
                     utilsData.socket.emit('createBan', newBan);
+                    enqueueSnackbar('User banned', { variant: "success", autoHideDuration: 2000 })
                 }
             }
         });
@@ -163,6 +165,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     const debanUser = (item: { id_banned: number, login_banned: string }) => {
         console.log("button debanUser");
         utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login_banned });
+        enqueueSnackbar('User debanned', { variant: "success", autoHideDuration: 2000 })
     }
 
     const getListItem = async () => {
@@ -177,7 +180,9 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                             <p>{item.login_banned}</p>
                         </div>
                         <div className="inItemBanUser_right">
-                            <button onClick={() => debanUser(item)} className="bi bi-x-lg"></button>
+                            <Tooltip title='Unban'>
+                                <button onClick={() => debanUser(item)}><Close /></button>
+                            </Tooltip>
                         </div>
                     </div>
                 </div>)
@@ -220,12 +225,12 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     return (
         <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeAffBanned} className="bi bi-arrow-left"></button>
+            <div id="header" className="mainHeader header-user-banned">
+                <div className="cross">
+                    <button onClick={closeAffBanned}><ArrowBackIosNew /></button>
                 </div>
                 <h3>Blocked Users</h3>
-                <div className="mainHeaderRight mainHeaderSide">
+                <div className="icons">
                     <button onClick={handleClickOpenDialogBan}>
                         <PersonOffIcon />
                     </button>

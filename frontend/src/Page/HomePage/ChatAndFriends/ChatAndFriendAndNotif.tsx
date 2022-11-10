@@ -32,8 +32,6 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
 
     const [goToOpenInvitationRequest, setGoToOpenInvitationRequest] = useState(false);
 
-    console.log("enter chatandfirend");
-
     const closeAll = () => {
         setFriendList(false);
         setInvitationRequest(false);

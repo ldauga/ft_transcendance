@@ -6,6 +6,7 @@ import './CSS/BanRoomParticipant.scss'
 import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import axiosConfig from "../../../Utils/axiosConfig";
+import { useSnackbar } from 'notistack';
 
 function AffParticipantsBanned(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function, setAffBanned: Function }) {
 
@@ -13,6 +14,8 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [update, setUpdate] = useState(false);
     const [isAdmin, setAdmin] = useState(false);
@@ -107,6 +110,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     const debanParticipant = (item: { login: string, id: number, admin: boolean }) => {
         utilsData.socket.emit('removeRoomBan', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name, login_banned: item.login });
+        enqueueSnackbar('Participant debaned', { variant: "success", autoHideDuration: 2000 })
     }
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {

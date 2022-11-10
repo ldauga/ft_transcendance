@@ -36,6 +36,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
             else {
                 let a = 1;
                 let b = 1;
+                let c = 1;
                 await axiosConfig.get('https://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                     console.log('check invit');
                     console.log(res.data);
@@ -60,7 +61,20 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                         console.log('relation not exist');
                     }
                 })
-                if (a == 2 && b == 2) {
+                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
+                    console.log('check blakcList');
+                    console.log(res.data);
+                    console.log(res);
+                    if (res.data == true) {
+                        console.log("blackListé");
+                        enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
+                    }
+                    else {
+                        c = 2;
+                        console.log('pas blackListé');
+                    }
+                })
+                if (a == 2 && b == 2 && c == 2) {
                     console.log('test == true');
                     console.log(receiver_login_tmp);
                     const newInvitationRequest = {

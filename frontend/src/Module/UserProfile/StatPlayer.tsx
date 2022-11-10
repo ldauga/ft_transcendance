@@ -98,6 +98,24 @@ function StatPlayer() {
 		}
 	})
 
+	utilsData.socket.removeAllListeners('userBanned');
+
+	utilsData.socket.on('userBanned', function (userBanned: boolean) {
+		console.log('userBanned = ', userBanned);
+		setUpdate(true);
+		utilsData.socket.off('userBanned');
+		utilsData.socket.removeListener('userBanned');
+	})
+
+	utilsData.socket.removeAllListeners('debanedUser');
+
+	utilsData.socket.on('debanedUser', function (debanedUser: boolean) {
+		console.log('debanedUser = ', debanedUser);
+		setUpdate(true);
+		utilsData.socket.off('debanedUser');
+		utilsData.socket.removeListener('debanedUser');
+	});
+
 	utilsData.socket.off('changeNicknameSuccess')
 
 	utilsData.socket.on('changeNicknameSuccess', function (param: any) {
@@ -273,12 +291,14 @@ function StatPlayer() {
 			else {
 				let a = 1;
 				let b = 1;
+				let c = 1;
 				await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					console.log('check invit');
 					console.log(res.data);
 					console.log(res);
 					if (res.data == true) {
 						console.log("invitationRequest already exist");
+						enqueueSnackbar('Invitation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
 					else {
 						a = 2;
@@ -291,13 +311,27 @@ function StatPlayer() {
 					console.log(res);
 					if (res.data == true) {
 						console.log("relation already exist");
+						enqueueSnackbar('Relation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
 					else {
 						b = 2;
 						console.log('relation not exist');
 					}
 				})
-				if (a == 2 && b == 2) {
+				await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
+					console.log('check blakcList');
+					console.log(res.data);
+					console.log(res);
+					if (res.data == true) {
+						console.log("blackListé");
+						enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
+					}
+					else {
+						c = 2;
+						console.log('pas blackListé');
+					}
+				})
+				if (a == 2 && b == 2 && c == 2) {
 					console.log('test == true');
 					console.log(receiver_login_tmp);
 					const newInvitationRequest = {
@@ -367,13 +401,6 @@ function StatPlayer() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openInviteGame = Boolean(anchorEl);
 
-	utilsData.socket.off('start')
-
-	utilsData.socket.on('start', function (info: { roomID: string, spectate: boolean }) {
-		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/Pong')
-	});
-
 	function profile_btn() {
 		if (login != profile.login) {
 			return (
@@ -383,7 +410,7 @@ function StatPlayer() {
 							<button onClick={removeFriend}>Remove Friend</button>
 						</> :
 						<>
-							<button disabled={profile.friendOrInvitation == 2} onClick={buttonAddFriend}>Add Friend</button>
+							<button disabled={profile.friendOrInvitation == 2 || profile.friendOrInvitation == 3} onClick={buttonAddFriend}>Add Friend</button>
 						</>}
 
 					{profile.status == 'online' ?
@@ -413,12 +440,12 @@ function StatPlayer() {
 											<MapCarousel activeStep={activeStep} />
 											<button onClick={handleNext}> <ArrowForwardIos /> </button>
 										</div>
-										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }) }}>{'Invite ' + profile.nickname}</button>
+										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
 									</div>
 								</MenuItem>
 							</Menu>
 						</> : <></>}
-					<button onClick={sendMsg}>Send Message</button>
+					<button disabled={profile.friendOrInvitation == 3} onClick={sendMsg}>Send Message</button>
 				</div>
 			);
 		} else {

@@ -77,6 +77,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		console.log("ChatNotifsInit tab.length: ", chatNotifsTab.length);
 		initChatNotif();
 		for (let i = 0; i < chatNotifsTab.length; i++) {
+			console.log("ChatNotifsInit chatNotifsTab i = ", i, " nb = ", chatNotifsTab[i].nb);
 			addChatNotif({ name: chatNotifsTab[i].name, userOrRoom: chatNotifsTab[i].userOrRoom, nb: chatNotifsTab[i].nb });
 		}
 		utilsData.socket.off('ChatNotifsInit');

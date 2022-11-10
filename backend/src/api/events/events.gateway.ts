@@ -55,6 +55,8 @@ let arrClient: Client[] = [];
 
 let arrNotifs: NotifClient[] = [];
 
+let arrNotifInWait: { login: string, notif: {} }[] = [];
+
 let arrRoom: Room[] = [];
 
 let arrParticipants: Participant[] = [];
@@ -177,14 +179,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const allRoom = this.getAllRoomByClientID(client.id)
     for (let i = 0; i < allRoom.length; i++) {
-      for (let index = 0; index < 2; index++) {
+      for (let index = 0; index < this.pongInfo[allRoom[i].index].players.length; index++) {
         if (this.pongInfo[allRoom[i].index].players[index].id == client.id) {
           this.pongInfo[allRoom[i].index].players[index].connected = false
           this.pongInfo[allRoom[i].index].players[index].dateDeconnection = Date.now()
         }
       }
       if (this.pongInfo[allRoom[i].index].players.length == 1 || (!this.pongInfo[allRoom[i].index].players[0].connected && !this.pongInfo[allRoom[i].index].players[1].connected && !this.pongInfo[allRoom[i].index].firstConnectionInviteProfie)) {
-        this.logger.log(`Room ${allRoom[i].index.roomID} has been deleted.`)
+        this.logger.log(`Room ${allRoom[i].room.roomID} has been deleted.`)
         this.pongInfo.splice(allRoom[i].index, 1)
       }
     }
@@ -213,20 +215,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     };
     arrClient.push(newClient);
   }
-
-  async sendToOneClient(username: string, eventName: string) {
-    // const _client = arrClient.find(obj => obj.username == username);
-    // console.log("client: ", _client);
-    // if (_client) {
-    //   console.log(_client.id);
-    //   console.log(eventName);
-    //   const tmp = _client.id;
-    //   console.log(tmp);
-    //   this.server.to(_client.id).emit('debanedUser', true);
-    // }
-    // console.log(arrClient[0].id);
-    this.server.to(arrClient[0].id).emit('debanedUser');
-  };
 
   @SubscribeMessage('storeClientInfo')
   async storeClientInfo(client: Socket, user: { login: string }) {
@@ -272,6 +260,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           else
             i++;
         }
+        arrRoom.forEach((item) => {
+          const _participantInRoom = item.users.find(obj => obj.username == user.login);
+          if (_participantInRoom)
+            _participantInRoom.id = client.id;
+        });
         const _notif = arrNotifs.find(obj => obj.username == user.login);
         this.logger.log("ClientStore _notif = ", _notif);
         if (!_notif) {
@@ -283,8 +276,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
         else {
           this.logger.log("ClientStore _notif.notifs.length = ", _notif.notifs.length);
+          if (_notif.notifs[0])
+            this.logger.log("ClientStore _notif.notifs[0].nb = ", _notif.notifs[0].nb);
+          // for (let i =0; i < arrNotifs.length; )
           this.server.to(client.id).emit('ChatNotifsInit', _notif.notifs);
         }
+
+        let index: number
+        console.log('arrNotifInWait :', arrNotifInWait)
+        while ((index = arrNotifInWait.findIndex(item => item.login == user.login)) != -1) {
+          this.server.to(item.id).emit('notif', arrNotifInWait[index].notif)
+          arrNotifInWait.splice(index, 1);
+        }
+
         //console.log("test");
         //this.server.to(client.id).emit('friendsList', arrClient);
       }
@@ -891,7 +895,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (removeParticipantReturn) {
       this.server.to(client.id).emit('removeParticipantReturn', true);
       const _client = arrClient.find(obj => obj.username == data.login);
-      if (_client != null) {
+      if (_client != undefined) {
         console.log(_client.username, " quit ", data.room_name);
         const newMsg = {
           id_sender: 0,
@@ -931,6 +935,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i++;
         }
       }
+      else
+        arrNotifInWait.push({ login: data.login, notif: { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } } })
     }
   }
 
@@ -1064,6 +1070,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   //NEW CHAT EVENTS
 
   NewMsgNotif = (receiver_name: string, sender_name: string, userOrRoom: boolean) => {
+    console.log("NewMsgNotif arrNotif.length: ", arrNotifs.length);
     let _notifClient = arrNotifs.find(obj => obj.username == receiver_name);
     console.log("_notifClient.notifs.length", _notifClient.notifs.length)
     if (_notifClient) {
@@ -1084,7 +1091,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           id: 0,
           nb: 1,
           name: sender_name,
-          userOrRoom: false
+          userOrRoom: userOrRoom
         }
         _notifClient.notifs.push(newNotif);
       }
@@ -1107,6 +1114,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('delChatNotifs')
   async delChatNotifs(client: Socket, data: any) {
+    console.log("delChatNotifs, data.name: ", data.name, ", data.userOrRoom: ", data.userOrRoom);
     const _notif = arrNotifs.find(obj => obj.username == data.loginOwner);
     if (_notif) {
       const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
@@ -1121,6 +1129,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     else {
       this.logger.log("delChatNotifs _notif not found");
     }
+    console.log("DELCHATNOTIFS arrNotif.length: ", arrNotifs.length);
   }
 
   @SubscribeMessage('createMsg')
@@ -1189,7 +1198,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //console.log("room.users ", room.users);
         console.log("room.users.length: ", room.users.length);
         while (i < room.users.length) {
-          console.log('new Msg to ', room.users[i].username);
+          console.log('new Msg to ', room.users[i].username, room.users[i].id);
           this.server.to(room.users[i].id).emit('newMsgReceived', data);
           this.NewMsgNotif(room.users[i].username, data.room_name, true);
           i++;
@@ -1234,10 +1243,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     const returnBan = await this.BlacklistService.createBan(newBan);
     if (returnBan) {
+      const tmp = arrClient.find(obj => obj.id == client.id);
+      if (tmp)
+        console.log("userBanned to ", tmp.username);
+      else
+        console.log("userBanned to ", client.id);
       this.server.to(client.id).emit('userBanned', true);
       const _client = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client)
+      if (_client) {
+        console.log("userBanned to ", _client.username);
         this.server.to(_client.id).emit('userBanned', true);
+      }
     }
   }
 
@@ -1246,10 +1262,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`${client.id} want deban: ${data.login_banned}`);
     const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
     if (removeBanReturn) {
+      const tmp = arrClient.find(obj => obj.id == client.id);
+      if (tmp)
+        console.log("debanedUser to ", tmp.username);
+      else
+        console.log("debanedUser to ", client.id);
       this.server.to(client.id).emit('debanedUser', true);
       const _client = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client)
+      if (_client) {
+        console.log("debanedUser to ", _client.username);
         this.server.to(_client.id).emit('debanedUser', true);
+      }
     }
   }
 
@@ -1290,8 +1313,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.server.to(client.id).emit('removeParticipantReturn', true);
       console.log("arrClient: ", arrClient);
       const _client = arrClient.find(obj => obj.username == data.login_banned);
-      console.log("client: ", _client.username);
-      if (_client != null) {
+      // console.log("client: ", _client.username);
+      if (_client != undefined) {
         console.log(_client.username, " quit ", data.room_name);
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
         this.server.to(_client.id).emit('notif', { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } })
@@ -1305,6 +1328,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i++;
         }
       }
+      else
+        arrNotifInWait.push({ login: data.login_banned, notif: { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } } })
     }
     const verifIfBanExist = await this.BlacklistService.checkRoomBan(data.id_banned, data.login_banned, data.room_name);
     const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login_banned, data.room_name);
@@ -1582,6 +1607,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].id = client.id
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected = true
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].sendNotif = false
+
+      if (this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected && this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login != info.user.login)].connected && this.pongInfo[room[0]].firstConnectionInviteProfie)
+        this.pongInfo[room[0]].firstConnectionInviteProfie = false
 
       const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
       for (let i = 0; i < friendList.length; i++) {
@@ -2094,8 +2122,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
     }) {
 
-    this.server.to(info.sendTo).emit('decline_invitation', info.user)
-    this.pongInfo.splice(this.getRoomByID("custom" + info.sendTo)[0], 1)
+    const room = this.getRoomByID("custom" + info.sendTo)
+
+    if (room != null) {
+      this.server.to(info.sendTo).emit('decline_invitation', info.user)
+      this.pongInfo.splice(room[0], 1)
+    }
   }
 
   @SubscribeMessage('ACCEPT_INVITATION')
@@ -2117,18 +2149,25 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     //console.log('room :', room, room[1].map.obstacles)
 
-    this.joinRoom(client, room[1].roomID)
+    if (room != null) {
 
-    this.pongInfo[room[0]].players[0].connected = true
-    this.pongInfo[room[0]].started = true
-    this.pongInfo[room[0]].setOponnent(client.id, info.user)
+      this.joinRoom(client, room[1].roomID)
 
-    this.pongInfo[room[0]].players[1].connected = true
-    this.pongInfo[room[0]].players[1].sendNotif = true
+      this.pongInfo[room[0]].players[0].connected = true
+      this.pongInfo[room[0]].started = true
+      this.pongInfo[room[0]].setOponnent(client.id, info.user)
 
-    this.pongInfo[room[0]].firstConnectionInviteProfie = true
+      this.pongInfo[room[0]].players[1].connected = true
+      this.pongInfo[room[0]].players[1].sendNotif = true
 
-    this.server.to(room[1].roomID).emit('start', "custom" + info.inviteID)
+      this.pongInfo[room[0]].firstConnectionInviteProfie = true
+
+      this.server.to(room[1].roomID).emit('start_invite_game')
+    } else {
+
+      this.AffNotistack(client, { text: 'Too late.', type: 'error' })
+
+    }
 
   }
 
@@ -2137,9 +2176,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //console.log("CHECK_IF_FRIEND_OR_INVIT id1: ", data.id1, ", id2: ", data.id2);
     const checkFriend = await this.FriendListService.checkExistRelation(data.id1, data.id2);
     const checkInvit = await this.invitationRequestService.checkInvitationRequest(data.id1, data.id2);
+    const checkBan = await this.BlacklistService.checkUserBanWithId(data.id1, data.id2);
     //console.log("checkFriend: ", checkFriend, ", checkInvit: ", checkInvit);
     if (checkFriend)
       this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 1);
+    else if (checkBan) {
+      this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 3);
+    }
     else if (checkInvit)
       this.server.to(client.id).emit("returnCheckIfFriendOrInvit", 2);
     else

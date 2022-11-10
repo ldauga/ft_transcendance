@@ -45,23 +45,23 @@ export const chatNotifReducer = (state: ChatNotifArray = initialState, action: c
 			else {
 				let _notif = state.chatNotifArray.find(obj => (obj.name == action.payload.name && action.payload.userOrRoom));
 				if (_notif) {
-					_notif.nb += 1;
+					_notif.nb += action.payload.nb;
 					if (!state.total || state.total == 0)
-						state.total = 1;
+						state.total = action.payload.nb;
 					else
-						state.total += 1;
+						state.total += action.payload.nb;
 				}
 				else {
 					let newNotif: ChatNotif = {
 						name: action.payload.name,
 						userOrRoom: true,
-						nb: 1
+						nb: action.payload.nb
 					};
 					state.chatNotifArray.push(newNotif);
 					if (!state.total || state.total == 0)
-						state.total = 1;
+						state.total = action.payload.nb;
 					else
-						state.total += 1;
+						state.total += action.payload.nb;
 				}
 			}
 			console.log("chatNotifReducer total2: ", state.total);
