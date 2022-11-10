@@ -67,7 +67,6 @@ export class UserController {
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
-    // deepcode ignore PT: <please specify a reason of ignoring this>
     return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
   }
 

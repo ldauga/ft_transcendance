@@ -1,5 +1,4 @@
 -- Language: psql
-
 CREATE USER backend PASSWORD 'test_password';
 
 -- CREATING EXTENSION FOR POSTGRESQL CRYPTO
