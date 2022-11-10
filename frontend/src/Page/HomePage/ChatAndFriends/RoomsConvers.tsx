@@ -321,7 +321,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                             <img src={pp1} />
                             <img src={pp2} />
                         </div> : pp1 ?
-                            <div className='profile-pic-group'><img src={pp1} /></div> :
+                            <div className='profile'><img src={pp1} /></div> :
                             <div className='profile-pic-group'><img src="" /></div>}
                         <div className="group-name">
                             <p>{props.roomsConversData.name}</p>
