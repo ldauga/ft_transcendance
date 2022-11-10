@@ -28,6 +28,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isMute, setMute] = useState(false);
     const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
 
+    const [update, setUpdate] = useState(false);
+
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
     const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
@@ -82,13 +84,31 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         utilsData.socket.removeListener('mutedUserInRoom');
     })
 
+    utilsData.socket.removeAllListeners('newParticipant');
+
+    utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
+        console.log('newParticipant = ', demutedUserInRoomReturn);
+        setUpdate(true);
+        utilsData.socket.off('newParticipant');
+        utilsData.socket.removeListener('newParticipant');
+    })
+
     utilsData.socket.removeAllListeners('demutedUserInRoom');
 
-    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoomReturn: boolean) {
-        console.log('demutedUserInRoom = ', demutedUserInRoomReturn);
+    utilsData.socket.on('demutedUserInRoom', function (newParticipantReturn: boolean) {
+        console.log('demutedUserInRoom = ', newParticipantReturn);
         checkIfMute();
         utilsData.socket.off('demutedUserInRoom');
         utilsData.socket.removeListener('demutedUserInRoom');
+    })
+
+    utilsData.socket.removeAllListeners('removeParticipantReturn');
+
+    utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
+        console.log('removeParticipantReturn = ', removeParticipantReturnReturn);
+        setUpdate(true);
+        utilsData.socket.off('removeParticipantReturn');
+        utilsData.socket.removeListener('removeParticipantReturn');
     })
 
     const closeConvers = () => {
@@ -146,7 +166,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         checkIfAdmin();
         checkIfMute();
         getUsers();
-    }, []);
+        if (update)
+            setUpdate(false);
+    }, [update]);
 
     const getUsers = async () => {
         console.log("getUsers");
