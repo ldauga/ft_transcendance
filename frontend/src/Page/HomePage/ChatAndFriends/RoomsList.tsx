@@ -9,7 +9,7 @@ import axiosConfig from '../../../Utils/axiosConfig';
 import NoEncryptionIcon from '@mui/icons-material/NoEncryption';
 import LockIcon from '@mui/icons-material/Lock';
 
-function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
+function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -22,7 +22,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function }) {
 
     const exit = () => {
         props.setRoomsList(false);
-        props.setRooms(true);
+        props.setChat(true);
     };
 
     const join = (item: { id: number, name: string, publicOrPrivate: boolean }) => {
