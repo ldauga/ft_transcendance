@@ -20,16 +20,16 @@ nav {
 
 	a {
 		all: unset;
-		margin-left: 10px;
+		margin-left: 5px;
 		cursor: pointer;
 		font-family: 'Titillium Web', cursive;
-		font-size: 16px;
+		font-size: 15px;
 	}
 
 	svg, div {
-		height: 31px;
+		height: 24px;
 	}
-	
+
 	svg {
 		cursor: pointer;
 	}
@@ -37,6 +37,7 @@ nav {
 	.right {
 		display: flex;
 		gap: 5px;
+		width: 152px;
 	}
 
 	.avatar {
@@ -52,7 +53,7 @@ nav {
 		display: flex;
 		align-items: center;
 		cursor: pointer;
-		margin-right: 10px;
+		margin-right: 5px;
 		text-transform: uppercase;
 		span {
 			display: none;
@@ -60,9 +61,50 @@ nav {
 			font-weight: 400;
 		}
 	}
+
+	.search-box {
+		display: flex;
+		border-radius: 22px;
+		transition: 0.4s;
+		margin-right: -4px;
+		&:hover {
+			color: #FFFF;
+			background: #2e384e;
+			margin-right: 20px;
+			input {
+				width: 122px;
+			}
+		}
+		input {
+		  border: unset;
+		  background: unset;
+		  font-family: 'Roboto';
+		  outline: unset;
+		  width: 0px;
+		  transition: 0.4s;
+		  color: #FFFF;
+		}
+	}
+
+	// @media screen and (min-width: 375px) {
+	// 	a {
+	// 		margin-right: 67px;
+	// 	}
+	// }
 	@media screen and (min-width: 425px) {
 		a {
 			font-size: 20px;
+		}
+		.right {
+			width: 218.01px;
+		}
+		.search-box {
+			&:hover {
+				margin-right: 0;
+				input {
+					width: 65px;
+				}
+			}
 		}
 		.profile {
 			gap: 2px;
@@ -72,20 +114,30 @@ nav {
 			}
 		}
 	}
-	
+
 	@media screen and (min-width: 768px) {
 		height: 83px;
 		a {
+			margin-left: 10px;
 			font-size: 37px;
 		}
 		.right {
+			width: 352.34px;
 			gap: 10px;
+		}
+		.search-box {
+			&:hover {
+				input {
+					width: 91px;
+				}
+			}
 		}
 		svg, div {
 			height: 43px;
 		}
 		.profile {
 			gap: 5px;
+			margin-right: 10px;
 			.avatar {
 				--avatar-size: 40px;
 				height: var(--avatar-size);
@@ -96,7 +148,7 @@ nav {
 			}
 		}
 	}
-	
+
 	@media screen and (min-width: 1024px) {
 		height: 85px;
 		a {
@@ -105,6 +157,17 @@ nav {
 		}
 		.right {
 			gap: 12px;
+			width: unset;
+		}
+		.search-box {
+			&:hover {
+				input {
+					width: 140px;
+				}
+			}
+			input {
+				font-size: 18px;
+			}
 		}
 		svg, div {
 			height: 48px;
@@ -145,4 +208,3 @@ nav {
 		}
 	}
 }
-

@@ -31,6 +31,7 @@ import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import MapCarousel from '../../Page/Pong/MapCarousel/MapCarousel'
 import { gameRoomClass } from '../../Page/Pong/gameRoomClass'
+import { Navigate } from 'react-router-dom'
 
 function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
@@ -142,12 +143,12 @@ function StatPlayer() {
 		utilsData.socket.removeListener('newFriendReceived');
 	})
 
-	const fetchUser = async (url: string) => {
-		// const check = await checkIfFriendOrInvit();
-		//console.log("check before: ", check);
-		await axiosConfig.get(url + profile.login)
-			.then(async (res) => {
-				console.log(res.data)
+	const fetchUser = async () => {
+		if (profile.login) {
+			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
+			console.log('res', res.data);
+			if (res.data !== '')
+			{
 				setProfile({
 					...profile,
 					id: res.data.id,
@@ -177,7 +178,10 @@ function StatPlayer() {
 					setRank({ label: 'bronze', img: bronze_rank_img })
 				}
 				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
-			})
+			} else
+				location.replace('/https://localhost:3000/NotFound');
+		} else
+			location.replace('/https://localhost:3000/NotFound');
 	}
 
 	const fetchMatchHistory = async () => {
@@ -226,7 +230,7 @@ function StatPlayer() {
 		}
 		setUpdate(false);
 		if (!profile.loaded) {
-			fetchUser('https://localhost:5001/user/login/')
+			fetchUser();
 		}
 		if (profile.loaded)
 			fetchMatchHistory();
@@ -251,7 +255,7 @@ function StatPlayer() {
 	}
 
 	const sendGetRequest = (value: string) => {
-		axios.get('https://localhost:5001/auth/2fa/turn-on/' + value, { withCredentials: true })
+		axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value/*, { withCredentials: true }*/)
 			.then(res => {
 				setTwoFactor(true);
 				setUserParameter2FACode('');
