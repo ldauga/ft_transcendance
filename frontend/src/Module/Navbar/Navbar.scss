@@ -20,7 +20,7 @@ nav {
 
 	a {
 		all: unset;
-		margin-left: 10px;
+		margin-left: 5px;
 		cursor: pointer;
 		font-family: 'Titillium Web', cursive;
 		font-size: 15px;
@@ -37,6 +37,7 @@ nav {
 	.right {
 		display: flex;
 		gap: 5px;
+		width: 152px;
 	}
 
 	.avatar {
@@ -52,7 +53,7 @@ nav {
 		display: flex;
 		align-items: center;
 		cursor: pointer;
-		margin-right: 10px;
+		margin-right: 5px;
 		text-transform: uppercase;
 		span {
 			display: none;
@@ -62,64 +63,48 @@ nav {
 	}
 
 	.search-box {
+		display: flex;
+		border-radius: 22px;
+		transition: 0.4s;
+		margin-right: -4px;
+		&:hover {
+			color: #FFFF;
+			background: #2e384e;
+			margin-right: 20px;
+			input {
+				width: 122px;
+			}
+		}
 		input {
-			display: none;
+		  border: unset;
+		  background: unset;
+		  font-family: 'Roboto';
+		  outline: unset;
+		  width: 0px;
+		  transition: 0.4s;
+		  color: #FFFF;
 		}
 	}
 
-	// .search-box {
-	// 	display: flex;
-	// 	background: #2e384e;
-	// 	height: 33px;
-	// 	border-radius: 50px;
-	// 	padding: 8px;
-	// 	margin-top: 5px;
-	//   }
-
-	//   .search-box:hover > .search-text{
-	// 	width: 240px;
-	//   }
-
-	//   .search-box:hover > .search-btn{
-	// 	background: white;
-	// 	color: #2e384e;
-	//   }
-
-	//   .search-btn {
-	// 	color: #ffffff;
-	// 	width: 35px;
-	// 	height: 35px;
-	// 	border-radius: 50%;
-	// 	background: #2e384e;
-	// 	display: flex;
-	// 	justify-content: center;
-	// 	align-items: center;
-	// 	transition: 0.4s;
-	// 	cursor: pointer;
-	// 	text-decoration: none;
-	//   }
-
-	//   .search-btn > i {
-	// 	font-size: 30px;
-	//   }
-
-	//   .search-text {
-	// 	border: none;
-	// 	background: none;
-	// 	outline: none;
-	// 	float: left;
-	// 	color: white;
-	// 	font-size: 16px;
-	// 	font-weight: normal;
-	// 	transition: 0.4s;
-	// 	line-height: 35px;
-	// 	width: 0px;
-	// 	margin-block: auto;
-	//   }
-
+	// @media screen and (min-width: 375px) {
+	// 	a {
+	// 		margin-right: 67px;
+	// 	}
+	// }
 	@media screen and (min-width: 425px) {
 		a {
 			font-size: 20px;
+		}
+		.right {
+			width: 218.01px;
+		}
+		.search-box {
+			&:hover {
+				margin-right: 0;
+				input {
+					width: 65px;
+				}
+			}
 		}
 		.profile {
 			gap: 2px;
@@ -133,16 +118,26 @@ nav {
 	@media screen and (min-width: 768px) {
 		height: 83px;
 		a {
+			margin-left: 10px;
 			font-size: 37px;
 		}
 		.right {
+			width: 352.34px;
 			gap: 10px;
+		}
+		.search-box {
+			&:hover {
+				input {
+					width: 91px;
+				}
+			}
 		}
 		svg, div {
 			height: 43px;
 		}
 		.profile {
 			gap: 5px;
+			margin-right: 10px;
 			.avatar {
 				--avatar-size: 40px;
 				height: var(--avatar-size);
@@ -162,6 +157,17 @@ nav {
 		}
 		.right {
 			gap: 12px;
+			width: unset;
+		}
+		.search-box {
+			&:hover {
+				input {
+					width: 140px;
+				}
+			}
+			input {
+				font-size: 18px;
+			}
 		}
 		svg, div {
 			height: 48px;
