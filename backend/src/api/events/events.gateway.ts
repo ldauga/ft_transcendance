@@ -2086,7 +2086,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       gameRoom: gameRoomClass,
       userLoginToSend: string,
     }) {
-    this.joinRoom(client, "custom" + client.id)
+
+    const room = this.getRoomByID("custom" + client.id)
+    
+    if (room != null)
+      this.pongInfo.splice(room[0], 1)
+    else
+      this.joinRoom(client, "custom" + client.id)
+      
     info.gameRoom.roomID = "custom" + client.id
     info.gameRoom.players[0].connected = true
     info.gameRoom.players[0].id = client.id
