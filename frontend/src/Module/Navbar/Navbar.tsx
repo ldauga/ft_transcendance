@@ -56,12 +56,14 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 	async function findUserProfile() {
 		if (searchBarContent) {
-			const ret = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
-			console.log(ret.data)
-			if (ret.data)
-				window.location.replace('https://localhost:3000/Profile/' + searchBarContent);
-			else
+			let res = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
+			if (!res.data.login)
+				res = await axiosConfig.get('https://localhost:5001/user/nickname/' + searchBarContent);
+			console.log(res);
+			if (!res.data.login)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
+			else
+				window.location.replace('https://localhost:3000/Profile/' + res.data.login);
 		}
 		return true;
 	}

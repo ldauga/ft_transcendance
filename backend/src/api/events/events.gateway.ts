@@ -2130,8 +2130,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }) {
 
     const room = this.getRoomByID("custom" + client.id)
-    
-    if (room != null)
+
+	if (room != null)
       this.pongInfo.splice(room[0], 1)
     else
       this.joinRoom(client, "custom" + client.id)
@@ -2512,6 +2512,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         case 'Nickname too short':
           this.server.to(client.id).emit('changeNicknameError', 'too-short')
           break;
+		case 'Cannot use someone\'s login as a nickname.':
+		  this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
+		  break;
       }
     }).then((res) => {
       if (res != undefined)

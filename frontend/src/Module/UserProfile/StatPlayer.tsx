@@ -90,10 +90,13 @@ function StatPlayer() {
 				enqueueSnackbar('Nickname already taken.', { variant: "warning", autoHideDuration: 2000 })
 				break;
 			case 'special-char':
-				enqueueSnackbar("Your nickname can only had alpha-numeric characters or \'_\'.", { variant: "warning", autoHideDuration: 2000 })
+				enqueueSnackbar("Your nickname can only have alpha-numeric characters or \'_\'.", { variant: "warning", autoHideDuration: 2000 })
 				break;
 			case 'identical-nickname':
 				enqueueSnackbar('Do not put the same nickname.', { variant: "warning", autoHideDuration: 2000 })
+				break;
+			case 'same-as-login':
+				enqueueSnackbar('Cannot use someone\'s login as your nickame.', { variant: "warning", autoHideDuration: 2000 })
 				break;
 		}
 	})

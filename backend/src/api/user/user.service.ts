@@ -151,7 +151,9 @@ export class UserService {
 		if (user.nickname == nickname)
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(nickname))
-			throw new UnauthorizedException('Nickname already used');
+			throw new BadRequestException('Nickname already used');
+		if (await this.getUserByLogin(nickname))
+			throw new BadRequestException('Cannot use someone\'s login as a nickname.');
 
 		user.nickname = nickname;
 		this.userRepository.save(user);
