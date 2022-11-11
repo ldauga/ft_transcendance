@@ -241,7 +241,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
 
       arrClient.forEach((client) => {
-        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'connected' })
+        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'login' })
       })
     }
 
@@ -555,6 +555,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log("arrClient: ", arrClient);
     //const removeFriendReturn = await this.http.post('https://localhost:5001/friendList/' + data.id_user1 + '/' + data.id_user2);
     const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_user1, data.id_user2);
+    const _notif = arrNotifs.find(obj => obj.username == data.login_user1);
+    if (_notif) {
+      const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_user2);
+      if (_notifToReset)
+        _notif.notifs.splice(_notifToReset);
+    }
+    const _notif2 = arrNotifs.find(obj => obj.username == data.login_user2);
+    if (_notif2) {
+      const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_user1);
+      if (_notifToReset2)
+        _notif2.notifs.splice(_notifToReset2);
+    }
     console.log('removeFriendReturn in eventgateway', removeFriendReturn);
     if (removeFriendReturn) {
       const _client1 = arrClient.find(obj => obj.username == data.login_user1);
@@ -665,6 +677,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         while (i < _room.users.length) {
           //const removeParticipantReturn = await this.http.post('https://localhost:5001/participants/' + _room.users[i].username + '/' + _room.name);
           const removeParticipantReturn = await this.ParticipantsService.removeParticipant(_room.users[i].username, _room.name);
+          const _notif = arrNotifs.find(obj => obj.username == _room.users[i].username);
+          if (_notif) {
+            const _notifToReset = _notif.notifs.findIndex(obj => obj.name == _room.name);
+            if (_notifToReset)
+              _notif.notifs.splice(_notifToReset);
+          }
           console.log("delete members"), removeParticipantReturn;
           i++;
         }
@@ -684,7 +702,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           }
         }
         const index = arrRoom.indexOf(_room);
-        arrRoom.slice(index);
+        arrRoom.splice(index);
       }
 
     };
@@ -900,6 +918,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         return;
     }
     const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login, data.room_name);
+    const _notif = arrNotifs.find(obj => obj.username == data.login);
+    if (_notif) {
+      const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
+      if (_notifToReset)
+        _notif.notifs.splice(_notifToReset);
+    }
     if (removeParticipantReturn) {
       this.server.to(client.id).emit('removeParticipantReturn', true);
       const _client = arrClient.find(obj => obj.username == data.login);
@@ -934,7 +958,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (_client_sender.username != data.login)
           this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.slice(index);
+        arrRoom.find(obj => obj.name == data.room_name).users.splice(index);
         const room = arrRoom.find(obj => obj.name == data.room_name);
         console.log("room: ", room);
         let i = 0;
@@ -1226,6 +1250,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.logger.log(`${client.id} remove Friend`);
       //const removeFriendReturn = await this.http.post('https://localhost:5001/friendList/' + data.id_banned + '/' + data.id_sender);
       const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_banned, data.id_sender);
+      const _notif = arrNotifs.find(obj => obj.username == data.login_banned);
+      if (_notif) {
+        const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_sender);
+        if (_notifToReset)
+          _notif.notifs.splice(_notifToReset);
+      }
+      const _notif2 = arrNotifs.find(obj => obj.username == data.login_sender);
+      if (_notif2) {
+        const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_banned);
+        if (_notifToReset2)
+          _notif2.notifs.splice(_notifToReset2);
+      }
       console.log('removeFriendReturn in eventgateway', removeFriendReturn);
       this.server.to(client.id).emit('returnRemoveFriend', true);
       const _client_receiver = arrClient.find(obj => obj.username === data.login_banned);
@@ -1291,7 +1327,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (checkParticipant) {
       this.logger.log(`${client.id} remove Participant`);
       //const removeParticipantReturn = await this.http.post('https://localhost:5001/participants/' + data.login_banned + '/' + data.room_name);
-      const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login_banned, data.room_name)
+      const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login_banned, data.room_name);
+      const _notif = arrNotifs.find(obj => obj.username == data.login_banned);
+      if (_notif) {
+        const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
+        if (_notifToReset)
+          _notif.notifs.splice(_notifToReset);
+      }
       console.log('removeParticipantReturn in eventgateway', removeParticipantReturn);
       const newMsg = {
         id_sender: 0,
@@ -1327,7 +1369,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
         this.server.to(_client.id).emit('notif', { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.slice(index);
+        arrRoom.find(obj => obj.name == data.room_name).users.splice(index);
         const room = arrRoom.find(obj => obj.name == data.room_name);
         console.log("room: ", room);
         let i = 0;
@@ -2086,7 +2128,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       gameRoom: gameRoomClass,
       userLoginToSend: string,
     }) {
-    this.joinRoom(client, "custom" + client.id)
+
+    const room = this.getRoomByID("custom" + client.id)
+    
+    if (room != null)
+      this.pongInfo.splice(room[0], 1)
+    else
+      this.joinRoom(client, "custom" + client.id)
+
     info.gameRoom.roomID = "custom" + client.id
     info.gameRoom.players[0].connected = true
     info.gameRoom.players[0].id = client.id

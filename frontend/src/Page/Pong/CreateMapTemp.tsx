@@ -357,15 +357,25 @@ const CreateMapTemp = (props: any) => {
 				ret = true
 		})
 
-		room.players.forEach((player) => {
-			var otop = player.y
-			var obottom = player.y + player.height
-			var oleft = player.x
-			var oright = player.x + player.width
+		{
+			var otop = room.players[0].y
+			var obottom = room.players[0].y + room.players[0].height
+			var oleft = room.players[0].x
+			var oright = room.players[0].x + room.players[0].width
 
 			if (oleft < bright && otop < bbottom && oright > bleft && obottom > btop)
 				ret = true
-		})
+		}
+
+		{
+			var otop = room.players[0].y
+			var obottom = room.players[0].y + room.players[0].height
+			var oleft = ((room.canvas.width / 8) * 7 - room.players[0].width / 2)
+			var oright = ((room.canvas.width / 8) * 7 - room.players[0].width / 2) + room.players[0].width
+
+			if (oleft < bright && otop < bbottom && oright > bleft && obottom > btop)
+				ret = true
+		}
 
 		return ret
 	}
