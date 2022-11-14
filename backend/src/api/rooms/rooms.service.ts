@@ -15,7 +15,7 @@ export class RoomsService {
 
 	private logger: Logger = new Logger('Rooms');
 
-	public async getAllRooms(): Promise<{ id: number, name: string, publicOrPrivate: boolean }[]> {
+	public async getAllRooms(): Promise<{ id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]> {
 		let arrReturn: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = [];
 		const returnAll = await this.RoomsRepository.find();
 		returnAll.forEach(element => {

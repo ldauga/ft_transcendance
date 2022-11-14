@@ -10,7 +10,7 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
+import { ArrowBackIosNew, Logout, Person, Settings, Update } from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -42,10 +42,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const bottom = useRef<null | HTMLDivElement>(null);
 
     const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
-
-    const [password, setPassword] = useState('');
-
-    const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     const [pp1, setPp1] = useState("");
     const [pp2, setPp2] = useState("");
@@ -165,7 +161,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         getUsers();
         if (update)
             setUpdate(false);
-    }, [update]);
+    }, [update, props]);
 
     const getUsers = async () => {
         console.log("getUsers");
@@ -210,47 +206,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
         setUsers(itemList);
     }
-
-    const handleClickOpenDialogChangePassword = () => {
-        setOpenDialogChangePassword(true);
-    };
-
-    const handleCloseDialogChangePassword = () => {
-        setPassword("");
-        setPasswordOrNot(false);
-        setOpenDialogChangePassword(false);
-    };
-
-    const updateSettings = async () => {
-        if (password.length <= 0) {
-            console.log("password empty");
-            return;
-        }
-        if (password.length > 10) {
-            console.log("password too long");
-            return;
-        }
-        if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
-            console.log("valideInput false");
-            return;
-        }
-        if (password.length >= 0) {
-            console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
-            const newPassword = {
-                login: userData.userReducer.user?.login,
-                room_name: props.roomsConversData.name,
-                passwordOrNot: passwordOrNot,
-                password: password
-            }
-            console.log("roomName: ", props.roomsConversData.name);
-            utilsData.socket.emit('changePassword', newPassword);
-        }
-        else
-            console.log("empty password");
-        setPassword("");
-        setPasswordOrNot(false);
-        setOpenDialogChangePassword(false);
-    };
 
     function Header() {
         const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -520,7 +475,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         useEffect(() => {
             console.log("useEffect() AffRoomConvers");
-        })
+        }, [update])
 
         return (
             <div className="chat">
@@ -563,10 +518,53 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
     };
 
-    return (
-        <div className="roomsConvers">
-            {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+    const handleClickOpenDialogChangePassword = () => {
+        setOpenDialogChangePassword(true);
+    };
+
+    function ChangePassword() {
+        const [password, setPassword] = useState('');
+
+        const [passwordOrNot, setPasswordOrNot] = useState(false);
+
+        const handleCloseDialogChangePassword = () => {
+            setPassword("");
+            setPasswordOrNot(false);
+            setOpenDialogChangePassword(false);
+        };
+
+        const updateSettings = async () => {
+            if (password.length <= 0) {
+                console.log("password empty");
+                return;
+            }
+            if (password.length > 10) {
+                console.log("password too long");
+                return;
+            }
+            if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
+                console.log("valideInput false");
+                return;
+            }
+            if (password.length >= 0) {
+                console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
+                const newPassword = {
+                    login: userData.userReducer.user?.login,
+                    room_name: props.roomsConversData.name,
+                    passwordOrNot: passwordOrNot,
+                    password: password
+                }
+                console.log("roomName: ", props.roomsConversData.name);
+                utilsData.socket.emit('changePassword', newPassword);
+            }
+            else
+                console.log("empty password");
+            setPassword("");
+            setPasswordOrNot(false);
+            setOpenDialogChangePassword(false);
+        };
+
+        return (
             <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>
                 <Grid container direction={"column"} spacing={1}>
                     <Grid item>
@@ -604,6 +602,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <button onClick={updateSettings}>Enter</button>
                 </DialogActions>
             </Dialog>
+        );
+    }
+
+    return (
+        <div className="roomsConvers">
+            {isConversRooms && <AffRoomConvers />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            <ChangePassword />
         </div>
     );
 };
