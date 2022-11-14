@@ -2441,6 +2441,38 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
   }
 
+  @SubscribeMessage('GET_ALL_USERS_IN_ROOM')
+  async getAllUsersInRoom(client: Socket, data: { room_id: number, room_name: string }) {
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
+      const messages = await this.MessagesService.getUsersRoomConversMessages(data.room_name);
+      const userList = await this.UserService.getAllUsers();
+      if (roomParticipants && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomParticipants.find(obj => obj.user_login == userList[index].login);
+          if (search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+          else {
+            if (messages) {
+              const search2 = messages.find(obj => obj.login == userList[index].login);
+              if (search2) {
+                const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+                retArr.push(toPush);
+              }
+            }
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllUsersInRoomReturn", retArr);
+      }
+    }
+  }
+
   @SubscribeMessage('GET_ALL_PARTICIPANTS')
   async getAllParticipants(client: Socket, data: { room_id: number, room_name: string }) {
     //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
