@@ -426,7 +426,7 @@ function StatPlayer() {
 									'aria-labelledby': 'basic-button',
 								}}
 							>
-								<MenuItem onClick={() => { }}>
+								<MenuItem key='Invite Game' onClick={() => { }}>
 									<div className='pong'>
 										<div className="instruction">Select map and press JOIN QUEUE !</div>
 										<div className='select-map'>

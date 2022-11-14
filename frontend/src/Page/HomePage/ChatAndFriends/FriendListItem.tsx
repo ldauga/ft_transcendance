@@ -199,13 +199,13 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                         </MenuItem>
                             <Divider /></> :
                         <></>)}
-                <MenuItem onClick={removeFriend}>
+                <MenuItem key='Remove Friend' onClick={removeFriend}>
                     <ListItemIcon>
                         <Person fontSize="small" />
                     </ListItemIcon>
                     Remove Friend
                 </MenuItem>
-                <MenuItem onClick={buttonBanUser}>
+                <MenuItem key='Ban Frien' onClick={buttonBanUser}>
                     <ListItemIcon>
                         <Settings fontSize="small" />
                     </ListItemIcon>
