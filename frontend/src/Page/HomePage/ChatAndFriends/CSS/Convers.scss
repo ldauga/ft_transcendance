@@ -82,6 +82,7 @@
 
         .message {
             padding: 10px 10px;
+            max-width: 242px;
         }
         .sender {
             border-radius: 1.125rem 1.125rem 0 1.125rem;
@@ -99,19 +100,19 @@
         }
         .content-sender,
         .content-receiver {
-            max-width: 242px;
             word-break: break-word;
-            width: fit-content;
+            width: 100%;
             display: flex;
             align-items: center;
         }
 
         .content-receiver {
             flex-direction: row-reverse;
+            justify-content: flex-end;
         }
 
         .content-sender {
-            align-self: flex-end;
+            justify-content: flex-end;
         }
 
         .dateDisplayNone {
