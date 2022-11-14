@@ -150,8 +150,7 @@ function StatPlayer() {
 		if (profile.login) {
 			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
 			console.log('res', res.data);
-			if (res.data !== '')
-			{
+			if (res.data !== '') {
 				setProfile({
 					...profile,
 					id: res.data.id,

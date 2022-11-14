@@ -21,9 +21,14 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setNotif, delNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
 
 	utilsData.socket.off('start_invite_game')
+
+	window.onload = function() {
+		if (persistantReducer.inviteCheckReducer.verif)
+			setInviteCheckReload(true)
+	}
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
 		history.pushState({}, '', window.URL.toString())

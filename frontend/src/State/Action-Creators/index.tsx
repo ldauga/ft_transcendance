@@ -1,6 +1,6 @@
 import { Dispatch } from "redux"
-import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType } from "../Action-Types"
-import { clientListAction, logAction, userAction, notifAction, twoFactorAction, chatNotifAction } from "../Actions"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType, inviteCheckActionType } from "../Action-Types"
+import { clientListAction, logAction, userAction, notifAction, twoFactorAction, chatNotifAction, inviteCheckAction } from "../Actions"
 import { ChatNotif, Client, msg, Notif } from "../type"
 
 //ClientList
@@ -162,6 +162,26 @@ export const setTwoFactor = (item: boolean) => {
     return (dispatch: Dispatch<twoFactorAction>) => {
         dispatch({
             type: twoFactorActionType.SETTWOFACTOR,
+            payload: item
+        })
+    }
+}
+
+// Invite
+
+export const setInviteCheck = (item: boolean) => {
+    return (dispatch: Dispatch<inviteCheckAction>) => {
+        dispatch({
+            type: inviteCheckActionType.SETINVITECHECK,
+            payload: item
+        })
+    }
+}
+
+export const setInviteCheckReload = (item: boolean) => {
+    return (dispatch: Dispatch<inviteCheckAction>) => {
+        dispatch({
+            type: inviteCheckActionType.SETINVITECHECKRELOAD,
             payload: item
         })
     }

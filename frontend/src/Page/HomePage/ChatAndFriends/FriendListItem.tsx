@@ -60,7 +60,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     const dispatch = useDispatch();
 
-    const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
+    const { delChatNotif, setConversChatNotif, setInviteCheck } = bindActionCreators(actionCreators, dispatch);
 
     // <button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
     // <button onClick={() => openChat(item)} className="bi bi-chat"></button>
@@ -234,6 +234,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);
+        setInviteCheck(true)
         utilsData.socket.emit('INVITE_CUSTOM', { user: userData.userReducer.user, userLoginToSend: props.item.user.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) });
         enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
     };

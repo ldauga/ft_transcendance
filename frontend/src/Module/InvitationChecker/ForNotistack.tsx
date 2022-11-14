@@ -13,6 +13,10 @@ import './InvitationChecker.css'
 function ForNotistack() {
 
     const utilsData = useSelector((state: RootState) => state.utils);
+    const inviteCheckReducer = useSelector((state: RootState) => state.persistantReducer.inviteCheckReducer);
+
+    const dispatch = useDispatch();
+	const { setInviteCheck, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -33,6 +37,14 @@ function ForNotistack() {
         utilsData.socket.off('returnAffNotistack');
         utilsData.socket.removeListener('returnAffNotistack');
     })
+
+    useEffect(() => {
+		if (inviteCheckReducer.verif && inviteCheckReducer.reload) {
+          enqueueSnackbar('Your party invitation has been cancelled.', { variant: "warning", autoHideDuration: 3000 })
+          setInviteCheck(false)
+          setInviteCheckReload(false)
+        }
+	})
 
     return (
         <div id="ForNotisstack"></div>

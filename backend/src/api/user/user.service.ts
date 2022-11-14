@@ -140,7 +140,6 @@ export class UserService {
 	}
 
 	async updateNickname(login: string, nickname: string): Promise<GetUserDto> {
-		console.log(nickname.search("^[a-zA-Z0-9_]*$"))
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;

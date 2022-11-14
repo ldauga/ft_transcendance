@@ -1,4 +1,4 @@
-import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType } from "../Action-Types"
+import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType, inviteCheckActionType } from "../Action-Types"
 import { ChatNotif, Client, msg, msgList, Notif } from "../type"
 
 
@@ -111,3 +111,15 @@ type SetTwoFactor = {
 }
 
 export type twoFactorAction = SetTwoFactor
+
+type SetInviteCheckAction = {
+    type: inviteCheckActionType.SETINVITECHECK
+    payload: boolean
+}
+
+type SetInviteCheckReloadAction = {
+    type: inviteCheckActionType.SETINVITECHECKRELOAD
+    payload: boolean
+}
+
+export type inviteCheckAction = SetInviteCheckAction | SetInviteCheckReloadAction
