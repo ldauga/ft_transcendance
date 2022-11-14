@@ -2,6 +2,7 @@ import React from 'react';
 import './Homepage.scss';
 import NavBar from '../../Module/Navbar/Navbar';
 import Background from '../../Module/Background/Background';
+import { Tooltip } from '@mui/material';
 
 export const constWhileSecu = 10;
 
@@ -17,7 +18,9 @@ function HomePage() {
                     <div className="pong-racket"></div>
                     <div className="ball"></div>
                 </div>
+                <Tooltip title='Play for the gloire'>
                 <button onClick={() => location.href = '/pong'}>Play !</button>
+                </Tooltip>
             </div>
         </>
     )

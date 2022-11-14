@@ -1,4 +1,4 @@
-import { Autocomplete, Button, ButtonGroup, styled, TextField } from "@mui/material";
+import { Autocomplete, Button, ButtonGroup, styled, TextField, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../../Module/Navbar/Navbar";
@@ -548,12 +548,16 @@ const CreateMapTemp = (props: any) => {
 				</div>
 				<div className="edit">
 					<div className="buttons">
+						<Tooltip title='Click to add obstacle'>
 						<button onClick={async () => {
 							setlastObstacleID(actualObstacleID)
 							room.map.addObstacle('red', actualObstacleID ? 100 : 50, 50, 50, 50, nbObstacle + 1)
 							setActualObstacleID(nbObstacle + 1)
 							setNbObstacle(nbObstacle + 1)
 						}}>Add obstacle</button>
+						</Tooltip>
+
+						<Tooltip title='Click to delete obstacle'>
 						<button onClick={async () => {
 							for (let index = 0; index < room.map.obstacles.length; index++) {
 								const element = room.map.obstacles[index];
@@ -563,15 +567,19 @@ const CreateMapTemp = (props: any) => {
 								}
 							}
 						}}>Delete obstacle</button>
+						</Tooltip>
 					</div>
 					<div className="invite-friend">
 						<Autocomplete
+							noOptionsText='No friend online'
 							onFocus={() => { utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', { user: persistantReduceur.userReducer.user }) }}
 							onChange={(e) => { setInvitInput( connectedClient.find(item => item.username == e.currentTarget.innerHTML)!.login) }}
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
+						<Tooltip title={inviteInput.length ? `Invite ${inviteInput} on your map` : 'Create your map and invite one of your friend connected'}>
 						<button className="play" disabled={checkAllCollisionsBall(room.ball)} onClick={inviteButtonClick}>Play</button>
+						</Tooltip>
 					</div>
 				</div>
 			</div>

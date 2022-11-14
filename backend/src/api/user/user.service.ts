@@ -141,7 +141,6 @@ export class UserService {
 	}
 
 	async updateNickname(login: string, nickname: string): Promise<GetUserDto> {
-		console.log(nickname.search("^[a-zA-Z0-9_]*$"))
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;
@@ -153,6 +152,9 @@ export class UserService {
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(nickname))
 			throw new UnauthorizedException('Nickname already used');
+			let tmp: UserEntity
+		if ((tmp = await this.getUserByLogin(nickname)) && tmp.login != user.login)
+			throw new UnauthorizedException('Nickname same as login');
 
 		user.nickname = nickname;
 		this.userRepository.save(user);

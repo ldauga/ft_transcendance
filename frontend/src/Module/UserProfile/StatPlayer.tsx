@@ -95,6 +95,9 @@ function StatPlayer() {
 			case 'identical-nickname':
 				enqueueSnackbar('Do not put the same nickname.', { variant: "warning", autoHideDuration: 2000 })
 				break;
+			case 'already-login':
+				enqueueSnackbar('The new nickname is already someone\'s login.', { variant: "warning", autoHideDuration: 2000 })
+				break;
 		}
 	})
 
@@ -147,8 +150,7 @@ function StatPlayer() {
 		if (profile.login) {
 			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
 			console.log('res', res.data);
-			if (res.data !== '')
-			{
+			if (res.data !== '') {
 				setProfile({
 					...profile,
 					id: res.data.id,

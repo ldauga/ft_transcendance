@@ -371,7 +371,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if ((player = room.players.find(player => !player.connected)) != undefined) {
         let client: Client
         if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
-              this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
+          this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
         }
       }
     })
@@ -2153,7 +2153,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log(info.userLoginToSend)
 
     const room = this.getRoomByID("custom" + client.id)
-    
+
     if (room != null)
       this.pongInfo.splice(room[0], 1)
     else
@@ -2534,6 +2534,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           break;
         case 'Nickname too short':
           this.server.to(client.id).emit('changeNicknameError', 'too-short')
+          break;
+        case 'Nickname same as login':
+          this.server.to(client.id).emit('changeNicknameError', 'already-login')
           break;
       }
     }).then((res) => {
