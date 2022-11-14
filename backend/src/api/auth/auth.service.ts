@@ -40,6 +40,9 @@ export class AuthService {
 			let user = await this.userServices.getUserByLogin(data.login);
 
 			if (!user) {
+
+
+
 				user = await this.userServices.createUser(data);
 			}
 			return this.signUser(user);

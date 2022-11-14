@@ -430,7 +430,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 console.log("admin: ", item.admin)
                 if (item.participantAdmin) {
                     return (
-                        <MenuItem onClick={() => buttonRemoveAdmin(item)}>
+                        <MenuItem key='Remove Admin' onClick={() => buttonRemoveAdmin(item)}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -440,7 +440,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 }
                 else {
                     return (
-                        <MenuItem onClick={() => buttonAddAdmin(item)}>
+                        <MenuItem key='Add Admin' onClick={() => buttonAddAdmin(item)}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -454,7 +454,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 console.log("admin: ", item.admin)
                 if (item.participantAdmin) {
                     return (
-                        <MenuItem onClick={() => demute({ login: item.login, id: item.id, admin: item.admin })}>
+                        <MenuItem key='Demute Participant' onClick={() => demute({ login: item.login, id: item.id, admin: item.admin })}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -464,7 +464,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 }
                 else {
                     return (
-                        <MenuItem onClick={() => handleClickOpenDialogMute(item)}>
+                        <MenuItem key='Mute Participant' onClick={() => handleClickOpenDialogMute(item)}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -515,13 +515,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     <AddOrRemoveAdmin />
                     <Divider />
                     <MutedOrNot />
-                    <MenuItem onClick={() => handleClickOpenDialogBan(item)}>
+                    <MenuItem key='Ban Participant' onClick={() => handleClickOpenDialogBan(item)}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
                         Ban Participant
                     </MenuItem>
-                    <MenuItem onClick={() => removeParticipant(item)}>
+                    <MenuItem key='Remove Participant' onClick={() => removeParticipant(item)}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
@@ -610,14 +610,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={addInvitationRequest}>
+                    <MenuItem key='Send Invitation' onClick={addInvitationRequest}>
                         <ListItemIcon>
                             <SendIcon fontSize="small" />
                         </ListItemIcon>
                         Send Invitation
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={affBanned}>
+                    <MenuItem key='Aff Ban' onClick={affBanned}>
                         <ListItemIcon>
                             <PersonOffIcon fontSize="small" />
                         </ListItemIcon>

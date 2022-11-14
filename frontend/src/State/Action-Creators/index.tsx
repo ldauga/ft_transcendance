@@ -68,7 +68,8 @@ export const setUser = (item: {
     losses: number,
     rank: number,
     profile_pic: string,
-    isTwoFactorAuthenticationEnabled: boolean
+    isTwoFactorAuthenticationEnabled: boolean,
+    isFirstConnection: boolean
 } | null) => {
     return (dispatch: Dispatch<userAction>) => {
         dispatch({

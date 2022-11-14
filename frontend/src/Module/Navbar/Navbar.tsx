@@ -171,64 +171,64 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			<nav>
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
-					<div className='search-box'>
-						<svg onClick={() => ref.current.focus()} onMouseEnter={() => ref.current.focus()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-							<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
-							<path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clipRule="evenodd" />
+				<div className='search-box reactour-search-box'>
+					<svg onClick={() => ref.current.focus()} onMouseEnter={() => ref.current.focus()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+						<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
+						<path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clipRule="evenodd" />
+					</svg>
+      				<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder = "Find user..." onChange={e => setSearchBarContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }}/>
+  				</div>
+				<button className='reactour-friend-list'onClick={() => { //friendList
+					setOpenPopUp(!open);
+					if (isChat) {
+						setChat(false);
+						setFriendList(true);
+					}
+					else if (isFriendList) {
+						setFriendList(false);
+						setOpenPopUp(false);
+					}
+					else if (isNotif) {
+						setNotif(false);
+						setFriendList(true);
+					}
+					else
+						setFriendList(true);
+				}}>
+					<Tooltip title="Friends">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+						<path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clipRule="evenodd" />
+						<path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
+					</svg>
+					</Tooltip>
+				</button>
+				<button className='reactour-notif' onClick={() => { //notifs
+					setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
+					setOpenPopUp(!open);
+					if (isChat) {
+						setChat(false);
+						setNotif(true);
+					}
+					else if (isFriendList) {
+						setFriendList(false);
+						setNotif(true);
+					}
+					else if (isNotif) {
+						setNotif(false);
+						setOpenPopUp(false);
+					}
+					else
+						setNotif(true);
+				}}>
+					<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - lastNbNotif >= 0 ? persistantReducer.notifReducer.notifArray.length - lastNbNotif : 0)}>
+					<Tooltip title="Notifications">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+							<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
 						</svg>
-						<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onChange={e => setSearchBarContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }} />
-					</div>
-					<button onClick={() => { //friendList
-						setOpenPopUp(!open);
-						if (isChat) {
-							setChat(false);
-							setFriendList(true);
-						}
-						else if (isFriendList) {
-							setFriendList(false);
-							setOpenPopUp(false);
-						}
-						else if (isNotif) {
-							setNotif(false);
-							setFriendList(true);
-						}
-						else
-							setFriendList(true);
-					}}>
-						<Tooltip title="Friends">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-								<path fillRule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clipRule="evenodd" />
-								<path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
-							</svg>
-						</Tooltip>
-					</button>
-					<button onClick={() => { //notifs
-						setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
-						setOpenPopUp(!open);
-						if (isChat) {
-							setChat(false);
-							setNotif(true);
-						}
-						else if (isFriendList) {
-							setFriendList(false);
-							setNotif(true);
-						}
-						else if (isNotif) {
-							setNotif(false);
-							setOpenPopUp(false);
-						}
-						else
-							setNotif(true);
-					}}>
-						<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - lastNbNotif >= 0 ? persistantReducer.notifReducer.notifArray.length - lastNbNotif : 0)}>
-							<Tooltip title="Notifications">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-									<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
-								</svg>
-							</Tooltip>
-						</Badge>
-					</button>
-					<button onClick={() => { //chat
+					</Tooltip>
+					</Badge>
+				</button>
+				<button className='reactour-chat' onClick={() => { //chat
 						setOpenPopUp(!open);
 						setAllNotifSeen()
 						if (isChat) {
@@ -254,69 +254,69 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 								</svg>
 							</Tooltip>
 						</Badge>
-					</button>
-					<Tooltip title="Account">
-						<div className='profile' onClick={handleClick}>
-							<img className='avatar' src={avatar} alt="avatar" />
-							<span>{nickname}</span>
-						</div>
-					</Tooltip>
-					<Menu
-						disableAutoFocusItem
-						anchorEl={anchorEl}
-						id="account-menu"
-						open={open}
-						onClose={handleClose}
-						onClick={handleClose}
-						PaperProps={{
-							elevation: 0,
-							sx: {
-								overflow: 'visible',
-								filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-								mt: 1.5,
-								'& .MuiAvatar-root': {
-									width: 32,
-									height: 32,
-									ml: -0.5,
-									mr: 1,
-								},
-								'&:before': {
-									content: '""',
-									display: 'block',
-									position: 'absolute',
-									top: 0,
-									right: 14,
-									width: 10,
-									height: 10,
-									bgcolor: 'background.paper',
-									transform: 'translateY(-50%) rotate(45deg)',
-									zIndex: 0,
-								},
+				</button>
+				<Tooltip title="Account">
+					<div className='profile reactour-profile' onClick={handleClick}>
+						<img className='avatar' src={avatar} alt="avatar" />
+						<span>{nickname}</span>
+					</div>
+				</Tooltip>
+				<Menu
+					disableAutoFocusItem
+					anchorEl={anchorEl}
+					id="account-menu"
+					open={open}
+					onClose={handleClose}
+					onClick={handleClose}
+					PaperProps={{
+						elevation: 0,
+						sx: {
+							overflow: 'visible',
+							filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+							mt: 1.5,
+							'& .MuiAvatar-root': {
+								width: 32,
+								height: 32,
+								ml: -0.5,
+								mr: 1,
 							},
-						}}
-						transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-						anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-					>
-						<MenuItem component={Link} href={`/Profile/${persistantReducer.userReducer.user!.login}`}>
-							<ListItemIcon>
-								<Person fontSize="small" />
-							</ListItemIcon>
-							Profile
-						</MenuItem>
-						<MenuItem component={Link} href="/LeaderBoard">
-							<ListItemIcon>
-								<Leaderboard fontSize="small" />
-							</ListItemIcon>
-							Leaderboard
-						</MenuItem>
-						<Divider />
-						<MenuItem onClick={logout}>
-							<ListItemIcon>
-								<Logout fontSize="small" />
-							</ListItemIcon>
-							Logout
-						</MenuItem>
-					</Menu>
+							'&:before': {
+								content: '""',
+								display: 'block',
+								position: 'absolute',
+								top: 0,
+								right: 14,
+								width: 10,
+								height: 10,
+								bgcolor: 'background.paper',
+								transform: 'translateY(-50%) rotate(45deg)',
+								zIndex: 0,
+							},
+						},
+					}}
+					transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+					anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+				>
+					<MenuItem key='Profile' component={Link} href={`/Profile/${persistantReducer.userReducer.user!.login}`}>
+						<ListItemIcon>
+							<Person fontSize="small" />
+						</ListItemIcon>
+						Profile
+					</MenuItem>
+					<MenuItem key='Leaderboard' component={Link} href="/LeaderBoard">
+						<ListItemIcon>
+							<Leaderboard fontSize="small" />
+						</ListItemIcon>
+						Leaderboard
+					</MenuItem>
+					<Divider />
+					<MenuItem key='Logout' onClick={logout}>
+						<ListItemIcon>
+							<Logout fontSize="small" />
+						</ListItemIcon>
+						Logout
+					</MenuItem>
+				</Menu>
 				</div>
 			</nav>
 			<PopupContainer open={openPopup} setClose={() => setOpenPopUp(false)}>
