@@ -149,6 +149,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 }
                 else {
                     console.log("push room");
+                    console.log("userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb: ", userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb);
                     await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                         <div className="itemConvers" onClick={() => openConvers(item)}>
                             <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb)}>

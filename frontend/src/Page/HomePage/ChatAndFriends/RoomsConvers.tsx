@@ -329,41 +329,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
             const [textNicknameHeader, setTextNicknameHeader] = useState("");
 
-            // useEffect(() => {
-            //     let str_nickname = "";
-            //     console.log('participants.length: ', participants.length);
-            //     for (let i = 0; i < participants.length; i++) {
-            //         if (i + 1 < participants.length)
-            //             str_nickname = str_nickname + participants[i].nickname + ", ";
-            //         else
-            //             str_nickname = str_nickname + participants[i].nickname;
-            //     }
-            //     console.log("str_nickname: ", str_nickname);
-            //     setTextNicknameHeader(str_nickname);
-            //     console.log("textNickname: ", textNicknameHeader);
-            // }, [participants])
+            utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
+                console.log('getAllParticipantsReturn = ', data);
+                let str_nickname = "";
+                console.log('data.length: ', data.length);
+                for (let i = 0; i < data.length; i++) {
+                    if (i + 1 < data.length)
+                        str_nickname = str_nickname + data[i].nickname + ", ";
+                    else
+                        str_nickname = str_nickname + data[i].nickname;
+                }
+                console.log("str_nickname: ", str_nickname);
+                setTextNicknameHeader(str_nickname);
+                console.log("textNickname: ", textNicknameHeader);
+                utilsData.socket.off('getAllParticipantsReturn');
+                utilsData.socket.removeListener('getAllParticipantsReturn');
+            })
 
             useEffect(() => {
-                let str_nickname = "";
-                axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
-                    console.log("get List User: ", res.data);
-                    let i = 0;
-                    res.data.forEach(async (item: { login: string, id: number }) => {
-                        console.log("for each")
-                        await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (element) => {
-                            console.log("push : ", element.data.login);
-                            if (i + 1 < res.data.length)
-                                str_nickname = str_nickname + element.data.nickname + ", ";
-                            else
-                                str_nickname = str_nickname + element.data.nickname;
-                            console.log("str_nickname1: ", str_nickname);
-                        });
-                        i++;
-                    });
-                    console.log("str_nickname: ", str_nickname);
-                    setTextNicknameHeader(str_nickname);
-                    console.log("textNickname: ", textNicknameHeader);
-                })
+                utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
             }, [textNicknameHeader, participants, users])
 
             return (
