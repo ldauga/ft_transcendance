@@ -10,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { HttpService } from '@nestjs/axios';
-import { gameRoomClass } from '../../GameRoomClass';
+import { gameRoomClass, Player } from '../../GameRoomClass';
 import { FriendListService } from '../friendsList/friendList.service';
 import { InvitationRequestService } from '../invitationRequest/invitationRequest.service';
 import { RoomsService } from '../rooms/rooms.service';
@@ -355,6 +355,24 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         })
 
         checkReconnexionArr.splice(index, 1)
+      }
+    })
+
+
+
+  }
+
+  @Interval(1000)
+  sendNotifGame() {
+    this.pongInfo.forEach(room => {
+      if (room.firstConnectionInviteProfie)
+        return
+      let player: Player
+      if ((player = room.players.find(player => !player.connected)) != undefined) {
+        let client: Client
+        if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
+              this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
+        }
       }
     })
 
@@ -1658,8 +1676,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected = true
       this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].sendNotif = false
 
-      if (this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected && this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login != info.user.login)].connected && this.pongInfo[room[0]].firstConnectionInviteProfie)
+      if (this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].connected && this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login != info.user.login)].connected && this.pongInfo[room[0]].firstConnectionInviteProfie) {
         this.pongInfo[room[0]].firstConnectionInviteProfie = false
+        this.pongInfo[room[0]].players[0].sendNotif = false
+        this.pongInfo[room[0]].players[1].sendNotif = false
+      }
 
       const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
       for (let i = 0; i < friendList.length; i++) {
@@ -2129,6 +2150,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       userLoginToSend: string,
     }) {
 
+    console.log(info.userLoginToSend)
+
     const room = this.getRoomByID("custom" + client.id)
     
     if (room != null)
@@ -2222,7 +2245,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       this.server.to(room[1].roomID).emit('start_invite_game')
     } else {
 
-      this.AffNotistack(client, { text: 'Too late.', type: 'error' })
+      this.AffNotistack(client, { text: 'Invitation to the game has been cancelled.', type: 'error' })
 
     }
 

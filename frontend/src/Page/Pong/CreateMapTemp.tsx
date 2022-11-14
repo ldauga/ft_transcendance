@@ -1,11 +1,13 @@
 import { Autocomplete, Button, ButtonGroup, styled, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../../Module/Navbar/Navbar";
-import { RootState } from "../../State";
+import { actionCreators, RootState } from "../../State";
 import { Ball, gameRoomClass, Obstacle } from "./gameRoomClass";
 import './CSS/CreateMap/CreateMapTemp.scss';
 import Background from "../../Module/Background/Background";
+import { bindActionCreators } from "redux";
+import { useSnackbar } from "notistack";
 
 var canvas = {
 	"width": 800,
@@ -31,9 +33,14 @@ const StyledAutocomplete = styled(Autocomplete)({
 });
 
 const CreateMapTemp = (props: any) => {
-	const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
+
+	const [connectedClient, setConnectedClient] = useState<{ username: string, login: string }[]>(new Array());
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const [room] = useState(new gameRoomClass("a", "b", null, "custom"));
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	
+	const dispatch = useDispatch();
+	const { setInviteCheck } = bindActionCreators(actionCreators, dispatch);
 
 	function drawFont(ctx: CanvasRenderingContext2D | null) {
 		if (ctx !== null) {
@@ -235,8 +242,6 @@ const CreateMapTemp = (props: any) => {
 
 	useEffect(() => {
 
-		setInputValue()
-
 		for (let index = 0; index < room.map.obstacles.length; index++) {
 			if (lastObstacleID == room.map.obstacles[index].id)
 				room.map.obstacles[index].color = 'rgb(48, 56, 76)'
@@ -247,23 +252,8 @@ const CreateMapTemp = (props: any) => {
 		render()
 	})
 
-	function setInputValue() {
-		for (let index = 0; index < room.map.obstacles.length; index++) {
-			if (actualObstacleID == room.map.obstacles[index].id) {
-				setXInput(room.map.obstacles[index].x)
-				setYInput(room.map.obstacles[index].y)
-				setWidthInput(room.map.obstacles[index].width)
-				setHeightInput(room.map.obstacles[index].height)
-			}
-		}
-	}
-
 	const [lastObstacleID, setlastObstacleID] = useState(0);
 	const [actualObstacleID, setActualObstacleID] = useState(0);
-	const [xInput, setXInput] = useState(0);
-	const [yInput, setYInput] = useState(0);
-	const [widthInput, setWidthInput] = useState(0);
-	const [heightInput, setHeightInput] = useState(0);
 
 	const [holdClick, setHoldClick] = useState(false);
 	const [holdClickDiff] = useState({ "diffX": 0, "diffY": 0 });
@@ -445,7 +435,6 @@ const CreateMapTemp = (props: any) => {
 							room.map.obstacles[index].x = cursorX
 						}
 						render()
-						setInputValue()
 					}
 				}
 			}
@@ -474,7 +463,7 @@ const CreateMapTemp = (props: any) => {
 
 		friendConnected.forEach(friend => {
 			if (friend.status == 'online')
-				tmp.push({ id: tmp.length, username: friend.user.nickname })
+				tmp.push({ username: friend.user.nickname, login: friend.user.login })
 
 		})
 
@@ -485,6 +474,8 @@ const CreateMapTemp = (props: any) => {
 	function inviteButtonClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		if (!checkAllCollisionsBall(room.ball)) {
 			utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
+			setInviteCheck(true)
+			enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
 		}
 	}
 
@@ -576,7 +567,7 @@ const CreateMapTemp = (props: any) => {
 					<div className="invite-friend">
 						<Autocomplete
 							onFocus={() => { utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', { user: persistantReduceur.userReducer.user }) }}
-							onChange={(e) => { setInvitInput(e.currentTarget.innerHTML) }}
+							onChange={(e) => { setInvitInput( connectedClient.find(item => item.username == e.currentTarget.innerHTML)!.login) }}
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
