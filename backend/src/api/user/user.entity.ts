@@ -27,6 +27,9 @@ export class UserEntity {
   @Column({ default: false })
   public isTwoFactorAuthenticationEnabled: boolean;
 
+  @Column({ default: true })
+  public isFirstConnection: boolean;
+
   @Column({ type: 'varchar', nullable: true })
   public totpsecret: string;
 

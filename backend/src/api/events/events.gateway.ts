@@ -241,7 +241,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
 
       arrClient.forEach((client) => {
-        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'login' })
+        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
       })
     }
 
@@ -369,6 +369,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         return
       let player: Player
       if ((player = room.players.find(player => !player.connected)) != undefined) {
+        if (!player.user)
+          return
         let client: Client
         if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
           this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
@@ -1783,6 +1785,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           this.server.to(room[1].roomID).emit('start', room[1].roomID);
 
           this.pongInfo[room[0]].players.forEach(async player => {
+
+            if (!player.user)
+              return
 
             const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
 

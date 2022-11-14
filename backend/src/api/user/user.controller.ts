@@ -83,4 +83,10 @@ export class UserController {
   public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
+
+  @Post('firstConnection')
+  @UseGuards(AuthGuard('jwt'))
+  public firstConnection(@Req() req: Request) {
+    return this.service.firstConnection(req.cookies['auth-cookie'].refreshToken)
+  }
 }

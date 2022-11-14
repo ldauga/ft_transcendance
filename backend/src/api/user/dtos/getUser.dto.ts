@@ -31,4 +31,8 @@ export class GetUserDto {
     @IsBoolean()
     @IsNotEmpty()
     public isTwoFactorAuthenticationEnabled: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    public isFirstConnection: boolean;
 }
