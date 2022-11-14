@@ -54,12 +54,9 @@ function App() {
           <button
           className='button-reactour'
             onClick={() => {
-              if (first) {
-                setCurrentStep((s) => steps!.length - 1)
-              } else {
-                setCurrentStep((s) => s - 1)
-              }
+              setCurrentStep((s) => s - 1)
             }}
+            disabled={first ? true : false}
             >
             Back
           </button>

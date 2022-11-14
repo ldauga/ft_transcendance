@@ -26,6 +26,11 @@ $pong-color: #2e384e; //var
 		color: #FFFF;
 		background: #2e384e;
 	}
+
+	&:disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
 }
 
 .homepage {
