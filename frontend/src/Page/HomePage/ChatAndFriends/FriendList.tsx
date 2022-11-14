@@ -19,12 +19,12 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
-	const [itemListHistory, setItemListHistory] = useState(Array<any>);
+	const [itemListHistory, setItemListHistory] = useState(Array<any>());
 	const [update, setUpdate] = useState(false);
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
-	const [friendArr, setFriendArr] = useState(Array<any>);
+	const [friendArr, setFriendArr] = useState(Array<any>());
 
 	const info = { user: userData.userReducer.user };
 
@@ -148,6 +148,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	}, [props]);
 
 	const handleClickOpenOptions = (event: React.MouseEvent<HTMLElement>) => {
+		console.log('ici');
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -155,7 +156,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 		setAnchorEl(null);
 	};
 
-	function MenuOptions() {
+	function MenuOptions(): JSX.Element {
 		return (
 			<Menu
 				disableAutoFocusItem
@@ -193,7 +194,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 			>
-				<MenuItem onClick={handleClickAddFriend}>
+				<MenuItem onClick={handleClickAddFriend} >
 					<ListItemIcon>
 						<PersonAdd fontSize="small" />
 					</ListItemIcon>

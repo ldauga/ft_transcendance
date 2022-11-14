@@ -11,6 +11,7 @@ export class ParticipantsController {
 
   //FAIRE FONCTIONNER AVEC LES GUARDS
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllParticipants(): Promise<{ login: string, room_name: string }[]> {
     return this.service.getAllParticipants();
   }

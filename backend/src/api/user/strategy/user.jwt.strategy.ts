@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     async validate(payload: any) {
         const user = await this.userService.getUserById(payload.sub);
         if (!user)
-            throw new UnauthorizedException('User not found.')
+            throw new UnauthorizedException('User not found')
         let now = Date.now().toString().substring(0, 10);
         if (payload.exp <= now) {
             throw new UnauthorizedException('Expired access token');

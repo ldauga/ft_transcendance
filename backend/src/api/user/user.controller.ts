@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, UseInterceptors, UploadedFile, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, UseInterceptors, UploadedFile, Res, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from './user.entity';
@@ -9,8 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
-import { Observable, of } from 'rxjs';
-import { join } from 'path';
+import { Observable } from 'rxjs';
 
 export const storage = {
   storage: diskStorage({
@@ -51,7 +50,6 @@ export class UserController {
   @Get('/nickname/:nickname')
   @UseGuards(AuthGuard('jwt'))
   public getUserByNickname(@Param('nickname') nickname: string): Promise<UserEntity> {
-    console.log('Nickname')
 	  return this.service.getUserByNickname(nickname);
   }
 
@@ -67,7 +65,16 @@ export class UserController {
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
-    return of(res.sendFile(join(process.cwd(), 'uploads/profileImages/' + fileId.split(':')[1])));
+	const fileName = fileId.split(':')[1];
+	var options = {
+        root: path.join(process.cwd() + '/uploads/profileImages/')
+    };
+
+	return res.sendFile(fileName, options, function (err) {
+        if (err) {
+			throw new BadRequestException('Unable to find user\'s avatar');
+        }
+    });
   }
 
   @Post('upload')
@@ -76,5 +83,4 @@ export class UserController {
   public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
-
 }
