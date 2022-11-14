@@ -110,15 +110,9 @@ function PongHome(props: any) {
 					<div className='pong'>
 						<h1>Select Map</h1>
 						<div className='select-map'>
-							<Tooltip title='Previous map'>
-								<button onClick={handleBack}><ArrowBackIosNew /></button>
-							</Tooltip>
-
+							<button onClick={handleBack}><ArrowBackIosNew /></button>
 							<MapCarousel activeStep={activeStep} />
-							
-							<Tooltip title='Next map'>
-								<button onClick={handleNext}> <ArrowForwardIos /> </button>
-							</Tooltip>
+							<button onClick={handleNext}> <ArrowForwardIos /> </button>
 						</div>
 						{
 							props.gameMap != 'createMap' ?
@@ -136,9 +130,7 @@ function PongHome(props: any) {
 					<div className="pong-loader"></div>
 					<h3>Searching</h3>
 					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button>
-					<Tooltip title='Leave the queue'>
 						<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
-					</Tooltip>
 				</div>}
 		</>
 	)

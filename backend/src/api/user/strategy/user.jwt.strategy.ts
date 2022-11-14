@@ -41,7 +41,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             losses: user.losses,
             rank: user.rank,
             profile_pic: user.profile_pic,
-            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+            isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+            isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
         }
         return retUser;
     }

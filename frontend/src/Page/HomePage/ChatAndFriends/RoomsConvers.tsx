@@ -302,20 +302,20 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                    <MenuItem key='Change Password' onClick={handleClickOpenDialogChangePassword}>
                         <ListItemIcon>
                             <SettingsIcon fontSize="small" />
                         </ListItemIcon>
                         Change Password
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={quitConvers}>
+                    <MenuItem key='Quit Room' onClick={quitConvers}>
                         <ListItemIcon>
                             <LogoutIcon fontSize="small" />
                         </ListItemIcon>
                         Quit Room
                     </MenuItem>
-                    <MenuItem onClick={removeRoom}>
+                    <MenuItem key='Remove Room' onClick={removeRoom}>
                         <ListItemIcon>
                             <DeleteIcon fontSize="small" />
                         </ListItemIcon>
@@ -424,14 +424,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={quitConvers}>
+                    <MenuItem key='Quit Room' onClick={quitConvers}>
                         <ListItemIcon>
                             <Person fontSize="small" />
                         </ListItemIcon>
                         Quit Room
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                    <MenuItem key='Change Password' onClick={handleClickOpenDialogChangePassword}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>

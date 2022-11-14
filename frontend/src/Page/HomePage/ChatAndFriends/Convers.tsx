@@ -248,7 +248,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
                         <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
-                        <p><div className='status'></div>online</p>
+                        <p><span className='status'></span>online</p>
                     </div>
                 </div>
                 {correspondantIsBlocked && <AffBlocked />}

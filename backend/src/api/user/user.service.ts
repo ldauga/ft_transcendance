@@ -65,7 +65,9 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -166,7 +168,9 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -187,7 +191,9 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -239,7 +245,9 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -259,7 +267,9 @@ export class UserService {
 			losses: user.losses,
 			rank: user.rank,
 			profile_pic: user.profile_pic,
-			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -270,5 +280,41 @@ export class UserService {
 			login: refreshToken.login,
 			token: refreshToken
 		});
+	}
+
+	async firstConnection(refreshToken: any) {
+		const user = await this.getUserByRefreshToken(refreshToken)
+
+		if (!user)
+			return null
+
+		user.isFirstConnection = false
+
+		this.userRepository.save(user)
+
+		const retUser: GetUserDto = {
+			id: user.id,
+			login: user.login,
+			nickname: user.nickname,
+			wins: user.wins,
+			losses: user.losses,
+			rank: user.rank,
+			profile_pic: user.profile_pic,
+			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
+		}
+		return retUser;
+	}
+
+	async checkErrorNickname(login: string) {
+		let user = await this.getUserByNickname(login)
+
+		if (user) {
+			user.nickname = user.login;
+			user.errorNickname = true;
+			this.userRepository.save(user);
+		}
+
 	}
 }

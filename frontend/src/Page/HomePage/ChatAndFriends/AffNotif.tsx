@@ -48,7 +48,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 				</div>
 				<div className="ListItemNotif">
 					{(() => {
-						return persistantReducer.notifReducer.notifArray.reverse().map((notif, index) => {
+						return persistantReducer.notifReducer.notifArray.map((notif, index) => {
 							switch (notif.type) {
 								case NotifType.GAMEINVITE:
 									return (
