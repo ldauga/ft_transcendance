@@ -66,7 +66,8 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -168,7 +169,8 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -190,7 +192,8 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -243,7 +246,8 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -264,7 +268,8 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
 	}
@@ -296,8 +301,20 @@ export class UserService {
 			rank: user.rank,
 			profile_pic: user.profile_pic,
 			isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled,
-			isFirstConnection: user.isFirstConnection
+			isFirstConnection: user.isFirstConnection,
+			errorNickname: user.errorNickname
 		}
 		return retUser;
+	}
+
+	async checkErrorNickname(login: string) {
+		let user = await this.getUserByNickname(login)
+
+		if (user) {
+			user.nickname = user.login;
+			user.errorNickname = true;
+			this.userRepository.save(user);
+		}
+
 	}
 }
