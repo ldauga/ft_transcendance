@@ -260,8 +260,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           else
             i++;
         }
-        arrRoom.forEach((item) => {
-          const _participantInRoom = item.users.find(obj => obj.username == user.login);
+        arrRoom.forEach((element) => {
+          const _participantInRoom = element.users.find(obj => obj.username == user.login);
           if (_participantInRoom)
             _participantInRoom.id = client.id;
         });
@@ -1258,6 +1258,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i++;
         }
       }
+    }
+    if (verifBan) {
+      this.server.to(client.id).emit('kickedOutOfTheGroup', true);
+    }
+    if (verifMute) {
+      this.server.to(client.id).emit('mutedUserInRoom', true);
     }
   }
 
@@ -2306,6 +2312,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     this.server.to(client.id).emit("getAllFriendConnected", retArr);
+  }
+
+  @SubscribeMessage('GET_ALL_ROOMS_CAN_I_JOIN')
+  async getAllRoomsCanIJoin(client: Socket) {
+    const _client = arrClient.find(obj => obj.id == client.id);
+    if (_client) {
+      const _user = await this.UserService.getUserByLogin(_client.username);
+      if (_user) {
+        const _rooms = await this.RoomsService.getAllRooms();
+        const retArr: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = [];
+        for (let i = 0; _rooms.length > i; i++) {
+          const _participant = await this.ParticipantsService.checkParticipant(_user.login, _rooms[i].name);
+          const _ban = await this.BlacklistService.checkRoomBan(_user.id, _user.login, _rooms[i].name);
+          if (!_participant && !_ban)
+            retArr.push({ id: _rooms[i].id, name: _rooms[i].name, publicOrPrivate: _rooms[i].publicOrPrivate, passwordOrNot: _rooms[i].passwordOrNot });
+        }
+        if (retArr.length <= 0)
+          this.server.to(client.id).emit("getAllRoomsCanIJoin", null);
+        else
+          this.server.to(client.id).emit("getAllRoomsCanIJoin", retArr);
+      }
+    }
   }
 
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
