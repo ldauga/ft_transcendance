@@ -1,3 +1,89 @@
+.invite-pong {
+    .select-map {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+            height: 25px;
+            width: auto;
+        }
+        
+        button {
+            all: unset;
+            cursor: pointer;
+            border: solid 2px #2e384e;
+            transition: all .3s ease-out;
+            &:first-of-type {
+                margin-right: 7px;
+            }
+            &:last-of-type {
+                margin-left: 7px;
+            }
+            &:hover {
+                color: white;
+                background: #2e384e;
+            }
+        }
+        .map-carousel {
+            .field {
+                width: 166px;
+                .ia-ping-racket, .ia-pong-racket, .ia-racket, .ia-ball, .expand-ball, .expand-middle, .expand-ping-racket, .expand-pong-racket {
+                    animation: none!important;
+                }
+                .ia-ping-racket, .expand-ping-racket {
+                    top: 11%;
+                }
+                .ia-pong-racket, .expand-pong-racket {
+                    top: 36%;
+                }
+                .ia-ball, .expand-ball {
+                    left: 20%;
+                    top: 50%;
+                }
+                .ia-racket {
+                    top: 50%;
+                }
+            }
+        }
+    }
+    @media screen and (min-width: 375px) {
+        .select-map {
+            .map-carousel {
+                .field {
+                    width: 219px;
+                }
+            }
+        }
+    }
+    
+    @media screen and (min-width: 425px) {
+        .select-map {
+            button {
+                &:first-of-type {
+                    margin-right: 13px;
+                }
+                &:last-of-type {
+                    margin-left: 13px;
+                }
+            }
+            .map-carousel {
+                .field {
+                    width: 244px;
+                    height: 135px;
+                    .basic-ping-racket, .basic-pong-racket {
+                        --racket-bottom: 70%;
+                    }
+                    .basic-ball {
+                        --bottom: 95%;
+                        --left: 7%;
+                        --right: 91%;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .ListItemFriendList {
     display: flex;
     flex-direction: column;
