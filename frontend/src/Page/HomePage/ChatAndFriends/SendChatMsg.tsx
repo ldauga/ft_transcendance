@@ -20,7 +20,7 @@ function SendChatMsg() {
 
     const [messageText, setMessageText] = useState('');
 
-    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string }[]>(new Array());
+    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string, nickname: string }[]>(new Array());
 
     const [inputValue, setInputValue] = useState('');
 
@@ -31,7 +31,7 @@ function SendChatMsg() {
         const tmp: any[] = []
         data.forEach(client => {
             if (client.login != userData.userReducer.user?.login) {
-                const a = { id: client.id, username: client.login };
+                const a = { id: client.id, username: client.login, nickname: client.nickname };
                 tmp.push(a);
             }
         })
@@ -47,48 +47,51 @@ function SendChatMsg() {
     async function sendMsg() {
         if (text.length <= 0 || inputValue.length <= 0)
             return;
-        if (inputValue.length > 40) {
+        if (text.length > 40) {
             enqueueSnackbar('Message max size is 40 characters', { variant: "error", autoHideDuration: 3000 })
             return;
         }
-        await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + inputValue).then(async (res) => {
-            console.log("checkIfRelationIsBlocked res.data: ", res.data);
-            if (res.data == true) {
-                enqueueSnackbar('You can\'t send a message to ' + inputValue + ', your relation is blocked', { variant: "error", autoHideDuration: 6000 })
-                return;
-            }
-        });
-        let test = false;
-        console.log('sendMsg');
-        await axiosConfig.get('https://localhost:5001/user/login/' + inputValue).then(async (res) => {
-            setText("");
-            console.log("axios.get");
-            console.log(res.data);
-            console.log(res);
-            let receiver_login_tmp: string = res.data.login;
-            if (res.data == "") {
-                enqueueSnackbar(inputValue + ' not found', { variant: "error", autoHideDuration: 2000 })
-                console.log("login not found");
-                return;
-            }
-            else {
-                console.log('test == true');
-                console.log(receiver_login_tmp);
-                const newMsg = {
-                    id_sender: userData.userReducer.user?.id,
-                    id_receiver: res.data.id,
-                    login_sender: userData.userReducer.user?.login,
-                    login_receiver: res.data.login,
-                    userOrRoom: false,
-                    room_id: 0,
-                    room_name: "",
-                    text: text
+        const _user = connectedClient.find(obj => obj.nickname == inputValue);
+        if (_user) {
+            await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + _user.username).then(async (res) => {
+                console.log("checkIfRelationIsBlocked res.data: ", res.data);
+                if (res.data == true) {
+                    enqueueSnackbar('You can\'t send a message to ' + _user.nickname + ', your relation is blocked', { variant: "error", autoHideDuration: 6000 })
+                    return;
                 }
-                utilsData.socket.emit('createMsg', newMsg);
+            });
+            let test = false;
+            console.log('sendMsg');
+            await axiosConfig.get('https://localhost:5001/user/login/' + _user.username).then(async (res) => {
+                setText("");
+                console.log("axios.get");
+                console.log(res.data);
+                console.log(res);
+                let receiver_login_tmp: string = res.data.login;
+                if (res.data == "") {
+                    enqueueSnackbar(_user.nickname + ' not found', { variant: "error", autoHideDuration: 2000 })
+                    console.log("login not found");
+                    return;
+                }
+                else {
+                    console.log('test == true');
+                    console.log(receiver_login_tmp);
+                    const newMsg = {
+                        id_sender: userData.userReducer.user?.id,
+                        id_receiver: res.data.id,
+                        login_sender: userData.userReducer.user?.login,
+                        login_receiver: res.data.login,
+                        userOrRoom: false,
+                        room_id: 0,
+                        room_name: "",
+                        text: text
+                    }
+                    utilsData.socket.emit('createMsg', newMsg);
 
-                return;
-            }
-        });
+                    return;
+                }
+            });
+        }
     }
 
     function SendButton() {
@@ -112,7 +115,7 @@ function SendChatMsg() {
         <div className="new-message">
             <Autocomplete
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED') }}
-                options={connectedClient.map((option) => option.username)}
+                options={connectedClient.map((option) => option.nickname)}
                 renderInput={(params) => <TextField {...params} label="Select a user" />}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
