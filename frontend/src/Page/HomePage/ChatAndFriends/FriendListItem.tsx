@@ -219,15 +219,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         // setProfilePic(`https://cdn.intra.42.fr/users/${props.item.login}.jpg`);
     }, [props]);
 
-    function AffStatus() {
-        return (
-            <div className="itemFriendListStatus">
-                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'online' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
-                <p>{props.item.status}</p>
-            </div>
-        );
-    };
-
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);
         setInviteCheck(true)
@@ -239,10 +230,12 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
                 <div className="friend-profile" onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.item.user.login) }}>
-                    <img src={props.item.user.profile_pic} />
+                    <div className="picture-status">
+                        <div className="status" style={{ backgroundColor: props.item.status == 'online' ? 'rgb(28, 177, 123)' : props.item.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }}></div>
+                        <img src={props.item.user.profile_pic} />
+                    </div>
                     <p>{props.item.user.nickname}</p>
                 </div>
-                <AffStatus />
             </div>
             <div className="inItemFriendList_right">
                 <button onClick={openChat}>
