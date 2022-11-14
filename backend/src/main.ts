@@ -9,12 +9,11 @@ async function bootstrap() {
 	const httpsOptions = {
 		key: fs.readFileSync('./src/common/certs/key.pem', 'utf8'),
 		cert: fs.readFileSync('./src/common/certs/cert.pem', 'utf8'),
-		// cors: {credentials: true, origin: "*"},
 	};
-	const app = await NestFactory.create(AppModule, {httpsOptions}/* { cors: {credentials: true, origin: process.env.CLIENT_URL} }*/);
+	const app = await NestFactory.create(AppModule, {httpsOptions});
 	const config: ConfigService = app.get(ConfigService);
 	const port: number = config.get<number>('PORT');
-	
+
 	app.enableCors({
 		origin: true,
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

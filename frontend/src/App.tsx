@@ -45,7 +45,7 @@ function App() {
           <Route path='/NotFound' element={<ConnectionChecker component={<NotFound />} />} />
           <Route path='/*' element={<Navigate to="/NotFound" replace />} />
         </Routes>
-        
+
       </PersistGate>
 
     </BrowserRouter>
