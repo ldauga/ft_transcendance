@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionCreators, RootState } from '../../../State';
+import { actionCreators, RootState } from '../State';
 import './CSS/Convers.scss'
 import '../Homepage.scss'
-import CreateRooms from './CreateRooms';
-import { constWhileSecu } from '../HomePage';
-import axiosConfig from '../../../Utils/axiosConfig';
+import CreateRooms from '../Page/HomePage/ChatAndFriends/CreateRooms';
+import { constWhileSecu } from '../Page/HomePage/HomePage';
+import axiosConfig from '../Utils/axiosConfig';
 import GroupIcon from '@mui/icons-material/Group';
 import { bindActionCreators } from 'redux';
 

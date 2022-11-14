@@ -11,6 +11,7 @@ export class ParticipantsController {
 
   //FAIRE FONCTIONNER AVEC LES GUARDS
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   public getAllParticipants(): Promise<{ login: string, room_name: string }[]> {
     return this.service.getAllParticipants();
   }
@@ -37,7 +38,7 @@ export class ParticipantsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkParticipant(login, name);
-    console.log('checkParticipant Check = ', returnCheck);
+    //console.log('checkParticipant Check = ', returnCheck);
     return returnCheck;
   }
 

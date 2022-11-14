@@ -36,3 +36,8 @@ export enum chatNotifActionType {
 export enum twoFactorActionType {
     SETTWOFACTOR = "SETTWOFACTOR"
 }
+
+export enum inviteCheckActionType {
+    SETINVITECHECK = "SETINVITECHECK",
+    SETINVITECHECKRELOAD = "SETINVITECHECKRELOAD"
+}

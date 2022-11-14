@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { CircularProgress, Box, MobileStepper, Paper } from '@mui/material';
+import { CircularProgress, Box, MobileStepper, Paper, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -110,21 +110,35 @@ function PongHome(props: any) {
 					<div className='pong'>
 						<h1>Select Map</h1>
 						<div className='select-map'>
-							<button onClick={handleBack}><ArrowBackIosNew /></button>
+							<Tooltip title='Previous map'>
+								<button onClick={handleBack}><ArrowBackIosNew /></button>
+							</Tooltip>
+
 							<MapCarousel activeStep={activeStep} />
-							<button onClick={handleNext}> <ArrowForwardIos /> </button>
+							
+							<Tooltip title='Next map'>
+								<button onClick={handleNext}> <ArrowForwardIos /> </button>
+							</Tooltip>
 						</div>
 						{
 							props.gameMap != 'createMap' ?
-								<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button> :
-								<button className='join-queue' onClick={() => props.setCreateMap(true)}>Create map</button>
+
+								<Tooltip title='Join queue and wait for opponent'>
+									<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button>
+								</Tooltip> :
+
+								<Tooltip title='Create map and invite your friend connected'>
+									<button className='join-queue' onClick={() => props.setCreateMap(true)}>Create map</button>
+								</Tooltip>
 						}
 					</div></> :
 				<div className='loading-screen'>
 					<div className="pong-loader"></div>
 					<h3>Searching</h3>
 					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button>
-					<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
+					<Tooltip title='Leave the queue'>
+						<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
+					</Tooltip>
 				</div>}
 		</>
 	)

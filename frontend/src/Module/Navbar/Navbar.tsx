@@ -1,21 +1,22 @@
-import { Leaderboard, Logout, Person, Settings } from '@mui/icons-material';
-import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Leaderboard, Logout, Person, Settings, Search, RemoveCircleOutlineSharp } from '@mui/icons-material';
+import { Badge, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, TextField, Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import ChatAndFriendAndNotif from '../../Page/HomePage/ChatAndFriends/ChatAndFriendAndNotif';
 import { actionCreators, RootState } from '../../State';
+import axiosConfig from '../../Utils/axiosConfig';
 import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
+import { SnackbarKey, withSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
 
 let tmp = 0
 let verif = false
-
 function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function }) {
-
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
+	const ref = useRef<any>(null);
 	const utilsData = useSelector((state: RootState) => state.utils);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -27,12 +28,14 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
 	const [conversNotif, setConversNotif] = useState({ name: "", userOrRoom: false });
+	const [searchBarContent, setSearchBarContent] = useState('');
 
 	const [lastNbNotif, setLastNbNotif] = useState(tmp);
 
 	const [isChat, setChat] = useState(false);
 	const [isFriendList, setFriendList] = useState(false);
 	const [isNotif, setNotif] = useState(false);
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -51,6 +54,21 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		window.location.replace('https://localhost:3000')
 	}
 
+	async function findUserProfile() {
+		if (searchBarContent) {
+			let res = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
+			if (!res.data.login)
+				res = await axiosConfig.get('https://localhost:5001/user/nickname/' + searchBarContent);
+			console.log(res);
+			if (!res.data.login)
+				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
+			else
+				window.location.replace('https://localhost:3000/Profile/' + res.data.login);
+		}
+		return true;
+	}
+
+	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
 	const nickname = persistantReducer.userReducer.user?.nickname;
 	const avatar = persistantReducer.userReducer.user?.profile_pic;
 
@@ -153,6 +171,13 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			<nav>
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
+					<div className='search-box'>
+						<svg onClick={() => ref.current.focus()} onMouseEnter={() => ref.current.focus()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+							<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
+							<path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clipRule="evenodd" />
+						</svg>
+						<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onChange={e => setSearchBarContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }} />
+					</div>
 					<button onClick={() => { //friendList
 						setOpenPopUp(!open);
 						if (isChat) {
@@ -178,9 +203,8 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						</Tooltip>
 					</button>
 					<button onClick={() => { //notifs
-						// setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
+						setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
 						setOpenPopUp(!open);
-						setAllNotifSeen()
 						if (isChat) {
 							setChat(false);
 							setNotif(true);
@@ -196,7 +220,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						else
 							setNotif(true);
 					}}>
-						<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - persistantReducer.notifReducer.notifArray.map(notif => notif.seen).filter(Boolean).length)}>
+						<Badge color="error" badgeContent={(persistantReducer.notifReducer.notifArray.length - lastNbNotif >= 0 ? persistantReducer.notifReducer.notifArray.length - lastNbNotif : 0)}>
 							<Tooltip title="Notifications">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 									<path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
@@ -206,6 +230,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 					</button>
 					<button onClick={() => { //chat
 						setOpenPopUp(!open);
+						setAllNotifSeen()
 						if (isChat) {
 							setOpenPopUp(false);
 							setChat(false);
@@ -221,7 +246,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						else
 							setChat(true);
 					}}>
-						<Badge color="error" badgeContent={(persistantReducer.chatNotifReducer.total)}>
+						<Badge color="error" badgeContent={persistantReducer.chatNotifReducer.total}>
 							<Tooltip title="Chat">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 									<path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z" />

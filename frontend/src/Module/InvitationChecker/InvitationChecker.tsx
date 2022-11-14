@@ -21,9 +21,14 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setNotif, delNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
 
 	utilsData.socket.off('start_invite_game')
+
+	window.onload = function() {
+		if (persistantReducer.inviteCheckReducer.verif)
+			setInviteCheckReload(true)
+	}
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
 		history.pushState({}, '', window.URL.toString())
@@ -50,15 +55,17 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.on('notif', function (notif: { type: NotifType, data?: Dictionary<any> }) {
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
-				return
+				return ;
+			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.GAMEINVITE && notif.type == NotifType.GAMEINVITE && persistantReducer.notifReducer.notifArray[index].data.inviteUser.login == notif.data?.inviteUser.login)
+				return ;
 			if (persistantReducer.notifReducer.notifArray[index] == notif)
-				return;
+				return ;
 			if (persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.DISCONNECTGAME) != undefined && notif.type == NotifType.DISCONNECTGAME)
 				return ;
 			if (notif.type == NotifType.LOOSEGAMEDISCONECT && persistantReducer.notifReducer.notifArray[index].type == NotifType.DISCONNECTGAME && notif.data?.roomId == persistantReducer.notifReducer.notifArray[index].data.roomId) {
 				delNotif(persistantReducer.notifReducer.notifArray[index])
 				setNotif({ ...notif, seen: false })
-				return;
+				return ;
 			}
 		}
 		setNotif({ ...notif, seen: false })

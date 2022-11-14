@@ -11,7 +11,7 @@ import CreateRooms from './CreateRooms';
 import './CSS/Chat.scss'
 import SendChatMsg from './SendChatMsg';
 
-function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setRooms: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function }) {
+function Chat(props: { setFriendList: Function, setChat: Function, setConvers: Function, setConversCorrespondantData: Function, setRooms: Function, setOldAff: Function, setRoomsConvers: Function, setroomsConversData: Function, setOldAffRoomConvers: Function, closeChat: Function, setRoomsList: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -27,6 +27,12 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const closeChat = () => {
         props.closeChat();
         props.setChat(false);
+    };
+
+    const affRoomsList = async () => {
+        console.log("affRoomsList");
+        props.setChat(false);
+        props.setRoomsList(true);
     };
 
     utilsData.socket.removeListener('newMsgReceived');
@@ -67,6 +73,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             //setConversChatNotif({ name: item.name, userOrRoom: false });
             props.setConversCorrespondantData({ id: item.id, login: item.login, nickname: item.name, profile_pic: item.profile_pic });
             delChatNotif({ name: item.login, userOrRoom: false });
+            utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: item.login, userOrRoom: false });
             props.setChat(false);
             props.setConvers(true);
         }
@@ -74,6 +81,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             //setConversChatNotif({ name: item.name, userOrRoom: true });
             props.setroomsConversData({ name: item.name, id: item.id });
             delChatNotif({ name: item.name, userOrRoom: true });
+            utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: item.name, userOrRoom: true });
             props.setChat(false);
             props.setRoomsConvers(true);
         }
@@ -128,33 +136,10 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         console.log("ChatList.length = ", ChatList.length);
         await ChatList.forEach(async (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
             console.log("test2");
-            // let pp1 = "";
-            // let pp2 = "";
-            // let i = 0;
-            // if (item.userOrRoom) {
-            //     await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + item.name).then(async (res) => {
-            //         console.log("get List User: ", res.data);
-            //         res.data.forEach(async (item: { login: string, id: number }) => {
-            //             await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
-            //                 if (i == 0) {
-            //                     pp1 = res.data.profile_pic;
-            //                     console.log("pp1 1: ", pp1);
-            //                     i++;
-            //                 }
-            //                 else if (i == 1) {
-            //                     pp2 = res.data.profile_pic;
-            //                     i++;
-            //                 }
-            //             });
-            //         });
-            //     });
-            //     console.log('pp1: ', pp1);
-            //     console.log("pp2: ", pp2);
-            // }
             if (!item.userOrRoom) {
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb)}>
+                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.login && obj.userOrRoom == item.userOrRoom))?.nb)}>
                             <img src={item.profile_pic}></img>
                         </Badge>
                         <p>{item.name}</p>
@@ -165,7 +150,9 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 console.log("push room");
                 await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
                     <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <Group />
+                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.login && obj.userOrRoom == item.userOrRoom))?.nb)}>
+                            <Group />
+                        </Badge>
                         <p>{item.name}</p>
                     </div>
                 </div>);
@@ -174,7 +161,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
         console.log("end");
         console.log("itemList.length: ", itemList.length);
         setItemListHistory(itemList);
-    }
+    };
 
     useEffect(() => {
         getListItem();
@@ -191,7 +178,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 <h3>Chat</h3>
                 <div className="icons">
                     <Tooltip title="Group List">
-                        <button onClick={handleClickRooms}><Group /></button>
+                        <button onClick={affRoomsList}><Group /></button>
                     </Tooltip>
                     <Tooltip title="Create Group">
                         <button onClick={affCreateGroup}><GroupAdd /></button>

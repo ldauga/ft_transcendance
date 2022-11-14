@@ -5,7 +5,7 @@ import Chat from "./Chat";
 import Convers from "./Convers";
 import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
-import Rooms from "./Rooms";
+import Rooms from "../../../Trash/Rooms";
 import RoomsConvers from "./RoomsConvers";
 import './CSS/ChatAndFriends.scss'
 import AffNotif from "./AffNotif";
@@ -91,10 +91,9 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
             {isNotif && <AffNotif setLastNbNotif={props.setLastNbNotif} setNotif={setNotif} setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} setConvers={setConvers} setChat={setChat} closeNotif={props.closeNotif} openFriendList={props.openFriendList} setGoToOpenInvitationRequest={setGoToOpenInvitationRequest} />}
             {isInvitationRequest && <InvitationRequest setFriendList={setFriendList} setInvitationRequest={setInvitationRequest} />}
             {isConvers && <Convers setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} conversCorrespondantData={conversCorrespondantData} oldAff={oldAff} openFriendConversFromProfile={props.openFriendConversFromProfile} setOpenFriendConversFromProfile={props.setOpenFriendConversFromProfile} setConversCorrespondantData={setConversCorrespondantData} />}
-            {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setRooms={setRooms} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} />}
-            {isRooms && <Rooms setChat={setChat} setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} setRoomsList={setRoomsList} />}
+            {isChat && <Chat setFriendList={setFriendList} setChat={setChat} setConvers={setConvers} setConversCorrespondantData={setConversCorrespondantData} setRooms={setRooms} setOldAff={setOldAff} setRoomsConvers={setRoomsConvers} setroomsConversData={setroomsConversData} setOldAffRoomConvers={setOldAffRoomConvers} closeChat={props.closeChat} setRoomsList={setRoomsList} />}
             {isRoomsConvers && <RoomsConvers setFriendList={setFriendList} setRooms={setRooms} setRoomsConvers={setRoomsConvers} roomsConversData={roomsConversData} oldAffRoomConvers={oldAffRoomsConvers} setChat={setChat} setRoomsConversData={setroomsConversData} />}
-            {isRoomsList && <RoomsList setRooms={setRooms} setRoomsList={setRoomsList} />}
+            {isRoomsList && <RoomsList setRooms={setRooms} setRoomsList={setRoomsList} setChat={setChat} />}
             {isBannedUsers && <AffUsersBanned setFriendList={setFriendList} setBannedUsers={setBannedUsers} />}
         </div>
     )

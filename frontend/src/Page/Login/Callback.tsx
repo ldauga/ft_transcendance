@@ -24,8 +24,7 @@ export default function Callback() {
     const [fullPinCode, setFullPinCode] = useState(false);
 
     function turnOn2fa(value: string) {
-        console.log('code: ' + value);
-        axios.get('http://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
+        axios.get('https://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
             .then((e) => {setTwoFactor(true), setTurnOn(true)})
             .catch((e) => {
                 enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
@@ -33,8 +32,7 @@ export default function Callback() {
     }
 
     if (persistantReducer.userReducer.user === null) {
-        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); })
-        console.log(cookie)
+        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); }).catch((err) => setUser(null))
     }
 
     if (persistantReducer.userReducer.user !== null) {
@@ -48,7 +46,7 @@ export default function Callback() {
                 <Background />
                 <div className="login-2fa">
                     <h1>Google Authenticator Code</h1>
-                    <PinInput 
+                    <PinInput
                         length={6}
                         focus
                         type="numeric"
