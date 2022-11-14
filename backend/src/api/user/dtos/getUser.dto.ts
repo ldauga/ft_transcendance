@@ -35,4 +35,8 @@ export class GetUserDto {
     @IsBoolean()
     @IsNotEmpty()
     public isFirstConnection: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    public errorNickname: boolean;
 }

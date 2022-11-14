@@ -27,9 +27,6 @@ export class UserEntity {
   @Column({ default: false })
   public isTwoFactorAuthenticationEnabled: boolean;
 
-  @Column({ default: true })
-  public isFirstConnection: boolean;
-
   @Column({ type: 'varchar', nullable: true })
   public totpsecret: string;
 
@@ -44,4 +41,10 @@ export class UserEntity {
 
   @Column({ nullable: true })
   public refreshTokenExp: string;
+
+  @Column({ default: true })
+  public isFirstConnection: boolean;
+
+  @Column({ default: false })
+  public errorNickname: boolean;
 }

@@ -81,6 +81,7 @@ function InvitationChecker(props: { children: any }) {
 	useEffect(() => {
 		console.log("useEffect() invitationChecker");
 		if (!test) {
+			// if ()
 			verifInvitationRequest()
 			test = true
 		}

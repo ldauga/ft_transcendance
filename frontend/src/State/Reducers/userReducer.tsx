@@ -11,7 +11,8 @@ export interface User {
         rank: number,
         profile_pic: string,
         isTwoFactorAuthenticationEnabled: boolean,
-        isFirstConnection: boolean
+        isFirstConnection: boolean,
+        errorNickname: boolean
     } | null;
 }
 
