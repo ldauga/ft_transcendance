@@ -1,9 +1,48 @@
 .boardDiv {
-	margin-top: 10vw;
+	margin-top: calc(50px + 7vh);
 }
 
 .pongBoard {
-    border: 10px rgb(48, 56, 76) solid;
+    border: 3px solid;
 
-    width: 70%;
+    height: 222px;
+}
+
+@media screen and (min-width: 425px) {
+    .pongBoard {
+        height: 299px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .boardDiv {
+        margin-top: calc(83px + 7vh);
+    }
+    .pongBoard {
+        height: 459px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .boardDiv {
+        margin-top: calc(85px + 7vh);
+    }
+    .pongBoard {
+        height: 546px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .boardDiv {
+        margin-top: calc(95px + 7vh);
+    }
+    .pongBoard {
+        height: 661px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .pongBoard {
+        height: 849px;
+    }
 }
