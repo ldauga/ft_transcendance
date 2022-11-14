@@ -138,7 +138,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         props.setConvers(true);
     };
 
-    function FriendOptions() {
+    function FriendOptions(): JSX.Element {
         return (
             <Menu
                 disableAutoFocusItem
@@ -177,28 +177,24 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 {props.item.status == 'in-game' ?
-                    <>
-                        <MenuItem
-                            onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
-                            <ListItemIcon>
-                                <Person fontSize="small" />
-                            </ListItemIcon>
-                            Spectate Friend
-                        </MenuItem>
-                        <Divider />
-                    </> : (props.item.status == 'online' ?
-                        <><MenuItem
-                            // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
-                            // aria-haspopup="true"
-                            // aria-expanded={openInviteGame ? 'true' : undefined}
-                            onClick={() => { setOpenDialogInviteGame(true) }}>
-                            <ListItemIcon>
-                                <Person fontSize="small" />
-                            </ListItemIcon>
-                            Invite Game
-                        </MenuItem>
-                            <Divider /></> :
-                        <></>)}
+                    <MenuItem
+                        onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
+                        <ListItemIcon>
+                            <Person fontSize="small" />
+                        </ListItemIcon>
+                        Spectate Friend
+                    </MenuItem> :
+                    <MenuItem
+                        // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
+                        // aria-haspopup="true"
+                        // aria-expanded={openInviteGame ? 'true' : undefined}
+                        onClick={() => { setOpenDialogInviteGame(true) }}
+                        disabled={!(props.item.status == 'online')}>
+                        <ListItemIcon>
+                            <Person fontSize="small" />
+                        </ListItemIcon>
+                        Invite Game
+                    </MenuItem>}
                 <MenuItem onClick={removeFriend}>
                     <ListItemIcon>
                         <Person fontSize="small" />

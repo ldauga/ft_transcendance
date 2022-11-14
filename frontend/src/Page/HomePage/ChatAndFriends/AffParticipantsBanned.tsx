@@ -44,9 +44,9 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
-    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: boolean) {
+    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
         console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
-        if (roomHasBeenDeletedReturn == true) {
+        if (roomHasBeenDeletedReturn == props.roomsConversData.name) {
             console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
             closeConvers();
         }

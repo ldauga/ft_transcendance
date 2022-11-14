@@ -114,7 +114,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
-            let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
                 console.log("login not found");
                 return;
@@ -136,7 +135,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 })
                 if (a == 2) {
                     console.log('test == true');
-                    console.log(receiver_login_tmp);
                     const newMuted = {
                         id_sender: userData.userReducer.user?.id,
                         id_muted: res.data.id,
@@ -177,7 +175,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
-            let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
                 console.log("login not found");
                 return;
@@ -199,7 +196,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 })
                 if (a == 2) {
                     console.log('test == true');
-                    console.log(receiver_login_tmp);
                     const newBan = {
                         id_sender: userData.userReducer.user?.id,
                         id_banned: res.data.id,
@@ -236,7 +232,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
-            let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
                 console.log("login not found");
                 return;
@@ -264,22 +259,32 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             console.log("axios.get");
             console.log(res.data);
             console.log(res);
-            let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
                 console.log("login not found");
                 return;
             }
             else {
-                const removeAdmin = {
-                    id_sender: userData.userReducer.user?.id,
-                    id_admin: res.data.id,
-                    login_sender: userData.userReducer.user?.login,
-                    login_admin: res.data.login,
-                    room_id: props.roomsConversData.id,
-                    room_name: props.roomsConversData.name
-                }
-                utilsData.socket.emit('removeAdmin', removeAdmin);
-                enqueueSnackbar('Admin removed', { variant: "success", autoHideDuration: 2000 })
+                const oldResData = res.data;
+                await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
+                    if (res.data == true) {
+                        enqueueSnackbar('Sorry you can\'t, he\'s owner', { variant: "warning", autoHideDuration: 2000 })
+                        return;
+                    }
+                    else {
+                        if (oldResData) {
+                            const removeAdmin = {
+                                id_sender: userData.userReducer.user?.id,
+                                id_admin: oldResData.id,
+                                login_sender: userData.userReducer.user?.login,
+                                login_admin: oldResData.login,
+                                room_id: props.roomsConversData.id,
+                                room_name: props.roomsConversData.name
+                            }
+                            utilsData.socket.emit('removeAdmin', removeAdmin);
+                            enqueueSnackbar('Admin removed', { variant: "success", autoHideDuration: 2000 })
+                        }
+                    }
+                });
             }
             return;
         });
@@ -318,9 +323,9 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
-    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: boolean) {
+    utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
         console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
-        if (roomHasBeenDeletedReturn == true) {
+        if (roomHasBeenDeletedReturn == props.roomsConversData.name) {
             console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
             closeConvers();
         }
@@ -360,11 +365,20 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     utilsData.socket.removeAllListeners('mutedUserInRoom');
 
-    utilsData.socket.on('mutedUserInRoom', function (demutedUserInRoom: boolean) {
-        console.log('mutedUserInRoom = ', demutedUserInRoom);
+    utilsData.socket.on('mutedUserInRoom', function (mutedUserInRoomReturn: boolean) {
+        console.log('mutedUserInRoom = ', mutedUserInRoomReturn);
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('mutedUserInRoom');
         utilsData.socket.removeListener('mutedUserInRoom');
+    })
+
+    utilsData.socket.removeAllListeners('demutedUserInRoom');
+
+    utilsData.socket.on('demutedUserInRoom', function (demutedUserInRoomReturn: boolean) {
+        console.log('demutedUserInRoom = ', demutedUserInRoomReturn);
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        utilsData.socket.off('demutedUserInRoom');
+        utilsData.socket.removeListener('demutedUserInRoom');
     })
 
     const addInvitationRequest = () => {
@@ -382,11 +396,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     const closeConvers = () => {
         console.log("closeConvers AffParticipantRooms");
         props.setAffParticipantsRooms(false);
-        props.setConversRooms(false);
-        if (props.oldAffRoomConvers == "chat")
-            props.setChat(true);
-        else
-            props.setRooms(true);
+        props.closeConvers();
     }
 
     const removeParticipant = (item: { login: string, id: number, admin: boolean, participantAdmin: boolean }) => {
@@ -452,7 +462,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
             function MutedOrNot() {
                 console.log("admin: ", item.admin)
-                if (item.participantAdmin) {
+                if (item.muted) {
                     return (
                         <MenuItem onClick={() => demute({ login: item.login, id: item.id, admin: item.admin })}>
                             <ListItemIcon>
@@ -464,7 +474,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 }
                 else {
                     return (
-                        <MenuItem onClick={() => handleClickOpenDialogMute(item)}>
+                        <MenuItem disabled={item.participantAdmin} onClick={() => handleClickOpenDialogMute(item)}>
                             <ListItemIcon>
                                 <Person fontSize="small" />
                             </ListItemIcon>
@@ -513,15 +523,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <AddOrRemoveAdmin />
-                    <Divider />
                     <MutedOrNot />
-                    <MenuItem onClick={() => handleClickOpenDialogBan(item)}>
+                    <MenuItem disabled={item.participantAdmin} onClick={() => handleClickOpenDialogBan(item)}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
                         Ban Participant
                     </MenuItem>
-                    <MenuItem onClick={() => removeParticipant(item)}>
+                    <MenuItem disabled={item.participantAdmin} onClick={() => removeParticipant(item)}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
@@ -532,7 +541,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         };
 
         console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
-        if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
+        if ((item.admin) && item.login != userData.userReducer.user?.login)
             return (
                 <div className="inItemParticipant_right">
                     {item.participantAdmin || (item.admin && item.login == userData.userReducer.user?.login) ?
@@ -658,7 +667,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const getListItem = async (data: any) => {
         const admin = await checkIfAdmin();
-        console.log("get affParticipantsRooms");
+        console.log("get affParticipantsRooms, admin: ", admin);
         let itemList: any[] = []
         console.log('data = ', data);
         let i = 0;

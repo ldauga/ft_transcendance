@@ -116,51 +116,53 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             relationList = res.data;
         });
         console.log("relationList: ", relationList);
-        for (let i = 0; i < relationList.length; i++) {
-            if (!relationList[i].userOrRoom) {
-                const user = await axiosConfig.get('https://localhost:5001/user/id/' + relationList[i].id);
-                console.log("user.data: ", user.data, "i: ", i);
-                console.log("push 1");
-                ChatList.push({ login: user.data.login, name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
-            }
-            else {
-                const checkIfParticipant = await axiosConfig.get('https://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
-                console.log("checkIfParticipant: ", checkIfParticipant.data);
-                if (checkIfParticipant.data) {
-                    console.log("push 2");
-                    ChatList.push({ login: "", name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
+        if (relationList.length > 0) {
+            for (let i = 0; i < relationList.length; i++) {
+                if (!relationList[i].userOrRoom) {
+                    const user = await axiosConfig.get('https://localhost:5001/user/id/' + relationList[i].id);
+                    console.log("user.data: ", user.data, "i: ", i);
+                    console.log("push 1");
+                    ChatList.push({ login: user.data.login, name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
+                }
+                else {
+                    const checkIfParticipant = await axiosConfig.get('https://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
+                    console.log("checkIfParticipant: ", checkIfParticipant.data);
+                    if (checkIfParticipant.data) {
+                        console.log("push 2");
+                        ChatList.push({ login: "", name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
+                    }
                 }
             }
+            let itemList: any[] = [];
+            console.log("ChatList.length = ", ChatList.length);
+            await ChatList.forEach(async (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
+                console.log("test2");
+                if (!item.userOrRoom) {
+                    await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
+                        <div className="itemConvers" onClick={() => openConvers(item)}>
+                            <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.login && obj.userOrRoom == item.userOrRoom))?.nb)}>
+                                <img src={item.profile_pic}></img>
+                            </Badge>
+                            <p>{item.name}</p>
+                        </div>
+                    </div>)
+                }
+                else {
+                    console.log("push room");
+                    await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
+                        <div className="itemConvers" onClick={() => openConvers(item)}>
+                            <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.name && obj.userOrRoom == item.userOrRoom))?.nb)}>
+                                <Group />
+                            </Badge>
+                            <p>{item.name}</p>
+                        </div>
+                    </div>);
+                }
+            });
+            console.log("end");
+            console.log("itemList.length: ", itemList.length);
+            setItemListHistory(itemList);
         }
-        let itemList: any[] = [];
-        console.log("ChatList.length = ", ChatList.length);
-        await ChatList.forEach(async (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
-            console.log("test2");
-            if (!item.userOrRoom) {
-                await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
-                    <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.login && obj.userOrRoom == item.userOrRoom))?.nb)}>
-                            <img src={item.profile_pic}></img>
-                        </Badge>
-                        <p>{item.name}</p>
-                    </div>
-                </div>)
-            }
-            else {
-                console.log("push room");
-                await itemList.push(<div key={itemList.length.toString()} className='itemListConvers'>
-                    <div className="itemConvers" onClick={() => openConvers(item)}>
-                        <Badge color="error" badgeContent={(userData.chatNotifReducer.chatNotifArray.find(obj => (obj.name == item.login && obj.userOrRoom == item.userOrRoom))?.nb)}>
-                            <Group />
-                        </Badge>
-                        <p>{item.name}</p>
-                    </div>
-                </div>);
-            }
-        });
-        console.log("end");
-        console.log("itemList.length: ", itemList.length);
-        setItemListHistory(itemList);
     };
 
     useEffect(() => {
