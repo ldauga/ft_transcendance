@@ -178,6 +178,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
                 <DialogContent>
                     <TextField
                         autoFocus
+                        type='password'
                         margin="dense"
                         id="name"
                         label="Password"
@@ -188,8 +189,8 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={joinWithPassword}>Enter</Button>
+                    <button onClick={handleClose}>Cancel</button>
+                    <button onClick={joinWithPassword}>Enter</button>
                 </DialogActions>
             </Dialog>
         </div>
