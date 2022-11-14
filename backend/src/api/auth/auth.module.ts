@@ -11,26 +11,26 @@ import { UserEntity } from '../user/user.entity';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [
-	  TypeOrmModule.forFeature([UserEntity]),
-	  PassportModule.register({ defaultStrategy: 'local' }),
-	  JwtModule.registerAsync({
-		useFactory: async (configService: ConfigService) => {
-		  return {
-			secret: configService.get<string>('SECRET'),
-			signOptions: {
-			  expiresIn: '15min',
+	imports: [
+		TypeOrmModule.forFeature([UserEntity]),
+		PassportModule.register({ defaultStrategy: 'local' }),
+		JwtModule.registerAsync({
+			useFactory: async (configService: ConfigService) => {
+				return {
+					secret: configService.get<string>('SECRET'),
+					signOptions: {
+						expiresIn: '1h',
+					},
+				};
 			},
-		  };
-		},
-		inject: [ConfigService],
-	  }),
-	  HttpModule,
-	  UserModule,
+			inject: [ConfigService],
+		}),
+		HttpModule,
+		UserModule,
 	],
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy],
-  exports: [AuthService]
+	controllers: [AuthController],
+	providers: [AuthService, LocalStrategy],
+	exports: [AuthService]
 })
 
-export class AuthModule {}
+export class AuthModule { }

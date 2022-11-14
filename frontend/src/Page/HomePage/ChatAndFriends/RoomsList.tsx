@@ -105,7 +105,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     };
 
     const getListItem = async () => {
-        let myRooms: { name: string, id: number }[];
+        let myRooms: { name: string, id: number }[] = [];
         await axiosConfig.get('https://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             console.log('res.data MyRooms = ', res.data);
             myRooms = res.data;

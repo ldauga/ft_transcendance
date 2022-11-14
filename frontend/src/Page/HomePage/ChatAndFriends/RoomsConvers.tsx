@@ -115,10 +115,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         props.setRoomsConversData({ name: "", id: 0 });
         props.setRoomsConvers(false);
-        if (props.oldAffRoomConvers == "Rooms")
-            props.setRooms(true);
-        else if (props.oldAffRoomConvers == "Chat")
-            props.setChat(true);
+        props.setChat(true);
     };
 
     const quitConvers = () => {
@@ -181,6 +178,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
+                console.log("for each")
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     if (i == 0) {
                         console.log("setPp1 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
@@ -192,12 +190,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         setPp2(res.data.profile_pic);
                         i++;
                     }
+                    console.log("push : ", res.data.login);
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
             console.log('itemList get Users: ', itemList);
+            setParticipants(itemList);
         })
-        setParticipants(itemList);
         await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User 2: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
@@ -327,14 +326,30 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         };
 
         function HeaderPrint() {
-            let str_nickname = "";
-            console.log("participants: ", participants);
-            for (let i = 0; i < participants.length; i++) {
-                if (i + 1 < participants.length)
-                    str_nickname = str_nickname + participants[i].nickname + ", ";
-                else
-                    str_nickname = str_nickname + participants[i].nickname;
-            }
+
+            const [textNicknameHeader, setTextNicknameHeader] = useState("");
+
+            utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
+                console.log('getAllParticipantsReturn = ', data);
+                let str_nickname = "";
+                console.log('data.length: ', data.length);
+                for (let i = 0; i < data.length; i++) {
+                    if (i + 1 < data.length)
+                        str_nickname = str_nickname + data[i].nickname + ", ";
+                    else
+                        str_nickname = str_nickname + data[i].nickname;
+                }
+                console.log("str_nickname: ", str_nickname);
+                setTextNicknameHeader(str_nickname);
+                console.log("textNickname: ", textNicknameHeader);
+                utilsData.socket.off('getAllParticipantsReturn');
+                utilsData.socket.removeListener('getAllParticipantsReturn');
+            })
+
+            useEffect(() => {
+                utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+            }, [textNicknameHeader, participants, users])
+
             return (
                 <>
                     <ArrowBackIosNew onClick={closeConvers} />
@@ -347,7 +362,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                             <div className='profile-pic-group'><img src="" /></div>}
                         <div className="group-name">
                             <p>{props.roomsConversData.name}</p>
-                            <p className='name-participants' onClick={affParticipants}>{str_nickname}</p>
+                            <p className='name-participants' onClick={affParticipants}>{textNicknameHeader}</p>
                         </div>
                     </div>
                 </>
