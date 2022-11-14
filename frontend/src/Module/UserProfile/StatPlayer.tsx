@@ -425,27 +425,21 @@ function StatPlayer() {
 							>
 								Invite Game
 							</button>
-							<Menu
-								id="menu-invite-game"
-								anchorEl={anchorEl}
-								open={openInviteGame}
-								onClose={() => setAnchorEl(null)}
-								MenuListProps={{
-									'aria-labelledby': 'basic-button',
-								}}
-							>
-								<MenuItem key='Invite Game' onClick={() => { }}>
-									<div className='pong'>
-										<div className="instruction">Select map and press JOIN QUEUE !</div>
+							<Dialog open={openInviteGame} onClose={() => { setAnchorEl(null) }}>
+								<div className="invite-pong">
+									<DialogContent>
 										<div className='select-map'>
 											<button onClick={handleBack}><ArrowBackIosNew /></button>
 											<MapCarousel activeStep={activeStep} />
 											<button onClick={handleNext}> <ArrowForwardIos /> </button>
 										</div>
-										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
-									</div>
-								</MenuItem>
-							</Menu>
+									</DialogContent>
+								</div>
+								<DialogActions>
+									<button className='join-queue' type='button' onClick={() => { setAnchorEl(null) }}>Cancel</button>
+									<button className='join-queue' type='button'onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
+								</DialogActions>
+							</Dialog>
 						</> : <></>}
 					<button disabled={profile.friendOrInvitation == 3} onClick={sendMsg}>Send Message</button>
 				</div>

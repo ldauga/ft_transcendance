@@ -258,14 +258,15 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 <FriendOptions />
             </div>
             <Dialog open={openDialogInviteGame} onClose={() => { setOpenDialogInviteGame(false) }}>
-                <DialogTitle>Select map and press JOIN QUEUE !</DialogTitle>
-                <DialogContent>
-                    <div className='select-map'>
-                        <button onClick={handleBack}><ArrowBackIosNew /></button>
-                        <MapCarousel activeStep={activeStep} />
-                        <button onClick={handleNext}> <ArrowForwardIos /> </button>
-                    </div>
-                </DialogContent>
+                <div className="invite-pong">
+                    <DialogContent>
+                        <div className='select-map'>
+                            <button onClick={handleBack}><ArrowBackIosNew /></button>
+                            <MapCarousel activeStep={activeStep} />
+                            <button onClick={handleNext}> <ArrowForwardIos /> </button>
+                        </div>
+                    </DialogContent>
+                </div>
                 <DialogActions>
                     <button className='join-queue' type='button' onClick={() => { setOpenDialogInviteGame(false) }}>Cancel</button>
                     <button className='join-queue' type='button' onClick={inviteGame}>{'Invite ' + props.item.user.nickname}</button>
