@@ -122,6 +122,22 @@
                 gap: 5px;
                 align-items: center;
                 width: 148px;
+                .picture-status {
+                    position: relative;
+                    display:inline-block;
+                    .status {
+                        position: absolute;
+                        --position-status: 38px;
+                        left: var(--position-status);
+                        top: var(--position-status);
+                        border: 1px solid white;
+                        border-radius: 50%;
+                        background-color: rgb(28, 177, 123);
+                        --status-size: 10px;
+                        width: var(--status-size);
+                        height: var(--status-size);
+                    }
+                }
                 img {
                     --avatar-size: 51px;
                     width: var(--avatar-size);
@@ -163,23 +179,7 @@
         .itemFriendListStatus {
             display: flex;
             align-items: baseline;
-            justify-content: center;
-    
-            .itemFriendListStatusPoint {
-                border-radius: 50%;
-                background-color: rgba(28, 177, 123, 1);
-                --status-size: 10px;
-                width: var(--status-size);
-                height: var(--status-size);
-            }
-    
-            p {
-                font-size: 1rem;
-                margin: 0;
-                font-weight: 200;
-                padding-left: 0.3rem;
-            }
-    
+            justify-content: center;    
         }
     
     }
@@ -203,6 +203,11 @@
                 .friend-profile {
                     gap: 7px;
                     width: 170px;
+                    .picture-status {
+                        .status {
+                            --position-status: 44px;
+                        }
+                    }
                     img {
                         --avatar-size: 59px;
                     }
@@ -216,6 +221,11 @@
                 .friend-profile {
                     gap: 11px;
                     width: 183px;
+                    .picture-status {
+                        .status {
+                            --position-status: 50px
+                        }
+                    }
                     img {
                         --avatar-size: 66px;
                     }
