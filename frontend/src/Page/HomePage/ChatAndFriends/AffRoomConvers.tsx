@@ -31,6 +31,22 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     const dispatch = useDispatch();
     const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
+    utilsData.socket.removeAllListeners('newParticipant');
+
+    utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
+        setUpdate(true);
+        utilsData.socket.off('newParticipant');
+        utilsData.socket.removeListener('newParticipant');
+    })
+
+    utilsData.socket.removeAllListeners('removeParticipantReturn');
+
+    utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
+        setUpdate(true);
+        utilsData.socket.off('removeParticipantReturn');
+        utilsData.socket.removeListener('removeParticipantReturn');
+    })
+
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
@@ -40,8 +56,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         //     getListItem();
         //     secu++;
         // }
-        setUpdate(true);
-        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
+        //utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
         // if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
         //     delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         // }
