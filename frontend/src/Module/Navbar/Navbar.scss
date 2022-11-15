@@ -85,18 +85,13 @@ nav {
 		  color: #FFFF;
 		}
 	}
-
-	// @media screen and (min-width: 375px) {
-	// 	a {
-	// 		margin-right: 67px;
-	// 	}
-	// }
 	@media screen and (min-width: 425px) {
 		a {
 			font-size: 20px;
+			margin-right: 13px;
 		}
 		.right {
-			width: 218.01px;
+			width: unset;
 		}
 		.search-box {
 			&:hover {
@@ -109,6 +104,10 @@ nav {
 		.profile {
 			gap: 2px;
 			span {
+				white-space: nowrap;
+				max-width: 57px;
+				overflow: hidden;
+				text-overflow: ellipsis;
 				font-size: 12px;
 				display: block;
 			}
@@ -122,13 +121,12 @@ nav {
 			font-size: 37px;
 		}
 		.right {
-			width: 352.34px;
 			gap: 10px;
 		}
 		.search-box {
 			&:hover {
 				input {
-					width: 91px;
+					width: 135px;
 				}
 			}
 		}
@@ -145,6 +143,10 @@ nav {
 			}
 			span {
 				font-size: 16px;
+				white-space: unset;
+				max-width: unset;
+				overflow: unset;
+				text-overflow: unset;
 			}
 		}
 	}
@@ -153,11 +155,11 @@ nav {
 		height: 85px;
 		a {
 			font-size: 44px;
+			margin-right: unset;
 			letter-spacing: 2px;
 		}
 		.right {
 			gap: 12px;
-			width: unset;
 		}
 		.search-box {
 			&:hover {

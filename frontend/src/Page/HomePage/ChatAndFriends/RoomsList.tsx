@@ -184,7 +184,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
                         fullWidth
                         variant="standard"
                         onChange={e => setPassword(e.target.value)}
-                        onKeyDown={e => { if (e.key == 'Enter') joinWithPassword }}
+                        onKeyDown={e => { if (e.key == 'Enter') joinWithPassword() }}
                     />
                 </DialogContent>
                 <DialogActions>

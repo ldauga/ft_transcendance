@@ -32,7 +32,7 @@
     }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1440px) {
     .boardDiv {
         margin-top: calc(95px + 7vh);
     }
@@ -41,7 +41,7 @@
     }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 2560px) {
     .pongBoard {
         height: 849px;
     }
