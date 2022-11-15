@@ -17,7 +17,6 @@ export const initialState: ChatNotifArray = {
 export const chatNotifReducer = (state: ChatNotifArray = initialState, action: chatNotifAction) => {
 	switch (action.type) {
 		case chatNotifActionType.ADDCHATNOTIF: {
-			console.log("chatNotifReducer total: ", state.total);
 			if (!action.payload.userOrRoom) {
 				let _notif = state.chatNotifArray.find(obj => (obj.name == action.payload.name && !action.payload.userOrRoom));
 				if (_notif) {
@@ -26,7 +25,6 @@ export const chatNotifReducer = (state: ChatNotifArray = initialState, action: c
 						state.total = action.payload.nb;
 					else
 						state.total += action.payload.nb;
-					//console.log("chatNotifReducer total2: ", state.total);
 
 				}
 				else {
@@ -64,7 +62,6 @@ export const chatNotifReducer = (state: ChatNotifArray = initialState, action: c
 						state.total += action.payload.nb;
 				}
 			}
-			console.log("chatNotifReducer total2: ", state.total);
 			return {
 				...state,
 				notifArray: state.chatNotifArray,

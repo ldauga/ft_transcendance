@@ -14,8 +14,8 @@ import { useSnackbar } from "notistack";
 
 export default function Callback() {
 
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [cookie, setCookie] = useCookies(['auth-cookie']);
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
@@ -25,7 +25,7 @@ export default function Callback() {
 
     function turnOn2fa(value: string) {
         axios.get('https://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
-            .then((e) => {setTwoFactor(true), setTurnOn(true)})
+            .then((e) => { setTwoFactor(true), setTurnOn(true) })
             .catch((e) => {
                 enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
             });
@@ -37,26 +37,25 @@ export default function Callback() {
 
     if (persistantReducer.userReducer.user !== null) {
 
-        console.log(persistantReducer.userReducer.user)
 
         if (persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && !persistantReducer.twoFactorReducer.verif)
 
             return (
                 <>
-                <Background />
-                <div className="login-2fa">
-                    <h1>Google Authenticator Code</h1>
-                    <PinInput
-                        length={6}
-                        focus
-                        type="numeric"
-                        inputMode="number"
-                        style={{padding: '10px'}}
-                        onChange={() => setFullPinCode(false)}
-                        onComplete={(value, index) => {turnOn2fa(value); setFullPinCode(true)}}
-                        autoSelect={true}
-                    />
-                </div>
+                    <Background />
+                    <div className="login-2fa">
+                        <h1>Google Authenticator Code</h1>
+                        <PinInput
+                            length={6}
+                            focus
+                            type="numeric"
+                            inputMode="number"
+                            style={{ padding: '10px' }}
+                            onChange={() => setFullPinCode(false)}
+                            onComplete={(value, index) => { turnOn2fa(value); setFullPinCode(true) }}
+                            autoSelect={true}
+                        />
+                    </div>
                 </>
             )
         else

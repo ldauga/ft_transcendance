@@ -34,7 +34,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
-        console.log('newMsgReceived = ', data);
         // const length = itemListHistory.length;
         // let secu = 0;
         // while (length == itemListHistory.length && secu < constWhileSecu) {
@@ -53,7 +52,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('getAllUsersInRoomReturn');
 
     utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllUsersInRoomReturn = ', data);
         getListItem(data);
         utilsData.socket.off('getAllUsersInRoomReturn');
         utilsData.socket.removeListener('getAllUsersInRoomReturn');
@@ -90,7 +88,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }
 
     function AffDate(props: { usersTmp: { id: number, login: string, nickname: string, profile_pic: string }[], item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        //console.log("Date: ", Date());
         if (props.item.id_sender == userData.userReducer.user?.id) {
             if (getYear() != props.item.year)
                 return (
@@ -174,7 +171,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
                 <div className='inItem2'>
                     <div className="picture-message">
                         <Tooltip title={nickname}>
-                        <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
+                            <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
                         </Tooltip>
                         <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                             <p>{props.item.text}</p>
@@ -187,7 +184,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     };
 
     const getUsers = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
-        console.log("getUsers");
         let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
         let i = 0;
         setUsers([]);
@@ -199,19 +195,14 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
-        console.log("getListItem affroomconvers");
         const usersTmp = await getUsers(data);
-        console.log("getlistitem users: ", users);
-        console.log("getlistitem usersTmp: ", usersTmp);
         await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
-            //console.log("get List Item Room Conversation", res.data);
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item usersTmp={usersTmp} item={item} />
                 </div>)
             });
-            //console.log('itemList : ', itemList);
             setItemListHistory(itemList);
         })
     }
@@ -225,7 +216,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }, [itemListHistory])
 
     useEffect(() => {
-        console.log("update: ", update);
         if (update) {
             setUpdate(false);
             utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });

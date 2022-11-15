@@ -49,7 +49,9 @@ export class UserService {
 	async getUserByRefreshToken(signedRefreshToken: any): Promise<GetUserDto> {
 		if (signedRefreshToken === undefined)
 			throw new UnauthorizedException('Token not found');
+
 		var user: any;
+
 		if (signedRefreshToken.refreshToken)
 			user = await this.userRepository.findOneBy({ signedRefreshToken: signedRefreshToken.refreshToken });
 		else if (signedRefreshToken)
@@ -57,6 +59,7 @@ export class UserService {
 
 		if (!user)
 			throw new BadRequestException('User not found');
+
 		const retUser = {
 			id: user.id,
 			login: user.login,
@@ -119,10 +122,10 @@ export class UserService {
 		let user = await this.getUserById(body.sub);
 		const decodedRefreshToken = this.jwtService.decode(refreshToken)
 		if (user) {
-			user.refreshToken = decodedRefreshToken['token'];
-			user.signedRefreshToken = refreshToken;
-			user.refreshTokenIAT = decodedRefreshToken['iat'];
-			user.refreshTokenExp = decodedRefreshToken['exp'];
+			user!.refreshToken = decodedRefreshToken['token'];
+			user!.signedRefreshToken = refreshToken;
+			user!.refreshTokenIAT = decodedRefreshToken['iat'];
+			user!.refreshTokenExp = decodedRefreshToken['exp'];
 			this.userRepository.save(user);
 			return user;
 		}
@@ -133,16 +136,18 @@ export class UserService {
 		let user = await this.getUserById(body.id);
 		if (user) {
 			if (body.win)
-				user.wins++;
+				user!.wins++;
 			else
-				user.losses++;
+				user!.losses++;
 			this.userRepository.save(user);
 			return user;
 		}
+		return null;
 	}
 
 	async updateNickname(login: string, nickname: string): Promise<GetUserDto> {
 		const user = await this.getUserByLogin(login)
+
 		if (!user)
 			return null;
 		if (nickname.length < 3 || nickname.length > 8)
@@ -230,10 +235,11 @@ export class UserService {
 
 	async turnOnTwoFactorAuthentication(login: string): Promise<GetUserDto> {
 
-		console.log('here')
 		const user = await this.getUserByLogin(login)
+
 		if (!user)
 			return null;
+
 		user.isTwoFactorAuthenticationEnabled = true;
 		this.userRepository.save(user);
 
@@ -254,8 +260,10 @@ export class UserService {
 
 	async turnOffTwoFactorAuthentication(login: string): Promise<GetUserDto> {
 		const user = await this.getUserByLogin(login)
+
 		if (!user)
 			return null;
+
 		user.isTwoFactorAuthenticationEnabled = false;
 		this.userRepository.save(user);
 
@@ -311,10 +319,10 @@ export class UserService {
 		let user = await this.getUserByNickname(login)
 
 		if (user) {
-			user.nickname = user.login;
-			user.errorNickname = true;
+			user!.nickname = user!.login;
+			user!.errorNickname = true;
 			this.userRepository.save(user);
 		}
-
+		return null;
 	}
 }

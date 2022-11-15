@@ -10,7 +10,7 @@ async function bootstrap() {
 		key: fs.readFileSync('./src/common/certs/key.pem', 'utf8'),
 		cert: fs.readFileSync('./src/common/certs/cert.pem', 'utf8'),
 	};
-	const app = await NestFactory.create(AppModule, {httpsOptions});
+	const app = await NestFactory.create(AppModule, { httpsOptions });
 	const config: ConfigService = app.get(ConfigService);
 	const port: number = config.get<number>('PORT');
 
@@ -23,7 +23,6 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
 	await app.listen(port, () => {
-	console.log('[WEB]', config.get<string>('BASE_URL'));
 	});
 }
 

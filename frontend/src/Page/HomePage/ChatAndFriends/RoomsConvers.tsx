@@ -51,7 +51,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
     utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
-        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
         if (roomHasBeenDeletedReturn == props.roomsConversData.name) {//NOTIF à ajouter
             closeConvers();
         }
@@ -62,9 +61,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
 
     utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
-        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
         if (kickedOutOfTheGroupReturn == true) {
-            console.log("You were kicked out of the ", props.roomsConversData.name, " group");//NOTIF à ajouter
             closeConvers();
         }
         utilsData.socket.off('kickedOutOfTheGroup');
@@ -74,7 +71,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('mutedUserInRoom');
 
     utilsData.socket.on('mutedUserInRoom', function (mutedUserInRoomReturn: boolean) {
-        console.log('mutedUserInRoom = ', mutedUserInRoomReturn);
         checkIfMute();
         utilsData.socket.off('mutedUserInRoom');
         utilsData.socket.removeListener('mutedUserInRoom');
@@ -83,7 +79,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('newParticipant');
 
     utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        console.log('newParticipant = ', demutedUserInRoomReturn);
         setUpdate(true);
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
@@ -92,7 +87,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('demutedUserInRoom');
 
     utilsData.socket.on('demutedUserInRoom', function (newParticipantReturn: boolean) {
-        console.log('demutedUserInRoom = ', newParticipantReturn);
         checkIfMute();
         utilsData.socket.off('demutedUserInRoom');
         utilsData.socket.removeListener('demutedUserInRoom');
@@ -101,7 +95,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        console.log('removeParticipantReturn = ', removeParticipantReturnReturn);
         setUpdate(true);
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
@@ -143,7 +136,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfOwner = async () => {
         await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
-            //console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setOwner(true);
             }
@@ -154,7 +146,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     useEffect(() => {
-        console.log("useEffect RoomsConvers");
         checkIfOwner();
         checkIfAdmin();
         checkIfMute();
@@ -164,7 +155,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [update, props]);
 
     const getUsers = async () => {
-        console.log("getUsers");
         let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
         let i = 0;
         setPp1("");
@@ -172,37 +162,28 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         setUsers([]);
         setParticipants([]);
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
-            console.log("get List User: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
-                console.log("for each")
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     if (i == 0) {
-                        console.log("setPp1 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
                         setPp1(res.data.profile_pic);
                         i++;
                     }
                     else if (i == 1) {
-                        console.log("setPp2 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
                         setPp2(res.data.profile_pic);
                         i++;
                     }
-                    console.log("push : ", res.data.login);
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
-            console.log('itemList get Users: ', itemList);
             setParticipants(itemList);
         })
         await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
-            console.log("get List User 2: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
-                console.log("login = ", item.login, "itemList: ", itemList)
                 if (!itemList.find(obj => obj.login == item.login))
                     await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                         itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                     });
             });
-            console.log('itemList get Users 2: ', itemList);
         })
         setUsers(itemList);
     }
@@ -285,18 +266,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             const [textNicknameHeader, setTextNicknameHeader] = useState("");
 
             utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
-                console.log('getAllParticipantsReturn = ', data);
                 let str_nickname = "";
-                console.log('data.length: ', data.length);
                 for (let i = 0; i < data.length; i++) {
                     if (i + 1 < data.length)
                         str_nickname = str_nickname + data[i].nickname + ", ";
                     else
                         str_nickname = str_nickname + data[i].nickname;
                 }
-                console.log("str_nickname: ", str_nickname);
                 setTextNicknameHeader(str_nickname);
-                console.log("textNickname: ", textNicknameHeader);
                 utilsData.socket.off('getAllParticipantsReturn');
                 utilsData.socket.removeListener('getAllParticipantsReturn');
             })
@@ -472,10 +449,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     function AffRoomConvers() {
 
-        console.log("AffRoomConvers");
 
         useEffect(() => {
-            console.log("useEffect() AffRoomConvers");
         }, [update])
 
         return (
@@ -490,20 +465,17 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const checkIfAdmin = async () => {
         let ifAdmin = false;
         await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
-            //console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
         await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
-            //console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        //console.log("return: ", ifAdmin);
     };
 
     const checkIfMute = async () => {
@@ -536,31 +508,25 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         const updateSettings = async () => {
             if (password.length <= 0) {
-                console.log("password empty");
                 return;
             }
             if (password.length > 10) {
-                console.log("password too long");
                 return;
             }
             if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
-                console.log("valideInput false");
                 return;
             }
             if (password.length >= 0) {
-                console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
                 const newPassword = {
                     login: userData.userReducer.user?.login,
                     room_name: props.roomsConversData.name,
                     passwordOrNot: passwordOrNot,
                     password: password
                 }
-                console.log("roomName: ", props.roomsConversData.name);
                 utilsData.socket.emit('changePassword', newPassword);
             }
             else
-                console.log("empty password");
-            setPassword("");
+                setPassword("");
             setPasswordOrNot(false);
             setOpenDialogChangePassword(false);
         };

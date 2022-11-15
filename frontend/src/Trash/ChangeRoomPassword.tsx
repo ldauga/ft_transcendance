@@ -15,17 +15,13 @@ function ChangeRoomPassword(props: { roomsConversData: { name: string, id: numbe
     const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     const updateSettings = async () => {
-        console.log('update Settings');
         if (text.length <= 0) {
-            console.log("password empty");
             return;
         }
         if (text.length > 10) {
-            console.log("password too long");
             return;
         }
         if (!valideInput(text, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
-            console.log("valideInput false");
             return;
         }
         const newPassword = {
@@ -34,7 +30,6 @@ function ChangeRoomPassword(props: { roomsConversData: { name: string, id: numbe
             passwordOrNot: passwordOrNot,
             password: text
         }
-        console.log("roomName: ", props.roomsConversData.name);
         utilsData.socket.emit('changePassword', newPassword);
     };
 

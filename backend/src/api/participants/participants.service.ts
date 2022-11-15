@@ -83,7 +83,6 @@ export class ParticipantsService {
 
 	async createAdmin(body: any): Promise<ParticipantsEntity> {
 		const returnRemoveParticipant = this.removeParticipant(body.user_login, body.room_name);
-		console.log("returnRemoveParticipant service: ", returnRemoveParticipant);
 		if (!returnRemoveParticipant)
 			return null;
 		const newParticipant = {
@@ -95,7 +94,6 @@ export class ParticipantsService {
 			publicOrPrivate: body.publicOrPrivate
 		};
 		const returnParticipant = this.createParticipant(newParticipant);
-		console.log("returnParticipant service: ", returnParticipant);
 		if (!returnParticipant)
 			return null;
 		return returnParticipant;
@@ -103,7 +101,6 @@ export class ParticipantsService {
 
 	async removeAdmin(body: any): Promise<ParticipantsEntity> {
 		const returnRemoveParticipant = this.removeParticipant(body.user_login, body.room_name);
-		console.log("returnRemoveParticipant service: ", returnRemoveParticipant);
 		if (!returnRemoveParticipant)
 			return null;
 		const newParticipant = {
@@ -115,7 +112,6 @@ export class ParticipantsService {
 			publicOrPrivate: body.publicOrPrivate
 		};
 		const returnParticipant = this.createParticipant(newParticipant);
-		console.log("returnParticipant service: ", returnParticipant);
 		if (!returnParticipant)
 			return null;
 		return returnParticipant;
@@ -130,7 +126,6 @@ export class ParticipantsService {
 			admin: body.admin,
 			publicOrPrivate: body.publicOrPrivate
 		})
-		console.log("returnParticipant service: ", returnParticipant);
 		if (!returnParticipant)
 			return null;
 		return returnParticipant;
@@ -145,7 +140,6 @@ export class ParticipantsService {
 			]
 		});
 		const removeReturn = this.ParticipantsRepository.delete(check);
-		console.log('removeParticipantReturn', removeReturn);
 		return true;
 	}
 
@@ -168,7 +162,6 @@ export class ParticipantsService {
 				{ room_name: name }
 			]
 		});
-		console.log("name: ", name);
 		// const usersWithMessages = await this.MessagesService.getUsersRoomConversMessages(name);
 		const usersWithMessages = await this.MessagesService.getUserMessages(0);
 		let arrParticipants: { login: string, id: number, admin: boolean }[] = [];
@@ -191,18 +184,14 @@ export class ParticipantsService {
 	// 		]
 	// 	});
 	// 	let arrParticipants: { login: string, id: number }[] = [];
-	// 	console.log("participants: ", participants);
 	// 	if (!participants)
 	// 		return null;
 	// 	await participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id })));
 	// 	let arrUsers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
 	// 	await arrParticipants.forEach(async item => {
-	// 		console.log("test1");
 	// 		const user = await this.UserService.getUserById(item.id);
-	// 		console.log("user: ", user);
 	// 		arrUsers.push({ id: user.id, login: user.login, nickname: user.nickname, profile_pic: user.profile_pic });
 	// 	});
-	// 	console.log("arrUsers: ", arrUsers);
 	// 	return arrUsers;
 	// }
 

@@ -58,7 +58,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	utilsData.socket.removeAllListeners('friendConnection');
 
 	utilsData.socket.on('friendConnection', function (friendConnection: boolean) {
-		console.log('friendConnection = ', friendConnection);
 		if (friendConnection == true)
 			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('friendConnection');
@@ -68,7 +67,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	utilsData.socket.removeAllListeners('friendDeconnection');
 
 	utilsData.socket.on('friendDeconnection', function (friendDeconnection: boolean) {
-		console.log('friendDeconnection = ', friendDeconnection);
 		if (friendDeconnection == true)
 			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('friendDeconnection');
@@ -78,7 +76,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	utilsData.socket.removeAllListeners('returnRemoveFriend');
 
 	utilsData.socket.on('returnRemoveFriend', function (returnRemoveFriend: boolean) {
-		console.log('returnRemoveFriend = ', returnRemoveFriend);
 		if (returnRemoveFriend == true)
 			utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('returnRemoveFriend');
@@ -88,7 +85,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	utilsData.socket.removeAllListeners('newFriendReceived');
 
 	utilsData.socket.on('newFriendReceived', function (data: any) {
-		console.log('newFriendReceived = ', data);
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		utilsData.socket.off('newFriendReceived');
 		utilsData.socket.removeListener('newFriendReceived');
@@ -99,7 +95,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	utilsData.socket.removeAllListeners('getAllFriendConnected');
 
 	utilsData.socket.on('getAllFriendConnected', function (data: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }[]) {
-		console.log('getAllFriendConnected = ', data);
 		const oldLength = itemListHistory.length;
 		for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
 			getListItem(data);
@@ -117,11 +112,8 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	})
 
 	const getListItem = async (data: any) => {
-		console.log("get friendList");
 		let itemList: any[] = []
-		console.log('data = ', data);
 		data.forEach((item: { status: string, user: { id: number, login: string, nickname: string, profile_pic: string } }) => {
-			console.log("item: ", item);
 			itemList.push(<div key={itemList.length.toString()} className='itemFriendList'>
 				<FriendListItem setFriendList={props.setFriendList} setConvers={props.setConvers} setConversCorrespondantData={props.setConversCorrespondantData} setOldAff={props.setOldAff} closeFriendList={props.closeFriendList} item={item} setUpdate={setUpdate} />
 			</div>)
@@ -138,7 +130,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	};
 
 	useEffect(() => {
-		console.log("useEffect friendList");
 		utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', info);
 		if (props.openFriendConversFromProfile) {
 			props.setConversCorrespondantData({ id: props.dataFriendConversFromProfile.id, login: props.dataFriendConversFromProfile.login, nickname: props.dataFriendConversFromProfile.nickname, profile_pic: props.dataFriendConversFromProfile.profile_pic });
@@ -148,7 +139,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	}, [props]);
 
 	const handleClickOpenOptions = (event: React.MouseEvent<HTMLElement>) => {
-		console.log('ici');
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -230,9 +220,9 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				<h3>Friends</h3>
 				<div className="icons">
 					<Tooltip title='More'>
-					<button onClick={handleClickOpenOptions}>
-						<MoreVertIcon />
-					</button>
+						<button onClick={handleClickOpenOptions}>
+							<MoreVertIcon />
+						</button>
 					</Tooltip>
 					<MenuOptions />
 				</div>

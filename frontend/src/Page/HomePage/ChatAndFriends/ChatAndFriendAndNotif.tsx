@@ -49,24 +49,20 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
     }
 
     useEffect(() => {
-        console.log("useEffect chatandfriend 2");
         if (conversCorrespondantData.login.length == 0) {
             if (roomsConversData.name.length == 0) {
                 props.setConversNotif({ name: "", userOrRoom: false })
             }
             else {
-                console.log("setConversNotif")
                 props.setConversNotif({ name: roomsConversData.name, userOrRoom: true })
             }
         }
         else {
-            console.log("setConversNotif")
             props.setConversNotif({ name: conversCorrespondantData.login, userOrRoom: false })
         }
     }, [conversCorrespondantData, roomsConversData]);
 
     useEffect(() => {
-        console.log("useEffect() ChatAndFriednAndNotif");
         closeAll();
         if (props.isNavChat)
             setChat(true);

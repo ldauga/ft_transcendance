@@ -16,7 +16,6 @@ export class MuteListController {
   @Get('/checkRoomMute/:id/:login/:roomName')
   public async checkRoomMute(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
     const returnCheck = await this.MuteListService.checkRoomMute(id, login, roomName);
-    console.log('checkRoomMuteReturn Check = ', returnCheck);
     return returnCheck;
   }
 }

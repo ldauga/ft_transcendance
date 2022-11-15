@@ -20,18 +20,12 @@ function AddFriend(props: { setNewAddFriend: Function }) {
 
     async function buttonAddFriend() {
         let test = false;
-        console.log('addFriend');
         const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
-        console.log("buttonAddFriend login: ", userToSend?.username);
         if (userToSend) {
             await axiosConfig.get('https://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
                 setInputValue("");
-                console.log("axios.get");
-                console.log(res.data);
-                console.log(res);
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
-                    console.log("login not found");
                     return;
                 }
                 else {
@@ -39,45 +33,28 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                     let b = 1;
                     let c = 1;
                     await axiosConfig.get('https://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
-                        console.log('check invit');
-                        console.log(res.data);
-                        console.log(res);
                         if (res.data == true) {
-                            console.log("invitationRequest already exist");
                         }
                         else {
                             a = 2;
-                            console.log('invitationRequest not exist');
                         }
                     })
                     await axiosConfig.get('https://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
-                        console.log('check friendList');
-                        console.log(res.data);
-                        console.log(res);
                         if (res.data == true) {
-                            console.log("relation already exist");
                         }
                         else {
                             b = 2;
-                            console.log('relation not exist');
                         }
                     })
                     await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
-                        console.log('check blakcList');
-                        console.log(res.data);
-                        console.log(res);
                         if (res.data == true) {
-                            console.log("blackListé");
                             enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
                         }
                         else {
                             c = 2;
-                            console.log('pas blackListé');
                         }
                     })
                     if (a == 2 && b == 2 && c == 2) {
-                        console.log('test == true');
-                        console.log(receiver_login_tmp);
                         const newInvitationRequest = {
                             id_user1: userData.userReducer.user?.id,
                             id_user2: res.data.id,
@@ -90,7 +67,6 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                             room_id: 0,
                             room_name: ""
                         }
-                        console.log('emit');
                         utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                         enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                     }
@@ -104,7 +80,6 @@ function AddFriend(props: { setNewAddFriend: Function }) {
     utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
 
     utilsData.socket.on('getAllClientConnectedWithoutFriend', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllClientConnectedWithoutFriend = ', data);
         const tmp: any[] = []
         data.forEach(client => {
             if (client.login != userData.userReducer.user?.login) {

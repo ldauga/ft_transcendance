@@ -59,7 +59,6 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
 
     const getListItem = async () => {
         await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
-            console.log("get InvitationRequest");
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
@@ -73,7 +72,6 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     utilsData.socket.removeListener('returnRemoveInvitationRequest');
 
     utilsData.socket.on('returnRemoveInvitationRequest', function (returnRemoveInvitation: boolean) {
-        console.log('returnRemoveInvitationRequest = ', returnRemoveInvitation);
         if (returnRemoveInvitation == true) {
             const length = itemListHistory.length;
             let secu = 0;
@@ -90,7 +88,6 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     utilsData.socket.removeListener('newInvitationReceived');
 
     utilsData.socket.on('newInvitationReceived', function (data: any) {
-        console.log('newInvitationReceived = ', data);
         const length = itemListHistory.length;
         let secu = 0;
         while (length == itemListHistory.length && secu < 5) {

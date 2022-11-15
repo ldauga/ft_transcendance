@@ -49,7 +49,6 @@ export class InvitationRequestService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
-		console.log("checkInvitationRequest check: ", check);
 		if (check == null)
 			return false;
 		if (id1 == id2)
@@ -88,14 +87,12 @@ export class InvitationRequestService {
 	}
 
 	async removeInvitationRequest(id1: number, id2: number): Promise<boolean> {
-		console.log("removeInvitationRequest");
 		const check = await this.InvitationRequestRepository.findOne({
 			where: [
 				{ id_user1: id1, id_user2: id2 }
 			]
 		});
 		const removeReturn = this.InvitationRequestRepository.delete(check);
-		console.log('removeReturn', removeReturn);
 		if (removeReturn)
 			return true;
 		return false;

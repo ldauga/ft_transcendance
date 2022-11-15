@@ -41,7 +41,6 @@ export class MuteListService {
 				{ room_id: room_id, room_name: room_name }
 			]
 		});
-		// console.log("returnAll: ", returnAll.length);
 		returnAll.forEach(element => {
 			const newMute = {
 				id_muted: element.id_muted,
@@ -75,7 +74,6 @@ export class MuteListService {
 	}
 
 	async createMute(body: any): Promise<MuteListEntity> {
-		console.log("createMute");
 		const returnMute = this.MuteListRepository.save({
 			id_sender: body.id_sender,
 			id_muted: body.id_muted,
@@ -97,14 +95,12 @@ export class MuteListService {
 	}
 
 	async removeUserMute(id_sender: number, login_muted: string): Promise<boolean> {
-		console.log("removeUserMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ id_sender: id_sender, login_muted: login_muted }
 			]
 		});
 		const removeReturn = this.MuteListRepository.delete(check);
-		console.log('removeReturn', removeReturn);
 		if (removeReturn)
 			return true;
 		else
@@ -112,14 +108,12 @@ export class MuteListService {
 	}
 
 	async removeRoomMute(room_id: number, login_muted: string): Promise<boolean> {
-		console.log("removeRoomMute");
 		const check = await this.MuteListRepository.findOne({
 			where: [
 				{ room_id: room_id, login_muted: login_muted }
 			]
 		});
 		const removeReturn = this.MuteListRepository.delete(check);
-		console.log('removeReturn', removeReturn);
 		if (removeReturn)
 			return true;
 		else

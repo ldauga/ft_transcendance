@@ -26,12 +26,12 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.off('start_invite_game')
 
-	
+
 
 	window.onload = function () {
 		if (persistantReducer.inviteCheckReducer.verif)
 			setInviteCheckReload(true)
-		
+
 	}
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
@@ -79,7 +79,6 @@ function InvitationChecker(props: { children: any }) {
 	})
 
 	useEffect(() => {
-		console.log("useEffect() invitationChecker");
 		if (!test) {
 			// if ()
 			verifInvitationRequest()

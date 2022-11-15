@@ -18,21 +18,18 @@ export class MessagesService {
 	private logger: Logger = new Logger('Messages');
 
 	async getUsersRoomConversMessages(name: string): Promise<{ login: string, id: number }[]> {
-		console.log("getUsersRoomConversMessages");
 		const messagesReturn = await this.MessagesRepository.find({
 			where: [
 				{ room_name: name }
 			]
 		});
 		let users: { login: string, id: number }[] = [];
-		//console.log("messagesReturn: ", messagesReturn);
 		if (!messagesReturn)
 			return users;
 		messagesReturn.forEach(element => {
 			if (!users.find(obj => obj.id == element.id_sender) && !(element.id_sender == 0 && element.login_sender == "server"))
 				users.push({ login: element.login_sender, id: element.id_sender });
 		});
-		console.log("users: ", users);
 		return users;
 	}
 
@@ -112,7 +109,6 @@ export class MessagesService {
 				}
 			}
 		});
-		//console.log("returnArray : ", returnArray);
 		if (!returnArray)
 			return null;
 		return returnArray;
@@ -144,7 +140,6 @@ export class MessagesService {
 	}
 
 	async removeAllRoomMessages(room_id: number, room_name: string): Promise<boolean> {
-		console.log("removeAllRoomMessages room: ", room_name);
 		if (room_id == 0)
 			return false;
 		const secu = 20000;
@@ -163,7 +158,6 @@ export class MessagesService {
 				]
 			});
 		}
-		console.log(20000 - secu, " messages deleted");
 		return (true);
 	}
 }

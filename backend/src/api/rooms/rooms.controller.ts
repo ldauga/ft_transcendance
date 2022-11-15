@@ -19,7 +19,6 @@ export class RoomsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkRoom(@Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkRoom(name);
-    console.log('checkRoom Check = ', returnCheck);
     return returnCheck;
   }
 
@@ -27,7 +26,6 @@ export class RoomsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkIfCanJoin(@Param('user_id', ParseIntPipe) user_id: number, @Param('user_login') user_login: string, @Param('room_id', ParseIntPipe) room_id: number, @Param('room_name') room_name: string, @Param('password') password: string): Promise<String> {
     const returnCheck = await this.service.checkIfCanJoin(user_id, user_login, room_id, room_name, password);
-    console.log('checkRoom Check = ', returnCheck);
     return returnCheck;
   }
 
@@ -35,7 +33,6 @@ export class RoomsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkIfOwner(@Param('id', ParseIntPipe) id: number, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkIfOwner(id, name);
-    // console.log('checkIfOwner Check = ', returnCheck);
     return returnCheck;
   }
 }

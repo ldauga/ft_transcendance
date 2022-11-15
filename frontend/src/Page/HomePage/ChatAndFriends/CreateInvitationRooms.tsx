@@ -22,7 +22,6 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
 
     utilsData.socket.on('getAllClientConnectedWithoutParticipants', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllClientConnectedWithoutParticipants = ', data);
         const tmp: any[] = []
         data.forEach(client => {
             if (client.login != userData.userReducer.user?.login) {
@@ -41,45 +40,32 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
     }, []);
 
     const createInvitation = async () => {
-        console.log('create Invitation Room');
         const _user = connectedClient.find(obj => obj.nickname == inputValue);
         if (_user) {
             await axiosConfig.get('https://localhost:5001/user/login/' + _user.username).then(async (res) => {
                 setInputValue("");
-                console.log("axios.get");
-                console.log(res.data);
-                console.log(res);
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
-                    console.log("login not found");
                     return;
                 }
                 else {
                     let a = 1;
                     let b = 1;
                     await axiosConfig.get('https://localhost:5001/invitationRequest/checkInvitationRequestForRooms/' + res.data.id + '/' + props.roomsConversData.name).then(async (res) => {
-                        console.log('check Invitation Room:', res.data);
                         if (res.data == true) {
-                            console.log("invitation Room already exist");
                         }
                         else {
                             a = 2;
-                            console.log('invitation Room not exist');
                         }
                     })
                     await axiosConfig.get('https://localhost:5001/participants/check/' + receiver_login_tmp + '/' + props.roomsConversData.name).then(async (res) => {
-                        console.log('check participants:', res.data);
                         if (res.data == true) {
-                            console.log("participant already exist");
                         }
                         else {
                             b = 2;
-                            console.log('participant not exist');
                         }
                     })
                     if (a == 2 && b == 2) {
-                        console.log('test == true');
-                        console.log(receiver_login_tmp);
                         const newInvitationRequest = {
                             id_user1: userData.userReducer.user?.id,
                             id_user2: res.data.id,

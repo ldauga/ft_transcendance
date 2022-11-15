@@ -26,41 +26,26 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
 
     async function buttonMuteRoomParticipant() {
         let test = false;
-        console.log("button with alwaysOrNot: ", alwaysOrNot);
-        console.log("text.length = ", text.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
         if (text.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
-            console.log("Wrong input for muteUser in Room");
             return;
         }
-        console.log("button mute");
         await axiosConfig.get('https://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
-            console.log("axios.get");
-            console.log(res.data);
-            console.log(res);
             let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
-                console.log("login not found");
                 return;
             }
             else {
                 let a = 1;
                 let b = 1;
                 await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
-                    console.log('check invit');
-                    console.log(res.data);
-                    console.log(res);
                     if (res.data == true) {
-                        console.log("mute already exist");
                     }
                     else {
                         a = 2;
-                        console.log('mute not exist');
                     }
                 })
                 if (a == 2) {
-                    console.log('test == true');
-                    console.log(receiver_login_tmp);
                     const newMuted = {
                         id_sender: userData.userReducer.user?.id,
                         id_muted: res.data.id,
