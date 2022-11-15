@@ -173,7 +173,9 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
             return (
                 <div className='inItem2'>
                     <div className="picture-message">
+                        <Tooltip title={nickname}>
                         <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
+                        </Tooltip>
                         <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                             <p>{props.item.text}</p>
                         </div>
