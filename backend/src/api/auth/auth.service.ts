@@ -1,4 +1,4 @@
-import { Logger, Injectable, UnauthorizedException, BadRequestException, Req } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { UserService } from '../user/user.service';
@@ -6,8 +6,6 @@ import { UserEntity } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { Repository } from 'typeorm';
-import { timeStamp } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +61,7 @@ export class AuthService {
 		return this.signUser(user);
 	}
 
-	async generateTwoFactorAuthenticationSecret(refreshToken: string, request: Request) {
+	async generateTwoFactorAuthenticationSecret(refreshToken: string) {
 		const secret = authenticator.generateSecret();
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);
 		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);
