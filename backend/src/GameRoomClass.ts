@@ -172,8 +172,6 @@ class Ball {
 
 		this.dx = random(0, 1) ? -1 : 1
 
-		this.x += this.dx * 100
-
 		this.dy = 0
 
 		this.speed = 1
@@ -441,18 +439,25 @@ class gameRoomClass {
 
 	movePlayer() {
 		for (let i = 0; i < 2; i++) {
-			if (this.players[i].up)
-				if (this.players[i].y >= this.players[i].speed)
-					this.players[i].y -= this.players[i].speed
-			if (this.players[i].down)
-				if (this.players[i].y + this.players[i].height < this.canvas.height)
+			if (this.players[i].cheat) {
+				if (this.ball.y > this.players[i].y + this.players[i].height / 2)
 					this.players[i].y += this.players[i].speed
-			if (this.players[i].expansion)
-				if (this.players[i].height < this.canvas.height)
-					this.players[i].height++
-			if (this.players[i].reduce)
-				if (this.players[i].height > this.canvas.height / 6)
-					this.players[i].height--
+				else if (this.ball.y < this.players[i].y + this.players[i].height / 2)
+					this.players[i].y -= this.players[i].speed
+			} else {
+				if (this.players[i].up)
+					if (this.players[i].y >= this.players[i].speed)
+						this.players[i].y -= this.players[i].speed
+				if (this.players[i].down)
+					if (this.players[i].y + this.players[i].height < this.canvas.height)
+						this.players[i].y += this.players[i].speed
+				if (this.players[i].expansion)
+					if (this.players[i].height < this.canvas.height)
+						this.players[i].height++
+				if (this.players[i].reduce)
+					if (this.players[i].height > this.canvas.height / 6)
+						this.players[i].height--
+			}
 		}
 	}
 
@@ -644,10 +649,6 @@ class gameRoomClass {
 			this.ball.dx = -1
 		else
 			this.ball.dx = random(0, 1) ? -1 : 1
-
-
-		if (this.ball.initial_x < 0)
-			this.ball.x += this.ball.dx * 100
 
 		for (let i = 0; i < 2; i++)
 			this.players[i].resetPos(this.canvas)

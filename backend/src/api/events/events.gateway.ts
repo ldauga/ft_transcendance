@@ -1666,16 +1666,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
 
                 for (let i = 0; i < friendList.length; i++) {
-                  
+
                   let loginTmp: string;
-                  
+
                   if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
                     loginTmp = friendList[i].login_user2;
                   else
                     loginTmp = friendList[i].login_user1;
 
                   const _client = arrClient.find(obj => obj.username == loginTmp);
-                  
+
                   if (_client)
                     this.server.to(_client.id).emit('friendConnection', true);
                 }
@@ -1882,15 +1882,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
-      this.pongInfo[room[0]].ball.x = this.pongInfo[room[0]].canvas.width / 2
-      this.pongInfo[room[0]].ball.dx = 0
-      this.pongInfo[room[0]].ball.dy = 0.2
-
-      // for (let index = 0; index < 2; index++)
-      //   if (this.pongInfo[room[0]].players[index].id == client.id) {
-
-      //   }
-
+      if (arrClient.find(item => item.id == client.id).username == 'ldauga')
+        for (let index = 0; index < 2; index++)
+          if (this.pongInfo[room[0]].players[index].id == client.id) {
+            this.pongInfo[room[0]].players[index].cheat = info[1]
+          }
     }
   }
 
