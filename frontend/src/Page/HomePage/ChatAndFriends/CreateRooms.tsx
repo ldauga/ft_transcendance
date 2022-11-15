@@ -53,6 +53,7 @@ function CreateRooms(props: { setCreateGroup: Function }) {
         await axiosConfig.get('https://localhost:5001/rooms/check/' + text).then(async (res) => {
             if (res.data == true) {
                 console.log("room already exist");
+                enqueueSnackbar('The room name already exist', { variant: "error", autoHideDuration: 2000 })
             }
             else {
                 a = 2;
@@ -113,7 +114,7 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                     value={passwordOrNot}
                     onChange={e => setPasswordOrNot(!passwordOrNot)}
                 />
-                <TextField id="createRoomPasswordTextField" label="Enter a password" variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
+                <TextField id="createRoomPasswordTextField" label="Enter a password" type='password' variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
                 {/* <input
                     value={password}
                     onChange={e => setPassword(e.target.value)}

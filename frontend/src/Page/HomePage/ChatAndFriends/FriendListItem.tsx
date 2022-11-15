@@ -138,7 +138,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         props.setConvers(true);
     };
 
-    function FriendOptions() {
+    function FriendOptions(): JSX.Element {
         return (
             <Menu
                 disableAutoFocusItem
@@ -177,35 +177,31 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 {props.item.status == 'in-game' ?
-                    <>
-                        <MenuItem
-                            onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
-                            <ListItemIcon>
-                                <Person fontSize="small" />
-                            </ListItemIcon>
-                            Spectate Friend
-                        </MenuItem>
-                        <Divider />
-                    </> : (props.item.status == 'online' ?
-                        <><MenuItem
-                            // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
-                            // aria-haspopup="true"
-                            // aria-expanded={openInviteGame ? 'true' : undefined}
-                            onClick={() => { setOpenDialogInviteGame(true) }}>
-                            <ListItemIcon>
-                                <Person fontSize="small" />
-                            </ListItemIcon>
-                            Invite Game
-                        </MenuItem>
-                            <Divider /></> :
-                        <></>)}
+                    <MenuItem
+                        onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
+                        <ListItemIcon>
+                            <Person fontSize="small" />
+                        </ListItemIcon>
+                        Spectate Friend
+                    </MenuItem> :
+                    <MenuItem
+                        // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
+                        // aria-haspopup="true"
+                        // aria-expanded={openInviteGame ? 'true' : undefined}
+                        onClick={() => { setOpenDialogInviteGame(true) }}
+                        disabled={!(props.item.status == 'online')}>
+                        <ListItemIcon>
+                            <Person fontSize="small" />
+                        </ListItemIcon>
+                        Invite Game
+                    </MenuItem>}
                 <MenuItem onClick={removeFriend}>
                     <ListItemIcon>
                         <Person fontSize="small" />
                     </ListItemIcon>
                     Remove Friend
                 </MenuItem>
-                <MenuItem onClick={buttonBanUser}>
+                <MenuItem key='Ban Frien' onClick={buttonBanUser}>
                     <ListItemIcon>
                         <Settings fontSize="small" />
                     </ListItemIcon>
@@ -223,15 +219,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         // setProfilePic(`https://cdn.intra.42.fr/users/${props.item.login}.jpg`);
     }, [props]);
 
-    function AffStatus() {
-        return (
-            <div className="itemFriendListStatus">
-                <div className="itemFriendListStatusPoint" style={{ backgroundColor: props.item.status == 'online' ? 'green' : props.item.status == 'in-game' ? 'orange' : 'darkred' }} ></div>
-                <p>{props.item.status}</p>
-            </div>
-        );
-    };
-
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);
         setInviteCheck(true)
@@ -243,10 +230,12 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
                 <div className="friend-profile" onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.item.user.login) }}>
-                    <img src={props.item.user.profile_pic} />
+                    <div className="picture-status">
+                        <div className="status" style={{ backgroundColor: props.item.status == 'online' ? 'rgb(28, 177, 123)' : props.item.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }}></div>
+                        <img src={props.item.user.profile_pic} />
+                    </div>
                     <p>{props.item.user.nickname}</p>
                 </div>
-                <AffStatus />
             </div>
             <div className="inItemFriendList_right">
                 <button onClick={openChat}>
@@ -258,14 +247,15 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                 <FriendOptions />
             </div>
             <Dialog open={openDialogInviteGame} onClose={() => { setOpenDialogInviteGame(false) }}>
-                <DialogTitle>Select map and press JOIN QUEUE !</DialogTitle>
-                <DialogContent>
-                    <div className='select-map'>
-                        <button onClick={handleBack}><ArrowBackIosNew /></button>
-                        <MapCarousel activeStep={activeStep} />
-                        <button onClick={handleNext}> <ArrowForwardIos /> </button>
-                    </div>
-                </DialogContent>
+                <div className="invite-pong">
+                    <DialogContent>
+                        <div className='select-map'>
+                            <button onClick={handleBack}><ArrowBackIosNew /></button>
+                            <MapCarousel activeStep={activeStep} />
+                            <button onClick={handleNext}> <ArrowForwardIos /> </button>
+                        </div>
+                    </DialogContent>
+                </div>
                 <DialogActions>
                     <button className='join-queue' type='button' onClick={() => { setOpenDialogInviteGame(false) }}>Cancel</button>
                     <button className='join-queue' type='button' onClick={inviteGame}>{'Invite ' + props.item.user.nickname}</button>

@@ -9,6 +9,7 @@ import axiosConfig from '../../../Utils/axiosConfig';
 import NoEncryptionIcon from '@mui/icons-material/NoEncryption';
 import LockIcon from '@mui/icons-material/Lock';
 import { ArrowBackIosNew } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat: Function }) {
 
@@ -20,6 +21,8 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     const [openDialog, setOpenDialog] = useState(false);
     const [password, setPassword] = useState("");
     const [roomToJoin, setRoomToJoin] = useState({ id: 0, name: "", publicOrPrivate: false });
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const exit = () => {
         props.setRoomsList(false);
@@ -39,17 +42,21 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
         props.setRoomsList(false);
     };
 
+    utilsData.socket.removeAllListeners('getAllRoomsCanIJoin');
+
+    utilsData.socket.on('getAllRoomsCanIJoin', function (getAllRoomsCanIJoin: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) {
+        console.log('getAllRoomsCanIJoin = ', getAllRoomsCanIJoin);
+        getListItem(getAllRoomsCanIJoin);
+        utilsData.socket.off('getAllRoomsCanIJoin');
+        utilsData.socket.removeListener('getAllRoomsCanIJoin');
+    })
+
     utilsData.socket.removeAllListeners('newRoomCreated');
 
     utilsData.socket.on('newRoomCreated', function (newRoomCreated: boolean) {
         console.log('newRoomCreated = ', newRoomCreated);
         if (newRoomCreated == true) {
-            const length = itemListHistory.length;
-            let secu = 0;
-            while (length == itemListHistory.length && secu < constWhileSecu) {
-                getListItem();
-                secu++;
-            }
+            utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
         }
         utilsData.socket.off('newRoomCreated');
         utilsData.socket.removeListener('newRoomCreated');
@@ -70,18 +77,14 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
 
     utilsData.socket.on('cantJoinChatRoom', function (cantJoinChatRoom: string) {
         console.log("You can't join this group, because: ", cantJoinChatRoom);
+        enqueueSnackbar('You can\'t join this room', { variant: "error", autoHideDuration: 2000 })
         utilsData.socket.off('cantJoinChatRoom');
         utilsData.socket.removeListener('cantJoinChatRoom');
     })
 
     utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
         console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
-        const length = itemListHistory.length;
-        let secu = 0;
-        while (length == itemListHistory.length && secu < constWhileSecu) {
-            getListItem();
-            secu++;
-        }
+        utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
         utilsData.socket.off('roomHasBeenDeleted');
         utilsData.socket.removeListener('roomHasBeenDeleted');
     })
@@ -97,67 +100,63 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
         setRoomToJoin({ id: 0, name: "", publicOrPrivate: false });
     };
 
-    const joinWithPassword = () => {
-        join(roomToJoin);
-        setPassword("");
-        setOpenDialog(false);
-        setRoomToJoin({ id: 0, name: "", publicOrPrivate: false });
+    const joinWithPassword = async () => {
+        await axiosConfig.get('https://localhost:5001/rooms/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + roomToJoin.id + '/' + roomToJoin.name + '/' + password).then(async (res) => {
+            if (res.data == "ok") {
+                join(roomToJoin);
+                setPassword("");
+                setOpenDialog(false);
+                setRoomToJoin({ id: 0, name: "", publicOrPrivate: false });
+            }
+            else {
+                setPassword("");
+                enqueueSnackbar('Wrong password', { variant: "error", autoHideDuration: 2000 })
+            }
+        });
     };
 
-    const getListItem = async () => {
-        let myRooms: { name: string, id: number }[];
-        await axiosConfig.get('https://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
-            console.log('res.data MyRooms = ', res.data);
-            myRooms = res.data;
-            console.log('nameTmp MyRooms = ', myRooms);
+    const getListItem = async (data: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) => {
+        let itemList: any[] = [];
+        console.log('data = ', data);
+        data.forEach(item => {
+            if (item.passwordOrNot) {
+                itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
+                    <div className="roomsInItem">
+                        <div className='roomListInItem1'>
+                            <LockIcon className='lockIcons' />
+                        </div>
+                        <p className='roomsItemRoomName'>{item.name}</p>
+                        <div className='roomListInItem2'>
+                            <Button className="joinButton" variant="contained" onClick={() => handleClickOpen(item)} >
+                                Join
+                            </Button>
+                        </div>
+                    </div>
+                </div>)
+            }
+            else {
+                console.log("test");
+                itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
+                    <div className="roomsInItem">
+                        <div className='roomListInItem1'>
+                            <NoEncryptionIcon className='lockIcons' />
+                        </div>
+                        <p className='roomsItemRoomName'>{item.name}</p>
+                        <div className='roomListInItem2'>
+                            <Button className="joinButton" variant="contained" onClick={() => join(item)} >
+                                Join
+                            </Button>
+                        </div>
+                    </div>
+                </div>)
+            }
         })
-        await axiosConfig.get('https://localhost:5001/rooms/').then(async (res) => {
-            let itemList: any[] = [];
-            console.log('res.data = ', res.data);
-            const nameTmp: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = res.data;
-            nameTmp.forEach(item => {
-                console.log("test: ", myRooms.find(obj => obj.id == item.id));
-                if (!myRooms.find(obj => obj.id == item.id) && !item.publicOrPrivate) {
-                    if (item.passwordOrNot) {
-                        itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
-                            <div className="roomsInItem">
-                                <div className='roomListInItem1'>
-                                    <LockIcon className='lockIcons' />
-                                </div>
-                                <p className='roomsItemRoomName'>{item.name}</p>
-                                <div className='roomListInItem2'>
-                                    <Button className="joinButton" variant="contained" onClick={() => handleClickOpen(item)} >
-                                        Join
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>)
-                    }
-                    else {
-                        console.log("test");
-                        itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
-                            <div className="roomsInItem">
-                                <div className='roomListInItem1'>
-                                    <NoEncryptionIcon className='lockIcons' />
-                                </div>
-                                <p className='roomsItemRoomName'>{item.name}</p>
-                                <div className='roomListInItem2'>
-                                    <Button className="joinButton" variant="contained" onClick={() => join(item)} >
-                                        Join
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>)
-                    }
-                }
-            })
-            setItemListHistory(itemList);
-        })
+        setItemListHistory(itemList);
     }
 
     useEffect(() => {
         console.log("useEffect RoomsList");
-        getListItem();
+        utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
     }, [props]);
 
     return (
@@ -178,18 +177,19 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
                 <DialogContent>
                     <TextField
                         autoFocus
+                        type='password'
                         margin="dense"
                         id="name"
                         label="Password"
                         fullWidth
                         variant="standard"
                         onChange={e => setPassword(e.target.value)}
-                        onKeyDown={e => { if (e.key == 'Enter') joinWithPassword }}
+                        onKeyDown={e => { if (e.key == 'Enter') joinWithPassword() }}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={joinWithPassword}>Enter</Button>
+                    <button onClick={handleClose}>Cancel</button>
+                    <button onClick={joinWithPassword}>Enter</button>
                 </DialogActions>
             </Dialog>
         </div>

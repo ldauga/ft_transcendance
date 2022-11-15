@@ -41,4 +41,10 @@ export class UserEntity {
 
   @Column({ nullable: true })
   public refreshTokenExp: string;
+
+  @Column({ default: true })
+  public isFirstConnection: boolean;
+
+  @Column({ default: false })
+  public errorNickname: boolean;
 }

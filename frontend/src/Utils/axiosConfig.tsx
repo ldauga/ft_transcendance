@@ -12,11 +12,10 @@ axiosConfig.interceptors.response.use(
   error => {
     axios.get('https://localhost:5001/auth/refresh', { withCredentials: true })
       .catch((error) => {
-        //console.log('interceptor error', error)
         if (error.response.data['statusCode'] == 401)
           window.open('https://localhost:3000', '_self')
       });
-      return error;
+    return error;
   }
 )
 

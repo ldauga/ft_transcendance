@@ -241,7 +241,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
 
       arrClient.forEach((client) => {
-        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'login' })
+        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
       })
     }
 
@@ -260,8 +260,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           else
             i++;
         }
-        arrRoom.forEach((item) => {
-          const _participantInRoom = item.users.find(obj => obj.username == user.login);
+        arrRoom.forEach((element) => {
+          const _participantInRoom = element.users.find(obj => obj.username == user.login);
           if (_participantInRoom)
             _participantInRoom.id = client.id;
         });
@@ -369,6 +369,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         return
       let player: Player
       if ((player = room.players.find(player => !player.connected)) != undefined) {
+        if (!player.user)
+          return
         let client: Client
         if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
           this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
@@ -439,6 +441,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             if (_room) {
               let i = 0;
               while (_room.users.length > i) {
+                console.log("demutedUserInRoom to ", _room.users[i].username, ", id: ", _room.users[i].id);
                 this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
                 i++;
               }
@@ -711,13 +714,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         //const removeAllRoomMessagesReturn = await this.http.post('https://localhost:5001/messages/removeAllRoomMessages/', toRemoveMsg);
         const removeAllRoomMessagesReturn = await this.MessagesService.removeAllRoomMessages(_room.id, _room.name);
         console.log("delete members", removeAllRoomMessagesReturn);
-        if (removeAllRoomMessagesReturn) {
-          i = 0;
-          while (i < arrClient.length) {
-            this.server.to(arrClient[i].id).emit('roomHasBeenDeleted', _room.name);
-            console.log("Send roomHasBeenDeleted to ", arrClient[i].username);
-            i++;
-          }
+        i = 0;
+        while (i < arrClient.length) {
+          this.server.to(arrClient[i].id).emit('roomHasBeenDeleted', _room.name);
+          console.log("Send roomHasBeenDeleted to ", arrClient[i].username);
+          i++;
         }
         const index = arrRoom.indexOf(_room);
         arrRoom.splice(index);
@@ -1056,17 +1057,20 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeAdmin')
   async removeAdmin(client: Socket, data: any) {
     let verif = false;
-    console.log("remove admin");
-    //const checkIfOwner = await this.http.get('https://localhost:5001/rooms/checkIfOwner/' + data.id_sender + '/' + data.login_sender);
+    console.log("remove admin, data: ", data);
+    console.log("remove admin, data.id_admin: ", data.id_admin);
     const checkIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.login_sender);
     if (checkIfOwner == true)
       verif = true;
-    // const checkIfAdmin = await this.http.get('https://localhost:5001/participants/checkAdmin/' + data.login_sender + '/' + data.room_name);
     const checkIfAdmin = await this.ParticipantsService.checkAdmin(data.login_sender, data.room_name);
     if (checkIfAdmin == true)
       verif = true;
-    //const checkParticipant = await this.http.get('https://localhost:5001/participants/checkIfAdminOrParticipant/' + data.login_admin + '/' + data.room_name);
-    const checkParticipant = await this.ParticipantsService.checkAdmin(data.login_admin, data.room_name);
+    let checkParticipant = await this.ParticipantsService.checkAdmin(data.login_admin, data.room_name);
+    this.logger.log(`${checkParticipant} data`);
+    const checkIfParticipantIsOwner = await this.RoomsService.checkIfOwner(data.id_admin, data.room_name);
+    this.logger.log(`${checkIfParticipantIsOwner} checkIfParticipantIsOwner`);
+    if (checkIfParticipantIsOwner == true)
+      checkParticipant = false;
     this.logger.log(`${checkParticipant} data`);
     console.log("verif : ", verif);
     if (checkParticipant == true && verif == true) {
@@ -1122,7 +1126,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   NewMsgNotif = (receiver_name: string, sender_name: string, userOrRoom: boolean) => {
     console.log("NewMsgNotif arrNotif.length: ", arrNotifs.length);
     let _notifClient = arrNotifs.find(obj => obj.username == receiver_name);
-    console.log("_notifClient.notifs.length", _notifClient.notifs.length)
+    //console.log("_notifClient.notifs.length", _notifClient.notifs.length)
     if (_notifClient) {
       let _notif;
       if (!userOrRoom) {
@@ -1132,7 +1136,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         console.log("sender_name: ", sender_name, ", userOrRoom: ", userOrRoom);
         _notif = _notifClient.notifs.find(obj => (obj.name == sender_name && obj.userOrRoom));
       }
-      console.log("_notif: ", _notif);
+      //console.log("_notif: ", _notif);
       if (_notif) {
         _notif.nb += 1;
       }
@@ -1254,6 +1258,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i++;
         }
       }
+    }
+    if (verifBan) {
+      this.server.to(client.id).emit('kickedOutOfTheGroup', true);
+    }
+    if (verifMute) {
+      this.server.to(client.id).emit('mutedUserInRoom', true);
     }
   }
 
@@ -1784,6 +1794,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
           this.pongInfo[room[0]].players.forEach(async player => {
 
+            if (!player.user)
+              return
+
             const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
 
             for (let i = 0; i < friendList.length; i++) {
@@ -2154,7 +2167,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const room = this.getRoomByID("custom" + client.id)
 
-	if (room != null)
+    if (room != null)
       this.pongInfo.splice(room[0], 1)
     else
       this.joinRoom(client, "custom" + client.id)
@@ -2301,6 +2314,28 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.server.to(client.id).emit("getAllFriendConnected", retArr);
   }
 
+  @SubscribeMessage('GET_ALL_ROOMS_CAN_I_JOIN')
+  async getAllRoomsCanIJoin(client: Socket) {
+    const _client = arrClient.find(obj => obj.id == client.id);
+    if (_client) {
+      const _user = await this.UserService.getUserByLogin(_client.username);
+      if (_user) {
+        const _rooms = await this.RoomsService.getAllRooms();
+        const retArr: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[] = [];
+        for (let i = 0; _rooms.length > i; i++) {
+          const _participant = await this.ParticipantsService.checkParticipant(_user.login, _rooms[i].name);
+          const _ban = await this.BlacklistService.checkRoomBan(_user.id, _user.login, _rooms[i].name);
+          if (!_participant && !_ban)
+            retArr.push({ id: _rooms[i].id, name: _rooms[i].name, publicOrPrivate: _rooms[i].publicOrPrivate, passwordOrNot: _rooms[i].passwordOrNot });
+        }
+        if (retArr.length <= 0)
+          this.server.to(client.id).emit("getAllRoomsCanIJoin", null);
+        else
+          this.server.to(client.id).emit("getAllRoomsCanIJoin", retArr);
+      }
+    }
+  }
+
   @SubscribeMessage('GET_ALL_CLIENT_CONNECTED')
   async getAllClientConnected(client: Socket) {
     const _client = arrClient.find(obj => obj.id == client.id);
@@ -2402,6 +2437,38 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
         //console.log("send getAllClientConnectedWithoutFriend to ", _client.username);
         this.server.to(client.id).emit("getAllClientConnectedWithoutBanned", retArr);
+      }
+    }
+  }
+
+  @SubscribeMessage('GET_ALL_USERS_IN_ROOM')
+  async getAllUsersInRoom(client: Socket, data: { room_id: number, room_name: string }) {
+    //console.log('GET_ALL_CLIENT_CONNECTED_WITHOUT_PARTICIPANTS :');
+    const _room = arrRoom.find(obj => obj.id == data.room_id);
+    if (_room) {
+      const roomParticipants = await this.ParticipantsService.getAllRoomParticipants(data.room_id);
+      const messages = await this.MessagesService.getUsersRoomConversMessages(data.room_name);
+      const userList = await this.UserService.getAllUsers();
+      if (roomParticipants && userList) {
+        const retArr = [];
+        for (let index = 0; index < userList.length; index++) {
+          const search = roomParticipants.find(obj => obj.user_login == userList[index].login);
+          if (search) {
+            const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+            retArr.push(toPush);
+          }
+          else {
+            if (messages) {
+              const search2 = messages.find(obj => obj.login == userList[index].login);
+              if (search2) {
+                const toPush = { id: userList[index].id, login: userList[index].login, nickname: userList[index].nickname, profile_pic: userList[index].profile_pic };
+                retArr.push(toPush);
+              }
+            }
+          }
+        }
+        //console.log("send getAllClientConnectedWithoutParticipants to ", client.id);
+        this.server.to(client.id).emit("getAllUsersInRoomReturn", retArr);
       }
     }
   }
@@ -2535,9 +2602,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         case 'Nickname too short':
           this.server.to(client.id).emit('changeNicknameError', 'too-short')
           break;
-		case 'Cannot use someone\'s login as a nickname.':
-		  this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
-		  break;
+        case 'Cannot use someone\'s login as a nickname.':
+          this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
+          break;
       }
     }).then((res) => {
       if (res != undefined)

@@ -38,11 +38,6 @@ function StatPlayer() {
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
 	const [open, setOpen] = useState(false);
-	const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
-	const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
-	const [userParameter2FACode, setUserParameter2FACode] = useState("");
-	const [userParameter2FARes, setUserParameter2FARes] = useState(0);
-	const [fullPinCode, setFullPinCode] = useState(0);
 	const [newNickname, setNewNickname] = useState("");
 	const [rank, setRank] = useState({
 		label: '',
@@ -56,7 +51,7 @@ function StatPlayer() {
 	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
 
 	const dispatch = useDispatch();
-	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
+	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch); // del?
 
 	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
@@ -236,7 +231,7 @@ function StatPlayer() {
 		}
 		if (profile.loaded)
 			fetchMatchHistory();
-	}, [profile, userParameter2FARes, update])
+	}, [profile, update])
 
 	const editAvatar = (e: any) => {
 		const img = e.target.files.item(0);
@@ -261,21 +256,6 @@ function StatPlayer() {
 			setProfile({ ...profile, profile_pic: '' });
 			enqueueSnackbar('Unable to update avatar.', { variant: 'warning', autoHideDuration: 2000 })
 		})
-	}
-
-	const sendGetRequest =  async (value: string) => {
-		const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
-		if (res.request.status === 200) {
-			console.log('la')
-				setTwoFactor(true);
-				setUserParameter2FACode('');
-				setUser(res.data);
-				setUserParameter2FARes(res.status);
-				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
-		} else {
-			console.log('ici')
-			enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
-		};
 	}
 
 	async function buttonAddFriend() {
@@ -403,6 +383,55 @@ function StatPlayer() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openInviteGame = Boolean(anchorEl);
 
+	function TWOFA() {
+		const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
+		const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
+		const [userParameter2FACode, setUserParameter2FACode] = useState("");
+		const [userParameter2FARes, setUserParameter2FARes] = useState(0);
+		const [fullPinCode, setFullPinCode] = useState(0);
+
+		const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
+
+		const sendGetRequest = async (value: string) => {
+			const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
+			if (res.request.status === 200) {
+				console.log('la')
+				setTwoFactor(true);
+				setUserParameter2FACode('');
+				setUser(res.data);
+				setUserParameter2FARes(res.status);
+				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
+			} else {
+				console.log('ici')
+				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
+			};
+		}
+
+		return (
+			<>
+				{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
+					<>
+						<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
+						<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
+							<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+							<DialogContent className='two-fa'>
+								<img src={userParameter2FAQrCode} />
+								<PinInput
+									length={6}
+									focus
+									onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }}
+									type="numeric"
+									inputMode="number"
+									style={{ padding: '10px' }}
+									onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
+									autoSelect={true}
+								/>
+							</DialogContent>
+						</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate 2FA</button>}
+			</>
+		);
+	}
+
 	function profile_btn() {
 		if (login != profile.login) {
 			return (
@@ -425,27 +454,21 @@ function StatPlayer() {
 							>
 								Invite Game
 							</button>
-							<Menu
-								id="menu-invite-game"
-								anchorEl={anchorEl}
-								open={openInviteGame}
-								onClose={() => setAnchorEl(null)}
-								MenuListProps={{
-									'aria-labelledby': 'basic-button',
-								}}
-							>
-								<MenuItem onClick={() => { }}>
-									<div className='pong'>
-										<div className="instruction">Select map and press JOIN QUEUE !</div>
+							<Dialog open={openInviteGame} onClose={() => { setAnchorEl(null) }}>
+								<div className="invite-pong">
+									<DialogContent>
 										<div className='select-map'>
 											<button onClick={handleBack}><ArrowBackIosNew /></button>
 											<MapCarousel activeStep={activeStep} />
 											<button onClick={handleNext}> <ArrowForwardIos /> </button>
 										</div>
-										<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
-									</div>
-								</MenuItem>
-							</Menu>
+									</DialogContent>
+								</div>
+								<DialogActions>
+									<button className='join-queue' type='button' onClick={() => { setAnchorEl(null) }}>Cancel</button>
+									<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
+								</DialogActions>
+							</Dialog>
 						</> : <></>}
 					<button disabled={profile.friendOrInvitation == 3} onClick={sendMsg}>Send Message</button>
 				</div>
@@ -481,25 +504,7 @@ function StatPlayer() {
 						Edit Avatar
 					</label>
 					<input id='file-upload' type='file' accept='.jpeg, .jpg, .png' onChange={editAvatar} />
-					{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
-						<>
-							<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
-							<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
-								<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
-								<DialogContent className='two-fa'>
-									<img src={userParameter2FAQrCode} />
-									<PinInput
-										length={6}
-										focus
-										onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }}
-										type="numeric"
-										inputMode="number"
-										style={{ padding: '10px' }}
-										onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
-										autoSelect={true}
-									/>
-								</DialogContent>
-							</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate 2FA</button>}
+					<TWOFA />
 				</div>
 			)
 		}
@@ -518,7 +523,7 @@ function StatPlayer() {
 						<div className='name'>
 							<p>{profile.nickname}</p>
 							<p>{profile.login}</p>
-							<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'green' : profile.status == 'in-game' ? 'orange' : 'darkred' }} ></span> {profile.status}</p>
+							<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'rgb(28, 177, 123)' : profile.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }} ></span> {profile.status}</p>
 						</div>
 					</div>
 					{profile_btn()}

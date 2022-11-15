@@ -131,7 +131,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         }
         else {
             return (
-                <div className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
+                <div onMouseOver={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                     <p>{props.item.text}</p>
                 </div>
             );
@@ -176,7 +176,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             console.log("get List Item Conversation");
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} onMouseOver={e => { e.currentTarget.children[0].className = 'date' }} onMouseOut={e => { e.currentTarget.children[0].className = 'dateDisplayNone' }} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
+                itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
                     <AffDate item={item} />
                     <Item item={item} />
                 </div>)
@@ -248,7 +248,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
                         <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
-                        <p><div className='status'></div>online</p>
+                        <p><span className='status'></span>online</p>
                     </div>
                 </div>
                 {correspondantIsBlocked && <AffBlocked />}
@@ -259,6 +259,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             </div>
             <div className="send-message">
                 <TextField value={messageText}
+                    autoFocus
                     onChange={e => setMessageText(e.target.value)}
                     placeholder='Your message...'
                     multiline maxRows={5}

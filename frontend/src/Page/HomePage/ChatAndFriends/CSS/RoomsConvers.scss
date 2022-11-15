@@ -117,6 +117,7 @@
             display: flex;
             align-items: flex-end;
             img {
+                cursor: pointer;
                 --avatar-size: 32px;
                 width: var(--avatar-size);
                 height: var(--avatar-size);

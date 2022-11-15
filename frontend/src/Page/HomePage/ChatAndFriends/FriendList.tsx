@@ -194,19 +194,19 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 			>
-				<MenuItem onClick={handleClickAddFriend} >
+				<MenuItem key='Add Friend' onClick={handleClickAddFriend}>
 					<ListItemIcon>
 						<PersonAdd fontSize="small" />
 					</ListItemIcon>
 					Add Friend
 				</MenuItem>
-				<MenuItem onClick={handleClickInvitationRequest}>
+				<MenuItem key='Invitation Request' onClick={handleClickInvitationRequest}>
 					<ListItemIcon>
 						<Person fontSize="small" />
 					</ListItemIcon>
 					Invitation Request
 				</MenuItem>
-				<MenuItem onClick={handleClickBanUser}>
+				<MenuItem key='Blocked Users' onClick={handleClickBanUser}>
 					<ListItemIcon>
 						<Cancel fontSize="small" />
 					</ListItemIcon>

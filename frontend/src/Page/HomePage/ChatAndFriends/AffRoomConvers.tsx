@@ -50,6 +50,15 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         utilsData.socket.removeListener('newMsgReceived');
     })
 
+    utilsData.socket.removeAllListeners('getAllUsersInRoomReturn');
+
+    utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log('getAllUsersInRoomReturn = ', data);
+        getListItem(data);
+        utilsData.socket.off('getAllUsersInRoomReturn');
+        utilsData.socket.removeListener('getAllUsersInRoomReturn');
+    })
+
     function getYear() {
         const date = Date();
         if (!date)
@@ -160,10 +169,13 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         else {
             const pp = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.profile_pic;
             const nickname = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.nickname;
+            const login = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.login;
             return (
                 <div className='inItem2'>
                     <div className="picture-message">
-                        <img src={pp}></img>
+                        <Tooltip title={nickname}>
+                        <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
+                        </Tooltip>
                         <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                             <p>{props.item.text}</p>
                         </div>
@@ -174,38 +186,21 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         }
     };
 
-    const getUsers = async () => {
+    const getUsers = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
         console.log("getUsers");
         let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
         let i = 0;
         setUsers([]);
-        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
-            console.log("get List User: ", res.data);
-            res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
-                    itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
-                });
-            });
-            console.log('itemList get Users: ', itemList);
-        })
-        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
-            console.log("get List User 2: ", res.data);
-            res.data.forEach(async (item: { login: string, id: number }) => {
-                console.log("login = ", item.login, "itemList: ", itemList)
-                if (!itemList.find(obj => obj.login == item.login))
-                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
-                        itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
-                    });
-            });
-            console.log('itemList get Users 2: ', itemList);
-        })
+        data.forEach(async (item: { id: number, login: string, nickname: string, profile_pic: string }) => {
+            itemList.push({ id: item.id, login: item.login, nickname: item.nickname, profile_pic: item.profile_pic });
+        });
         setUsers(itemList);
         return (itemList);
     }
 
-    const getListItem = async () => {
+    const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
         console.log("getListItem affroomconvers");
-        const usersTmp = await getUsers();
+        const usersTmp = await getUsers(data);
         console.log("getlistitem users: ", users);
         console.log("getlistitem usersTmp: ", usersTmp);
         await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
@@ -233,7 +228,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         console.log("update: ", update);
         if (update) {
             setUpdate(false);
-            getListItem();
+            utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
             // bottom.current?.scrollIntoView();
         }
     }, [props, update]);

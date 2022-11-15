@@ -10,7 +10,7 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
+import { ArrowBackIosNew, Logout, Person, Settings, Update } from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -42,10 +42,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const bottom = useRef<null | HTMLDivElement>(null);
 
     const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
-
-    const [password, setPassword] = useState('');
-
-    const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     const [pp1, setPp1] = useState("");
     const [pp2, setPp2] = useState("");
@@ -115,10 +111,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         props.setRoomsConversData({ name: "", id: 0 });
         props.setRoomsConvers(false);
-        if (props.oldAffRoomConvers == "Rooms")
-            props.setRooms(true);
-        else if (props.oldAffRoomConvers == "Chat")
-            props.setChat(true);
+        props.setChat(true);
     };
 
     const quitConvers = () => {
@@ -168,7 +161,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         getUsers();
         if (update)
             setUpdate(false);
-    }, [update]);
+    }, [update, props]);
 
     const getUsers = async () => {
         console.log("getUsers");
@@ -181,6 +174,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
+                console.log("for each")
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     if (i == 0) {
                         console.log("setPp1 with: ", res.data.nickname, ", pp: ", res.data.profile_pic);
@@ -192,12 +186,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         setPp2(res.data.profile_pic);
                         i++;
                     }
+                    console.log("push : ", res.data.login);
                     itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                 });
             });
             console.log('itemList get Users: ', itemList);
+            setParticipants(itemList);
         })
-        setParticipants(itemList);
         await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             console.log("get List User 2: ", res.data);
             res.data.forEach(async (item: { login: string, id: number }) => {
@@ -211,47 +206,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
         setUsers(itemList);
     }
-
-    const handleClickOpenDialogChangePassword = () => {
-        setOpenDialogChangePassword(true);
-    };
-
-    const handleCloseDialogChangePassword = () => {
-        setPassword("");
-        setPasswordOrNot(false);
-        setOpenDialogChangePassword(false);
-    };
-
-    const updateSettings = async () => {
-        if (password.length <= 0) {
-            console.log("password empty");
-            return;
-        }
-        if (password.length > 10) {
-            console.log("password too long");
-            return;
-        }
-        if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
-            console.log("valideInput false");
-            return;
-        }
-        if (password.length >= 0) {
-            console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
-            const newPassword = {
-                login: userData.userReducer.user?.login,
-                room_name: props.roomsConversData.name,
-                passwordOrNot: passwordOrNot,
-                password: password
-            }
-            console.log("roomName: ", props.roomsConversData.name);
-            utilsData.socket.emit('changePassword', newPassword);
-        }
-        else
-            console.log("empty password");
-        setPassword("");
-        setPasswordOrNot(false);
-        setOpenDialogChangePassword(false);
-    };
 
     function Header() {
         const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -303,20 +257,20 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                    <MenuItem key='Change Password' onClick={handleClickOpenDialogChangePassword}>
                         <ListItemIcon>
                             <SettingsIcon fontSize="small" />
                         </ListItemIcon>
                         Change Password
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={quitConvers}>
+                    <MenuItem key='Quit Room' onClick={quitConvers}>
                         <ListItemIcon>
                             <LogoutIcon fontSize="small" />
                         </ListItemIcon>
                         Quit Room
                     </MenuItem>
-                    <MenuItem onClick={removeRoom}>
+                    <MenuItem key='Remove Room' onClick={removeRoom}>
                         <ListItemIcon>
                             <DeleteIcon fontSize="small" />
                         </ListItemIcon>
@@ -327,14 +281,30 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         };
 
         function HeaderPrint() {
-            let str_nickname = "";
-            console.log("participants: ", participants);
-            for (let i = 0; i < participants.length; i++) {
-                if (i + 1 < participants.length)
-                    str_nickname = str_nickname + participants[i].nickname + ", ";
-                else
-                    str_nickname = str_nickname + participants[i].nickname;
-            }
+
+            const [textNicknameHeader, setTextNicknameHeader] = useState("");
+
+            utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
+                console.log('getAllParticipantsReturn = ', data);
+                let str_nickname = "";
+                console.log('data.length: ', data.length);
+                for (let i = 0; i < data.length; i++) {
+                    if (i + 1 < data.length)
+                        str_nickname = str_nickname + data[i].nickname + ", ";
+                    else
+                        str_nickname = str_nickname + data[i].nickname;
+                }
+                console.log("str_nickname: ", str_nickname);
+                setTextNicknameHeader(str_nickname);
+                console.log("textNickname: ", textNicknameHeader);
+                utilsData.socket.off('getAllParticipantsReturn');
+                utilsData.socket.removeListener('getAllParticipantsReturn');
+            })
+
+            useEffect(() => {
+                utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+            }, [textNicknameHeader, participants, users])
+
             return (
                 <>
                     <ArrowBackIosNew onClick={closeConvers} />
@@ -347,7 +317,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                             <div className='profile-pic-group'><img src="" /></div>}
                         <div className="group-name">
                             <p>{props.roomsConversData.name}</p>
-                            <p className='name-participants' onClick={affParticipants}>{str_nickname}</p>
+                            <p className='name-participants' onClick={affParticipants}>{textNicknameHeader}</p>
                         </div>
                     </div>
                 </>
@@ -393,14 +363,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={quitConvers}>
+                    <MenuItem key='Quit Room' onClick={quitConvers}>
                         <ListItemIcon>
                             <Person fontSize="small" />
                         </ListItemIcon>
                         Quit Room
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={handleClickOpenDialogChangePassword}>
+                    <MenuItem key='Change Password' onClick={handleClickOpenDialogChangePassword}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
@@ -483,6 +453,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         return (
             <div className="send-message">
                 <TextField value={messageText}
+                    autoFocus
                     onChange={e => setMessageText(e.target.value)}
                     placeholder={textPlaceHolder}
                     multiline maxRows={5}
@@ -505,7 +476,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         useEffect(() => {
             console.log("useEffect() AffRoomConvers");
-        })
+        }, [update])
 
         return (
             <div className="chat">
@@ -548,10 +519,53 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         })
     };
 
-    return (
-        <div className="roomsConvers">
-            {isConversRooms && <AffRoomConvers />}
-            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+    const handleClickOpenDialogChangePassword = () => {
+        setOpenDialogChangePassword(true);
+    };
+
+    function ChangePassword() {
+        const [password, setPassword] = useState('');
+
+        const [passwordOrNot, setPasswordOrNot] = useState(false);
+
+        const handleCloseDialogChangePassword = () => {
+            setPassword("");
+            setPasswordOrNot(false);
+            setOpenDialogChangePassword(false);
+        };
+
+        const updateSettings = async () => {
+            if (password.length <= 0) {
+                console.log("password empty");
+                return;
+            }
+            if (password.length > 10) {
+                console.log("password too long");
+                return;
+            }
+            if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
+                console.log("valideInput false");
+                return;
+            }
+            if (password.length >= 0) {
+                console.log('update Settings with password: ', password, ", passwordOrNot: ", passwordOrNot);
+                const newPassword = {
+                    login: userData.userReducer.user?.login,
+                    room_name: props.roomsConversData.name,
+                    passwordOrNot: passwordOrNot,
+                    password: password
+                }
+                console.log("roomName: ", props.roomsConversData.name);
+                utilsData.socket.emit('changePassword', newPassword);
+            }
+            else
+                console.log("empty password");
+            setPassword("");
+            setPasswordOrNot(false);
+            setOpenDialogChangePassword(false);
+        };
+
+        return (
             <Dialog open={openDialogChangePassword} onClose={handleCloseDialogChangePassword}>
                 <Grid container direction={"column"} spacing={1}>
                     <Grid item>
@@ -589,6 +603,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     <button onClick={updateSettings}>Enter</button>
                 </DialogActions>
             </Dialog>
+        );
+    }
+
+    return (
+        <div className="roomsConvers">
+            {isConversRooms && <AffRoomConvers />}
+            {isAffParticipantsRooms && <AffParticipantsRooms roomsConversData={props.roomsConversData} setAffParticipantsRooms={setAffParticipantsRooms} setConversRooms={setConversRooms} closeConvers={closeConvers} setRooms={props.setRooms} oldAffRoomConvers={props.oldAffRoomConvers} setChat={props.setChat} />}
+            <ChangePassword />
         </div>
     );
 };

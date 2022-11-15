@@ -33,7 +33,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     };
 
     const affRoomsList = async () => {
-        console.log("affRoomsList");
         props.setRooms(false);
         props.setRoomsList(true);
     };
@@ -55,7 +54,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     utilsData.socket.removeAllListeners('newRoomCreated');
 
     utilsData.socket.on('newRoomCreated', function (newRoomCreated: boolean) {
-        console.log('newRoomCreated = ', newRoomCreated);
         if (newRoomCreated == true) {
             const length = itemListHistory.length;
             let secu = 0;
@@ -71,7 +69,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
     utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
-        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
         const length = itemListHistory.length;
         let secu = 0;
         while (length == itemListHistory.length && secu < constWhileSecu) {
@@ -85,7 +82,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
 
     utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
-        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
         if (kickedOutOfTheGroupReturn == true) {
             const length = itemListHistory.length;
             let secu = 0;
@@ -101,7 +97,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     const getListItem = async () => {
         await axiosConfig.get('https://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];
-            console.log('res.data = ', res.data);
             const nameTmp: { name: string, id: number }[] = res.data;
             nameTmp.forEach(item => {
                 itemList.push(<div key={itemList.length.toString()} className='itemGroupList'>
@@ -117,9 +112,7 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
 
     useEffect(() => {
         const oldLength = itemListHistory.length;
-        console.log("oldLength: ", oldLength, ", itemListHistory.length: ", itemListHistory.length);
         for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
-            console.log("Rooms useEffect getListItem i: ", i, ", oldLength: ", oldLength, ", itemListHistory.length: ", itemListHistory.length);
             getListItem();
         }
     }, [props]);
