@@ -129,7 +129,7 @@ const checkReconnexionArr = []
     origin: '*',
   },
 })
-export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly UserService: UserService,
     private readonly FriendListService: FriendListService,
@@ -187,7 +187,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   storeClientInfo(client: Socket, user: { login: string }) {
 
     let tmp: number;
-    console.log("event");
+    console.log("pong");
     if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
       checkReconnexionArr.splice(tmp, 1)
     else if (user.login) {

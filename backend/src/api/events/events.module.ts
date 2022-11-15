@@ -21,6 +21,7 @@ import { RoomsEntity } from "../rooms/rooms.entity";
 import { RoomsService } from "../rooms/rooms.service";
 import { UserModule } from "../user/user.module";
 import { EventsGateway } from "./events.gateway";
+import { PongGateway } from "./pong.gateway";
 
 @Module({
     imports: [
@@ -28,8 +29,8 @@ import { EventsGateway } from "./events.gateway";
             MessagesEntity, ParticipantsEntity, RoomsEntity, BlackListEntity, MuteListEntity]),
         AuthModule, UserModule
     ],
-    providers: [EventsGateway, FriendListService, InvitationRequestService, 
+    providers: [EventsGateway, PongGateway, FriendListService, InvitationRequestService,
         MatchesHistoryService, MessagesService, ParticipantsService, RoomsService, BlackListService, MuteListService],
     exports: [EventsModule]
 })
-export class EventsModule {}
+export class EventsModule { }
