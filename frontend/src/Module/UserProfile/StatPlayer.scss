@@ -55,9 +55,15 @@
 			align-items: center;
 
 			p {
-				line-height: 1px;
+				margin: 9px 0;
 				font-size: 18px;
 
+				&:first-of-type {
+					white-space: nowrap;
+					width: 94px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 				&:nth-child(2) {
 					font-size: 14px;
 					color: rgba($color: #2e384e, $alpha: .6);
@@ -244,10 +250,15 @@
 					display: flex;
 					align-items: center;
 
+					span:first-child, span:last-child {
+						white-space: nowrap;
+						max-width: 90px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
 					span:first-child {
 						margin-right: 3px;
 						cursor: pointer;
-						transition: all .1s ease-out;
 
 						&:hover {
 							color: #FFFF;
@@ -257,7 +268,6 @@
 					span:last-child {
 						margin-left: 3px;
 						cursor: pointer;
-						transition: all .3s ease-out;
 
 						&:hover {
 							color: #f1e8e6;
@@ -296,7 +306,9 @@
 				.name {
 					p {
 						font-size: 20px;
-
+						&:first-of-type {
+							width: 123px;
+						}
 						&:nth-child(2) {
 							font-size: 16px;
 						}
@@ -309,6 +321,17 @@
 				button,
 				label {
 					font-size: 15px;
+				}
+			}
+		}
+		.match-history {
+			.cards {
+				.card {
+					.opponent {
+						span:first-child, span:last-child {
+							max-width: 113px;
+						}
+					}
 				}
 			}
 		}
@@ -389,7 +412,9 @@
 
 					.opponent {
 						font-size: 20px;
-
+						span:first-child, span:last-child {
+							max-width: 128px;
+						}
 						.score {
 							font-size: 26px;
 						}
@@ -405,6 +430,26 @@
 
 		.profile {
 			margin-top: 21px;
+			.user {
+				.name {
+					p {
+						&:first-of-type {
+							width: unset;
+						}
+					}
+				}
+			}
+		}
+		.match-history {
+			.cards {
+				.card {
+					.opponent {
+						span:first-child, span:last-child {
+							max-width: unset;
+						}
+					}
+				}
+			}
 		}
 	}
 

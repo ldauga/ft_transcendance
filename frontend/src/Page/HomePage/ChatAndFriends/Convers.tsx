@@ -259,6 +259,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             </div>
             <div className="send-message">
                 <TextField value={messageText}
+                    autoFocus
                     onChange={e => setMessageText(e.target.value)}
                     placeholder='Your message...'
                     multiline maxRows={5}

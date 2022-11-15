@@ -114,7 +114,7 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                     value={passwordOrNot}
                     onChange={e => setPasswordOrNot(!passwordOrNot)}
                 />
-                <TextField id="createRoomPasswordTextField" label="Enter a password" variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
+                <TextField id="createRoomPasswordTextField" label="Enter a password" type='password' variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
                 {/* <input
                     value={password}
                     onChange={e => setPassword(e.target.value)}

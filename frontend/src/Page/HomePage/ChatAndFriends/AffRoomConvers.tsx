@@ -169,10 +169,11 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         else {
             const pp = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.profile_pic;
             const nickname = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.nickname;
+            const login = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.login;
             return (
                 <div className='inItem2'>
                     <div className="picture-message">
-                        <img src={pp}></img>
+                        <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
                         <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                             <p>{props.item.text}</p>
                         </div>

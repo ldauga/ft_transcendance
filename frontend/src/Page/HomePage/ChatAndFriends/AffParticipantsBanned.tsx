@@ -7,6 +7,7 @@ import '../Homepage.scss'
 import { constWhileSecu } from '../HomePage';
 import axiosConfig from "../../../Utils/axiosConfig";
 import { useSnackbar } from 'notistack';
+import { ArrowBackIosNew } from '@mui/icons-material';
 
 function AffParticipantsBanned(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function, setAffBanned: Function }) {
 
@@ -118,27 +119,12 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
             return (
                 <div className="inItemFriendList_right">
-                    <button onClick={() => debanParticipant(item)} className="bi bi-x-lg"></button>
+                    <button onClick={(e) => {e.stopPropagation(); debanParticipant(item)}} className="bi bi-x-lg"></button>
                 </div>
             );
         else
             return (
                 <div className="inItemFriendList_right">
-                </div>
-            );
-    };
-
-    function RightHeader() {
-        if (isAdmin)
-            return (
-                <div className="mainHeaderRight mainHeaderSide">
-                    {/* <button onClick={handleClickBanRoomParticipant}><i className="bi bi-person-x-fill"></i></button> */}
-                </div>
-            );
-        else
-            return (
-                <div className="mainHeaderRight mainHeaderSide">
-
                 </div>
             );
     };
@@ -191,14 +177,14 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     return (
         <div className="mainAffGene">
-            <div id="header" className="mainHeader">
-                <div className="mainHeaderLeft mainHeaderSide">
-                    <button onClick={closeAffBanned} className="bi bi-arrow-left"></button>
+            <div className="mainHeader">
+                <div className="cross">
+                    <button onClick={closeAffBanned}><ArrowBackIosNew /></button>
                 </div>
                 <h3>Banned Users</h3>
-                <RightHeader />
+                <div className="icons">
+                </div>
             </div>
-            {/* {banRoomParticipant && <BanRoomParticipant roomsConversData={props.roomsConversData} />} */}
             <AffList />
         </div>
     );
