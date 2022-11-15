@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, HttpException, HttpStatus, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, ForbiddenException, Get, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Response } from 'express';
@@ -53,7 +53,7 @@ export class AuthController {
 			throw new BadRequestException('User not found')
 
 		const refreshToken = request.cookies['auth-cookie'].refreshToken;
-		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken, request);
+		const { otpAuthUrl } = await this.authService.generateTwoFactorAuthenticationSecret(refreshToken);
 		return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
 	}
 
