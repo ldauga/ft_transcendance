@@ -141,6 +141,15 @@ function StatPlayer() {
 		utilsData.socket.removeListener('newFriendReceived');
 	})
 
+	utilsData.socket.removeAllListeners('returnRemoveFriend');
+
+	utilsData.socket.on('returnRemoveFriend', function (returnRemoveFriend: any) {
+		console.log('returnRemoveFriend = ', returnRemoveFriend);
+		setUpdate(true);
+		utilsData.socket.off('returnRemoveFriend');
+		utilsData.socket.removeListener('returnRemoveFriend');
+	})
+
 	const fetchUser = async () => {
 		if (profile.login) {
 			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)

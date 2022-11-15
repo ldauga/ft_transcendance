@@ -555,17 +555,27 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     //const addFriendReturn = await this.http.post('https://localhost:5001/friendList/', newFriend);
     const addFriendReturn = await this.FriendListService.createFriendShip(newFriend);
     //console.log(addFriendReturn.forEach(item => (console.log('addFriendReturn in eventgateway'))));
+    const _client1 = arrClient.find(obj => obj.username === data.login_user1);
+    const _client2 = arrClient.find(obj => obj.username === data.login_user2);
+    if (_client1) {
+      console.log("refreshUser to ", _client1.username);
+      this.server.to(_client1.id).emit('refreshUser', data);
+    }
+    if (_client2) {
+      console.log("refreshUser to ", _client1.username);
+      this.server.to(_client1.id).emit('refreshUser', data);
+    }
     console.log(addFriendReturn)
     if (addFriendReturn) {
-      const _client1 = arrClient.find(obj => obj.username === data.login_user1);
-      const _client2 = arrClient.find(obj => obj.username === data.login_user2);
-      if (_client1) {
+      const _client11 = arrClient.find(obj => obj.username === data.login_user1);
+      const _client22 = arrClient.find(obj => obj.username === data.login_user2);
+      if (_client11) {
         console.log("newFriend to ", _client1.username);
-        this.server.to(_client1.id).emit('newFriendReceived', data);
+        this.server.to(_client11.id).emit('newFriendReceived', data);
       }
-      if (_client2) {
+      if (_client22) {
         console.log("newFriend to ", _client1.username);
-        this.server.to(_client1.id).emit('newFriendReceived', data);
+        this.server.to(_client22.id).emit('newFriendReceived', data);
       }
     }
   }
@@ -575,27 +585,40 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     this.logger.log(`${client.id} remove Friend`);
     console.log("arrClient: ", arrClient);
     //const removeFriendReturn = await this.http.post('https://localhost:5001/friendList/' + data.id_user1 + '/' + data.id_user2);
-    const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_user1, data.id_user2);
-    const _notif = arrNotifs.find(obj => obj.username == data.login_user1);
-    if (_notif) {
-      const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_user2);
-      if (_notifToReset)
-        _notif.notifs.splice(_notifToReset);
-    }
-    const _notif2 = arrNotifs.find(obj => obj.username == data.login_user2);
-    if (_notif2) {
-      const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_user1);
-      if (_notifToReset2)
-        _notif2.notifs.splice(_notifToReset2);
-    }
-    console.log('removeFriendReturn in eventgateway', removeFriendReturn);
-    if (removeFriendReturn) {
-      const _client1 = arrClient.find(obj => obj.username == data.login_user1);
-      if (_client1)
-        this.server.to(_client1.id).emit('returnRemoveFriend', true);
-      const _client2 = arrClient.find(obj => obj.username == data.login_user2);
-      if (_client2)
-        this.server.to(_client2.id).emit('returnRemoveFriend', true);
+    const _check = await this.FriendListService.checkExistRelation(data.id_user1, data.id_user2);
+    if (_check) {
+      const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_user1, data.id_user2);
+      const _notif = arrNotifs.find(obj => obj.username == data.login_user1);
+      if (_notif) {
+        const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_user2);
+        if (_notifToReset)
+          _notif.notifs.splice(_notifToReset);
+      }
+      const _notif2 = arrNotifs.find(obj => obj.username == data.login_user2);
+      if (_notif2) {
+        const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_user1);
+        if (_notifToReset2)
+          _notif2.notifs.splice(_notifToReset2);
+      }
+      console.log('removeFriendReturn in eventgateway', removeFriendReturn);
+      const _client1 = arrClient.find(obj => obj.username === data.login_user1);
+      const _client2 = arrClient.find(obj => obj.username === data.login_user2);
+      if (_client1) {
+        console.log("refreshUser to ", _client1.username);
+        this.server.to(_client1.id).emit('refreshUser', data);
+      }
+      if (_client2) {
+        console.log("refreshUser to ", _client1.username);
+        this.server.to(_client1.id).emit('refreshUser', data);
+      }
+      if (removeFriendReturn) {
+        const _client11 = arrClient.find(obj => obj.username == data.login_user1);
+        if (_client11)
+          this.server.to(_client11.id).emit('returnRemoveFriend', true);
+        const _client22 = arrClient.find(obj => obj.username == data.login_user2);
+        if (_client22)
+          this.server.to(_client22.id).emit('returnRemoveFriend', true);
+      }
     }
   }
 
