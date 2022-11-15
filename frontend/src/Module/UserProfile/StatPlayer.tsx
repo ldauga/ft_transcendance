@@ -38,7 +38,6 @@ function StatPlayer() {
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const userData = useSelector((state: RootState) => state.persistantReducer);
 	const [open, setOpen] = useState(false);
-	const [fullPinCode, setFullPinCode] = useState(0);
 	const [newNickname, setNewNickname] = useState("");
 	const [rank, setRank] = useState({
 		label: '',
@@ -52,7 +51,7 @@ function StatPlayer() {
 	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
 
 	const dispatch = useDispatch();
-	const { setUser, delNotif, delAllNotif, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
+	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch); // del?
 
 	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
@@ -389,6 +388,9 @@ function StatPlayer() {
 		const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
 		const [userParameter2FACode, setUserParameter2FACode] = useState("");
 		const [userParameter2FARes, setUserParameter2FARes] = useState(0);
+		const [fullPinCode, setFullPinCode] = useState(0);
+
+		const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
 
 		const sendGetRequest = async (value: string) => {
 			const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
