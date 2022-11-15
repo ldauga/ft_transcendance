@@ -230,7 +230,6 @@ export class UserService {
 
 	async turnOnTwoFactorAuthentication(login: string): Promise<GetUserDto> {
 
-		console.log('here')
 		const user = await this.getUserByLogin(login)
 		if (!user)
 			return null;

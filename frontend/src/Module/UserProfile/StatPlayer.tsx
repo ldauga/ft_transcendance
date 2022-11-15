@@ -99,7 +99,6 @@ function StatPlayer() {
 	utilsData.socket.removeAllListeners('userBanned');
 
 	utilsData.socket.on('userBanned', function (userBanned: boolean) {
-		console.log('userBanned = ', userBanned);
 		setUpdate(true);
 		utilsData.socket.off('userBanned');
 		utilsData.socket.removeListener('userBanned');
@@ -108,7 +107,6 @@ function StatPlayer() {
 	utilsData.socket.removeAllListeners('debanedUser');
 
 	utilsData.socket.on('debanedUser', function (debanedUser: boolean) {
-		console.log('debanedUser = ', debanedUser);
 		setUpdate(true);
 		utilsData.socket.off('debanedUser');
 		utilsData.socket.removeListener('debanedUser');
@@ -125,7 +123,6 @@ function StatPlayer() {
 	})
 
 	utilsData.socket.on('returnCheckIfFriendOrInvit', function (returnCheckIfFriendOrInvit: number) {
-		console.log('returnCheckIfFriendOrInvit = ', returnCheckIfFriendOrInvit);
 		if (profile.friendOrInvitation != returnCheckIfFriendOrInvit)
 			setProfile({ ...profile, friendOrInvitation: returnCheckIfFriendOrInvit })
 		utilsData.socket.off('returnCheckIfFriendOrInvit');
@@ -135,7 +132,6 @@ function StatPlayer() {
 	utilsData.socket.removeAllListeners('newFriendReceived');
 
 	utilsData.socket.on('newFriendReceived', function (newFriendReceived: any) {
-		console.log('newFriendReceived = ', newFriendReceived);
 		setUpdate(true);
 		utilsData.socket.off('newFriendReceived');
 		utilsData.socket.removeListener('newFriendReceived');
@@ -144,7 +140,6 @@ function StatPlayer() {
 	utilsData.socket.removeAllListeners('returnRemoveFriend');
 
 	utilsData.socket.on('returnRemoveFriend', function (returnRemoveFriend: any) {
-		console.log('returnRemoveFriend = ', returnRemoveFriend);
 		setUpdate(true);
 		utilsData.socket.off('returnRemoveFriend');
 		utilsData.socket.removeListener('returnRemoveFriend');
@@ -153,7 +148,6 @@ function StatPlayer() {
 	const fetchUser = async () => {
 		if (profile.login) {
 			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
-			console.log('res', res.data);
 			if (res.data !== '') {
 				setProfile({
 					...profile,
@@ -231,7 +225,6 @@ function StatPlayer() {
 
 	useEffect(() => {
 		if (profile.id) {
-			console.log("emit CHECK_IF_FRIEND_OR_INVIT with id1: ", userData.userReducer.user?.id, ", id2: ", profile.id);
 			utilsData.socket.emit('CHECK_IF_FRIEND_OR_INVIT', { id1: userData.userReducer.user?.id, id2: profile.id });
 		}
 		setUpdate(false);
@@ -269,14 +262,9 @@ function StatPlayer() {
 
 	async function buttonAddFriend() {
 		let test = false;
-		console.log('addFriend');
 		await axiosConfig.get('https://localhost:5001/user/login/' + profile.login).then(async (res) => {
-			console.log("axios.get");
-			console.log(res.data);
-			console.log(res);
 			let receiver_login_tmp: string = res.data.login;
 			if (res.data == "") {
-				console.log("login not found");
 				return;
 			}
 			else {
@@ -284,47 +272,30 @@ function StatPlayer() {
 				let b = 1;
 				let c = 1;
 				await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
-					console.log('check invit');
-					console.log(res.data);
-					console.log(res);
 					if (res.data == true) {
-						console.log("invitationRequest already exist");
 						enqueueSnackbar('Invitation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
 					else {
 						a = 2;
-						console.log('invitationRequest not exist');
 					}
 				})
 				await axiosConfig.get('https://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
-					console.log('check friendList');
-					console.log(res.data);
-					console.log(res);
 					if (res.data == true) {
-						console.log("relation already exist");
 						enqueueSnackbar('Relation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
 					else {
 						b = 2;
-						console.log('relation not exist');
 					}
 				})
 				await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
-					console.log('check blakcList');
-					console.log(res.data);
-					console.log(res);
 					if (res.data == true) {
-						console.log("blackListé");
 						enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
 					}
 					else {
 						c = 2;
-						console.log('pas blackListé');
 					}
 				})
 				if (a == 2 && b == 2 && c == 2) {
-					console.log('test == true');
-					console.log(receiver_login_tmp);
 					const newInvitationRequest = {
 						id_user1: persistantReduceur.userReducer.user?.id,
 						id_user2: res.data.id,
@@ -337,7 +308,6 @@ function StatPlayer() {
 						room_id: 0,
 						room_name: ""
 					}
-					console.log('emit');
 					utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
 				}
 				return;
@@ -348,7 +318,6 @@ function StatPlayer() {
 	utilsData.socket.removeAllListeners('refreshUser');
 
 	utilsData.socket.on('refreshUser', function (data: boolean) {
-		console.log('refreshUser = ', data);
 		setUpdate(true);
 		utilsData.socket.off('refreshUser');
 		utilsData.socket.removeListener('refreshUser');
@@ -404,14 +373,12 @@ function StatPlayer() {
 		const sendGetRequest = async (value: string) => {
 			const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
 			if (res.request.status === 200) {
-				console.log('la')
 				setTwoFactor(true);
 				setUserParameter2FACode('');
 				setUser(res.data);
 				setUserParameter2FARes(res.status);
 				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
 			} else {
-				console.log('ici')
 				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
 			};
 		}
@@ -436,7 +403,7 @@ function StatPlayer() {
 									autoSelect={true}
 								/>
 							</DialogContent>
-						</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate 2FA</button>}
+						</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
 			</>
 		);
 	}

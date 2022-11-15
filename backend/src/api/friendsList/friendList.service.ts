@@ -24,21 +24,18 @@ export class FriendListService {
 				{ id_user2: id }
 			]
 		});
-		console.log('matches.length', matches.length);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;
 	}
 
 	async getUserFriendListWithLogin(login: string): Promise<FriendListEntity[]> {
-		//console.log("friendList.service store: ", login);
 		const matches = await this.FriendListRepository.find({
 			where: [
 				{ login_user1: login },
 				{ login_user2: login }
 			]
 		});
-		//console.log('matches', matches);
 		if (!matches)
 			return null; // gestion d erreur needed
 		return matches;
@@ -73,7 +70,6 @@ export class FriendListService {
 	}
 
 	async removeFriendShip(id1: number, id2: number): Promise<boolean> {
-		console.log("removeFriendShip id1:", id1, ", id2: ", id2);
 		if (!this.checkExistRelation(id1, id2))
 			return false;
 		const check = await this.FriendListRepository.findOne({
@@ -84,7 +80,6 @@ export class FriendListService {
 		});
 
 		const removeReturn = this.FriendListRepository.delete(check);
-		console.log('removeReturn', removeReturn);
 		if (removeReturn)
 			return true;
 		else

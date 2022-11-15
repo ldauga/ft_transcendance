@@ -38,7 +38,7 @@ const CreateMapTemp = (props: any) => {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 	const [room] = useState(new gameRoomClass("a", "b", null, "custom"));
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	
+
 	const dispatch = useDispatch();
 	const { setInviteCheck } = bindActionCreators(actionCreators, dispatch);
 
@@ -459,8 +459,6 @@ const CreateMapTemp = (props: any) => {
 	utilsData.socket.on('getAllFriendConnected', function (friendConnected: Array<any>) {
 		const tmp: any[] = []
 
-		console.log(friendConnected)
-
 		friendConnected.forEach(friend => {
 			if (friend.status == 'online')
 				tmp.push({ username: friend.user.nickname, login: friend.user.login })
@@ -549,36 +547,36 @@ const CreateMapTemp = (props: any) => {
 				<div className="edit">
 					<div className="buttons">
 						<Tooltip title='Click to add obstacle'>
-						<button onClick={async () => {
-							setlastObstacleID(actualObstacleID)
-							room.map.addObstacle('red', actualObstacleID ? 100 : 50, 50, 50, 50, nbObstacle + 1)
-							setActualObstacleID(nbObstacle + 1)
-							setNbObstacle(nbObstacle + 1)
-						}}>Add obstacle</button>
+							<button onClick={async () => {
+								setlastObstacleID(actualObstacleID)
+								room.map.addObstacle('red', actualObstacleID ? 100 : 50, 50, 50, 50, nbObstacle + 1)
+								setActualObstacleID(nbObstacle + 1)
+								setNbObstacle(nbObstacle + 1)
+							}}>Add obstacle</button>
 						</Tooltip>
 
 						<Tooltip title='Click to delete obstacle'>
-						<button onClick={async () => {
-							for (let index = 0; index < room.map.obstacles.length; index++) {
-								const element = room.map.obstacles[index];
-								if (actualObstacleID == element.id) {
-									room.map.obstacles.splice(index, 1)
-									setActualObstacleID(-1)
+							<button onClick={async () => {
+								for (let index = 0; index < room.map.obstacles.length; index++) {
+									const element = room.map.obstacles[index];
+									if (actualObstacleID == element.id) {
+										room.map.obstacles.splice(index, 1)
+										setActualObstacleID(-1)
+									}
 								}
-							}
-						}}>Delete obstacle</button>
+							}}>Delete obstacle</button>
 						</Tooltip>
 					</div>
 					<div className="invite-friend">
 						<Autocomplete
 							noOptionsText='No friend online'
 							onFocus={() => { utilsData.socket.emit('GET_ALL_FRIEND_CONNECTED', { user: persistantReduceur.userReducer.user }) }}
-							onChange={(e) => { setInvitInput( connectedClient.find(item => item.username == e.currentTarget.innerHTML)!.login) }}
+							onChange={(e) => { setInvitInput(connectedClient.find(item => item.username == e.currentTarget.innerHTML)!.login) }}
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
 						<Tooltip title={inviteInput.length ? `Invite ${inviteInput} on your map` : 'Create your map and invite one of your friend connected'}>
-						<button className="play" disabled={checkAllCollisionsBall(room.ball)} onClick={inviteButtonClick}>Play</button>
+							<button className="play" disabled={checkAllCollisionsBall(room.ball)} onClick={inviteButtonClick}>Play</button>
 						</Tooltip>
 					</div>
 				</div>

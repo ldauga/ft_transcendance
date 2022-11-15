@@ -16,14 +16,13 @@ function ForNotistack() {
     const inviteCheckReducer = useSelector((state: RootState) => state.persistantReducer.inviteCheckReducer);
 
     const dispatch = useDispatch();
-	const { setInviteCheck, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
+    const { setInviteCheck, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     utilsData.socket.removeAllListeners('returnAffNotistack');
 
     utilsData.socket.on('returnAffNotistack', function (data: { text: string, type: string }) {
-        console.log('returnAffNotistack = ', data);
         if (data.type == "default")
             enqueueSnackbar(data.text, { variant: "default", autoHideDuration: 2000 })
         else if (data.type == "success")
@@ -39,12 +38,12 @@ function ForNotistack() {
     })
 
     useEffect(() => {
-		if (inviteCheckReducer.verif && inviteCheckReducer.reload) {
-          enqueueSnackbar('Your party invitation has been cancelled.', { variant: "warning", autoHideDuration: 3000 })
-          setInviteCheck(false)
-          setInviteCheckReload(false)
+        if (inviteCheckReducer.verif && inviteCheckReducer.reload) {
+            enqueueSnackbar('Your party invitation has been cancelled.', { variant: "warning", autoHideDuration: 3000 })
+            setInviteCheck(false)
+            setInviteCheckReload(false)
         }
-	})
+    })
 
     return (
         <div id="ForNotisstack"></div>

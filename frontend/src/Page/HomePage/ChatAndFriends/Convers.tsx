@@ -31,7 +31,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         if (props.openFriendConversFromProfile)
             props.setOpenFriendConversFromProfile(false);
         props.setConvers(false);
-        console.log("oldAff: ", props.oldAff);
         if (props.oldAff == "Chat")
             props.setChat(true);
         else
@@ -63,7 +62,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     utilsData.socket.removeListener('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
-        console.log('newMsgReceived = ', data);
         for (let i = 0; i < 4; i++) {
             getListItem();
         }
@@ -139,7 +137,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     function AffDate(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        console.log("Date: ", Date());
         if (getYear() != props.item.year)
             return (
                 <div className='dateDisplayNone'>
@@ -168,12 +165,10 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const getListItem = async () => {
         await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
-            console.log("checkIfRelationIsBlocked res.data: ", res.data);
             if (res.data == true && correspondantIsBlocked == false)
                 setCorrespondantIsBlocked(true);
         });
         await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
-            console.log("get List Item Conversation");
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
@@ -181,7 +176,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     <Item item={item} />
                 </div>)
             });
-            console.log('itemList : ', itemList);
             setItemListHistory(itemList);
         })
         initOneConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
@@ -194,7 +188,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
         getListItem();
-        console.log("correspondantIsBlocked: ", false);
     }, [props, correspondantIsBlocked]);
 
     function SendButton() {
@@ -217,7 +210,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     utilsData.socket.removeAllListeners('userBanned');
 
     utilsData.socket.on('userBanned', function (userBanned: boolean) {
-        console.log('userBanned = ', userBanned);
         getListItem();
         utilsData.socket.off('userBanned');
         utilsData.socket.removeListener('userBanned');
@@ -226,7 +218,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     utilsData.socket.removeAllListeners('debanedUser');
 
     utilsData.socket.on('debanedUser', function (debanedUser: boolean) {
-        console.log('debanedUser = ', debanedUser);
         getListItem();
         utilsData.socket.off('debanedUser');
         utilsData.socket.removeListener('debanedUser');

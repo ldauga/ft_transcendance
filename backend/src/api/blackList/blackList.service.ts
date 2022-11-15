@@ -71,7 +71,6 @@ export class BlackListService {
 	}
 
 	async checkUserBan(login: string, login_receiver: string): Promise<boolean> {
-		console.log("login: ", login, ", login_receiver: ", login_receiver);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ login_banned: login, login_sender: login_receiver, userOrRoom: false }
@@ -83,7 +82,6 @@ export class BlackListService {
 	}
 
 	async checkUserBanWithId(id_sender: number, id_receiver: number): Promise<boolean> {
-		console.log("id_sender: ", id_sender, ", id_receiver: ", id_receiver);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ id_sender: id_sender, id_banned: id_receiver, userOrRoom: false },
@@ -96,7 +94,6 @@ export class BlackListService {
 	}
 
 	async checkIfRelationIsBlocked(login1: string, login2: string): Promise<boolean> {
-		//console.log("login1: ", login1, ", login2: ", login2);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ login_banned: login1, login_sender: login2, userOrRoom: false },
@@ -120,7 +117,6 @@ export class BlackListService {
 	}
 
 	async createBan(body: any): Promise<BlackListEntity> {
-		console.log("createBan");
 		const returnBan = this.BlackListRepository.save({
 			id_sender: body.id_sender,
 			id_banned: body.id_banned,
@@ -142,17 +138,13 @@ export class BlackListService {
 	}
 
 	async removeUserBan(id_sender: number, login_banned: string) {
-		console.log("removeUserBan");
-		console.log("id sender = ", id_sender, ", login_banned = ", login_banned);
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ id_sender: id_sender, login_banned: login_banned }
 			]
 		});
-		console.log("check = ", check);
 		if (check) {
 			const removeReturn = this.BlackListRepository.delete(check);
-			console.log('removeReturn', removeReturn);
 			if (!removeReturn)
 				return false;
 			return true;
@@ -161,14 +153,12 @@ export class BlackListService {
 	}
 
 	async removeRoomBan(room_id: number, login_banned: string) {
-		console.log("removeRoomBan");
 		const check = await this.BlackListRepository.findOne({
 			where: [
 				{ room_id: room_id, login_banned: login_banned }
 			]
 		});
 		const removeReturn = this.BlackListRepository.delete(check);
-		console.log('removeReturn', removeReturn);
 		if (!removeReturn)
 			return false;
 		return true;

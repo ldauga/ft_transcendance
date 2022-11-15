@@ -36,9 +36,8 @@ function Settings() {
 	};
 
 	const handleClose = (param: any) => {
-		console.log('userParameter: ' + userParameterNewNickname);
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axiosConfig.post('https://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }).then((res) => { console.log(res); if (res.data) setUser(res.data) }).catch((err) => { console.log('err', err) })
+			axiosConfig.post('https://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }).then((res) => { if (res.data) setUser(res.data) })
 
 		if (userParameterNewProfilePicture != null) {
 
@@ -57,9 +56,6 @@ function Settings() {
 
 			axios(config).then((res) => setUser(res.data))
 		}
-
-		// console.log(userParameter2FARes)
-
 		setUserParameter2FAQrCode("")
 		setUserParameter2FACode("")
 		setUserParameter2FARes(0)
@@ -182,7 +178,7 @@ function Settings() {
 							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { console.log(res); setUser(res.data) }) }}>Desactivate</button>
+									<button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate</button>
 								</div>
 							</>
 						}

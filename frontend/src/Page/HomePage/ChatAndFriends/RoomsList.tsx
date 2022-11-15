@@ -45,7 +45,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     utilsData.socket.removeAllListeners('getAllRoomsCanIJoin');
 
     utilsData.socket.on('getAllRoomsCanIJoin', function (getAllRoomsCanIJoin: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) {
-        console.log('getAllRoomsCanIJoin = ', getAllRoomsCanIJoin);
         getListItem(getAllRoomsCanIJoin);
         utilsData.socket.off('getAllRoomsCanIJoin');
         utilsData.socket.removeListener('getAllRoomsCanIJoin');
@@ -54,7 +53,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     utilsData.socket.removeAllListeners('newRoomCreated');
 
     utilsData.socket.on('newRoomCreated', function (newRoomCreated: boolean) {
-        console.log('newRoomCreated = ', newRoomCreated);
         if (newRoomCreated == true) {
             utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
         }
@@ -65,7 +63,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     utilsData.socket.removeAllListeners('joinChatRoomAccepted');
 
     utilsData.socket.on('joinChatRoomAccepted', function (joinChatRoomAccepted: boolean) {
-        console.log('joinChatRoomAccepted = ', joinChatRoomAccepted);
         if (joinChatRoomAccepted == true) {
             exit();
         }
@@ -76,14 +73,12 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     utilsData.socket.removeAllListeners('cantJoinChatRoom');
 
     utilsData.socket.on('cantJoinChatRoom', function (cantJoinChatRoom: string) {
-        console.log("You can't join this group, because: ", cantJoinChatRoom);
         enqueueSnackbar('You can\'t join this room', { variant: "error", autoHideDuration: 2000 })
         utilsData.socket.off('cantJoinChatRoom');
         utilsData.socket.removeListener('cantJoinChatRoom');
     })
 
     utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
-        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
         utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
         utilsData.socket.off('roomHasBeenDeleted');
         utilsData.socket.removeListener('roomHasBeenDeleted');
@@ -117,7 +112,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
 
     const getListItem = async (data: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) => {
         let itemList: any[] = [];
-        console.log('data = ', data);
         data.forEach(item => {
             if (item.passwordOrNot) {
                 itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
@@ -135,7 +129,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
                 </div>)
             }
             else {
-                console.log("test");
                 itemList.push(<div key={itemList.length.toString()} className='roomsItemList'>
                     <div className="roomsInItem">
                         <div className='roomListInItem1'>
@@ -155,7 +148,6 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     }
 
     useEffect(() => {
-        console.log("useEffect RoomsList");
         utilsData.socket.emit('GET_ALL_ROOMS_CAN_I_JOIN');
     }, [props]);
 

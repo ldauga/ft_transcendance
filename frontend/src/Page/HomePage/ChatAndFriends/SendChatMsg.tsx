@@ -27,7 +27,6 @@ function SendChatMsg() {
     utilsData.socket.removeAllListeners('getAllClientConnectedWithoutFriend');
 
     utilsData.socket.on('getAllClientConnected', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllClientConnected = ', data);
         const tmp: any[] = []
         data.forEach(client => {
             if (client.login != userData.userReducer.user?.login) {
@@ -54,28 +53,20 @@ function SendChatMsg() {
         const _user = connectedClient.find(obj => obj.nickname == inputValue);
         if (_user) {
             await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + _user.username).then(async (res) => {
-                console.log("checkIfRelationIsBlocked res.data: ", res.data);
                 if (res.data == true) {
                     enqueueSnackbar('You can\'t send a message to ' + _user.nickname + ', your relation is blocked', { variant: "error", autoHideDuration: 6000 })
                     return;
                 }
             });
             let test = false;
-            console.log('sendMsg');
             await axiosConfig.get('https://localhost:5001/user/login/' + _user.username).then(async (res) => {
                 setText("");
-                console.log("axios.get");
-                console.log(res.data);
-                console.log(res);
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
                     enqueueSnackbar(_user.nickname + ' not found', { variant: "error", autoHideDuration: 2000 })
-                    console.log("login not found");
                     return;
                 }
                 else {
-                    console.log('test == true');
-                    console.log(receiver_login_tmp);
                     const newMsg = {
                         id_sender: userData.userReducer.user?.id,
                         id_receiver: res.data.id,

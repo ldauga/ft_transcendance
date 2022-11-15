@@ -24,7 +24,6 @@ function CreateRooms(props: { setCreateGroup: Function }) {
     const [passwordOrNot, setPasswordOrNot] = useState(false);
 
     const createGroup = async () => {
-        console.log("valideInput name: ", valideInput(text, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
         if (text.length <= 0) {
             enqueueSnackbar('The room name can\'t be empty', { variant: "warning", autoHideDuration: 2000 })
             return;
@@ -52,16 +51,13 @@ function CreateRooms(props: { setCreateGroup: Function }) {
         let a = 1;
         await axiosConfig.get('https://localhost:5001/rooms/check/' + text).then(async (res) => {
             if (res.data == true) {
-                console.log("room already exist");
                 enqueueSnackbar('The room name already exist', { variant: "error", autoHideDuration: 2000 })
             }
             else {
                 a = 2;
-                console.log('room not exist');
             }
         });
         if (a == 2) {
-            console.log('test == true');
             const newRoom = {
                 name: text,
                 description: "",
@@ -72,7 +68,6 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                 publicOrPrivate: publicOrPrivate,
                 passwordOrNot: passwordOrNot
             }
-            console.log("newRoom: ", newRoom);
             utilsData.socket.emit('createChatRooms', newRoom);
             enqueueSnackbar('Your chat room is created', { variant: "success", autoHideDuration: 2000 })
             setText("");

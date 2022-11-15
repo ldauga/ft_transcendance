@@ -25,8 +25,6 @@ export class InvitationRequestController {
   @UseGuards(AuthGuard('jwt'))
   public async checkInvitationRequest(@Param('id1', ParseIntPipe) id1: number, @Param('id2', ParseIntPipe) id2: number): Promise<boolean> {
     const returnCheck = await this.invitationRequestService.checkInvitationRequest(id1, id2);
-    console.log('checkInvitationRequest Check = ');
-    console.log(returnCheck);
     return returnCheck;
   }
 
@@ -34,7 +32,6 @@ export class InvitationRequestController {
   @UseGuards(AuthGuard('jwt'))
   public async checkInvitationRequestForRooms(@Param('id', ParseIntPipe) id: number, @Param('roomName') roomName: string): Promise<boolean> {
     const returnCheck = await this.invitationRequestService.checkInvitationRequestForRooms(id, roomName);
-    console.log('checkInvitationRequestForRooms Check = ', returnCheck);
     return returnCheck;
   }
 }

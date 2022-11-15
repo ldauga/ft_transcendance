@@ -38,7 +38,6 @@ export class ParticipantsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkParticipant(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkParticipant(login, name);
-    //console.log('checkParticipant Check = ', returnCheck);
     return returnCheck;
   }
 
@@ -46,7 +45,6 @@ export class ParticipantsController {
   @UseGuards(AuthGuard('jwt'))
   public async checkIfAdmin(@Param('login') login: string, @Param('name') name: string): Promise<boolean> {
     const returnCheck = await this.service.checkAdmin(login, name);
-    // console.log('checkAdmin Check = ', returnCheck);
     return returnCheck;
   }
 }

@@ -26,29 +26,24 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     const checkIfAdmin = async () => {
         let ifAdmin = false;
         await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log("check ifOwner = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
         await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
-            console.log("check ifAdmin = ", res.data);
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        console.log("return: ", ifAdmin);
         return ifAdmin;
     };
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
     utilsData.socket.on('roomHasBeenDeleted', function (roomHasBeenDeletedReturn: string) {
-        console.log('roomHasBeenDeleted = ', roomHasBeenDeletedReturn);
         if (roomHasBeenDeletedReturn == props.roomsConversData.name) {
-            console.log(props.roomsConversData.name, " has been deleted");//NOTIF à ajouter
             closeConvers();
         }
         utilsData.socket.off('roomHasBeenDeleted');
@@ -58,9 +53,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('kickedOutOfTheGroup');
 
     utilsData.socket.on('kickedOutOfTheGroup', function (kickedOutOfTheGroupReturn: boolean) {
-        console.log('kickedOutOfTheGroup = ', kickedOutOfTheGroupReturn);
         if (kickedOutOfTheGroupReturn == true) {
-            console.log("You were kicked out of the ", props.roomsConversData.name, " group");//NOTIF à ajouter
             closeConvers();
         }
         utilsData.socket.off('kickedOutOfTheGroup');
@@ -72,7 +65,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
-        console.log('removeParticipantReturn = ', roomHasBeenDeletedReturn);
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
@@ -81,7 +73,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('debanedUserInRoom');
 
     utilsData.socket.on('debanedUserInRoom', function (debanedUserInRoom: boolean) {
-        console.log('debanedUserInRoom = ', debanedUserInRoom);
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('debanedUserInRoom');
         utilsData.socket.removeListener('debanedUserInRoom');
@@ -90,7 +81,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('newRoomBan');
 
     utilsData.socket.on('newRoomBan', function (newRoomBan: boolean) {
-        console.log('newRoomBan = ', newRoomBan);
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newRoomBan');
         utilsData.socket.removeListener('newRoomBan');
@@ -115,11 +105,10 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     }
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {
-        console.log("Rigthitem isAdmin: ", isAdmin, ", admin: ", item.admin);
         if ((isAdmin || item.admin) && item.login != userData.userReducer.user?.login)
             return (
                 <div className="inItemFriendList_right">
-                    <button onClick={(e) => {e.stopPropagation(); debanParticipant(item)}} className="bi bi-x-lg"></button>
+                    <button onClick={(e) => { e.stopPropagation(); debanParticipant(item) }} className="bi bi-x-lg"></button>
                 </div>
             );
         else
@@ -132,7 +121,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('getAllParticipantsBannedReturn');
 
     utilsData.socket.on('getAllParticipantsBannedReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllParticipantsBannedReturn = ', data);
         getListItem(data);
         utilsData.socket.off('getAllParticipantsBannedReturn');
         utilsData.socket.removeListener('getAllParticipantsBannedReturn');
@@ -140,12 +128,10 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
         const admin = await checkIfAdmin();
-        console.log("get affParticipantsRooms");
         let itemList: any[] = []
-        console.log('data = ', data);
         let i = 0;
         data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-            itemList.push(<div key={itemList.length.toString()} className='participant_ban' onClick={(e) => { console.log('aff-participant'); history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+            itemList.push(<div key={itemList.length.toString()} className='participant_ban' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
                 <img src={item.profile_pic}></img>
                 <p>{item.nickname}</p>
                 <RightItem login={item.login} id={item.id} admin={admin} />
@@ -156,7 +142,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     }
 
     useEffect(() => {
-        console.log("useEffect AffParticipantsBanned");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
     }, [props]);
 

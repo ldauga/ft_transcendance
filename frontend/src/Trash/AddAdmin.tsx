@@ -14,15 +14,10 @@ function AddAdmin(props: { roomsConversData: { name: string, id: number } }) {
 
     async function buttonAddAdmin() {
         let test = false;
-        console.log('addFriend');
         await axiosConfig.get('https://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
-            console.log("axios.get");
-            console.log(res.data);
-            console.log(res);
             let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
-                console.log("login not found");
                 return;
             }
             else {

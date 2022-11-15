@@ -15,7 +15,7 @@ export class AuthService {
 		private userServices: UserService,
 		private http: HttpService,
 		private jwtService: JwtService
-	  ) {}
+	) { }
 
 	private readonly clientId: string = process.env.API_UID;
 	private readonly clientSecret: string = process.env.API_SECRET;
@@ -29,14 +29,13 @@ export class AuthService {
 	async login(req: any) {
 		try {
 			const token = this.http.post(`${this.API_authorizationURI}`,
-			`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
-			console.log('token', token);
+				`grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${req.code}&redirect_uri=${this.redirectURI}`);
 			this.accessToken = (await lastValueFrom(token)).data.access_token;
 			this.headers = { Authorization: `Bearer ${this.accessToken}` };
 
 			const { data } = await lastValueFrom(
 				this.http.get(`${this.endpoint}/me`, {
-				  headers: this.headers,
+					headers: this.headers,
 				}),
 			);
 
@@ -49,14 +48,13 @@ export class AuthService {
 				user = await this.userServices.createUser(data);
 			}
 			return this.signUser(user);
-		} catch(error) {
+		} catch (error) {
 			this.logger.error(error);
 			return null;
 		}
 	}
 
-	async loginSans42(login: string)
-	{
+	async loginSans42(login: string) {
 		let user = await this.userServices.getUserByLogin(login);
 
 		if (!user) {
@@ -69,16 +67,16 @@ export class AuthService {
 		const secret = authenticator.generateSecret();
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);
 		const otpAuthUrl = authenticator.keyuri(response.login, 'Trans en danse', secret);
-		
+
 		const user = await this.userServices.getUserByLogin(response.login);
 		if (!user)
 			return null;
-		
+
 		await this.userServices.setTwoFactorAuthenticationSecret(secret, user.id);
-	
+
 		return {
-		  secret,
-		  otpAuthUrl
+			secret,
+			otpAuthUrl
 		}
 	}
 
@@ -88,8 +86,8 @@ export class AuthService {
 
 	isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, totpsecret: string) {
 		return authenticator.verify({
-		  token: twoFactorAuthenticationCode,
-		  secret: totpsecret,
+			token: twoFactorAuthenticationCode,
+			secret: totpsecret,
 		});
 	}
 

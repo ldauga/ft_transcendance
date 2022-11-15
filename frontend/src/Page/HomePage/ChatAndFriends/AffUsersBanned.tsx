@@ -66,40 +66,28 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     async function buttonBanUser() {
         const user = connectedClient.find(obj => obj.nickname == inputValue);
-        console.log("text.length = ", inputValue.length, ", days = ", days, ", minutes = ", minutes, ", seconds = ", seconds, ", alwaysOrNot = ", alwaysOrNot);
         if (inputValue.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot) || !user) {
-            console.log("Wrong input for banUser");
             enqueueSnackbar('Wrong input for banUser', { variant: "error", autoHideDuration: 2000 })
             return;
         }
         if (user) {
             await axiosConfig.get('https://localhost:5001/user/login/' + user.login).then(async (res) => {
                 setInputValue("");
-                console.log("axios.get");
-                console.log(res.data);
-                console.log(res);
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
-                    console.log("login not found");
                     return;
                 }
                 else {
                     let a = 1;
                     let b = 1;
                     await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
-                        console.log('check invit');
-                        console.log(res.data);
-                        console.log(res);
                         if (res.data == true) {
-                            console.log("ban already exist");
                         }
                         else {
                             a = 2;
-                            console.log('ban not exist');
                         }
                     })
                     if (a == 2) {
-                        console.log(receiver_login_tmp);
                         const newBan = {
                             id_sender: userData.userReducer.user?.id,
                             id_banned: res.data.id,
@@ -131,7 +119,6 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     utilsData.socket.removeAllListeners('userBanned');
 
     utilsData.socket.on('userBanned', function (userBanned: boolean) {
-        console.log('userBanned = ', userBanned);
         utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
         utilsData.socket.off('userBanned');
         utilsData.socket.removeListener('userBanned');
@@ -140,7 +127,6 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     utilsData.socket.removeAllListeners('debanedUser');
 
     utilsData.socket.on('debanedUser', function (debanedUser: boolean) {
-        console.log('debanedUser = ', debanedUser);
         utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
         utilsData.socket.off('debanedUser');
         utilsData.socket.removeListener('debanedUser');
@@ -149,7 +135,6 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     utilsData.socket.removeAllListeners('getAllClientConnectedWithoutBanned');
 
     utilsData.socket.on('getAllClientConnectedWithoutBanned', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllClientConnectedWithoutBanned = ', data);
         setConnectedClient(data);
         utilsData.socket.off('getAllClientConnectedWithoutBanned');
         utilsData.socket.removeListener('getAllClientConnectedWithoutBanned');
@@ -161,15 +146,12 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     }
 
     const debanUser = (item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-        console.log("button debanUser");
         utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login });
         enqueueSnackbar('User debanned', { variant: "success", autoHideDuration: 2000 })
     }
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
-        console.log("get affParticipantsRooms");
         let itemList: any[] = []
-        console.log('data = ', data);
         let i = 0;
         data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string }) => {
             itemList.push(<div key={itemList.length.toString()} className='itemBanUser'>
@@ -192,14 +174,12 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     utilsData.socket.removeAllListeners('getAllUsersBannedReturn');
 
     utilsData.socket.on('getAllUsersBannedReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log('getAllUsersBannedReturn = ', data);
         getListItem(data);
         utilsData.socket.off('getAllUsersBannedReturn');
         utilsData.socket.removeListener('getAllUsersBannedReturn');
     })
 
     useEffect(() => {
-        console.log("useEffect AffUserBanned");
         utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
         utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
     }, [props]);

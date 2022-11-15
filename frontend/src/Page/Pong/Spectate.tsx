@@ -27,7 +27,6 @@ function Spectate() {
 
     useEffect(() => {
         if (!verif) {
-            console.log('window.location.href.toString().split(\'/\').reverse()[0] :', window.location.href.toString().split('/').reverse()[0])
             if (window.location.href.toString().split('/').reverse()[0] == 'Spectate') {
 
 
@@ -272,7 +271,6 @@ function Spectate() {
     const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
-        console.log('on.(\'finish\')')
         setFinishGame(true)
 
         setFinishRoom(room)

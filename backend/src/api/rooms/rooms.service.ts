@@ -39,7 +39,6 @@ export class RoomsService {
 		if (check == null)
 			return ("room not found");
 		if (check.passwordOrNot) {
-			console.log("check.password: ", check.password, ", passwordInput: ", password);
 			const isMatch = await bcrypt.compare(password, check.password);
 			if (isMatch)
 				return ("ok");
@@ -85,7 +84,6 @@ export class RoomsService {
 	}
 
 	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
-		console.log("service changePassword, room name: ", room_name, ", password: ", password, ", passwordOrNot: ", passwordOrNot);
 		if (!this.checkRoom(room_name))
 			return false;
 		const check = await this.RoomsRepository.findOne({
@@ -93,13 +91,11 @@ export class RoomsService {
 				{ name: room_name }
 			]
 		});
-		console.log("check 1: ", check);
 		check.passwordOrNot = passwordOrNot;
 
 		const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
 		const hash = await bcrypt.hash(password, saltOrRounds);
 		check.password = hash;
-		console.log("check 2: ", check);
 		const returnRoom = this.RoomsRepository.save(check);
 		return true;
 	}
@@ -133,7 +129,6 @@ export class RoomsService {
 			]
 		});
 		const removeReturn = this.RoomsRepository.delete(check);
-		console.log('removeRoomReturn', removeReturn);
 		if (removeReturn)
 			return true;
 		return false;

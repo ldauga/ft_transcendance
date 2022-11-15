@@ -13,13 +13,13 @@ import { Observable } from 'rxjs';
 
 export const storage = {
   storage: diskStorage({
-      destination: './uploads/profileImages',
-      filename: (req, file, cb) => {
-          const filename: string = uuidv4();
-          const extension: string = path.parse(file.originalname).ext;
+    destination: './uploads/profileImages',
+    filename: (req, file, cb) => {
+      const filename: string = uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
 
-          cb(null, `${filename}${extension}`)
-      }
+      cb(null, `${filename}${extension}`)
+    }
   })
 }
 
@@ -37,20 +37,19 @@ export class UserController {
   @Get('/id/:id')
   @UseGuards(AuthGuard('jwt'))
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
-	  return this.service.getUserById(id);
+    return this.service.getUserById(id);
   }
 
   @Get('/login/:login')
   @UseGuards(AuthGuard('jwt'))
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
-    console.log('Login')
     return this.service.getUserByLogin(login);
   }
 
   @Get('/nickname/:nickname')
   @UseGuards(AuthGuard('jwt'))
   public getUserByNickname(@Param('nickname') nickname: string): Promise<UserEntity> {
-	  return this.service.getUserByNickname(nickname);
+    return this.service.getUserByNickname(nickname);
   }
 
   @Get('/userExist')
@@ -65,15 +64,15 @@ export class UserController {
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
   getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
-	const fileName = fileId.split(':')[1];
-	var options = {
-        root: path.join(process.cwd() + '/uploads/profileImages/')
+    const fileName = fileId.split(':')[1];
+    var options = {
+      root: path.join(process.cwd() + '/uploads/profileImages/')
     };
 
-	return res.sendFile(fileName, options, function (err) {
-        if (err) {
-			throw new BadRequestException('Unable to find user\'s avatar');
-        }
+    return res.sendFile(fileName, options, function (err) {
+      if (err) {
+        throw new BadRequestException('Unable to find user\'s avatar');
+      }
     });
   }
 

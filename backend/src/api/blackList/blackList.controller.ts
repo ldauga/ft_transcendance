@@ -29,7 +29,6 @@ export class BlackListController {
   @UseGuards(AuthGuard('jwt'))
   public async checkIfRelationIsBlocked(@Param('login1') login1: string, @Param('login2') login2: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkIfRelationIsBlocked(login1, login2);
-    //console.log('checkIfRelationIsBlockedReturn Check = ', returnCheck);
     return returnCheck;
   }
 
@@ -37,7 +36,6 @@ export class BlackListController {
   @UseGuards(AuthGuard('jwt'))
   public async checkUserBan(@Param('login') login: string, @Param('loginReceiver') loginReceiver: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkUserBan(login, loginReceiver);
-    console.log('checkUserBanReturn Check = ', returnCheck);
     return returnCheck;
   }
 
@@ -45,7 +43,6 @@ export class BlackListController {
   @UseGuards(AuthGuard('jwt'))
   public async checkRoomBan(@Param('id', ParseIntPipe) id: number, @Param('login') login: string, @Param('roomName') roomName: string): Promise<boolean> {
     const returnCheck = await this.BlackListService.checkRoomBan(id, login, roomName);
-    console.log('checkRoomBanReturn Check = ', returnCheck);
     return returnCheck;
   }
 
