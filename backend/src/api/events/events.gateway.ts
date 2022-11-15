@@ -1863,15 +1863,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
-      this.pongInfo[room[0]].ball.x = this.pongInfo[room[0]].canvas.width / 2
-      this.pongInfo[room[0]].ball.dx = 0
-      this.pongInfo[room[0]].ball.dy = 0.2
-
-      // for (let index = 0; index < 2; index++)
-      //   if (this.pongInfo[room[0]].players[index].id == client.id) {
-
-      //   }
-
+      if (arrClient.find(item => item.id == client.id).username == 'ldauga')
+        for (let index = 0; index < 2; index++)
+          if (this.pongInfo[room[0]].players[index].id == client.id) {
+            this.pongInfo[room[0]].players[index].cheat = info[1]
+          }
     }
   }
 
