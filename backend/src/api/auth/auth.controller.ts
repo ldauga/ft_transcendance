@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, ForbiddenException, Get, HttpException, HttpStatus, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Response } from 'express';
@@ -13,20 +13,22 @@ export class AuthController {
 
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
-		if (query.error == "access_denied") {
-			res.status(401).redirect(`https://localhost:3000/`);
-			return ;
-		}
+		try {
+			if (query.error == "access_denied")
+				throw new ForbiddenException("42's API error: " + query.error);
 
-		const accessToken = await this.authService.login(query);
-		const refreshToken = await this.userServices.getRefreshToken(accessToken);
-		const secretData = {
-			accessToken,
-			refreshToken
+			const accessToken = await this.authService.login(query);
+			const refreshToken = await this.userServices.getRefreshToken(accessToken);
+			const secretData = {
+				accessToken,
+				refreshToken
+			};
+
+			res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
+			res.status(302).redirect(`https://localhost:3000/Login/Callback`);
+		} catch(e) {
+			res.status(403).redirect('https://localhost:3000/Login');
 		};
-
-		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-		res.status(302).redirect(`https://localhost:3000/Login/Callback`);
 	}
 
 	@Get('/loginSans42/:login')
