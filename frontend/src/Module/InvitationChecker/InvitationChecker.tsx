@@ -36,11 +36,11 @@ function InvitationChecker(props: { children: any }) {
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/Pong')
+		window.location.replace('https://10.3.3.5:3000/Pong')
 	});
 
 	function verifInvitationRequest() {
-		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
+		axiosConfig.get('https://10.3.3.5:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
