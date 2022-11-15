@@ -3,9 +3,9 @@ import './Background.scss'
 function Background() {
     return (
         <div className="background">
-            <div className='ping-bg'></div>
-            <div className='pong-bg'></div>
-            <div className='ball-bg'></div>
+            <div title='ping' className='ping-bg'></div>
+            <div title='pong' className='pong-bg'></div>
+            <div title='ball' className='ball-bg'></div>
         </div>
     )
 }
