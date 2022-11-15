@@ -365,11 +365,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(1000)
   sendNotifGame() {
     this.pongInfo.forEach(room => {
-      if (room.firstConnectionInviteProfie)
+      if (room.firstConnectionInviteProfie || !room.started)
         return
       let player: Player
       if ((player = room.players.find(player => !player.connected)) != undefined) {
-        if (!player.user)
+        if (player.user == null)
           return
         let client: Client
         if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
@@ -1624,7 +1624,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       for (let j = 0; j < 2; j++) {
         //console.log('this.pongInfo[i].players[j] :', this.pongInfo[i].players[j])
 
-        if (this.pongInfo[i].players[j].user.login == ClientLogin) {
+        if (this.pongInfo[i].players[j].user != null && this.pongInfo[i].players[j].user.login == ClientLogin) {
 
           return [i, this.pongInfo[i]]
         }
@@ -1893,31 +1893,39 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             this.pongInfo[index].players[i].ready = false
             if (!this.pongInfo[index].players[i].sendNotif) {
 
-              const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
 
-              for (let i = 0; i < friendList.length; i++) {
-                let loginTmp: string;
-                if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
-                  loginTmp = friendList[i].login_user2;
-                else
-                  loginTmp = friendList[i].login_user1;
-                const _client = arrClient.find(obj => obj.username == loginTmp);
-                if (_client) {
-                  this.server.to(_client.id).emit('friendConnection', true);
-                  //console.log("emit friendConnection to ", _client.username);
+              if (this.pongInfo[index].players[i].user != null) {
+
+                const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
+
+                for (let i = 0; i < friendList.length; i++) {
+                  
+                  let loginTmp: string;
+                  
+                  if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
+                    loginTmp = friendList[i].login_user2;
+                  else
+                    loginTmp = friendList[i].login_user1;
+
+                  const _client = arrClient.find(obj => obj.username == loginTmp);
+                  
+                  if (_client)
+                    this.server.to(_client.id).emit('friendConnection', true);
                 }
+
+                arrClient.forEach((client) => {
+                  this.server.to(client.id).emit('getClientStatus', { user: this.pongInfo[index].players[i].user.login, status: 'offline' })
+                })
+
+                arrClient.forEach(async (item) => {
+                  if (item.username == this.pongInfo[index].players[i].user.login) {
+                    this.server.to(item.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: this.pongInfo[index].roomID, opponentLogin: this.pongInfo[index].players[i ? 0 : 1].user.login } })
+                    this.pongInfo[index].players[i].sendNotif = true;
+                  }
+                })
               }
 
-              arrClient.forEach((client) => {
-                this.server.to(client.id).emit('getClientStatus', { user: this.pongInfo[index].players[i].user.login, status: 'offline' })
-              })
 
-              arrClient.forEach(async (item) => {
-                if (item.username == this.pongInfo[index].players[i].user.login) {
-                  this.server.to(item.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: this.pongInfo[index].roomID, opponentLogin: this.pongInfo[index].players[i ? 0 : 1].user.login } })
-                  this.pongInfo[index].players[i].sendNotif = true;
-                }
-              })
             }
             if ((15 - Math.floor((Date.now() - this.pongInfo[index].players[i].dateDeconnection) / 1000)) == 0 && this.pongInfo[index].players[i ? 0 : 1].score != 3) {
 

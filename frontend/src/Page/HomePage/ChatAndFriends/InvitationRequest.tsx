@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../State";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "../../../State";
 import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
 import './CSS/InvitationRequest.scss'
@@ -8,6 +8,8 @@ import axiosConfig from "../../../Utils/axiosConfig";
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew, Check, Close } from "@mui/icons-material";
+import { NotifType } from "../../../State/type";
+import { bindActionCreators } from "redux";
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
@@ -15,6 +17,9 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     const { enqueueSnackbar } = useSnackbar();
+
+    const dispatch = useDispatch();
+	const { delNotif } = bindActionCreators(actionCreators, dispatch);
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
     const [update, setUpdate] = useState(false);
@@ -125,6 +130,11 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
             login_user1: item.sender_login,
             login_user2: item.receiver_login
         }
+
+        if (!itemListHistory.length)
+            if (persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.PENDINGINVITATION) != undefined)
+                delNotif(persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.PENDINGINVITATION)!)
+
         utilsData.socket.emit('addFriend', newFriend);
         enqueueSnackbar('You have accepted a friend request', { variant: "success", autoHideDuration: 2000 })
         setUpdate(true);
