@@ -25,6 +25,17 @@
 		td {
 			border-bottom: 1px solid rgba(#2e384e, 0.5);
 			padding: 5px 0 5px 5px;
+			.user {
+				display: flex;
+				align-items: center;
+				gap: 3px;
+				span {
+					white-space: nowrap;
+					max-width: 83px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
 			&:first-of-type {
 				width: var(--nickname-size);
 			}
@@ -81,6 +92,12 @@
 			}
 			td {
 				padding: 9px 0 9px 10px;
+				.user {
+					gap: 5px;
+					span {
+						max-width: 104px;
+					}
+				}
 			}
 		}
 		.tabContent {
@@ -130,6 +147,11 @@
 			}
 			td {
 				padding: 12px 0 12px 28px;
+				.user {
+					span {
+						max-width: unset;
+					}
+				}
 			}
 		}
 		.tabContent {

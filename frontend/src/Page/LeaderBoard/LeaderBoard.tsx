@@ -55,7 +55,7 @@ function LeaderBoard() {
 						<tbody>
 							{rows.map((row) => (
 								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.login) }} key={row.nickname}>
-									<td><img src={row.profile_pic} /> <span>{row.nickname}</span></td>
+									<td><div className="user"><img src={row.profile_pic} /> <span>{row.nickname}</span></div></td>
 									<td><img src={
 										!row.wins ? unranked :
 											row.wins < 5 ? bronze_rank_img :

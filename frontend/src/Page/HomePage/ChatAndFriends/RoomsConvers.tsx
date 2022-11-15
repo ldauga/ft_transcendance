@@ -453,6 +453,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         return (
             <div className="send-message">
                 <TextField value={messageText}
+                    autoFocus
                     onChange={e => setMessageText(e.target.value)}
                     placeholder={textPlaceHolder}
                     multiline maxRows={5}
