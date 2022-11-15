@@ -146,7 +146,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   //private http = new HttpService;
   private logger: Logger = new Logger('AppGateway');
 
-  async handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
 
     const tmp = arrClient.find(item => item.id == client.id)
@@ -154,21 +154,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (tmp != undefined && tmp.username != "" && tmp.username != undefined) {
       checkReconnexionArr.push({ username: tmp.username, date: new Date() })
     }
-
-    // const friendList = await this.FriendListService.getUserFriendListWithLogin(tmp.username);
-
-    // for (let i = 0; i < friendList.length; i++) {
-    //   let loginTmp;
-    //   if (friendList[i].login_user1 == tmp.username)
-    //     loginTmp = friendList[i].login_user2;
-    //   else
-    //     loginTmp = friendList[i].login_user1;
-    //   const _client = arrClient.find(obj => obj.username == loginTmp);
-    //   if (_client) {
-    //     this.server.to(_client.id).emit('friendConnection', true);
-    //   }
-    // }
-    // }
 
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
@@ -199,7 +184,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   @SubscribeMessage('storeClientInfo')
-  async storeClientInfo(client: Socket, user: { login: string }) {
+  storeClientInfo(client: Socket, user: { login: string }) {
 
     let tmp: number;
 
@@ -207,21 +192,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
       checkReconnexionArr.splice(tmp, 1)
     else if (user.login) {
-      const friendList = await this.FriendListService.getUserFriendListWithLogin(user.login);
-
-
-      for (let i = 0; i < friendList.length; i++) {
-        let loginTmp: string;
-        if (friendList[i].login_user1 == user.login)
-          loginTmp = friendList[i].login_user2;
-        else
-          loginTmp = friendList[i].login_user1;
-        const _client = arrClient.find(obj => obj.username == loginTmp);
-        if (_client) {
-          this.server.to(_client.id).emit('friendConnection', true);
+      this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          let loginTmp: string;
+          if (res[i].login_user1 == user.login)
+            loginTmp = res[i].login_user2;
+          else
+            loginTmp = res[i].login_user1;
+          const _client = arrClient.find(obj => obj.username == loginTmp);
+          if (_client) {
+            this.server.to(_client.id).emit('friendConnection', true);
+          }
         }
-      }
-
+      })
       arrClient.forEach((client) => {
         this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
       })
@@ -274,56 +257,53 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async afterInit(server: any) {
     this.logger.log('Init');
-    //const getAllRoomsReturn = await this.http.get('https://localhost:5001/rooms');
-    const getAllRoomsReturn = await this.RoomsService.getAllRooms();
-    getAllRoomsReturn.forEach(async (item) => {
-      //const a: { id: number; name: string; publicOrPrivate: boolean; }[] = item;
-      //let i = 0;
-      //while (i < a.length) {
-      let newRoom: Room = {
-        id: item.id,
-        name: item.name,
-        users: []
-      };
-      arrRoom.push(newRoom);
-      //i++;
+    this.RoomsService.getAllRooms().then((res) => {
+      res.forEach(item => {
+        let newRoom: Room = {
+          id: item.id,
+          name: item.name,
+          users: []
+        };
+        arrRoom.push(newRoom);
+        //i++;
+      })
     });
-    const getAllParticipantsReturn = await this.ParticipantsService.getAllParticipants();
-    await getAllParticipantsReturn.forEach(item => {
-      //const a: { login: string, room_name: string }[] = item.data;
-      //let i = 0;
-      //while (i < a.length) {
-      let newParticipant: Participant = {
-        username: item.login,
-        room_name: item.room_name
-      }
-      arrParticipants.push(newParticipant);
-      //i++;
-      //}
-    });
+    this.ParticipantsService.getAllParticipants().then((res) => {
+      res.forEach(item => {
+        //const a: { login: string, room_name: string }[] = item.data;
+        //let i = 0;
+        //while (i < a.length) {
+        let newParticipant: Participant = {
+          username: item.login,
+          room_name: item.room_name
+        }
+        arrParticipants.push(newParticipant);
+        //i++;
+        //}
+      });
+    })
   }
 
   @Interval(1000)
   tmpFunction() {
     checkReconnexionArr.forEach(async (user, index) => {
       if (new Date().getSeconds() - user.date.getSeconds() != 0) {
-        const friendList = await this.FriendListService.getUserFriendListWithLogin(user.username);
-        for (let i = 0; i < friendList.length; i++) {
-          let loginTmp: string;
-          if (friendList[i].login_user1 == user.username)
-            loginTmp = friendList[i].login_user2;
-          else
-            loginTmp = friendList[i].login_user1;
-          const _client = arrClient.find(obj => obj.username == loginTmp);
-          if (_client) {
-            this.server.to(_client.id).emit('friendDeconnection', true);
+        this.FriendListService.getUserFriendListWithLogin(user.username).then((res) => {
+          for (let i = 0; i < res.length; i++) {
+            let loginTmp: string;
+            if (res[i].login_user1 == user.username)
+              loginTmp = res[i].login_user2;
+            else
+              loginTmp = res[i].login_user1;
+            const _client = arrClient.find(obj => obj.username == loginTmp);
+            if (_client) {
+              this.server.to(_client.id).emit('friendDeconnection', true);
+            }
           }
-        }
-
+        })
         arrClient.forEach((client) => {
           this.server.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline' })
         })
-
         checkReconnexionArr.splice(index, 1)
       }
     })
@@ -353,92 +333,85 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @Interval(1000)
   checkBanAndMute() {
     time = time + 1;
-    //const getAllBan = http.get('https://localhost:5001/blackList');
     const getAllBan = this.BlacklistService.getAllBanTimer();
     getAllBan.then(async item => {
       const a: { login_banned: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
       a.forEach(async item => {
         if (item.timer + item.date <= time && !item.alwaysOrNot) {
           if (!item['userOrRoom']) {
-            //const removeUserBanReturn = await http.post('https://localhost:5001/blackList/removeUserBan/' + item.id_sender + '/' + item.login_banned);
-            const removeUserBanReturn = await this.BlacklistService.removeUserBan(item['id_sender'], item['login_banned'])
-            if (removeUserBanReturn) {
-              //EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-              // EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-              const _client = arrClient.find(obj => obj.username == item.login_sender);
-              if (_client)
-                this.server.to(_client.id).emit('debanedUser', true);
-            }
+            this.BlacklistService.removeUserBan(item['id_sender'], item['login_banned']).then((res) => {
+              if (res) {
+                const _client = arrClient.find(obj => obj.username == item.login_sender);
+                if (_client)
+                  this.server.to(_client.id).emit('debanedUser', true);
+              }
+            })
           }
           else {
-            //const removeRoomBanReturn = await http.post('https://localhost:5001/blackList/removeRoomBan/' + item.room_id + '/' + item.login_banned);
-            const removeRoomBanReturn = await this.BlacklistService.removeRoomBan(item['room_id'], item['login_banned'])
-            if (removeRoomBanReturn) {
-              //EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-              // EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-              const _room = arrRoom.find(obj => obj.id == item.room_id);
-              if (_room) {
-                let i = 0;
-                while (_room.users.length > i) {
-                  this.server.to(_room.users[i].id).emit('debanedUserInRoom', true);
-                  i++;
+            this.BlacklistService.removeRoomBan(item['room_id'], item['login_banned']).then((res) => {
+              if (res) {
+                const _room = arrRoom.find(obj => obj.id == item.room_id);
+                if (_room) {
+                  let i = 0;
+                  while (_room.users.length > i) {
+                    this.server.to(_room.users[i].id).emit('debanedUserInRoom', true);
+                    i++;
+                  }
                 }
               }
-            }
+            })
           }
         }
       });
     });
-    //const getAllMute = http.get('https://localhost:5001/muteList');
     const getAllMute = this.MutelistService.getAllMuteTimer();
     getAllMute.then(async item => {
       const b: { login_muted: string, userOrRoom: boolean, id_sender: number, login_sender: string, room_id: number, alwaysOrNot: boolean, date: number, timer: number }[] = item;
       b.forEach(async item => {
         if (item['timer'] + item['date'] <= time && !item.alwaysOrNot) {
-          //const removeUserMuteReturn = await http.post('https://localhost:5001/muteList/removeRoomMute/' + item['room_id'] + '/' + item['login_muted']);
-          const removeUserMuteReturn = await this.MutelistService.removeRoomMute(item['room_id'], item['login_muted']);
-          if (removeUserMuteReturn) {
-            //EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-            // EventsGateway.prototype.sendToOneClient(item.login_sender, 'debanedUser');
-            const _room = arrRoom.find(obj => obj.id == item.room_id);
-            if (_room) {
-              let i = 0;
-              while (_room.users.length > i) {
-                this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
-                i++;
+          this.MutelistService.removeRoomMute(item['room_id'], item['login_muted']).then((res) => {
+            if (res) {
+              const _room = arrRoom.find(obj => obj.id == item.room_id);
+              if (_room) {
+                let i = 0;
+                while (_room.users.length > i) {
+                  this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
+                  i++;
+                }
               }
             }
-          }
+          })
         }
       });
     });
   }
 
   @SubscribeMessage('deconnection')
-  async deconnection(client: Socket, info: { user: any }) {
+  deconnection(client: Socket, info: { user: any }) {
     const login = arrClient.find(obj => obj.id == client.id).username;
     if (login != null) {
-      const friendList = await this.FriendListService.getUserFriendListWithLogin(login);
-      for (let i = 0; i < friendList.length; i++) {
-        let loginTmp: string;
-        if (friendList[i].login_user1 == login)
-          loginTmp = friendList[i].login_user2;
-        else
-          loginTmp = friendList[i].login_user1;
-        const _client = arrClient.find(obj => obj.username == loginTmp);
-        if (_client) {
-          //this.getAllFriendConnected(client, info);
-          this.server.to(_client.id).emit('friendDeconnection', true);
+      this.FriendListService.getUserFriendListWithLogin(login).then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          let loginTmp: string;
+          if (res[i].login_user1 == login)
+            loginTmp = res[i].login_user2;
+          else
+            loginTmp = res[i].login_user1;
+          const _client = arrClient.find(obj => obj.username == loginTmp);
+          if (_client) {
+            //this.getAllFriendConnected(client, info);
+            this.server.to(_client.id).emit('friendDeconnection', true);
+          }
         }
-      }
+        const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
+        if (indexOfClient !== -1)
+          arrClient.splice(indexOfClient, 1);
+      })
     }
-    const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
-    if (indexOfClient !== -1)
-      arrClient.splice(indexOfClient, 1);
   }
 
   @SubscribeMessage('msgConnection')
-  async handleMessage(client: Socket, message: string) {
+  handleMessage(client: Socket, message: string) {
     const _client_temp = arrClient.find(obj => obj.id === client.id);
     const newmessage = `Hey! You have the id: ${client.id}, ${_client_temp.id} and your username is: ${_client_temp.username}. Welcome to our server!`;
     this.server.to(client.id).emit('msgToClient', newmessage);
@@ -1048,7 +1021,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   };
 
   @SubscribeMessage('delChatNotifs')
-  async delChatNotifs(client: Socket, data: any) {
+  delChatNotifs(client: Socket, data: any) {
     const _notif = arrNotifs.find(obj => obj.username == data.loginOwner);
     if (_notif) {
       const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
@@ -1059,67 +1032,75 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   @SubscribeMessage('createMsg')
-  async createMsg(client: Socket, data: any) {
+  createMsg(client: Socket, data: any) {
     this.logger.log(`${client.id} create newMsg: ${data.text}`);
-    let verifBan = false;
-    let verifMute = false;
     if (!data.userOrRoom) {
-      //const checkIfBanned = await http.get('https://localhost:5001/blackList/checkUserBan/' + data.login_sender + '/' + data.login_receiver);
-      const checkIfBanned = await this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver);
-      if (checkIfBanned == true)
-        verifBan = true;
+      this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver).then((res) => {
+        if (!res) {
+          const newMsg = {
+            id_sender: data.id_sender,
+            id_receiver: data.id_receiver,
+            login_sender: data.login_sender,
+            login_receiver: data.login_receiver,
+            userOrRoom: data.userOrRoom,
+            serverMsg: false,
+            room_id: data.room_id,
+            room_name: data.room_name,
+            text: data.text,
+            year: getYear(),
+            month: getMonth(),
+            day: getDay(),
+            hour: getHour(),
+            minute: getMinute()
+          }
+          this.MessagesService.createMessages(newMsg).then((res) => {
+            const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
+            if (_client_receiver != null) {
+              this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+            }
+            this.NewMsgNotif(data.login_receiver, data.login_sender, false);
+          })
+        }
+      })
     }
     else {
-      //const checkIfBanned = await http.get('https://localhost:5001/blackList/checkRoomBan/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
-      const checkIfBanned = await this.BlacklistService.checkRoomBan(data.id_sender, data.login_sender, data.room_name);
-      if (checkIfBanned == true)
-        verifBan = true;
-    }
-    //const checkIfMuted = await http.get('https://localhost:5001/muteList/checkRoomMute/' + data.id_sender + '/' + data.login_sender + '/' + data.room_name);
-    const checkIfMuted = await this.MutelistService.checkRoomMute(data.id_sender, data.login_sender, data.room_name);
-
-    if (checkIfMuted == true)
-      verifMute = true;
-    if (!verifBan && !verifMute) {
-      const newMsg = {
-        id_sender: data.id_sender,
-        id_receiver: data.id_receiver,
-        login_sender: data.login_sender,
-        login_receiver: data.login_receiver,
-        userOrRoom: data.userOrRoom,
-        serverMsg: false,
-        room_id: data.room_id,
-        room_name: data.room_name,
-        text: data.text,
-        year: getYear(),
-        month: getMonth(),
-        day: getDay(),
-        hour: getHour(),
-        minute: getMinute()
-      }
-      const returnMsg = await this.MessagesService.createMessages(newMsg);
-      if (!data.userOrRoom) {
-        const _client_receiver = arrClient.find(obj => obj.username === data.login_receiver);
-        if (_client_receiver != null) {
-          this.server.to(_client_receiver.id).emit('newMsgReceived', data);
+      this.BlacklistService.checkRoomBan(data.id_sender, data.login_sender, data.room_name).then((res) => {
+        if (!res) {
+          this.MutelistService.checkRoomMute(data.id_sender, data.login_sender, data.room_name).then((res) => {
+            if (!res) {
+              const newMsg = {
+                id_sender: data.id_sender,
+                id_receiver: data.id_receiver,
+                login_sender: data.login_sender,
+                login_receiver: data.login_receiver,
+                userOrRoom: data.userOrRoom,
+                serverMsg: false,
+                room_id: data.room_id,
+                room_name: data.room_name,
+                text: data.text,
+                year: getYear(),
+                month: getMonth(),
+                day: getDay(),
+                hour: getHour(),
+                minute: getMinute()
+              }
+              this.MessagesService.createMessages(newMsg).then((res) => {
+                const room = arrRoom.find(obj => obj.name == data.room_name);
+                let i = 0;
+                while (i < room.users.length) {
+                  this.server.to(room.users[i].id).emit('newMsgReceived', data);
+                  this.NewMsgNotif(room.users[i].username, data.room_name, true);
+                  i++;
+                }
+              })
+            }
+            else
+              this.server.to(client.id).emit('mutedUserInRoom', true);
+          })
         }
-        this.NewMsgNotif(data.login_receiver, data.login_sender, false);
-      }
-      else {
-        const room = arrRoom.find(obj => obj.name == data.room_name);
-        let i = 0;
-        while (i < room.users.length) {
-          this.server.to(room.users[i].id).emit('newMsgReceived', data);
-          this.NewMsgNotif(room.users[i].username, data.room_name, true);
-          i++;
-        }
-      }
-    }
-    if (verifBan) {
-      this.server.to(client.id).emit('kickedOutOfTheGroup', true);
-    }
-    if (verifMute) {
-      this.server.to(client.id).emit('mutedUserInRoom', true);
+        else
+          this.server.to(client.id).emit('kickedOutOfTheGroup', true);
+      })
     }
   }
 
@@ -1666,16 +1647,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
 
                 for (let i = 0; i < friendList.length; i++) {
-                  
+
                   let loginTmp: string;
-                  
+
                   if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
                     loginTmp = friendList[i].login_user2;
                   else
                     loginTmp = friendList[i].login_user1;
 
                   const _client = arrClient.find(obj => obj.username == loginTmp);
-                  
+
                   if (_client)
                     this.server.to(_client.id).emit('friendConnection', true);
                 }
