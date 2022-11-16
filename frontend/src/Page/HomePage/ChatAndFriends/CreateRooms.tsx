@@ -49,7 +49,7 @@ function CreateRooms(props: { setCreateGroup: Function }) {
             return;
         }
         let a = 1;
-        await axiosConfig.get('https://10.3.3.5:5001/rooms/check/' + text).then(async (res) => {
+        await axiosConfig.get('https://10.3.4.5:5001/rooms/check/' + text).then(async (res) => {
             if (res.data == true) {
                 enqueueSnackbar('The room name already exist', { variant: "error", autoHideDuration: 2000 })
             }

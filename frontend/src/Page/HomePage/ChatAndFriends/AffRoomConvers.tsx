@@ -10,245 +10,134 @@ import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
+import { ArrowBackIosNew, Logout, Person, Settings, Update } from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
 import { bindActionCreators } from 'redux';
+import AffConvers from './AffConvers';
+import AffConversTest from './AffConversTest';
+import HeaderRoomConvers from './HeaderRoomConvers';
 
-function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
-    const utilsData = useSelector((state: RootState) => state.utils);
-    const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const messagesEndRef = useRef<null | HTMLDivElement>(null);
+function AffRoomConvers(props: { closeConvers: Function, roomsConversData: { name: string, id: number } }) {
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>());
-    const [update, setUpdate] = useState(true);
-    const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
+	const utilsData = useSelector((state: RootState) => state.utils);
+	const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const dispatch = useDispatch();
-    const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
+	useEffect(() => {
+		console.log('useEffect aff room convers')
+	}, [PushSubscriptionOptions])
 
-    utilsData.socket.removeAllListeners('newParticipant');
+	function SendZoneRoomConvers(props: { roomsConversData: { name: string, id: number } }) {
 
-    utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        utilsData.socket.off('newParticipant');
-        utilsData.socket.removeListener('newParticipant');
-    })
+		const [messageText, setMessageText] = useState('');
+		const [update, setUpdate] = useState(true);
 
-    utilsData.socket.removeAllListeners('removeParticipantReturn');
+		const [isMute, setMute] = useState(false);
+		const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
 
-    utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        utilsData.socket.off('removeParticipantReturn');
-        utilsData.socket.removeListener('removeParticipantReturn');
-    })
+		utilsData.socket.removeAllListeners('demutedUserInRoom');
 
-    utilsData.socket.removeAllListeners('newMsgReceived');
+		utilsData.socket.on('demutedUserInRoom', function (newParticipantReturn: boolean) {
+			checkIfMute();
+			utilsData.socket.off('demutedUserInRoom');
+			utilsData.socket.removeListener('demutedUserInRoom');
+		})
 
-    utilsData.socket.on('newMsgReceived', function (data: any) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        // const length = itemListHistory.length;
-        // let secu = 0;
-        // while (length == itemListHistory.length && secu < constWhileSecu) {
-        //     getListItem();
-        //     secu++;
-        // }
-        //utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
-        // if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
-        //     delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        // }
-        utilsData.socket.off('newMsgReceived');
-        utilsData.socket.removeListener('newMsgReceived');
-    })
+		utilsData.socket.removeAllListeners('mutedUserInRoom');
 
-    utilsData.socket.removeAllListeners('getAllUsersInRoomReturn');
+		utilsData.socket.on('mutedUserInRoom', function (mutedUserInRoomReturn: boolean) {
+			checkIfMute();
+			utilsData.socket.off('mutedUserInRoom');
+			utilsData.socket.removeListener('mutedUserInRoom');
+		})
 
-    utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log("getAllUsersInRoomReturn: ", data);
-        getListItem(data);
-        utilsData.socket.off('getAllUsersInRoomReturn');
-        utilsData.socket.removeListener('getAllUsersInRoomReturn');
-    })
+		useEffect(() => {
+			console.log("useEffect SendZoneRoomConvers");
+			// if (update) {
+			// 	checkIfMute();
+			// 	setUpdate(false);
+			// }
+		});
 
-    function getYear() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[3])
-            return ("");
-        return (tmp[3]);
-    }
+		const checkIfMute = async () => {
+			await axiosConfig.get('https://10.3.4.5:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+				if (res.data == true) {
+					setMute(true);
+					setTextPlaceHolder("You are mute");
+				}
+				else {
+					setMute(false);
+					setTextPlaceHolder("Your message...");
+				}
+			})
+		};
 
-    function getMonth() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[1])
-            return ("");
-        return (tmp[1]);
-    }
+		function sendMessage() {
+			if (messageText.length <= 0 || isMute)
+				return;
+			const newMsg = {
+				id_sender: userData.userReducer.user?.id,
+				id_receiver: 0,
+				login_sender: userData.userReducer.user?.login,
+				login_receiver: "",
+				userOrRoom: true,
+				room_id: props.roomsConversData.id,
+				room_name: props.roomsConversData.name,
+				text: messageText
+			}
+			utilsData.socket.emit('createMsg', newMsg);
+			setMessageText("");
+		};
 
-    function getDay() {
-        const date = Date();
-        if (!date)
-            return ("");
-        let tmp = date.split(' ');
-        if (!tmp || !tmp[2])
-            return ("");
-        return (tmp[2]);
-    }
+		function SendButton() {
+			if (messageText.length <= 0) {
+				return (
+					<button className="sendButtonDisabled" onClick={sendMessage} disabled={messageText.length <= 0}>
+						send
+					</button>
+				);
+			}
+			else {
+				return (
+					<button onClick={sendMessage} disabled={messageText.length <= 0}>
+						send
+					</button>
+				);
+			}
+		};
 
-    function AffDate(props: { usersTmp: { id: number, login: string, nickname: string, profile_pic: string }[], item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        if (props.item.id_sender == userData.userReducer.user?.id) {
-            if (getYear() != props.item.year)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getMonth() != props.item.month)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getDay() != props.item.day)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-        }
-        else {
-            const user = props.usersTmp.find(obj => obj.id == props.item.id_sender);
-            const nickname = user?.nickname;
-            if (getYear() != props.item.year)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} {props.item.year} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getMonth() != props.item.month)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else if (getDay() != props.item.day)
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.month} {props.item.day} at {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-            else
-                return (
-                    <div className='dateDisplayNone'>
-                        <p>{nickname} - {props.item.hour}:{props.item.minute}</p>
-                    </div>
-                );
-        }
+		return (
+			<div className="send-message">
+				<TextField value={messageText}
+					autoFocus
+					onChange={e => setMessageText(e.target.value)}
+					placeholder={textPlaceHolder}
+					multiline maxRows={5}
+					onKeyDown={(e) => {
+						if (e.keyCode == 13) {
+							e.preventDefault();
+							sendMessage();
+						}
+					}}
+					disabled={isMute}
+				/>
+				<SendButton />
+			</div>
+		);
+	}
 
-    };
-
-    function Item(props: { usersTmp: { id: number, login: string, nickname: string, profile_pic: string }[], item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
-        if (props.item.id_sender == userData.userReducer.user?.id && !props.item.serverMsg) {
-            return (
-                <div className='inItem2'>
-                    <AffDate usersTmp={props.usersTmp} item={props.item} />
-                    <div onMouseOver={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.children[0]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
-                        <p>{props.item.text}</p>
-                    </div>
-                </div>
-            );
-        }
-        else if (props.item.serverMsg) {
-            return (
-                <div className="server_msg">
-                    <p>{props.item.text}</p>
-                </div>
-            );
-        }
-        else {
-            const pp = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.profile_pic;
-            const nickname = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.nickname;
-            const login = props.usersTmp.find(obj => obj.id == props.item.id_sender)?.login;
-            return (
-                <div className='inItem2'>
-                    <div className="picture-message">
-                        <Tooltip title={nickname}>
-                            <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + login) }} src={pp}></img>
-                        </Tooltip>
-                        <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
-                            <p>{props.item.text}</p>
-                        </div>
-                    </div>
-                    <AffDate usersTmp={props.usersTmp} item={props.item} />
-                </div>
-            );
-        }
-    };
-
-    const getUsers = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
-        let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
-        let i = 0;
-        setUsers([]);
-        data.forEach(async (item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-            itemList.push({ id: item.id, login: item.login, nickname: item.nickname, profile_pic: item.profile_pic });
-        });
-        setUsers(itemList);
-        return (itemList);
-    }
-
-    const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
-        const usersTmp = await getUsers(data);
-        await axiosConfig.get('https://10.3.3.5:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
-            let itemList: any[] = []
-            console.log("res: ", res);
-            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
-                itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
-                    <Item usersTmp={usersTmp} item={item} />
-                </div>)
-            });
-            setItemListHistory(itemList);
-        })
-    }
-
-    useEffect(() => {
-		console.log('useEffect aff convers')
-        messagesEndRef.current?.scrollIntoView();
-        // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
-        //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        //     setOldChatNotifTotal(userData.chatNotifReducer.total);
-        // }
-    }, [itemListHistory])
-
-    useEffect(() => {
-		console.log('useEffect aff convers 2')
-        if (update) {
-            setUpdate(false);
-        }
-    });
-
-    // ref={bottom}
-
-    return (
-        <div className="messages" >
-            {itemListHistory}
-            <div ref={messagesEndRef} />
-        </div>
-    );
+	return (
+		<div className="chat">
+			<AffConversTest />
+			{/* <HeaderRoomConvers closeConvers={props.closeConvers} roomsConversData={props.roomsConversData} /> */}
+			<AffConvers roomsConversData={props.roomsConversData} />
+			<SendZoneRoomConvers roomsConversData={props.roomsConversData} />
+		</div>
+	);
 };
 
-export default AffConvers;
+export default AffRoomConvers

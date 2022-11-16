@@ -71,7 +71,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
             return;
         }
         if (user) {
-            await axiosConfig.get('https://10.3.3.5:5001/user/login/' + user.login).then(async (res) => {
+            await axiosConfig.get('https://10.3.4.5:5001/user/login/' + user.login).then(async (res) => {
                 setInputValue("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
@@ -80,7 +80,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                 else {
                     let a = 1;
                     let b = 1;
-                    await axiosConfig.get('https://10.3.3.5:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                    await axiosConfig.get('https://10.3.4.5:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {

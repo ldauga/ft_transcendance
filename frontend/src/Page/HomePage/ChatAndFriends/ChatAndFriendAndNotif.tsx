@@ -48,8 +48,6 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
         setBannedUsers(false);
     }
 
-    console.log("chatandfriend");
-
     useEffect(() => {
 		console.log('useEffect chat and friend')
         if (conversCorrespondantData.login.length == 0) {
@@ -62,11 +60,12 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
         }
         else {
             props.setConversNotif({ name: conversCorrespondantData.login, userOrRoom: false })
-        }
-    }, [conversCorrespondantData, roomsConversData]);
+		}
+    }, [conversCorrespondantData]);
 
     useEffect(() => {
 		console.log('useEffect chat and friend 2')
+		// if (props.isNavChat || props.isNavFriendList || props.isNotif)
         closeAll();
         if (props.isNavChat)
             setChat(true);
@@ -83,7 +82,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
         else if (props.openFriendConversFromProfile) {
             setFriendList(true);
         }
-    }, [props.isNavChat, props.isNotif, props.isNavFriendList]);
+    }, [props.isNavChat, props.isNavFriendList, props.isNotif]);
 
     return (
         <div className="mainAffChatAndFriend">

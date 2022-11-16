@@ -164,11 +164,11 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     const getListItem = async () => {
-        await axiosConfig.get('https://10.3.3.5:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
+        await axiosConfig.get('https://10.3.4.5:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
             if (res.data == true && correspondantIsBlocked == false)
                 setCorrespondantIsBlocked(true);
         });
-        await axiosConfig.get('https://10.3.3.5:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
+        await axiosConfig.get('https://10.3.4.5:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
@@ -236,9 +236,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             <div className="header">
                 <ArrowBackIosNew onClick={closeConvers} />
                 <div className="profile">
-                    <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + props.conversCorrespondantData.login) }} />
+                    <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.4.5:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
-                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
+                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.4.5:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
                         <p><span className='status'></span>online</p>
                     </div>
                 </div>

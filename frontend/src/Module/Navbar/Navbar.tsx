@@ -51,18 +51,18 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 		delAllNotif();
 		setTwoFactor(false);
-		window.location.replace('https://10.3.3.5:3000')
+		window.location.replace('https://10.3.4.5:3000')
 	}
 
 	async function findUserProfile() {
 		if (searchBarContent) {
-			let res = await axiosConfig.get('https://10.3.3.5:5001/user/login/' + searchBarContent);
+			let res = await axiosConfig.get('https://10.3.4.5:5001/user/login/' + searchBarContent);
 			if (!res.data.login)
-				res = await axiosConfig.get('https://10.3.3.5:5001/user/nickname/' + searchBarContent);
+				res = await axiosConfig.get('https://10.3.4.5:5001/user/nickname/' + searchBarContent);
 			if (!res.data.login)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
 			else
-				window.location.replace('https://10.3.3.5:3000/Profile/' + res.data.login);
+				window.location.replace('https://10.3.4.5:3000/Profile/' + res.data.login);
 		}
 		return true;
 	}
@@ -121,7 +121,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			else
 				openFriendList();
 		}
-	}, [props]);
+	}, [props.openFriendConversFromProfile]);
 
 	const closeFriendList = () => {
 		//setConversChatNotif({ name: "", userOrRoom: false });
@@ -155,7 +155,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		setNotif(true);
 	}
 
-	console.log("navbar");
 	return (
 		<div className="App">
 			<nav>

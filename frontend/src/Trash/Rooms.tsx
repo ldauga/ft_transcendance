@@ -95,7 +95,7 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     })
 
     const getListItem = async () => {
-        await axiosConfig.get('https://10.3.3.5:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('https://10.3.4.5:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];
             const nameTmp: { name: string, id: number }[] = res.data;
             nameTmp.forEach(item => {
@@ -115,7 +115,7 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
         for (let i = 0; i < constWhileSecu || oldLength < itemListHistory.length; i++) {
             getListItem();
         }
-    }, [props]);
+    });
 
     function MainAffRoomsItems() {
         if (isCreateGroup)

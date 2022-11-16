@@ -565,7 +565,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     user: any,
     roomId: string
   }) {
-    
+
     console.log('Event FORFEIT')
     var room = this.getRoomByID(info.roomId);
 
@@ -670,7 +670,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       gameRoom: gameRoomClass,
       userLoginToSend: string,
     }) {
-      
+
       console.log('Event INVITE_CUSTOM')
 
     const room = this.getRoomByID("custom" + client.id)
@@ -746,7 +746,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       },
       inviteID: string
     }) {
-      
+
       console.log('Event ACCEPT_INVITATION')
     var room = this.getRoomByID("custom" + info.inviteID)
 
