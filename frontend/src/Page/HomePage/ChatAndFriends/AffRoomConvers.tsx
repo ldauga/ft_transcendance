@@ -34,7 +34,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newParticipant');
 
     utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
     })
@@ -42,7 +42,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -50,7 +50,8 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
-        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        getUsers2();
         // const length = itemListHistory.length;
         // let secu = 0;
         // while (length == itemListHistory.length && secu < constWhileSecu) {
@@ -69,7 +70,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
         console.log("getAllUsersInRoomReturn: ", data);
-        getListItem(data);
+        //getListItem(data);
         utilsData.socket.off('getAllUsersInRoomReturn');
         utilsData.socket.removeListener('getAllUsersInRoomReturn');
     })
@@ -225,8 +226,36 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         })
     }
 
+    const getUsers2 = async () => {
+        let allusers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
+        let users: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
+        await axiosConfig.get('https://localhost:5001/user').then(async (res) => {
+            for (let i = 0; i < res.data.length; i++) {
+                allusers.push({ id: res.data[i].id, login: res.data[i].login, nickname: res.data[i].nickname, profile_pic: res.data[i].profile_pic })
+            }
+        })
+        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
+            for (let i = 0; i < res.data.length; i++) {
+                const _user = allusers.find(obj => obj.login == res.data[i].login);
+                if (_user)
+                    users.push(_user)
+            }
+        })
+        await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+            let itemList: any[] = []
+            console.log("res: ", res);
+            console.log("USERS: ", users);
+            res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
+                itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
+                    <Item usersTmp={users} item={item} />
+                </div>)
+            });
+            setItemListHistory(itemList);
+        })
+    }
+
     useEffect(() => {
-		console.log('useEffect aff convers')
+        console.log('useEffect aff convers')
         messagesEndRef.current?.scrollIntoView();
         // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
         //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
@@ -235,8 +264,10 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }, [itemListHistory])
 
     useEffect(() => {
-		console.log('useEffect aff convers 2')
+        console.log('useEffect aff convers 2')
         if (update) {
+            getUsers2();
+            //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
             setUpdate(false);
         }
     });

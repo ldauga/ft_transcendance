@@ -276,11 +276,27 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                 utilsData.socket.removeListener('getAllParticipantsReturn');
             })
 
+            const getAllParticipant = async () => {
+                let str_nickname = "";
+                await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+                    for (let i = 0; i < res.data.length; i++) {
+                        if (i + 1 < res.data.length) {
+                            str_nickname = str_nickname + res.data[i].login + ", ";
+                        }
+                        else {
+                            str_nickname = str_nickname + res.data[i].login;
+                        }
+                    }
+                    setTextNicknameHeader(str_nickname);
+                })
+            }
+
             useEffect(() => {
                 console.log("useEffect HeaderPrint textNicknameHeader: ", textNicknameHeader);
+                getAllParticipant();
+                // if ()
+                //     utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
                 if (update) {
-                    utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-                    utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
                     setUpdate(false);
                 }
             })
@@ -396,9 +412,19 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     function SendZone() {
         const [messageText, setMessageText] = useState('');
 
+        const [count, setCount] = useState(0);
+
+        useEffect(() => {
+            console.log("count: ", count);
+        })
+
         function sendMessage() {
             if (messageText.length <= 0 || isMute)
                 return;
+            if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
+                console.log("NON");
+                return;
+            }
             const newMsg = {
                 id_sender: userData.userReducer.user?.id,
                 id_receiver: 0,
@@ -411,6 +437,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             }
             utilsData.socket.emit('createMsg', newMsg);
             setMessageText("");
+            setCount(Math.round(((new Date()).valueOf() / 1000)));
         };
 
         function SendButton() {
