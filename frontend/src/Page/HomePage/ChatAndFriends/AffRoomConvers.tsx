@@ -24,7 +24,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [update, setUpdate] = useState(true);
     const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
