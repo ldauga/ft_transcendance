@@ -223,6 +223,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }
 
     useEffect(() => {
+		console.log('useEffect aff convers')
         messagesEndRef.current?.scrollIntoView();
         // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
         //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
@@ -231,6 +232,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }, [itemListHistory])
 
     useEffect(() => {
+		console.log('useEffect aff convers 2')
         if (update) {
             setUpdate(false);
             utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });

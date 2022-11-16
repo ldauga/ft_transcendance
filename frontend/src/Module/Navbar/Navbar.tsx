@@ -105,6 +105,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	})
 
 	useEffect(() => {
+		console.log('useEffect navbar')
 		if (props.openFriendConversFromProfile) {
 			if (isChat) {
 				closeChat();

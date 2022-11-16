@@ -4,6 +4,7 @@ import { actionCreators, RootState } from "../../State";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import InvitationChecker from "../InvitationChecker/InvitationChecker";
+import { useEffect } from "react";
 
 var test = false
 
@@ -15,6 +16,11 @@ function ConnectionChecker(props: {
   const utilsData = useSelector((state: RootState) => state.utils)
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+
+  useEffect(() => {
+		console.log('useEffect connectionChecker')
+
+  })
 
   if (!test) {
       axios.get("https://10.3.3.5:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
