@@ -277,6 +277,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             })
 
             useEffect(() => {
+                console.log("useEffect HeaderPrint textNicknameHeader: ", textNicknameHeader);
                 if (update) {
                     utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
                     utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
