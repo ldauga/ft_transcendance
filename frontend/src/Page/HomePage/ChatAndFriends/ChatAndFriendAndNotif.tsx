@@ -51,6 +51,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
     console.log("chatandfriend");
 
     useEffect(() => {
+		console.log('useEffect chat and friend')
         if (conversCorrespondantData.login.length == 0) {
             if (roomsConversData.name.length == 0) {
                 props.setConversNotif({ name: "", userOrRoom: false })
@@ -65,6 +66,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
     }, [conversCorrespondantData, roomsConversData]);
 
     useEffect(() => {
+		console.log('useEffect chat and friend 2')
         closeAll();
         if (props.isNavChat)
             setChat(true);
