@@ -147,7 +147,7 @@ function StatPlayer() {
 
 	const fetchUser = async () => {
 		if (profile.login) {
-			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
+			const res = await axiosConfig.get('https://10.3.3.5:5001/user/login/' + profile.login)
 			if (res.data !== '') {
 				setProfile({
 					...profile,
@@ -179,13 +179,13 @@ function StatPlayer() {
 				}
 				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			} else
-				location.replace('/https://localhost:3000/NotFound');
+				location.replace('/https://10.3.3.5:3000/NotFound');
 		} else
-			location.replace('/https://localhost:3000/NotFound');
+			location.replace('/https://10.3.3.5:3000/NotFound');
 	}
 
 	const fetchMatchHistory = async () => {
-		await axiosConfig.get('https://localhost:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
+		await axiosConfig.get('https://10.3.3.5:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
 			.then((res) => {
 				let matches: any[] = []
 				res.data.forEach((item: { nickname_user1: string, login_user1: string, score_u1: number, nickname_user2: string, login_user2: string, score_u2: number, winner_nickname: string, date: Date }) => {
@@ -194,11 +194,11 @@ function StatPlayer() {
 							<div className="card">
 								<h3>{item.winner_nickname == profile.nickname ? 'Victory' : 'Defeat'}</h3>
 								<div className='opponent'>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user1) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + item.login_user1) }}>
 										{item.nickname_user1}
 									</span>
 									<span className='score'>{item.score_u1.toString() + '-' + item.score_u2.toString()}</span>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user2) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + item.login_user2) }}>
 										{item.nickname_user2}
 									</span>
 								</div>
@@ -242,7 +242,7 @@ function StatPlayer() {
 
 		var config = {
 			method: 'post',
-			url: 'https://localhost:5001/user/upload',
+			url: 'https://10.3.3.5:5001/user/upload',
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
@@ -262,7 +262,7 @@ function StatPlayer() {
 
 	async function buttonAddFriend() {
 		let test = false;
-		await axiosConfig.get('https://localhost:5001/user/login/' + profile.login).then(async (res) => {
+		await axiosConfig.get('https://10.3.3.5:5001/user/login/' + profile.login).then(async (res) => {
 			let receiver_login_tmp: string = res.data.login;
 			if (res.data == "") {
 				return;
@@ -271,7 +271,7 @@ function StatPlayer() {
 				let a = 1;
 				let b = 1;
 				let c = 1;
-				await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://10.3.3.5:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Invitation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
@@ -279,7 +279,7 @@ function StatPlayer() {
 						a = 2;
 					}
 				})
-				await axiosConfig.get('https://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://10.3.3.5:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Relation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
@@ -287,7 +287,7 @@ function StatPlayer() {
 						b = 2;
 					}
 				})
-				await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
+				await axiosConfig.get('https://10.3.3.5:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
 					}
@@ -371,7 +371,7 @@ function StatPlayer() {
 		const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
 
 		const sendGetRequest = async (value: string) => {
-			const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
+			const res = await axiosConfig.get('https://10.3.3.5:5001/auth/2fa/turn-on/' + value)
 			if (res.request.status === 200) {
 				setTwoFactor(true);
 				setUserParameter2FACode('');
@@ -387,7 +387,7 @@ function StatPlayer() {
 			<>
 				{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
 					<>
-						<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
+						<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://10.3.3.5:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
 						<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
 							<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
 							<DialogContent className='two-fa'>
@@ -403,7 +403,7 @@ function StatPlayer() {
 									autoSelect={true}
 								/>
 							</DialogContent>
-						</Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
+						</Dialog></> : <button onClick={() => { axiosConfig.get('https://10.3.3.5:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
 			</>
 		);
 	}

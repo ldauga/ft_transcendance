@@ -25,9 +25,9 @@ export class AuthController {
 			};
 
 			res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-			res.status(302).redirect(`https://localhost:3000/Login/Callback`);
+			res.status(302).redirect(`https://10.3.3.5:3000/Login/Callback`);
 		} catch(e) {
-			res.status(403).redirect('https://localhost:3000/Login');
+			res.status(403).redirect('https://10.3.3.5:3000/Login');
 		};
 	}
 
@@ -41,7 +41,7 @@ export class AuthController {
 		};
 
 		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-		res.status(302).redirect(`https://localhost:3000/Login/Callback`);
+		res.status(302).redirect(`https://10.3.3.5:3000/Login/Callback`);
 	}
 
 	@Get('2fa/generate')

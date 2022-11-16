@@ -25,10 +25,12 @@ function HomePage() {
 
     const { setIsOpen } = useTour()
 
+    console.log("home page")
+
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {
-			axiosConfig.post('https://localhost:5001/user/firstConnection').then(res => setUser(res.data))
+			axiosConfig.post('https://10.3.3.5:5001/user/firstConnection').then(res => setUser(res.data))
             setIsOpen(true)
 		}
     })
