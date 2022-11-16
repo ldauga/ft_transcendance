@@ -24,7 +24,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [update, setUpdate] = useState(true);
     const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
@@ -226,6 +226,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }
 
     useEffect(() => {
+		console.log('useEffect aff convers')
         messagesEndRef.current?.scrollIntoView();
         // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
         //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
@@ -234,6 +235,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }, [itemListHistory])
 
     useEffect(() => {
+		console.log('useEffect aff convers 2')
         if (update) {
             setUpdate(false);
         }
