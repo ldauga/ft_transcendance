@@ -42,7 +42,7 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
     const createInvitation = async () => {
         const _user = connectedClient.find(obj => obj.nickname == inputValue);
         if (_user) {
-            await axiosConfig.get('https://localhost:5001/user/login/' + _user.username).then(async (res) => {
+            await axiosConfig.get('https://10.64.1.68:5001/user/login/' + _user.username).then(async (res) => {
                 setInputValue("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
@@ -51,14 +51,14 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                 else {
                     let a = 1;
                     let b = 1;
-                    await axiosConfig.get('https://localhost:5001/invitationRequest/checkInvitationRequestForRooms/' + res.data.id + '/' + props.roomsConversData.name).then(async (res) => {
+                    await axiosConfig.get('https://10.64.1.68:5001/invitationRequest/checkInvitationRequestForRooms/' + res.data.id + '/' + props.roomsConversData.name).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
                             a = 2;
                         }
                     })
-                    await axiosConfig.get('https://localhost:5001/participants/check/' + receiver_login_tmp + '/' + props.roomsConversData.name).then(async (res) => {
+                    await axiosConfig.get('https://10.64.1.68:5001/participants/check/' + receiver_login_tmp + '/' + props.roomsConversData.name).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {

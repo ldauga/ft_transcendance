@@ -82,7 +82,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
 
     async function buttonBanUser() {
         let test = false;
-        await axiosConfig.get('https://localhost:5001/user/login/' + props.item.user.login).then(async (res) => {
+        await axiosConfig.get('https://10.64.1.68:5001/user/login/' + props.item.user.login).then(async (res) => {
             let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
                 return;
@@ -90,7 +90,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                await axiosConfig.get('https://10.64.1.68:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                     if (res.data == true) {
                     }
                     else {
@@ -167,7 +167,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
             >
                 {props.item.status == 'in-game' ?
                     <MenuItem
-                        onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Spectate/' + props.item.user.login) }}>
+                        onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.64.1.68:3000/Spectate/' + props.item.user.login) }}>
                         <ListItemIcon>
                             <Person fontSize="small" />
                         </ListItemIcon>
@@ -218,7 +218,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     return (
         <div className="inItemFriendList">
             <div className="inItemFriendList_left">
-                <div className="friend-profile" onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.item.user.login) }}>
+                <div className="friend-profile" onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.64.1.68:3000/Profile/' + props.item.user.login) }}>
                     <div className="picture-status">
                         <div className="status" style={{ backgroundColor: props.item.status == 'online' ? 'rgb(28, 177, 123)' : props.item.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }}></div>
                         <img src={props.item.user.profile_pic} />

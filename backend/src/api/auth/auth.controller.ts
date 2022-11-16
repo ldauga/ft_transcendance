@@ -9,7 +9,7 @@ export class AuthController {
 	constructor(
 		private authService: AuthService,
 		private userServices: UserService
-	) {}
+	) { }
 
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
@@ -25,9 +25,9 @@ export class AuthController {
 			};
 
 			res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-			res.status(302).redirect(`https://localhost:3000/Login/Callback`);
-		} catch(e) {
-			res.status(403).redirect('https://localhost:3000/Login');
+			res.status(302).redirect(`https://10.64.1.68:3000/Login/Callback`);
+		} catch (e) {
+			res.status(403).redirect('https://10.64.1.68:3000/Login');
 		};
 	}
 
@@ -41,7 +41,7 @@ export class AuthController {
 		};
 
 		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-		res.status(302).redirect(`https://localhost:3000/Login/Callback`);
+		res.status(302).redirect(`https://10.64.1.68:3000/Login/Callback`);
 	}
 
 	@Get('2fa/generate')
@@ -87,8 +87,8 @@ export class AuthController {
 			throw new BadRequestException('User not found');
 		const totpsecret = await this.userServices.getTotpSecret(user.login);
 		const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
-				code,
-				totpsecret,
+			code,
+			totpsecret,
 		);
 
 		if (!isCodeValid) {
@@ -116,6 +116,6 @@ export class AuthController {
 			accessToken,
 			refreshToken
 		};
-		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true});
+		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
 	}
 }

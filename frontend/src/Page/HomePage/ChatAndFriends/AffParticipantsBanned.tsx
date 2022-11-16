@@ -25,13 +25,13 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.64.1.68:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.64.1.68:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
@@ -131,7 +131,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         let itemList: any[] = []
         let i = 0;
         data.forEach((item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-            itemList.push(<div key={itemList.length.toString()} className='participant_ban' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+            itemList.push(<div key={itemList.length.toString()} className='participant_ban' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.64.1.68:3000/Profile/' + item.login) }}>
                 <img src={item.profile_pic}></img>
                 <p>{item.nickname}</p>
                 <RightItem login={item.login} id={item.id} admin={admin} />

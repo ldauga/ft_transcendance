@@ -16,21 +16,21 @@ export const constWhileSecu = 10;
 
 
 function HomePage() {
-    
+
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-    
+
     const dispatch = useDispatch();
 
-	const { setUser } = bindActionCreators(actionCreators, dispatch);
+    const { setUser } = bindActionCreators(actionCreators, dispatch);
 
     const { setIsOpen } = useTour()
 
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {
-			axiosConfig.post('https://localhost:5001/user/firstConnection').then(res => setUser(res.data))
+            axiosConfig.post('https://10.64.1.68:5001/user/firstConnection').then(res => setUser(res.data))
             setIsOpen(true)
-		}
+        }
     })
 
     return (
@@ -45,7 +45,7 @@ function HomePage() {
                     <div className="ball"></div>
                 </div>
                 <Tooltip title='Play for the gloire'>
-                <button className='reactour-play' onClick={() => location.href = '/pong'}>Play !</button>
+                    <button className='reactour-play' onClick={() => location.href = '/pong'}>Play !</button>
                 </Tooltip>
             </div>
         </>

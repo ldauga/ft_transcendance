@@ -51,18 +51,18 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 		delAllNotif();
 		setTwoFactor(false);
-		window.location.replace('https://localhost:3000')
+		window.location.replace('https://10.64.1.68:3000')
 	}
 
 	async function findUserProfile() {
 		if (searchBarContent) {
-			let res = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
+			let res = await axiosConfig.get('https://10.64.1.68:5001/user/login/' + searchBarContent);
 			if (!res.data.login)
-				res = await axiosConfig.get('https://localhost:5001/user/nickname/' + searchBarContent);
+				res = await axiosConfig.get('https://10.64.1.68:5001/user/nickname/' + searchBarContent);
 			if (!res.data.login)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
 			else
-				window.location.replace('https://localhost:3000/Profile/' + res.data.login);
+				window.location.replace('https://10.64.1.68:3000/Profile/' + res.data.login);
 		}
 		return true;
 	}
