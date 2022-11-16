@@ -44,6 +44,8 @@ const steps = [
 
 function App() {
 
+  console.log("app")
+
   return (
     <SnackbarProvider maxSnack={5}>
 

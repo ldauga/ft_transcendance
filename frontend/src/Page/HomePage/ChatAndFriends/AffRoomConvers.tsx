@@ -34,7 +34,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newParticipant');
 
     utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        setUpdate(true);
+        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
     })
@@ -42,7 +42,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        setUpdate(true);
+        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -50,6 +50,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
+        utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         // const length = itemListHistory.length;
         // let secu = 0;
         // while (length == itemListHistory.length && secu < constWhileSecu) {
@@ -67,6 +68,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('getAllUsersInRoomReturn');
 
     utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
+        console.log("getAllUsersInRoomReturn: ", data);
         getListItem(data);
         utilsData.socket.off('getAllUsersInRoomReturn');
         utilsData.socket.removeListener('getAllUsersInRoomReturn');
@@ -213,6 +215,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         const usersTmp = await getUsers(data);
         await axiosConfig.get('https://10.3.3.5:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             let itemList: any[] = []
+            console.log("res: ", res);
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item usersTmp={usersTmp} item={item} />
@@ -233,10 +236,8 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     useEffect(() => {
         if (update) {
             setUpdate(false);
-            utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-            // bottom.current?.scrollIntoView();
         }
-    }, [props, update]);
+    });
 
     // ref={bottom}
 

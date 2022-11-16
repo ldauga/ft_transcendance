@@ -16,6 +16,8 @@ function ConnectionChecker(props: {
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
+  console.log("connection checker")
+
   if (!test) {
       axios.get("https://10.3.3.5:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
 

@@ -154,6 +154,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		setNotif(true);
 	}
 
+	console.log("navbar");
 	return (
 		<div className="App">
 			<nav>
@@ -308,7 +309,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 				</div>
 			</nav>
 			<PopupContainer open={openPopup} setClose={() => setOpenPopUp(false)}>
-				<ChatAndFriendAndNotif setLastNbNotif={setLastNbNotif} setOpenPopUp={setOpenPopUp} isNotif={isNotif} isNavChat={isChat} isNavFriendList={isFriendList} closeFriendList={closeFriendList} closeChat={closeChat} closeNotif={closeNotif} openFriendList={openFriendList} openChat={openChat} openNotif={openNotif} openFriendConversFromProfile={props.openFriendConversFromProfile} dataFriendConversFromProfile={props.dataFriendConversFromProfile} setOpenFriendConversFromProfile={props.setOpenFriendConversFromProfile} setConversNotif={setConversNotif} />
+				<ChatAndFriendAndNotif setLastNbNotif={() => {}} setOpenPopUp={() => {}} isNotif={false} isNavChat={false} isNavFriendList={false} closeFriendList={() => {}} closeChat={() => {}} closeNotif={() => {}} openFriendList={() => {}} openChat={() => {}} openNotif={() => {}} openFriendConversFromProfile={false} dataFriendConversFromProfile={() => {}} setOpenFriendConversFromProfile={() => {}} setConversNotif={() => {}} />
 			</PopupContainer>
 		</div>
 	);

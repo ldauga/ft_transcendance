@@ -25,6 +25,8 @@ function HomePage() {
 
     const { setIsOpen } = useTour()
 
+    console.log("home page")
+
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {

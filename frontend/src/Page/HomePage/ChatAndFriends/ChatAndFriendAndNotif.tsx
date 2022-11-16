@@ -14,7 +14,7 @@ import AffUsersBanned from "./AffUsersBanned";
 
 function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {
 
-    const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
+    //const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
     const [isFriendList, setFriendList] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
@@ -48,6 +48,8 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
         setBannedUsers(false);
     }
 
+    console.log("chatandfriend");
+
     useEffect(() => {
         if (conversCorrespondantData.login.length == 0) {
             if (roomsConversData.name.length == 0) {
@@ -73,7 +75,7 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
             setGoToOpenInvitationRequest(false);
         }
         else if (props.isNotif) {
-            props.setLastNbNotif(persistantReduceur.notifReducer.notifArray.length)
+            //props.setLastNbNotif(persistantReduceur.notifReducer.notifArray.length)
             setNotif(true);
         }
         else if (props.openFriendConversFromProfile) {

@@ -101,6 +101,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('storeClientInfo')
   storeClientInfo(client: Socket, user: { login: string }) {
+    console.log('Event storeClientInfo')
 
     let tmp: number;
     console.log("pong");
@@ -164,6 +165,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('JOIN_ROOM')
   async joinRoom(client: Socket, roomId: string) {
+    console.log('Event JOIN_ROOM')
 
     client.join(roomId);
     this.logger.log(`${client.id} join: ${roomId}`)
@@ -245,6 +247,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         profile_pic: string
       }
     }) {
+      console.log('Event CHECK_RECONNEXION')
 
     const room = this.getRoomByClientLogin(info.user.login)
 
@@ -292,20 +295,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('JOIN_QUEUE')
-  async joinQueue(
-    client: Socket,
-    info: {
-      user: {
-        id: number,
-        login: string,
-        nickname: string,
-        wins: number,
-        looses: number,
-        rank: number,
-        profile_pic: string
-      },
-      gameMap: string
-    }) {
+  async joinQueue( client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, gameMap: string }) {
+    console.log('Event JOIN_QUEUE')
 
     this.server.to(client.id).emit('joined')
 
@@ -356,19 +347,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('LEAVE_QUEUE')
-  async leaveQueue(
-    client: Socket,
-    info: {
-      user: {
-        id: number,
-        login: string,
-        nickname: string,
-        wins: number,
-        looses: number,
-        rank: number,
-        profile_pic: string
-      },
-    }) {
+  async leaveQueue( client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string },}) {
+    console.log('Event LEAVE_QUEUE')
     const room = this.getRoomByClientLogin(info.user.login)
 
     if (room != null) {
@@ -380,19 +360,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('SPECTATE_CLIENT')
-  async spectateClient(client: Socket,
-    info: {
-      user: {
-        id: number,
-        login: string,
-        nickname: string,
-        wins: number,
-        looses: number,
-        rank: number,
-        profile_pic: string
-      },
-      specID: string
-    }) {
+  async spectateClient(client: Socket,info: {user: {  id: number,  login: string,  nickname: string,  wins: number,  looses: number,  rank: number,  profile_pic: string},specID: string}) {
+    console.log('Event SPECTATE_CLIENT')
 
     var room = this.getRoomByID(info.specID)
     if (room == null) {
@@ -526,6 +495,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('RENDER')
   async render(client: Socket, roomID: string) {
+    //console.log('Event RENDER')
 
     var room = this.getRoomByID(roomID);
 
@@ -595,7 +565,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     user: any,
     roomId: string
   }) {
-
+    
+    console.log('Event FORFEIT')
     var room = this.getRoomByID(info.roomId);
 
     this.pongInfo[room[0]].players.forEach((item, index) => {
@@ -630,6 +601,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('ENTER')
   async enter(client: Socket, info: [string, boolean]) {
+    console.log('Event ENTER')
     var room = this.getRoomByID(info[0])
     if (room != null) {
       for (let index = 0; index < 2; index++)
@@ -644,6 +616,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('SPACE')
   async space(client: Socket, info: [string, boolean]) {
+    console.log('Event SPACE')
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
@@ -657,6 +630,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('ARROW_UP')
   async arrowUp(client: Socket, info: [string, boolean]) {
+    console.log('Event ARROW_UP')
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
@@ -670,6 +644,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   // info type: string -> roomID | boolean -> value of key (press or release)
   @SubscribeMessage('ARROW_DOWN')
   async arrowDown(client: Socket, info: [string, boolean]) {
+    console.log('Event ARROW_DOWN')
     var room = this.getRoomByID(info[0])
     if (room != null) {
 
@@ -695,7 +670,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       gameRoom: gameRoomClass,
       userLoginToSend: string,
     }) {
-
+      
+      console.log('Event INVITE_CUSTOM')
 
     const room = this.getRoomByID("custom" + client.id)
 
@@ -746,6 +722,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         profile_pic: string
       }
     }) {
+      console.log('Event DECLINE_INVITATION')
 
     const room = this.getRoomByID("custom" + info.sendTo)
 
@@ -769,7 +746,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       },
       inviteID: string
     }) {
-
+      
+      console.log('Event ACCEPT_INVITATION')
     var room = this.getRoomByID("custom" + info.inviteID)
 
 
@@ -798,6 +776,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('GET_ALL_FRIEND_CONNECTED')
   async getAllFriendConnected(client: Socket, info: { user: any }) {
+    console.log('Event GET_ALL_FRIEND_CONNECTED')
 
     const friendList = await this.FriendListService.getUserFriendList(info.user.id)
 
@@ -828,6 +807,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('GET_CLIENT_STATUS')
   async getClientStatus(client: Socket, info: { user: any }) {
+    console.log('Event GET_CLIENT_STATUS')
     if (this.getRoomByClientLogin(info.user.login))
       this.server.to(client.id).emit('getClientStatus', { login: info.user.login, status: 'in-game' })
     else if (arrClient.find((item) => item.username == info.user.login))
@@ -838,11 +818,13 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('AffNotistack')
   async AffNotistack(client: Socket, info: { text: string, type: string }) {
+    console.log('Event AffNotistack')
     this.server.to(client.id).emit('returnAffNotistack', { text: info.text, type: info.type })
   }
 
   @SubscribeMessage('CHECK_IF_IN_GAME')
   async CheckIfInGame(client: Socket, info: { login: string }) {
+    console.log('Event CHECK_IF_IN_GAME')
     const room = this.getRoomByClientLogin(info.login);
     if (room == null)
       this.server.to(client.id).emit('client_not_playing')
@@ -854,6 +836,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('RENDER_SPECTATE')
   async RenderSpectate(client: Socket, info: { login: string }) {
+    console.log('Event RENDER_SPECTATE')
     const room = this.getRoomByClientLogin(info.login);
     if (room != null)
       this.server.to(client.id).emit('render_spectate', room[1])
@@ -866,12 +849,14 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   ///////////////////////////////////////////////////////////
   @SubscribeMessage('friendsListRequest')
   async listFriendsRequest(client: Socket) {
+    console.log('Event friendsListRequest')
     this.logger.log(`${arrClient.find(obj => obj.id === client.id).username} request her friends list`);
     this.server.to(client.id).emit('friendsList', arrClient);
   }
 
   @SubscribeMessage('CHANGE_NICKNAME')
   async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
+    console.log('Event CHANGE_NICKNAME')
 
     this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
       switch (err.response.message) {

@@ -28,7 +28,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isMute, setMute] = useState(false);
     const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
 
-    const [update, setUpdate] = useState(false);
+    const [update, setUpdate] = useState(true);
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
@@ -79,7 +79,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('newParticipant');
 
     utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        setUpdate(true);
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
     })
@@ -95,7 +95,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        setUpdate(true);
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -150,9 +150,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         checkIfAdmin();
         checkIfMute();
         getUsers();
-        if (update)
-            setUpdate(false);
-    }, [update, props]);
+    }, [props]);
 
     const getUsers = async () => {
         let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
@@ -279,8 +277,12 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             })
 
             useEffect(() => {
-                utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-            }, [textNicknameHeader, participants, users])
+                if (update) {
+                    utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+                    utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+                    setUpdate(false);
+                }
+            })
 
             return (
                 <>
@@ -448,11 +450,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }
 
     function AffRoomConvers() {
-
-
-        useEffect(() => {
-        }, [update])
-
+        console.log("affroomconvers");
         return (
             <div className="chat">
                 <Header />
@@ -571,6 +569,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             </Dialog>
         );
     }
+
+    console.log("return roomconvers")
 
     return (
         <div className="roomsConvers">
