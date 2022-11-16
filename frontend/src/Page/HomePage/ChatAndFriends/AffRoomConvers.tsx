@@ -188,7 +188,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
                 <div className='inItem2'>
                     <div className="picture-message">
                         <Tooltip title={nickname}>
-                            <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + login) }} src={pp}></img>
+                            <img onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + login) }} src={pp}></img>
                         </Tooltip>
                         <div onMouseOver={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'date' }} onMouseOut={e => { var child = e.currentTarget.parentElement?.parentElement?.children[1]; if (child) child.className = 'dateDisplayNone' }} className={(props.item.id_sender == userData.userReducer.user?.id ? 'message sender' : 'message receiver')}>
                             <p>{props.item.text}</p>
@@ -213,7 +213,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
         const usersTmp = await getUsers(data);
-        await axiosConfig.get('https://10.3.3.5:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             let itemList: any[] = []
             console.log("res: ", res);
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {

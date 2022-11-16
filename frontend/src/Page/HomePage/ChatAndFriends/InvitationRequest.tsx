@@ -58,7 +58,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     }
 
     const getListItem = async () => {
-        await axiosConfig.get('https://10.3.3.5:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>

@@ -9,6 +9,7 @@ import gold_rank_img from '../../Assets/rank/gold_rank.png'
 import diamond_rank_img from '../../Assets/rank/diamond_rank.png'
 import silver_rank_img from '../../Assets/rank/silver_rank.png'
 import platinium_rank_img from '../../Assets/rank/platinium_rank.png'
+import { Tooltip } from '@mui/material';
 
 function LeaderBoard() {
 
@@ -16,7 +17,7 @@ function LeaderBoard() {
 
 	useEffect(() => {
 		if (!rows.length) {
-			axiosConfig.get('https://10.3.3.5:5001/user').then(res => {
+			axiosConfig.get('https://localhost:5001/user').then(res => {
 
 				let tmp = res.data
 
@@ -34,6 +35,20 @@ function LeaderBoard() {
 			})
 		}
 	})
+
+	function ToolTipHelper(wins: number) {
+		if (!wins)
+			return 'Unranked'
+		else if (wins < 5)
+			return 'Bronze'
+		else if (wins < 10)
+			return 'Silver'
+		else if (wins < 20)
+			return 'Gold'
+		else if (wins < 50)
+			return 'Platinium'
+		else return 'Diamond'
+	}
 
 	return (
 		<>
@@ -54,16 +69,20 @@ function LeaderBoard() {
 					<table>
 						<tbody>
 							{rows.map((row) => (
-								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.3.3.5:3000/Profile/' + row.login) }} key={row.nickname}>
+								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.login) }} key={row.nickname}>
 									<td><div className="user"><img src={row.profile_pic} /> <span>{row.nickname}</span></div></td>
-									<td><img src={
+									<td>
+										<Tooltip title={ToolTipHelper(row.wins)}>
+										<img src={
 										!row.wins ? unranked :
 											row.wins < 5 ? bronze_rank_img :
 												row.wins < 10 ? silver_rank_img :
 													row.wins < 20 ? gold_rank_img :
 														row.wins < 50 ? platinium_rank_img :
 															diamond_rank_img
-									} /></td>
+										} />
+										</Tooltip>
+									</td>
 									<td>{row.wins}</td>
 									<td>{row.losses}</td>
 								</tr>

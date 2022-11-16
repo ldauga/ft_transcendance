@@ -66,7 +66,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													// window.location.href = 'https://10.3.3.5:3000/pong'
+													// window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -89,7 +89,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'https://10.3.3.5:3000/pong'
+													window.location.href = 'https://localhost:3000/pong'
 												}} >RECONNECT</button>
 											</div>
 										</div>

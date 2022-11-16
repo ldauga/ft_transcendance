@@ -135,7 +135,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfOwner = async () => {
-        await axiosConfig.get('https://10.3.3.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setOwner(true);
             }
@@ -159,9 +159,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         setPp2("");
         setUsers([]);
         setParticipants([]);
-        await axiosConfig.get('https://10.3.3.5:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('https://10.3.3.5:5001/user/id/' + item.id).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                     if (i == 0) {
                         setPp1(res.data.profile_pic);
                         i++;
@@ -175,10 +175,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             });
             setParticipants(itemList);
         })
-        await axiosConfig.get('https://10.3.3.5:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach(async (item: { login: string, id: number }) => {
                 if (!itemList.find(obj => obj.login == item.login))
-                    await axiosConfig.get('https://10.3.3.5:5001/user/id/' + item.id).then(async (res) => {
+                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
                         itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                     });
             });
@@ -462,13 +462,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('https://10.3.3.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('https://10.3.3.5:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
@@ -477,7 +477,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfMute = async () => {
-        await axiosConfig.get('https://10.3.3.5:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setMute(true);
                 setTextPlaceHolder("You are mute");
