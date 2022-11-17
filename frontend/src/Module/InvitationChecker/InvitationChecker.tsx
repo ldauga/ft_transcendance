@@ -22,7 +22,7 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setUser, setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
+	const { setUser, setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload, setInviteCheck } = bindActionCreators(actionCreators, dispatch);
 
 	utilsData.socket.off('start_invite_game')
 
@@ -35,12 +35,16 @@ function InvitationChecker(props: { children: any }) {
 	}
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
+		if (persistantReducer.inviteCheckReducer)
+			setInviteCheck(false)
+			
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('https://localhost:3000/Pong')
+
 	});
 
 	function verifInvitationRequest() {
-		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
+		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
@@ -81,7 +85,6 @@ function InvitationChecker(props: { children: any }) {
 	useEffect(() => {
 		console.log('useEffect invitation Checker')
 		if (!test) {
-			// if ()
 			verifInvitationRequest()
 			test = true
 		}

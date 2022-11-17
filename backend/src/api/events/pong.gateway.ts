@@ -77,13 +77,34 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     const allRoom = this.getAllRoomByClientID(client.id)
     for (let i = 0; i < allRoom.length; i++) {
-      for (let index = 0; index < this.pongInfo[allRoom[i].index].players.length; index++) {
-        if (this.pongInfo[allRoom[i].index].players[index].id == client.id) {
-          this.pongInfo[allRoom[i].index].players[index].connected = false
-          this.pongInfo[allRoom[i].index].players[index].dateDeconnection = Date.now()
-        }
-      }
+
+      this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].connected = false
+      this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].dateDeconnection = Date.now()
+
       if (this.pongInfo[allRoom[i].index].players.length == 1 || (!this.pongInfo[allRoom[i].index].players[0].connected && !this.pongInfo[allRoom[i].index].players[1].connected && !this.pongInfo[allRoom[i].index].firstConnectionInviteProfie)) {
+
+        this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].score = 3
+
+        const data = {
+          id_user1: this.pongInfo[allRoom[i].index].players[0].user.id,
+          score_u1: this.pongInfo[allRoom[i].index].players[0].score,
+          id_user2: this.pongInfo[allRoom[i].index].players[1].user.id,
+          score_u2: this.pongInfo[allRoom[i].index].players[1].score,
+          winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
+        }
+
+        //const match = http.post('https://localhost:5001/matchesHistory', data);
+        const match = this.MatchesHistoryService.createMatch(data);
+
+        this.pongInfo[allRoom[i].index].players.forEach((item, index) => {
+          if (!item.connected && item.id != client.id) {
+            arrClient.forEach((client) => {
+              if (client.username == item.user.login)
+                this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[allRoom[i].index].players[index ? 0 : 1].user.login, roomId: this.pongInfo[allRoom[i].index].roomID } })
+            })
+          }
+        })
+
         this.logger.log(`Room ${allRoom[i].room.roomID} has been deleted.`)
         this.pongInfo.splice(allRoom[i].index, 1)
       }
@@ -247,7 +268,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         profile_pic: string
       }
     }) {
-      console.log('Event CHECK_RECONNEXION')
+    console.log('Event CHECK_RECONNEXION')
 
     const room = this.getRoomByClientLogin(info.user.login)
 
@@ -295,7 +316,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('JOIN_QUEUE')
-  async joinQueue( client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, gameMap: string }) {
+  async joinQueue(client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, gameMap: string }) {
     console.log('Event JOIN_QUEUE')
 
     this.server.to(client.id).emit('joined')
@@ -347,7 +368,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('LEAVE_QUEUE')
-  async leaveQueue( client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string },}) {
+  async leaveQueue(client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, }) {
     console.log('Event LEAVE_QUEUE')
     const room = this.getRoomByClientLogin(info.user.login)
 
@@ -360,7 +381,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('SPECTATE_CLIENT')
-  async spectateClient(client: Socket,info: {user: {  id: number,  login: string,  nickname: string,  wins: number,  looses: number,  rank: number,  profile_pic: string},specID: string}) {
+  async spectateClient(client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, specID: string }) {
     console.log('Event SPECTATE_CLIENT')
 
     var room = this.getRoomByID(info.specID)
@@ -385,10 +406,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(client.id).emit('start_spectate', client.id);
   }
 
-  @Interval(3)
+  @Interval(16)
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
       if (this.pongInfo[index].started) {
+        console.log(this.pongInfo[index].ball)
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
             this.pongInfo[index].players[i].ready = false
@@ -479,32 +501,27 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
               })
 
-
-
-              return;
             }
 
-            return this.server.to(this.pongInfo[index].players[i ? 0 : 1].id).emit('deconected')
+            // return this.server.to(this.pongInfo[index].players[i ? 0 : 1].id).emit('deconected')
           }
-        if (!(this.pongInfo[index].players[0].score == 3 || this.pongInfo[index].players[1].score == 3))
-          if (this.pongInfo[index].players[0].ready && this.pongInfo[index].players[1].ready)
-            this.pongInfo[index].moveAll();
+          else if (this.pongInfo[index].players[i ? 0 : 1].connected)
+            if (!(this.pongInfo[index].players[0].score == 3 || this.pongInfo[index].players[1].score == 3))
+              if (this.pongInfo[index].players[0].ready && this.pongInfo[index].players[1].ready)
+                this.pongInfo[index].moveAll();
+
+        this.render(this.pongInfo[index].roomID)
+
       }
     }
   }
 
-  @SubscribeMessage('RENDER')
-  async render(client: Socket, roomID: string) {
+  async render(roomID: string) {
     //console.log('Event RENDER')
 
     var room = this.getRoomByID(roomID);
 
     if (room != null) {
-
-      if (room[1].spectate.find(spectator => spectator.id == client.id, true) != undefined) {
-        this.server.to(client.id).emit('render', this.pongInfo[room[0]])
-        return
-      }
 
       if (this.pongInfo[room[0]].players[0].score == 3 || this.pongInfo[room[0]].players[1].score == 3) {
 
@@ -555,7 +572,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         return;
       }
 
-      this.server.to(client.id).emit('render', this.pongInfo[room[0]])
+      this.server.to(roomID).emit('render', this.pongInfo[room[0]])
 
     }
   }
@@ -565,7 +582,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     user: any,
     roomId: string
   }) {
-    
+
     console.log('Event FORFEIT')
     var room = this.getRoomByID(info.roomId);
 
@@ -606,7 +623,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (room != null) {
       for (let index = 0; index < 2; index++)
         if (this.pongInfo[room[0]].players[index].id == client.id)
-          if (!(this.pongInfo[room[0]].players[index].ready && this.pongInfo[room[0]].players[index ? 0 : 1].ready)) {
+          if (!this.pongInfo[room[0]].players[0].ready || !this.pongInfo[room[0]].players[1].ready) {
             this.pongInfo[room[0]].players[index].ready = !this.pongInfo[room[0]].players[index].ready
             if (this.pongInfo[room[0]].players[index ? 0 : 1].ready && this.pongInfo[room[0]].firstConnectionInviteProfie)
               this.pongInfo[room[0]].firstConnectionInviteProfie = false
@@ -670,8 +687,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       gameRoom: gameRoomClass,
       userLoginToSend: string,
     }) {
-      
-      console.log('Event INVITE_CUSTOM')
+
+    console.log('Event INVITE_CUSTOM')
 
     const room = this.getRoomByID("custom" + client.id)
 
@@ -681,8 +698,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.joinRoom(client, "custom" + client.id)
 
     info.gameRoom.roomID = "custom" + client.id
-    info.gameRoom.players[0].connected = true
-    info.gameRoom.players[0].id = client.id
 
     for (let index = 0; index < info.gameRoom.map.obstacles.length; index++) {
       info.gameRoom.map.obstacles[index].initialX = info.gameRoom.map.obstacles[index].x
@@ -690,17 +705,19 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       info.gameRoom.map.obstacles[index].initialHeight = info.gameRoom.map.obstacles[index].height
     }
 
-    this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, "map1"))
+    const index = this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, "map1")) - 1
 
-    this.pongInfo[this.pongInfo.length - 1].map.obstacles = info.gameRoom.map.obstacles
+    this.pongInfo[index].map.obstacles = info.gameRoom.map.obstacles
 
-    this.pongInfo[this.pongInfo.length - 1].ball.x = info.gameRoom.ball.x
-    this.pongInfo[this.pongInfo.length - 1].ball.y = info.gameRoom.ball.y
+    this.pongInfo[index].ball.x = info.gameRoom.ball.x
+    this.pongInfo[index].ball.y = info.gameRoom.ball.y
 
     if (info.gameRoom.ball.initial_x >= 0) {
-      this.pongInfo[this.pongInfo.length - 1].ball.x = this.pongInfo[this.pongInfo.length - 1].ball.initial_x = info.gameRoom.ball.initial_x
-      this.pongInfo[this.pongInfo.length - 1].ball.y = this.pongInfo[this.pongInfo.length - 1].ball.initial_y = info.gameRoom.ball.initial_y
+      this.pongInfo[index].ball.x = this.pongInfo[index].ball.initial_x = info.gameRoom.ball.initial_x
+      this.pongInfo[index].ball.y = this.pongInfo[index].ball.initial_y = info.gameRoom.ball.initial_y
     }
+
+    this.pongInfo[index].players.forEach(player => player.sendNotif = false)
 
     arrClient.forEach((item) => {
       if (info.userLoginToSend == item.username)
@@ -722,7 +739,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         profile_pic: string
       }
     }) {
-      console.log('Event DECLINE_INVITATION')
+    console.log('Event DECLINE_INVITATION')
 
     const room = this.getRoomByID("custom" + info.sendTo)
 
@@ -746,8 +763,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       },
       inviteID: string
     }) {
-      
-      console.log('Event ACCEPT_INVITATION')
+
+    console.log('Event ACCEPT_INVITATION')
     var room = this.getRoomByID("custom" + info.inviteID)
 
 
@@ -760,7 +777,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.pongInfo[room[0]].setOponnent(client.id, info.user)
 
       this.pongInfo[room[0]].players[1].connected = true
-      this.pongInfo[room[0]].players[1].sendNotif = true
+      // this.pongInfo[room[0]].players[1].sendNotif = true
 
       this.pongInfo[room[0]].firstConnectionInviteProfie = true
 
