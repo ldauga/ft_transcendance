@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
 import { bindActionCreators } from 'redux';
 import AffConvers from './AffRoomConvers';
+import { useSnackbar } from 'notistack';
 
 function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setRoomsConvers: Function, roomsConversData: { name: string, id: number }, oldAffRoomConvers: string, setChat: Function, setRoomsConversData: Function }) {
 
@@ -27,6 +28,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isAdmin, setAdmin] = useState(false);
     const [isMute, setMute] = useState(false);
     const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [update, setUpdate] = useState(true);
 
@@ -137,7 +140,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfOwner = async () => {
-        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setOwner(true);
             }
@@ -161,9 +164,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         setPp2("");
         setUsers([]);
         setParticipants([]);
-        await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach(async (item: { login: string, id: number }) => {
-                await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                await axiosConfig.get('https://10.3.2.5:5001/user/id/' + item.id).then(async (res) => {
                     if (i == 0) {
                         setPp1(res.data.profile_pic);
                         i++;
@@ -177,10 +180,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             });
             setParticipants(itemList);
         })
-        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach(async (item: { login: string, id: number }) => {
                 if (!itemList.find(obj => obj.login == item.login))
-                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
+                    await axiosConfig.get('https://10.3.2.5:5001/user/id/' + item.id).then(async (res) => {
                         itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
                     });
             });
@@ -280,7 +283,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
             const getAllParticipant = async () => {
                 let str_nickname = "";
-                await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://10.3.2.5:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
                     for (let i = 0; i < res.data.length; i++) {
                         if (i + 1 < res.data.length) {
                             str_nickname = str_nickname + res.data[i].login + ", ";
@@ -492,13 +495,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
@@ -507,7 +510,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     };
 
     const checkIfMute = async () => {
-        await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/muteList/checkRoomMute/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name).then(async (res) => {
             if (res.data == true) {
                 setMute(true);
                 setTextPlaceHolder("You are mute");
@@ -535,18 +538,22 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         };
 
         const updateSettings = async () => {
-            if (password.length <= 0) {
+            if (password.length <= 0 && passwordOrNot) {
+				enqueueSnackbar('Empty password.', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
-            if (password.length > 10) {
+            if (password.length > 10 && passwordOrNot) {
+				enqueueSnackbar('Password too long. (10 char. max.)', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
-            if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")) {
+            if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890") && passwordOrNot) {
+				enqueueSnackbar('Allowed characters: only alpha and only digits.', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
-            if (password.length >= 0) {
+            if (password.length >= 0 || !passwordOrNot) {
                 const newPassword = {
                     login: userData.userReducer.user?.login,
+					room_id: props.roomsConversData.id,
                     room_name: props.roomsConversData.name,
                     passwordOrNot: passwordOrNot,
                     password: password

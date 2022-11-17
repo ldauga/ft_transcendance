@@ -93,7 +93,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
         }
 
-        //const match = http.post('https://localhost:5001/matchesHistory', data);
+        //const match = http.post('https://10.3.2.5:5001/matchesHistory', data);
         const match = this.MatchesHistoryService.createMatch(data);
 
         this.pongInfo[allRoom[i].index].players.forEach((item, index) => {
@@ -464,7 +464,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
               }
 
-              //const match = http.post('https://localhost:5001/matchesHistory', data);
+              //const match = http.post('https://10.3.2.5:5001/matchesHistory', data);
               const match = this.MatchesHistoryService.createMatch(data);
 
               room[1].players.forEach((item, index) => {
@@ -871,31 +871,31 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(client.id).emit('friendsList', arrClient);
   }
 
-  @SubscribeMessage('CHANGE_NICKNAME')
-  async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
-    console.log('Event CHANGE_NICKNAME')
+//   @SubscribeMessage('CHANGE_NICKNAME')
+//   async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
+//     console.log('Event CHANGE_NICKNAME')
 
-    this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
-      switch (err.response.message) {
-        case 'Cannot set identical nickname':
-          this.server.to(client.id).emit('changeNicknameError', 'identical-nickname')
-          break;
-        case 'Nickname already used':
-          this.server.to(client.id).emit('changeNicknameError', 'already-used')
-          break;
-        case 'No special char':
-          this.server.to(client.id).emit('changeNicknameError', 'special-char')
-          break;
-        case 'Nickname too short':
-          this.server.to(client.id).emit('changeNicknameError', 'too-short')
-          break;
-        case 'Cannot use someone\'s login as a nickname.':
-          this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
-          break;
-      }
-    }).then((res) => {
-      if (res != undefined)
-        this.server.to(client.id).emit('changeNicknameSuccess', res)
-    })
-  }
+//     this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
+//       switch (err.response.message) {
+//         case 'Cannot set identical nickname':
+//           this.server.to(client.id).emit('changeNicknameError', 'identical-nickname')
+//           break;
+//         case 'Nickname already used':
+//           this.server.to(client.id).emit('changeNicknameError', 'already-used')
+//           break;
+//         case 'No special char':
+//           this.server.to(client.id).emit('changeNicknameError', 'special-char')
+//           break;
+//         case 'Nickname too short':
+//           this.server.to(client.id).emit('changeNicknameError', 'too-short')
+//           break;
+//         case 'Cannot use someone\'s login as a nickname.':
+//           this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
+//           break;
+//       }
+//     }).then((res) => {
+//       if (res != undefined)
+//         this.server.to(client.id).emit('changeNicknameSuccess', res)
+//     })
+//   }
 }

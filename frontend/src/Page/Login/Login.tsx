@@ -15,13 +15,13 @@ function Login(props: { user?: any }) {
 	function onClick42Login() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-df0f4dd2427878ccac15324ec302d9143641c88217994dd66796c42c8eba923b&redirect_uri=https%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
+		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-df0f4dd2427878ccac15324ec302d9143641c88217994dd66796c42c8eba923b&redirect_uri=https%3A%2F%2F10.3.2.5%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
 	}
 
 	function onClickLoginSans42() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://localhost:5001/auth/loginSans42/` + login, '_self')
+		window.open(`https://10.3.2.5:5001/auth/loginSans42/` + login, '_self')
 	}
 
 	return (

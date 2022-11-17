@@ -95,7 +95,7 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     })
 
     const getListItem = async () => {
-        await axiosConfig.get('https://localhost:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
+        await axiosConfig.get('https://10.3.2.5:5001/participants/userRooms/' + userData.userReducer.user?.login).then(async (res) => {
             let itemList: any[] = [];
             const nameTmp: { name: string, id: number }[] = res.data;
             nameTmp.forEach(item => {

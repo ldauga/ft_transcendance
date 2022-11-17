@@ -16,9 +16,9 @@ export const constWhileSecu = 10;
 
 
 function HomePage() {
-    
+
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-    
+
     const dispatch = useDispatch();
 
 	const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -30,7 +30,7 @@ function HomePage() {
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {
-			axiosConfig.post('https://localhost:5001/user/firstConnection').then(res => setUser(res.data))
+			axiosConfig.post('https://10.3.2.5:5001/user/firstConnection').then(res => setUser(res.data))
             setIsOpen(true)
 		}
     })

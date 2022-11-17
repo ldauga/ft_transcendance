@@ -37,14 +37,14 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
 		if (persistantReducer.inviteCheckReducer)
 			setInviteCheck(false)
-			
+
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://localhost:3000/Pong')
+		window.location.replace('https://10.3.2.5:3000/Pong')
 
 	});
 
 	function verifInvitationRequest() {
-		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
+		axiosConfig.get('https://10.3.2.5:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
@@ -61,7 +61,10 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.removeAllListeners('notif');
 
 	utilsData.socket.on('notif', function (notif: { type: NotifType, data?: Dictionary<any> }) {
+		console.log('notif', notif)
+		console.log('notif arr', persistantReducer.notifReducer.notifArray)
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
+
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
 				return;
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.GAMEINVITE && notif.type == NotifType.GAMEINVITE && persistantReducer.notifReducer.notifArray[index].data.inviteUser.login == notif.data?.inviteUser.login)

@@ -31,7 +31,7 @@ function Spectate() {
 
 
                 history.pushState({}, '', window.URL.toString())
-                window.location.replace('https://localhost:3000/NotFound')
+                window.location.replace('https://10.3.2.5:3000/NotFound')
             }
             else {
                 utilsData.socket.emit('CHECK_IF_IN_GAME', { login: window.location.href.toString().split('/').reverse()[0] })
@@ -44,7 +44,7 @@ function Spectate() {
 
     utilsData.socket.on('client_not_playing', function () {
         history.pushState({}, '', window.URL.toString())
-        window.location.replace('https://localhost:3000/NotFound')
+        window.location.replace('https://10.3.2.5:3000/NotFound')
     })
 
     utilsData.socket.on('start_spectate', function () {
@@ -280,7 +280,7 @@ function Spectate() {
 
         let U, H;
         setTimeout(function () {
-            window.location.replace('https://localhost:3000');
+            window.location.replace('https://10.3.2.5:3000');
         }, 5000);
 
         U = finishRoom?.players[0]
