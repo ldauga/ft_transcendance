@@ -81,7 +81,7 @@ class Player {
 		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
 
-		this.speed = 1
+		this.speed = 5
 
 		this.score = 0
 
@@ -99,7 +99,7 @@ class Player {
 		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
 
-		this.speed = 1
+		this.speed = 5
 	}
 
 }
@@ -172,11 +172,9 @@ class Ball {
 
 		this.dx = random(0, 1) ? -1 : 1
 
-		this.x += this.dx * 100
-
 		this.dy = 0
 
-		this.speed = 1
+		this.speed = 5
 
 		this.radius = 10
 
@@ -200,7 +198,7 @@ class Ball {
 		this.dx = random(0, 1) ? -1 : 1
 		this.dy = 0
 
-		this.speed = 1
+		this.speed = 5
 
 		this.radius = 10
 
@@ -243,6 +241,8 @@ class Obstacle {
 	speed: number
 	initialSpeed: number
 
+	verif: number
+
 	id: number
 
 	constructor(color: string, x: number, y: number, width: number, height: number, state: number, speed: number = 0) {
@@ -261,6 +261,8 @@ class Obstacle {
 
 		this.speed = speed
 		this.initialSpeed = speed
+
+		this.verif = 0
 
 		this.id = 0;
 	}
@@ -283,7 +285,7 @@ class Map {
 		}
 		if (gameMap == 'map1')
 			this.mapColor = 'black'
-		else if (gameMap == 'map2'){
+		else if (gameMap == 'map2') {
 			this.mapColor = 'black'
 			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, MOTION, 0.4))
 		}
@@ -299,6 +301,7 @@ class Map {
 			this.obstacles[index].y = this.obstacles[index].initialY
 			this.obstacles[index].height = this.obstacles[index].initialHeight
 			this.obstacles[index].speed = this.obstacles[index].initialSpeed
+			this.obstacles[index].verif = 0
 		}
 	}
 
@@ -313,6 +316,7 @@ class gameRoomClass {
 	roomID: string
 
 	started: boolean
+	firstConnectionInviteProfie: boolean
 
 	map: Map
 
@@ -336,6 +340,7 @@ class gameRoomClass {
 		this.roomID = roomId
 
 		this.started = false
+		this.firstConnectionInviteProfie = false
 
 		this.canvas = new Canvas()
 
@@ -434,18 +439,25 @@ class gameRoomClass {
 
 	movePlayer() {
 		for (let i = 0; i < 2; i++) {
-			if (this.players[i].up)
-				if (this.players[i].y >= this.players[i].speed)
-					this.players[i].y -= this.players[i].speed
-			if (this.players[i].down)
-				if (this.players[i].y + this.players[i].height < this.canvas.height)
+			if (this.players[i].cheat) {
+				if (this.ball.y > this.players[i].y + this.players[i].height / 2)
 					this.players[i].y += this.players[i].speed
-			if (this.players[i].expansion)
-				if (this.players[i].height < this.canvas.height)
-					this.players[i].height++
-			if (this.players[i].reduce)
-				if (this.players[i].height > this.canvas.height / 6)
-					this.players[i].height--
+				else if (this.ball.y < this.players[i].y + this.players[i].height / 2)
+					this.players[i].y -= this.players[i].speed
+			} else {
+				if (this.players[i].up)
+					if (this.players[i].y >= this.players[i].speed)
+						this.players[i].y -= this.players[i].speed
+				if (this.players[i].down)
+					if (this.players[i].y + this.players[i].height < this.canvas.height)
+						this.players[i].y += this.players[i].speed
+				if (this.players[i].expansion)
+					if (this.players[i].height < this.canvas.height)
+						this.players[i].height++
+				if (this.players[i].reduce)
+					if (this.players[i].height > this.canvas.height / 6)
+						this.players[i].height--
+			}
 		}
 	}
 
@@ -469,17 +481,39 @@ class gameRoomClass {
 
 	checkCollisionObstacle(obstacle: Obstacle): boolean {
 
-		var ptop = obstacle.y
-		var pbottom = obstacle.y + obstacle.height
-		var pleft = obstacle.x
-		var pright = obstacle.x + obstacle.width
+		const distX = Math.abs(this.ball.x - obstacle.x - obstacle.width / 2);
+		const distY = Math.abs(this.ball.y - obstacle.y - obstacle.height / 2);
 
-		var btop = this.ball.y - this.ball.radius
-		var bbottom = this.ball.y + this.ball.radius
-		var bleft = this.ball.x - this.ball.radius
-		var bright = this.ball.x + this.ball.radius
+		if (distX > (obstacle.width / 2 + this.ball.radius)) {
+			return false;
+		}
+		if (distY > (obstacle.height / 2 + this.ball.radius)) {
+			return false;
+		}
 
-		return pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop
+		if (distX <= (obstacle.width / 2)) {
+			return true;
+		}
+		if (distY <= (obstacle.height / 2)) {
+			return true;
+		}
+
+		const Δx = distX - obstacle.width / 2;
+		const Δy = distY - obstacle.height / 2;
+		return Δx * Δx + Δy * Δy <= this.ball.radius * this.ball.radius;
+
+
+		// var ptop = obstacle.y
+		// var pbottom = obstacle.y + obstacle.height
+		// var pleft = obstacle.x
+		// var pright = obstacle.x + obstacle.width
+
+		// var btop = this.ball.y - this.ball.radius
+		// var bbottom = this.ball.y + this.ball.radius
+		// var bleft = this.ball.x - this.ball.radius
+		// var bright = this.ball.x + this.ball.radius
+
+		// return pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop
 	}
 
 	moveBall() {
@@ -534,25 +568,33 @@ class gameRoomClass {
 				this.ball.dx = direction * this.ball.speed * Math.cos(angleRad)
 				this.ball.dy = this.ball.speed * Math.sin(angleRad)
 
-				if (this.ball.speed < 2) {
-					this.ball.speed += 0.1
-					this.players[0].speed += 0.1
-					this.players[1].speed += 0.1
+				if (this.ball.speed < 20) {
+					this.ball.speed += 1
+					this.players[0].speed += 1
+					this.players[1].speed += 1
 				}
 				// augmente la vitesse de la balle à chaque contact avec un joueur
 			}
 
 		for (let index = 0; index < this.map.obstacles.length; index++) {
 
-			if (this.checkCollisionObstacle(this.map.obstacles[index])) {
+			if (this.checkCollisionObstacle(this.map.obstacles[index]) && !this.map.obstacles[index].verif) {
 
-				if (this.ball.x - this.ball.radius < this.map.obstacles[index].x ||
-					this.ball.x + this.ball.radius > this.map.obstacles[index].x + this.map.obstacles[index].width)
-					this.ball.dx *= -1
-				if (this.ball.y - this.ball.radius < this.map.obstacles[index].y ||
-					this.ball.y + this.ball.radius > this.map.obstacles[index].y + this.map.obstacles[index].height)
-					this.ball.dy *= -1
+				this.map.obstacles[index].verif = 30
 
+				if (this.ball.x + this.ball.radius < this.map.obstacles[index].x + this.map.obstacles[index].width) {
+					this.ball.dx *= -1;
+				}
+
+				if (this.ball.x - this.ball.radius > this.map.obstacles[index].x) {
+					this.ball.dx *= -1;
+				}
+				if (this.ball.y + this.ball.radius < this.map.obstacles[index].y + this.map.obstacles[index].height) {
+					this.ball.dy *= -1;
+				}
+				if (this.ball.y - this.ball.radius > this.map.obstacles[index].y) {
+					this.ball.dy *= -1;
+				}
 			}
 		}
 
@@ -564,8 +606,11 @@ class gameRoomClass {
 	moveObstacle() {
 		for (let index = 0; index < this.map.obstacles.length; index++) {
 			if (this.map.obstacles[index].state == MOTION) {
-				if (this.checkCollisionObstacle(this.map.obstacles[index]))
+				if (this.checkCollisionObstacle(this.map.obstacles[index]) || this.map.obstacles[index].verif) {
+					if (this.map.obstacles[index].verif)
+						this.map.obstacles[index].verif--;
 					return
+				}
 				if (this.map.obstacles[index].y + this.map.obstacles[index].height / 2 < this.ball.y)
 					if (this.map.obstacles[index].y + this.map.obstacles[index].height < this.canvas.height - this.ball.radius * 2 - this.map.obstacles[index].speed)
 						this.map.obstacles[index].y += this.map.obstacles[index].speed
@@ -574,11 +619,14 @@ class gameRoomClass {
 						this.map.obstacles[index].y -= this.map.obstacles[index].speed
 			}
 			else if (this.map.obstacles[index].state == EXPAND) {
+				this.map.obstacles[index].verif = 0
 				this.map.obstacles[index].height += this.map.obstacles[index].speed
 				this.map.obstacles[index].y -= this.map.obstacles[index].speed / 2
 				if (this.map.obstacles[index].height == this.map.obstacles[index].initialHeight || this.map.obstacles[index].height == this.canvas.height)
 					this.map.obstacles[index].speed *= -1
 			}
+			else if (this.map.obstacles[index].verif)
+				this.map.obstacles[index].verif = 0
 		}
 	}
 
@@ -601,10 +649,6 @@ class gameRoomClass {
 			this.ball.dx = -1
 		else
 			this.ball.dx = random(0, 1) ? -1 : 1
-
-
-		if (this.ball.initial_x < 0)
-			this.ball.x += this.ball.dx * 100
 
 		for (let i = 0; i < 2; i++)
 			this.players[i].resetPos(this.canvas)
