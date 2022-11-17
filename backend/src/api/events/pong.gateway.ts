@@ -83,15 +83,18 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
       if (this.pongInfo[allRoom[i].index].players.length == 1 || (!this.pongInfo[allRoom[i].index].players[0].connected && !this.pongInfo[allRoom[i].index].players[1].connected && !this.pongInfo[allRoom[i].index].firstConnectionInviteProfie)) {
 
-        this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].score = 3
 
-        const data = {
-          id_user1: this.pongInfo[allRoom[i].index].players[0].user.id,
-          score_u1: this.pongInfo[allRoom[i].index].players[0].score,
-          id_user2: this.pongInfo[allRoom[i].index].players[1].user.id,
-          score_u2: this.pongInfo[allRoom[i].index].players[1].score,
-          winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
-        }
+        if (this.pongInfo[allRoom[i].index].players.length == 2) {
+
+          this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].score = 3
+          
+          const data = {
+            id_user1: this.pongInfo[allRoom[i].index].players[0].user.id,
+            score_u1: this.pongInfo[allRoom[i].index].players[0].score,
+            id_user2: this.pongInfo[allRoom[i].index].players[1].user.id,
+            score_u2: this.pongInfo[allRoom[i].index].players[1].score,
+            winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
+          }
 
         //const match = http.post('https://localhost:5001/matchesHistory', data);
         const match = this.MatchesHistoryService.createMatch(data);
@@ -100,11 +103,13 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           if (!item.connected && item.id != client.id) {
             arrClient.forEach((client) => {
               if (client.username == item.user.login)
-                this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[allRoom[i].index].players[index ? 0 : 1].user.login, roomId: this.pongInfo[allRoom[i].index].roomID } })
+              this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[allRoom[i].index].players[index ? 0 : 1].user.login, roomId: this.pongInfo[allRoom[i].index].roomID } })
             })
           }
         })
-
+        
+      }
+      
         this.logger.log(`Room ${allRoom[i].room.roomID} has been deleted.`)
         this.pongInfo.splice(allRoom[i].index, 1)
       }
