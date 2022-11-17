@@ -16,10 +16,14 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     const [itemListHistory, setItemListHistory] = useState(Array<any>);
 
     const [messageText, setMessageText] = useState('');
+    
+    const [statut, setStatut] = useState('');
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     const [correspondantIsBlocked, setCorrespondantIsBlocked] = useState(false);
+
+    const [update, setUpdate] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -58,6 +62,33 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             getListItem();
         }
     };
+
+    utilsData.socket.removeListener('getClientStatus');
+
+    utilsData.socket.on('getClientStatus', function (data: any) {
+        console.log("getClientStatus data: ", data);
+        if (data.user == props.conversCorrespondantData.login) {
+            setStatut(data.status);
+        }
+        utilsData.socket.off('getClientStatus');
+        utilsData.socket.removeListener('getClientStatus');
+    })
+
+    utilsData.socket.removeListener('friendConnection');
+
+    utilsData.socket.on('friendConnection', function (data: any) {
+        setStatut("online");
+        utilsData.socket.off('friendConnection');
+        utilsData.socket.removeListener('friendConnection');
+    })
+
+    utilsData.socket.removeListener('friendDeconnection');
+
+    utilsData.socket.on('friendDeconnection', function (data: any) {
+        setStatut("offline");
+        utilsData.socket.off('friendDeconnection');
+        utilsData.socket.removeListener('friendDeconnection');
+    })
 
     utilsData.socket.removeListener('newMsgReceived');
 
@@ -188,6 +219,10 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
         getListItem();
+        if (!update) {
+            utilsData.socket.emit('GET_CLIENT_STATUS', {user: {login: props.conversCorrespondantData.login}});
+            setUpdate(true);
+        }
     }, [props, correspondantIsBlocked]);
 
     function SendButton() {
@@ -239,7 +274,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
                     <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
                         <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
-                        <p><span className='status'></span>online</p>
+                        <p><span className='status'></span>{statut}</p>
                     </div>
                 </div>
                 {correspondantIsBlocked && <AffBlocked />}

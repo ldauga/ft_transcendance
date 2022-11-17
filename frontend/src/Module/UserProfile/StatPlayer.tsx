@@ -223,6 +223,22 @@ function StatPlayer() {
 			setProfile({ ...profile, status: info.status })
 	})
 
+	utilsData.socket.removeListener('friendConnection');
+
+    utilsData.socket.on('friendConnection', function (data: any) {
+		setProfile({ ...profile, status: "online" })
+        utilsData.socket.off('friendConnection');
+        utilsData.socket.removeListener('friendConnection');
+    })
+
+    utilsData.socket.removeListener('friendDeconnection');
+
+    utilsData.socket.on('friendDeconnection', function (data: any) {
+		setProfile({ ...profile, status: "offline" })
+        utilsData.socket.off('friendDeconnection');
+        utilsData.socket.removeListener('friendDeconnection');
+    })
+
 	useEffect(() => {
 		if (profile.id) {
 			utilsData.socket.emit('CHECK_IF_FRIEND_OR_INVIT', { id1: userData.userReducer.user?.id, id2: profile.id });
