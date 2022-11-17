@@ -177,7 +177,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
                 </div>
             </div>
             {isCreateGroup && <CreateRooms setCreateGroup={setCreateGroup} />}
-            {isSendChatMsg && <SendChatMsg />}
+            {isSendChatMsg && <SendChatMsg setSendChatMsg={setSendChatMsg} />}
             {itemListHistory}
         </div>
     );

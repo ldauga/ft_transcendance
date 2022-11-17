@@ -13,13 +13,17 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
 
     const [messageText, setMessageText] = useState('');
+
+    const [statut, setStatut] = useState('');
 
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     const [correspondantIsBlocked, setCorrespondantIsBlocked] = useState(false);
+
+    const [update, setUpdate] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -58,6 +62,33 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             getListItem();
         }
     };
+
+    utilsData.socket.removeListener('getClientStatus');
+
+    utilsData.socket.on('getClientStatus', function (data: any) {
+        console.log("getClientStatus data: ", data);
+        if (data.user == props.conversCorrespondantData.login) {
+            setStatut(data.status);
+        }
+        utilsData.socket.off('getClientStatus');
+        utilsData.socket.removeListener('getClientStatus');
+    })
+
+    utilsData.socket.removeListener('friendConnection');
+
+    utilsData.socket.on('friendConnection', function (data: any) {
+        setStatut("online");
+        utilsData.socket.off('friendConnection');
+        utilsData.socket.removeListener('friendConnection');
+    })
+
+    utilsData.socket.removeListener('friendDeconnection');
+
+    utilsData.socket.on('friendDeconnection', function (data: any) {
+        setStatut("offline");
+        utilsData.socket.off('friendDeconnection');
+        utilsData.socket.removeListener('friendDeconnection');
+    })
 
     utilsData.socket.removeListener('newMsgReceived');
 
@@ -188,6 +219,10 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView();
         getListItem();
+        if (!update) {
+            utilsData.socket.emit('GET_CLIENT_STATUS', {user: {login: props.conversCorrespondantData.login}});
+            setUpdate(true);
+        }
     }, [props, correspondantIsBlocked]);
 
     function SendButton() {

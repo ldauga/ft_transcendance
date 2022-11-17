@@ -382,8 +382,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           const _client = arrClient.find(obj => obj.username == loginTmp);
           if (_client) {
             //this.getAllFriendConnected(client, info);
-        console.log("emit");
-
+            console.log("emit friendDeconnection to ", _client.username);
             this.server.to(_client.id).emit('friendDeconnection', true);
           }
         }

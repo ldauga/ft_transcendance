@@ -9,7 +9,7 @@ import './CSS/Convers.scss'
 import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
-function SendChatMsg() {
+function SendChatMsg(props: {setSendChatMsg: Function}) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
@@ -78,7 +78,7 @@ function SendChatMsg() {
                         text: text
                     }
                     utilsData.socket.emit('createMsg', newMsg);
-
+					props.setSendChatMsg(false);
                     return;
                 }
             });

@@ -286,10 +286,14 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                 await axiosConfig.get('https://10.3.2.5:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
                     for (let i = 0; i < res.data.length; i++) {
                         if (i + 1 < res.data.length) {
-                            str_nickname = str_nickname + res.data[i].login + ", ";
+                            await axiosConfig.get('https://10.3.2.5:5001/user/id/' + res.data[i].id).then(async (element) => {
+                            str_nickname = str_nickname + element.data.nickname + ", ";
+                        });
                         }
                         else {
-                            str_nickname = str_nickname + res.data[i].login;
+                            await axiosConfig.get('https://10.3.2.5:5001/user/id/' + res.data[i].id).then(async (element) => {
+                                str_nickname = str_nickname + element.data.nickname;
+                        });
                         }
                     }
                     setTextNicknameHeader(str_nickname);
