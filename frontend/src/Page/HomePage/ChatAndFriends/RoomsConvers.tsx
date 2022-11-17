@@ -78,7 +78,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     utilsData.socket.removeAllListeners('newParticipant');
 
-    utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
+    utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
+        console.log("newParticipant");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
@@ -95,6 +96,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
+        console.log("removeParticipantReturn");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');

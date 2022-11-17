@@ -31,25 +31,10 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     const dispatch = useDispatch();
     const { delChatNotif, initOneConversChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
-    utilsData.socket.removeAllListeners('newParticipant');
-
-    utilsData.socket.on('newParticipant', function (demutedUserInRoomReturn: boolean) {
-        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        utilsData.socket.off('newParticipant');
-        utilsData.socket.removeListener('newParticipant');
-    })
-
-    utilsData.socket.removeAllListeners('removeParticipantReturn');
-
-    utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        utilsData.socket.off('removeParticipantReturn');
-        utilsData.socket.removeListener('removeParticipantReturn');
-    })
-
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
+        console.log("newMsgReceived2");
         //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         getUsers2();
         // const length = itemListHistory.length;
@@ -58,7 +43,7 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         //     getListItem();
         //     secu++;
         // }
-        //utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
+        utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
         // if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
         //     delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         // }

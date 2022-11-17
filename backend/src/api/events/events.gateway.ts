@@ -522,13 +522,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_notif) {
         const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_user2);
         if (_notifToReset)
-          _notif.notifs.splice(_notifToReset);
+          _notif.notifs.splice(_notifToReset, 1);
       }
       const _notif2 = arrNotifs.find(obj => obj.username == data.login_user2);
       if (_notif2) {
         const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_user1);
         if (_notifToReset2)
-          _notif2.notifs.splice(_notifToReset2);
+          _notif2.notifs.splice(_notifToReset2, 1);
       }
       const _client1 = arrClient.find(obj => obj.username === data.login_user1);
       const _client2 = arrClient.find(obj => obj.username === data.login_user2);
@@ -652,7 +652,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           if (_notif) {
             const _notifToReset = _notif.notifs.findIndex(obj => obj.name == _room.name);
             if (_notifToReset)
-              _notif.notifs.splice(_notifToReset);
+              _notif.notifs.splice(_notifToReset, 1);
           }
           i++;
         }
@@ -670,7 +670,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           i++;
         }
         const index = arrRoom.indexOf(_room);
-        arrRoom.splice(index);
+        arrRoom.splice(index, 1);
       }
 
     };
@@ -730,13 +730,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
         this.server.to(_client.id).emit('joinChatRoomAccepted', true);
         const a = arrRoom.find(obj => obj.name == data.room_name);
-        a.users.push(_client);
-        let i = 0;
-        while (i < a.users.length) {
-        console.log("emit");
-
-          this.server.to(a.users[i].id).emit('newParticipant', true);
-          i++;
+        if (a) {
+          a.users.push(_client);
+          let i = 0;
+          while (i < a.users.length) {
+            console.log("emit newParticipant to ", a.users[i].username, ", id: ", a.users[i].id);
+            this.server.to(a.users[i].id).emit('newParticipant', true);
+            i++;
+          }
         }
       }
     }
@@ -874,7 +875,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (_notif) {
       const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
       if (_notifToReset)
-        _notif.notifs.splice(_notifToReset);
+        _notif.notifs.splice(_notifToReset, 1);
     }
     if (removeParticipantReturn) {
       console.log("emit");
@@ -915,11 +916,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (_client_sender.username != data.login)
           this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.splice(index);
+        arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
-        console.log("emit");
+        console.log("emit removeParticipantReturn to ", room.users[i].username, ",id : ", room.users[i].id);
 
           this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
           i++;
@@ -1158,10 +1159,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               }
               this.MessagesService.createMessages(newMsg).then((res) => {
                 const room = arrRoom.find(obj => obj.name == data.room_name);
+                console.log("room: ",room);
+                console.log("room.users: ",room.users.length);
                 let i = 0;
                 while (i < room.users.length) {
-        console.log("emit");
-
+                  console.log("emit to ", room.users[i].username, ", id: ", room.users[i].id);
                   this.server.to(room.users[i].id).emit('newMsgReceived', data);
                   this.NewMsgNotif(room.users[i].username, data.room_name, true);
                   i++;
@@ -1200,13 +1202,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_notif) {
         const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.login_sender);
         if (_notifToReset)
-          _notif.notifs.splice(_notifToReset);
+          _notif.notifs.splice(_notifToReset, 1);
       }
       const _notif2 = arrNotifs.find(obj => obj.username == data.login_sender);
       if (_notif2) {
         const _notifToReset2 = _notif2.notifs.findIndex(obj => obj.name == data.login_banned);
         if (_notifToReset2)
-          _notif2.notifs.splice(_notifToReset2);
+          _notif2.notifs.splice(_notifToReset2, 1);
       }
       this.server.to(client.id).emit('returnRemoveFriend', true);
       console.log("emit");
@@ -1279,7 +1281,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (_notif) {
         const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
         if (_notifToReset)
-          _notif.notifs.splice(_notifToReset);
+          _notif.notifs.splice(_notifToReset, 1);
       }
       const newMsg = {
         id_sender: 0,
@@ -1317,7 +1319,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
         this.server.to(_client.id).emit('notif', { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.splice(index);
+        arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
