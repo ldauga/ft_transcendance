@@ -81,7 +81,7 @@ class Player {
 		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
 
-		this.speed = 1
+		this.speed = 3
 
 		this.score = 0
 
@@ -99,7 +99,7 @@ class Player {
 		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
 
-		this.speed = 1
+		this.speed = 7
 	}
 
 }
@@ -170,11 +170,11 @@ class Ball {
 		this.x = canvas.width / 2
 		this.y = canvas.height / 2
 
-		this.dx = random(0, 1) ? -1 : 1
-
+		this.speed = 3
+		
+		this.dx = random(0, 1) ? -this.speed : this.speed
+		
 		this.dy = 0
-
-		this.speed = 1
 
 		this.radius = 10
 
@@ -195,10 +195,10 @@ class Ball {
 			this.y = this.initial_y
 		}
 
-		this.dx = random(0, 1) ? -1 : 1
+		this.dx = random(0, 1) ? -this.speed : this.speed
 		this.dy = 0
 
-		this.speed = 1
+		this.speed = 7
 
 		this.radius = 10
 
@@ -568,7 +568,7 @@ class gameRoomClass {
 				this.ball.dx = direction * this.ball.speed * Math.cos(angleRad)
 				this.ball.dy = this.ball.speed * Math.sin(angleRad)
 
-				if (this.ball.speed < 2) {
+				if (this.ball.speed < 6) {
 					this.ball.speed += 0.1
 					this.players[0].speed += 0.1
 					this.players[1].speed += 0.1
@@ -644,11 +644,11 @@ class gameRoomClass {
 		this.ball.reset(this.canvas)
 
 		if (this.players[0].score > this.players[1].score)
-			this.ball.dx = 1
+			this.ball.dx = this.ball.speed
 		else if (this.players[0].score < this.players[1].score)
-			this.ball.dx = -1
+			this.ball.dx = -this.ball.speed
 		else
-			this.ball.dx = random(0, 1) ? -1 : 1
+			this.ball.dx = random(0, 1) ? -this.ball.speed : this.ball.speed
 
 		for (let i = 0; i < 2; i++)
 			this.players[i].resetPos(this.canvas)

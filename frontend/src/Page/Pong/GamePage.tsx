@@ -257,7 +257,7 @@ const GamePage = (props: any) => {
 
     const utilsData = useSelector((state: RootState) => state.utils);
 
-    var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
+    // var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
 
     function render(room: gameRoomClass) {
 

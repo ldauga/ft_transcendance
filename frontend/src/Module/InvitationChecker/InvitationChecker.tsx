@@ -22,7 +22,7 @@ function InvitationChecker(props: { children: any }) {
 
 	const dispatch = useDispatch();
 
-	const { setUser, setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload } = bindActionCreators(actionCreators, dispatch);
+	const { setUser, setNotif, delNotif, addChatNotif, initChatNotif, setInviteCheckReload, setInviteCheck } = bindActionCreators(actionCreators, dispatch);
 
 	utilsData.socket.off('start_invite_game')
 
@@ -35,8 +35,12 @@ function InvitationChecker(props: { children: any }) {
 	}
 
 	utilsData.socket.on('start_invite_game', function (info: { roomID: string, spectate: boolean }) {
+		if (persistantReducer.inviteCheckReducer)
+			setInviteCheck(false)
+			
 		history.pushState({}, '', window.URL.toString())
 		window.location.replace('https://localhost:3000/Pong')
+
 	});
 
 	function verifInvitationRequest() {
