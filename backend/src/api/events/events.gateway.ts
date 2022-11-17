@@ -412,6 +412,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async createInvitationRequest(client: Socket, data: any) {
     console.log('Event createInvitationRequest')
     this.logger.log(`${client.id} said: create Invitation Request`);
+
     let verifBan = false;
     if (!data.userOrRoom) {
       const checkIfBanned = await this.BlacklistService.checkUserBan(data.sender_login, data.receiver_login);
@@ -433,11 +434,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         room_id: data.room_id,
         room_name: data.room_name
       }
+	  if (arrClient)
       arrClient.forEach((item) => {
         if (item.username == invitationRequest.receiver_login)
-        console.log("emit");
-
-          this.server.to(item.id).emit('notif', { type: 'PENDINGINVITATION' })
+			this.server.to(item.id).emit('notif', { type: 'PENDINGINVITATION' })
       })
 
       //const invitationRequestReturn = await this.http.post('https://localhost:5001/invitationRequest', invitationRequest);

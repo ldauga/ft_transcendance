@@ -40,7 +40,7 @@ function InvitationChecker(props: { children: any }) {
 	});
 
 	function verifInvitationRequest() {
-		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id/*, { withCredentials: true}*/).then((res) => {
+		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
@@ -81,7 +81,6 @@ function InvitationChecker(props: { children: any }) {
 	useEffect(() => {
 		console.log('useEffect invitation Checker')
 		if (!test) {
-			// if ()
 			verifInvitationRequest()
 			test = true
 		}
