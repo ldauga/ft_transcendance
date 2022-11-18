@@ -83,27 +83,33 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
       if (this.pongInfo[allRoom[i].index].players.length == 1 || (!this.pongInfo[allRoom[i].index].players[0].connected && !this.pongInfo[allRoom[i].index].players[1].connected && !this.pongInfo[allRoom[i].index].firstConnectionInviteProfie)) {
 
-        this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].score = 3
+        if (this.pongInfo[allRoom[i].index].players.length == 2 && this.pongInfo[allRoom[i].index].players[1].user != null) {
 
-        const data = {
-          id_user1: this.pongInfo[allRoom[i].index].players[0].user.id,
-          score_u1: this.pongInfo[allRoom[i].index].players[0].score,
-          id_user2: this.pongInfo[allRoom[i].index].players[1].user.id,
-          score_u2: this.pongInfo[allRoom[i].index].players[1].score,
-          winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
-        }
+          // console.log()
 
-        //const match = http.post('https://localhost:5001/matchesHistory', data);
-        const match = this.MatchesHistoryService.createMatch(data);
+          this.pongInfo[allRoom[i].index].players[this.pongInfo[allRoom[i].index].players.findIndex(player => player.id == client.id)].score = 3
 
-        this.pongInfo[allRoom[i].index].players.forEach((item, index) => {
-          if (!item.connected && item.id != client.id) {
-            arrClient.forEach((client) => {
-              if (client.username == item.user.login)
-                this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[allRoom[i].index].players[index ? 0 : 1].user.login, roomId: this.pongInfo[allRoom[i].index].roomID } })
-            })
+          const data = {
+            id_user1: this.pongInfo[allRoom[i].index].players[0].user.id,
+            score_u1: this.pongInfo[allRoom[i].index].players[0].score,
+            id_user2: this.pongInfo[allRoom[i].index].players[1].user.id,
+            score_u2: this.pongInfo[allRoom[i].index].players[1].score,
+            winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
           }
-        })
+
+          //const match = http.post('https://localhost:5001/matchesHistory', data);
+          const match = this.MatchesHistoryService.createMatch(data);
+
+          this.pongInfo[allRoom[i].index].players.forEach((item, index) => {
+            if (!item.connected && item.id != client.id) {
+              arrClient.forEach((client) => {
+                if (client.username == item.user.login)
+                  this.server.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.pongInfo[allRoom[i].index].players[index ? 0 : 1].user.login, roomId: this.pongInfo[allRoom[i].index].roomID } })
+              })
+            }
+          })
+
+        }
 
         this.logger.log(`Room ${allRoom[i].room.roomID} has been deleted.`)
         this.pongInfo.splice(allRoom[i].index, 1)
@@ -410,6 +416,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
       if (this.pongInfo[index].started) {
+        let stop = false;
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
             this.pongInfo[index].players[i].ready = false
@@ -475,9 +482,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 }
               })
 
-              this.pongInfo.splice(room[0], 1)
+
+              stop = true
 
               this.server.to(room[1].roomID).emit('finish', room[1])
+
 
               room[1].players.forEach(async player => {
                 const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
@@ -500,6 +509,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
               })
 
+
+              this.pongInfo.splice(room[0], 1)
+
+              return 'stop';
+
             }
 
             // return this.server.to(this.pongInfo[index].players[i ? 0 : 1].id).emit('deconected')
@@ -508,8 +522,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             if (!(this.pongInfo[index].players[0].score == 3 || this.pongInfo[index].players[1].score == 3))
               if (this.pongInfo[index].players[0].ready && this.pongInfo[index].players[1].ready)
                 this.pongInfo[index].moveAll();
-
-        this.render(this.pongInfo[index].roomID)
+        if (!stop)
+          this.render(this.pongInfo[index].roomID)
 
       }
     }
@@ -649,11 +663,12 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log('Event ARROW_UP')
     var room = this.getRoomByID(info[0])
     if (room != null) {
-
       for (let index = 0; index < 2; index++)
-        if (this.pongInfo[room[0]].players[index].id == client.id)
+        if (this.pongInfo[room[0]].players[index].id == client.id) {
           this.pongInfo[room[0]].players[index].up = info[1]
-
+          if (info[1])
+            this.pongInfo[room[0]].players[index].down = false
+        }
     }
   }
 
@@ -663,11 +678,12 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log('Event ARROW_DOWN')
     var room = this.getRoomByID(info[0])
     if (room != null) {
-
       for (let index = 0; index < 2; index++)
-        if (this.pongInfo[room[0]].players[index].id == client.id)
+        if (this.pongInfo[room[0]].players[index].id == client.id) {
           this.pongInfo[room[0]].players[index].down = info[1]
-
+          if (info[1])
+            this.pongInfo[room[0]].players[index].up = false
+        }
     }
   }
 

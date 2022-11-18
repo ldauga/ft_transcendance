@@ -67,8 +67,11 @@ function InvitationChecker(props: { children: any }) {
 
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
 				return;
-			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.GAMEINVITE && notif.type == NotifType.GAMEINVITE && persistantReducer.notifReducer.notifArray[index].data.inviteUser.login == notif.data?.inviteUser.login)
+			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.GAMEINVITE && notif.type == NotifType.GAMEINVITE && persistantReducer.notifReducer.notifArray[index].data.inviteUser.login == notif.data?.inviteUser.login) {
+				delNotif(persistantReducer.notifReducer.notifArray[persistantReducer.notifReducer.notifArray.findIndex(item => item.type == NotifType.GAMEINVITE && item.data.inviteUser.login == notif.data?.inviteUser.login)])
+				setNotif({ ...notif, seen: false })
 				return;
+			}
 			if (persistantReducer.notifReducer.notifArray[index] == notif)
 				return;
 			if (persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.DISCONNECTGAME) != undefined && notif.type == NotifType.DISCONNECTGAME)
