@@ -203,7 +203,8 @@ function StatPlayer() {
 
 	utilsData.socket.off('getClientStatus')
 
-	utilsData.socket.on('getClientStatus', (info: { user: string, status: string }) => {
+	utilsData.socket.on('getClientStatus', (info: { user: string, status: string, emitFrom: string }) => {
+		console.log(`getClientStatus emit from ${info.emitFrom}.`)
 		if (info.user == profile.login)
 			setProfile({ ...profile, status: info.status })
 	})

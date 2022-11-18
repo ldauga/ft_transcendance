@@ -151,9 +151,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
     const tmp = arrClient.find(item => item.id == client.id)
 
-    if (tmp != undefined && tmp.username != "" && tmp.username != undefined) {
-      checkReconnexionArr.push({ username: tmp.username, date: new Date() })
-    }
+    // if (tmp != undefined && tmp.username != "" && tmp.username != undefined) {
+    //   checkReconnexionArr.push({ username: tmp.username, date: new Date() })
+    // }
 
     const indexOfClient = arrClient.findIndex(obj => obj.id === client.id);
     if (indexOfClient !== -1)
@@ -177,26 +177,26 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log("event");
     if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
       checkReconnexionArr.splice(tmp, 1)
-    else if (user.login) {
-      this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
-        for (let i = 0; i < res.length; i++) {
-          let loginTmp: string;
-          if (res[i].login_user1 == user.login)
-            loginTmp = res[i].login_user2;
-          else
-            loginTmp = res[i].login_user1;
-          const _client = arrClient.find(obj => obj.username == loginTmp);
-          if (_client) {
-        console.log("emit");
-            this.server.to(_client.id).emit('friendConnection', true);
-          }
-        }
-      })
-      arrClient.forEach((client) => {
-        console.log("emit");
-        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
-      })
-    }
+    // else if (user.login) {
+    //   this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
+    //     for (let i = 0; i < res.length; i++) {
+    //       let loginTmp: string;
+    //       if (res[i].login_user1 == user.login)
+    //         loginTmp = res[i].login_user2;
+    //       else
+    //         loginTmp = res[i].login_user1;
+    //       const _client = arrClient.find(obj => obj.username == loginTmp);
+    //       if (_client) {
+    //     console.log("emit");
+    //         this.server.to(_client.id).emit('friendConnection', true);
+    //       }
+    //     }
+    //   })
+    //   arrClient.forEach((client) => {
+    //     console.log("emit");
+    //     this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
+    //   })
+    // }
 
     arrClient.forEach((item) => {
       if (item.id == client.id) {
@@ -275,37 +275,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     })
   }
 
-  @Interval(1000)
-  tmpFunction() {
-    checkReconnexionArr.forEach(async (user, index) => {
-      if (new Date().getSeconds() - user.date.getSeconds() != 0) {
-        this.FriendListService.getUserFriendListWithLogin(user.username).then((res) => {
-          for (let i = 0; i < res.length; i++) {
-            let loginTmp: string;
-            if (res[i].login_user1 == user.username)
-              loginTmp = res[i].login_user2;
-            else
-              loginTmp = res[i].login_user1;
-            const _client = arrClient.find(obj => obj.username == loginTmp);
-            if (_client) {
-        console.log("emit");
 
-              this.server.to(_client.id).emit('friendDeconnection', true);
-            }
-          }
-        })
-        arrClient.forEach((client) => {
-        console.log("emit");
-
-          this.server.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline' })
-        })
-        checkReconnexionArr.splice(index, 1)
-      }
-    })
-
-
-
-  }
 
   @Interval(1000)
   checkBanAndMute() {
