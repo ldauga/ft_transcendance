@@ -148,19 +148,19 @@ function StatPlayer() {
 				if (res.data.wins == 0 && res.data.losses == 0) {
 					setRank({ label: 'unranked', img: unranked })
 				}
-				else if (res.data.wins > 5) {
+				else if (res.data.wins < 5) {
+					setRank({ label: 'bronze', img: bronze_rank_img })
+				}
+				else if (res.data.wins < 10) {
 					setRank({ label: 'silver', img: silver_rank_img })
 				}
-				else if (res.data.wins > 10) {
+				else if (res.data.wins < 20) {
 					setRank({ label: 'gold', img: gold_rank_img })
 				}
-				else if (res.data.wins > 20) {
+				else if (res.data.wins < 50) {
 					setRank({ label: 'platinium', img: platinium_rank_img })
-				}
-				else if (res.data.wins > 30) {
-					setRank({ label: 'diamond', img: diamond_rank_img })
 				} else {
-					setRank({ label: 'bronze', img: bronze_rank_img })
+					setRank({ label: 'diamond', img: diamond_rank_img })
 				}
 				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			} else
