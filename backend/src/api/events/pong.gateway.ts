@@ -126,12 +126,70 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     arrClient.push(newClient);
   }
 
+  @Interval(1000)
+  tmpFunction() {
+    checkReconnexionArr.forEach(async (user, index) => {
+      if (new Date().getSeconds() - user.date.getSeconds() != 0) {
+        this.FriendListService.getUserFriendListWithLogin(user.username).then((res) => {
+          for (let i = 0; i < res.length; i++) {
+            let loginTmp: string;
+            if (res[i].login_user1 == user.username)
+              loginTmp = res[i].login_user2;
+            else
+              loginTmp = res[i].login_user1;
+            const _client = arrClient.find(obj => obj.username == loginTmp);
+            if (_client) {
+              console.log("emit");
+
+              this.server.to(_client.id).emit('friendDeconnection', true);
+            }
+          }
+        })
+        arrClient.forEach((client) => {
+          console.log("emit");
+
+          this.server.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline', emitFrom: 'tmpFunction' })
+        })
+        checkReconnexionArr.splice(index, 1)
+      }
+    })
+
+
+
+  }
+
   @SubscribeMessage('storeClientInfo')
   storeClientInfo(client: Socket, user: { login: string }) {
     console.log('Event storeClientInfo')
 
     let tmp: number;
+    let tmpRoom: [number, gameRoomClass];
     console.log("pong");
+    if ((tmpRoom = this.getRoomByClientLogin(user.login)) != null && !tmpRoom[1].players.find(player => player.user.login == user.login).connected) {
+      checkReconnexionArr.splice(checkReconnexionArr.findIndex(item => item.username == user.login), 1)
+
+      this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          let loginTmp: string;
+          if (res[i].login_user1 == user.login)
+            loginTmp = res[i].login_user2;
+          else
+            loginTmp = res[i].login_user1;
+          const _client = arrClient.find(obj => obj.username == loginTmp);
+          if (_client) {
+            console.log("emit");
+
+            this.server.to(_client.id).emit('friendDeconnection', true);
+          }
+        }
+      })
+      arrClient.forEach((client) => {
+        console.log("emit");
+
+        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online', emitFrom: 'storeClientInfo' })
+      })
+
+    }
     if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
       checkReconnexionArr.splice(tmp, 1)
     else if (user.login) {
@@ -149,7 +207,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         }
       })
       arrClient.forEach((client) => {
-        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online' })
+        this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online', emitFrom: 'storeClientInfo 2' })
       })
     }
 
@@ -293,6 +351,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
 
       const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
+      
       for (let i = 0; i < friendList.length; i++) {
         let loginTmp: string;
         if (friendList[i].login_user1 == this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login)
@@ -304,6 +363,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           this.server.to(_client.id).emit('friendConnection', true);
         }
       }
+
+      arrClient.forEach((client) => {
+        this.server.to(client.id).emit('getClientStatus', { user: this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
+      })
 
       this.server.to(client.id).emit('start', room[1].roomID)
 
@@ -363,7 +426,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             }
 
             arrClient.forEach((client) => {
-              this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'in-game' })
+              this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'in-game', emitFrom: 'JOIN_QUEUE' })
             })
 
           })
@@ -425,26 +488,26 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
               if (this.pongInfo[index].players[i].user != null) {
 
-                const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
+                // const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[index].players[i].user.login);
 
-                for (let i = 0; i < friendList.length; i++) {
+                // for (let i = 0; i < friendList.length; i++) {
 
-                  let loginTmp: string;
+                //   let loginTmp: string;
 
-                  if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
-                    loginTmp = friendList[i].login_user2;
-                  else
-                    loginTmp = friendList[i].login_user1;
+                //   if (friendList[i].login_user1 == this.pongInfo[index].players[i].user.login)
+                //     loginTmp = friendList[i].login_user2;
+                //   else
+                //     loginTmp = friendList[i].login_user1;
 
-                  const _client = arrClient.find(obj => obj.username == loginTmp);
+                //   const _client = arrClient.find(obj => obj.username == loginTmp);
 
-                  if (_client)
-                    this.server.to(_client.id).emit('friendConnection', true);
-                }
+                //   if (_client)
+                //     this.server.to(_client.id).emit('friendConnection', true);
+                // }
 
-                arrClient.forEach((client) => {
-                  this.server.to(client.id).emit('getClientStatus', { user: this.pongInfo[index].players[i].user.login, status: 'offline' })
-                })
+                // arrClient.forEach((client) => {
+                //   this.server.to(client.id).emit('getClientStatus', { user: this.pongInfo[index].players[i].user.login, status: 'offline', emitFrom: 'handleInterval' })
+                // })
 
                 arrClient.forEach(async (item) => {
                   if (item.username == this.pongInfo[index].players[i].user.login) {
@@ -504,7 +567,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 }
 
                 arrClient.forEach((client) => {
-                  this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'offline' })
+                  this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'offline', emitFrom: 'handleInterval 2' })
                 })
 
               })
@@ -578,7 +641,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           }
 
           arrClient.forEach((client) => {
-            this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'in-game' })
+            this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'online', emitFrom: 'render' })
           })
         })
 
@@ -842,11 +905,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log('Event GET_CLIENT_STATUS info: ', info);
     console.log(arrClient.find((item) => item.username == info.user.login));
     if (this.getRoomByClientLogin(info.user.login))
-      this.server.to(client.id).emit('getClientStatus', { login: info.user.login, status: 'in-game' })
+      this.server.to(client.id).emit('getClientStatus', { login: info.user.login, status: 'in-game', emitFrom: 'getClientStatus' })
     else if (arrClient.find((item) => item.username == info.user.login))
-      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'online' })
+      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'online', emitFrom: 'getClientStatus' })
     else
-      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline' })
+      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'offline', emitFrom: 'getClientStatus' })
   }
 
   @SubscribeMessage('AffNotistack')
@@ -887,31 +950,31 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(client.id).emit('friendsList', arrClient);
   }
 
-  @SubscribeMessage('CHANGE_NICKNAME')
-  async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
-    console.log('Event CHANGE_NICKNAME')
+  //   @SubscribeMessage('CHANGE_NICKNAME')
+  //   async changeNickname(client: Socket, info: { user: any, newNickname: string }) {
+  //     console.log('Event CHANGE_NICKNAME')
 
-    this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
-      switch (err.response.message) {
-        case 'Cannot set identical nickname':
-          this.server.to(client.id).emit('changeNicknameError', 'identical-nickname')
-          break;
-        case 'Nickname already used':
-          this.server.to(client.id).emit('changeNicknameError', 'already-used')
-          break;
-        case 'No special char':
-          this.server.to(client.id).emit('changeNicknameError', 'special-char')
-          break;
-        case 'Nickname too short':
-          this.server.to(client.id).emit('changeNicknameError', 'too-short')
-          break;
-        case 'Cannot use someone\'s login as a nickname.':
-          this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
-          break;
-      }
-    }).then((res) => {
-      if (res != undefined)
-        this.server.to(client.id).emit('changeNicknameSuccess', res)
-    })
-  }
+  //     this.UserService.updateNickname(info.user.login, info.newNickname).catch((err) => {
+  //       switch (err.response.message) {
+  //         case 'Cannot set identical nickname':
+  //           this.server.to(client.id).emit('changeNicknameError', 'identical-nickname')
+  //           break;
+  //         case 'Nickname already used':
+  //           this.server.to(client.id).emit('changeNicknameError', 'already-used')
+  //           break;
+  //         case 'No special char':
+  //           this.server.to(client.id).emit('changeNicknameError', 'special-char')
+  //           break;
+  //         case 'Nickname too short':
+  //           this.server.to(client.id).emit('changeNicknameError', 'too-short')
+  //           break;
+  //         case 'Cannot use someone\'s login as a nickname.':
+  //           this.server.to(client.id).emit('changeNicknameError', 'same-as-login');
+  //           break;
+  //       }
+  //     }).then((res) => {
+  //       if (res != undefined)
+  //         this.server.to(client.id).emit('changeNicknameSuccess', res)
+  //     })
+  //   }
 }
