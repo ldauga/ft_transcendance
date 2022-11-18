@@ -351,7 +351,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
 
       const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
-      
+
       for (let i = 0; i < friendList.length; i++) {
         let loginTmp: string;
         if (friendList[i].login_user1 == this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login)

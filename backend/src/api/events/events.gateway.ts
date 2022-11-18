@@ -827,77 +827,82 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log('Event removeParticipant')
     this.logger.log(`${client.id} want remove Participant`);
     const _client_sender = arrClient.find(obj => obj.id == client.id);
-    if (_client_sender.username != data.login) {
-      const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
-      if (!verifIfAdmin) {
-        return;
-      }
-    }
-    const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
-    if (verifIfReceiverIsAdmin) {
-      const verifIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.room_name);
-      if (!verifIfOwner)
-        return;
-    }
-    const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login, data.room_name);
-    const _notif = arrNotifs.find(obj => obj.username == data.login);
-    if (_notif) {
-      const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
-      if (_notifToReset)
-        _notif.notifs.splice(_notifToReset, 1);
-    }
-    if (removeParticipantReturn) {
-      console.log("emit");
+	if (_client_sender) {
+		const verifIfAdmin = await this.ParticipantsService.checkParticipant(data.login, data.room_name);
+		if (verifIfAdmin) {
+			if (_client_sender.username != data.login) {
+				const verifIfAdmin = await this.ParticipantsService.checkAdmin(_client_sender.username, data.room_name);
+				if (!verifIfAdmin) {
+				  return;
+				}
+			  }
+			  const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
+			  if (verifIfReceiverIsAdmin) {
+				const verifIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.room_name);
+				if (!verifIfOwner)
+				  return;
+			  }
+			  const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login, data.room_name);
+			  const _notif = arrNotifs.find(obj => obj.username == data.login);
+			  if (_notif) {
+				const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
+				if (_notifToReset)
+				  _notif.notifs.splice(_notifToReset, 1);
+			  }
+			  if (removeParticipantReturn) {
+				console.log("emit");
 
-      this.server.to(client.id).emit('removeParticipantReturn', true);
-      const _client = arrClient.find(obj => obj.username == data.login);
-      if (_client != undefined) {
-        const newMsg = {
-          id_sender: 0,
-          id_receiver: 0,
-          login_sender: "server",
-          login_receiver: "",
-          userOrRoom: true,
-          serverMsg: true,
-          room_id: data.room_id,
-          room_name: data.room_name,
-          text: data.login + " quit chat room",
-          year: getYear(),
-          month: getMonth(),
-          day: getDay(),
-          hour: getHour(),
-          minute: getMinute()
-        }
-        const createMsgReturn = await this.MessagesService.createMessages(newMsg);
-        const room2 = arrRoom.find(obj => obj.name == data.room_name);
-        let i2 = 0;
-        while (i2 < room2.users.length) {
-        console.log("emit");
+				this.server.to(client.id).emit('removeParticipantReturn', true);
+				const _client = arrClient.find(obj => obj.username == data.login);
+				if (_client != undefined) {
+				  const newMsg = {
+					id_sender: 0,
+					id_receiver: 0,
+					login_sender: "server",
+					login_receiver: "",
+					userOrRoom: true,
+					serverMsg: true,
+					room_id: data.room_id,
+					room_name: data.room_name,
+					text: data.login + " quit chat room",
+					year: getYear(),
+					month: getMonth(),
+					day: getDay(),
+					hour: getHour(),
+					minute: getMinute()
+				  }
+				  const createMsgReturn = await this.MessagesService.createMessages(newMsg);
+				  const room2 = arrRoom.find(obj => obj.name == data.room_name);
+				  let i2 = 0;
+				  while (i2 < room2.users.length) {
+				  console.log("emit");
 
-          this.server.to(room2.users[i2].id).emit('newMsgReceived', true);
-          i2++;
-        }
-        console.log("emit");
+					this.server.to(room2.users[i2].id).emit('newMsgReceived', true);
+					i2++;
+				  }
+				  console.log("emit");
 
-        this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
-        console.log("emit");
+				  this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
+				  console.log("emit");
 
-        if (_client_sender.username != data.login)
-          this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
-        const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
-        const room = arrRoom.find(obj => obj.name == data.room_name);
-        let i = 0;
-        while (i < room.users.length) {
-        console.log("emit removeParticipantReturn to ", room.users[i].username, ",id : ", room.users[i].id);
+				  if (_client_sender.username != data.login)
+					this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
+				  const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
+				  arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
+				  const room = arrRoom.find(obj => obj.name == data.room_name);
+				  let i = 0;
+				  while (i < room.users.length) {
+				  console.log("emit removeParticipantReturn to ", room.users[i].username, ",id : ", room.users[i].id);
 
-          this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
-          i++;
-        }
-      }
-      else
-        arrNotifInWait.push({ login: data.login, notif: { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } } })
-    }
+					this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
+					i++;
+				  }
+				}
+				else
+				  arrNotifInWait.push({ login: data.login, notif: { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } } })
+			  }
+		}
+	}
   }
 
   @SubscribeMessage('createAdmin')
