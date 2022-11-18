@@ -231,7 +231,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 const oldResData = res.data;
                 await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
                     if (res.data == true) {
-                        enqueueSnackbar('Sorry you can\'t, he\'s owner', { variant: "warning", autoHideDuration: 2000 })
+                        enqueueSnackbar('You can\'t remove this admin role, user is the group owner', { variant: "warning", autoHideDuration: 2000 })
                         return;
                     }
                     else {
@@ -361,6 +361,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         }
         utilsData.socket.emit('removeParticipant', participantToRemove);
         enqueueSnackbar('Participant removed', { variant: "success", autoHideDuration: 2000 })
+		closeAffParticipantsRooms();
     }
 
     function demute(item: { login: string, id: number, admin: boolean }) {
@@ -635,7 +636,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             }
             itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
                 <img src={item.profile_pic}></img>
-                {item.mute ? <p>{item.nickname} (Mute)</p> : <p>{item.nickname}</p>}
+                {item.mute ? <p>{item.nickname} (Muted)</p> : <p>{item.nickname}</p>}
                 <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={item.mute} />
             </div>
             )
