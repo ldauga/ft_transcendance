@@ -16,7 +16,7 @@ import { useSnackbar } from 'notistack';
 let tmp = 0
 let verif = false
 function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function }) {
-	const ref = useRef<any>(null);
+	const ref = useRef<HTMLInputElement | null>(null);
 	const inputRef = useRef(null);
 	const utilsData = useSelector((state: RootState) => state.utils);
 
@@ -173,11 +173,11 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 				<a href='/'>FT_TRANSCENDENCE</a>
 				<div className='right'>
 					<div className='search-box reactour-search-box'>
-						<svg onClick={() => ref.current.focus()} onMouseEnter={() => ref.current.focus()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+						<svg onClick={() => ref?.current?.focus()} onMouseEnter={() => ref?.current?.focus()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
 							<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
 							<path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clipRule="evenodd" />
 						</svg>
-						<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile(ref.current.value); }} />
+						<input onMouseLeave={() => ref?.current?.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile(ref?.current?.value!); }} />
 					</div>
 					<button className='reactour-friend-list' onClick={() => { //friendList
 						setOpenPopUp(!open);
