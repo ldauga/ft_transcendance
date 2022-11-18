@@ -190,8 +190,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       })
 
     }
-    if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
+    if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0) {
+      this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online', emitFrom: 'storeClientInfo' })
       checkReconnexionArr.splice(tmp, 1)
+    }
     else if (user.login) {
       this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
         for (let i = 0; i < res.length; i++) {
@@ -351,7 +353,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
 
       const friendList = await this.FriendListService.getUserFriendListWithLogin(this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login);
-      
+
       for (let i = 0; i < friendList.length; i++) {
         let loginTmp: string;
         if (friendList[i].login_user1 == this.pongInfo[room[0]].players[this.pongInfo[room[0]].players.findIndex(player => player.user.login == info.user.login)].user.login)
