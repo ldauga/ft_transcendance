@@ -190,8 +190,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       })
 
     }
-    if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0)
+    if ((tmp = checkReconnexionArr.findIndex(item => item.username == user.login)) >= 0) {
+      this.server.to(client.id).emit('getClientStatus', { user: user.login, status: 'online', emitFrom: 'storeClientInfo' })
       checkReconnexionArr.splice(tmp, 1)
+    }
     else if (user.login) {
       this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
         for (let i = 0; i < res.length; i++) {
