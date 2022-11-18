@@ -25,6 +25,8 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
 
     const [inputValue, setInputValue] = useState('');
 
+    const [update, setUpdate] = useState(false);
+
     const [connectedClient, setConnectedClient] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
 
     const [openDialogBan, setOpenDialogBan] = useState(false);
@@ -148,6 +150,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     const debanUser = (item: { id: number, login: string, nickname: string, profile_pic: string }) => {
         utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login });
         enqueueSnackbar('User debanned', { variant: "success", autoHideDuration: 2000 })
+        utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
     }
 
     const getListItem = async (data: { id: number, login: string, nickname: string, profile_pic: string }[]) => {
@@ -180,9 +183,12 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     })
 
     useEffect(() => {
-        utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
-        utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
-    }, [props]);
+		if (!update) {
+			utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
+			utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
+			setUpdate(true);
+		}
+    }, [props, itemListHistory]);
 
     function AffList() {
         return (

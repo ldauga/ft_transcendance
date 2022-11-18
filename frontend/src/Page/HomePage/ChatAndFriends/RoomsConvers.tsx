@@ -424,7 +424,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const [count, setCount] = useState(0);
 
         useEffect(() => {
-            console.log("count: ", count);
+            //console.log("count: ", count);
         })
 
         function sendMessage() {

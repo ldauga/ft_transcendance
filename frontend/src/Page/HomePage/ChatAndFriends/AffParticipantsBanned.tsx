@@ -100,8 +100,9 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     }
 
     const debanParticipant = (item: { login: string, id: number, admin: boolean }) => {
-        utilsData.socket.emit('removeRoomBan', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name, login_banned: item.login });
+        utilsData.socket.emit('removeRoomBan', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name, id_banned: item.id, login_banned: item.login });
         enqueueSnackbar('Participant debaned', { variant: "success", autoHideDuration: 2000 })
+        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
     }
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {
@@ -142,8 +143,11 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     }
 
     useEffect(() => {
-        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-    }, [props]);
+		if (!update) {
+			utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+			setUpdate(true);
+		}
+    }, [props, itemListHistory]);
 
     function AffList() {
         if (banRoomParticipant == true)

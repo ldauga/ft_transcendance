@@ -29,6 +29,8 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
+	const [count, setCount] = useState(0);
+
     const closeConvers = () => {
         //setConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
         props.setConversCorrespondantData({ id: 0, login: "", nickname: "", profile_pic: "" });
@@ -46,6 +48,10 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     function sendMessage() {
         if (messageText.length <= 0)
             return;
+		if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
+			console.log("NON");
+			return;
+		}
         const newMsg = {
             id_sender: userData.userReducer.user?.id,
             id_receiver: props.conversCorrespondantData.id,
@@ -58,6 +64,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         }
         utilsData.socket.emit('createMsg', newMsg);
         setMessageText("");
+		setCount(Math.round(((new Date()).valueOf() / 1000)));
         for (let i = 0; i < 5; i++) {
             getListItem();
         }

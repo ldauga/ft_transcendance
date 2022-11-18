@@ -1366,18 +1366,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeRoomBan')
   async removeRoomBan(client: Socket, data: any) {
     console.log('Event removeRoomBan')
-    this.logger.log(`${client.id} want deban: ${data.login_banned} in room_id: ${data.room_id}`);
-    const removeBanReturn = await this.BlacklistService.removeRoomBan(data.room_id, data.login_banned);
-    if (removeBanReturn) {
-      const room = arrRoom.find(obj => obj.name == data.room_name);
-      let i = 0;
-      while (i < room.users.length) {
-        this.server.to(room.users[i].id).emit('debanedUserInRoom', true);
-        console.log("emit");
+    const verifIfBanExist = await this.BlacklistService.checkRoomBan(data.id_banned, data.login_banned, data.room_name);
+	if (verifIfBanExist) {
+		this.logger.log(`${client.id} want deban: ${data.login_banned} in room_id: ${data.room_id}`);
+		const removeBanReturn = await this.BlacklistService.removeRoomBan(data.room_id, data.login_banned);
+		if (removeBanReturn) {
+		const room = arrRoom.find(obj => obj.name == data.room_name);
+		let i = 0;
+		while (i < room.users.length) {
+			this.server.to(room.users[i].id).emit('debanedUserInRoom', true);
+			console.log("emit");
 
-        i++;
-      }
-    }
+			i++;
+		}
+		}
+	}
   }
 
   //MUTELIST EVENTS
