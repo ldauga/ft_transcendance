@@ -22,7 +22,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
         let test = false;
         const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
         if (userToSend) {
-            await axiosConfig.get('https://10.3.2.5:5001/user/login/' + userToSend?.username).then(async (res) => {
+            await axiosConfig.get('https://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
                 setInputValue("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
@@ -32,21 +32,21 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                     let a = 1;
                     let b = 1;
                     let c = 1;
-                    await axiosConfig.get('https://10.3.2.5:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                    await axiosConfig.get('https://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
                             a = 2;
                         }
                     })
-                    await axiosConfig.get('https://10.3.2.5:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                    await axiosConfig.get('https://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
                             b = 2;
                         }
                     })
-                    await axiosConfig.get('https://10.3.2.5:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
+                    await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
                         if (res.data == true) {
                             enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
                         }

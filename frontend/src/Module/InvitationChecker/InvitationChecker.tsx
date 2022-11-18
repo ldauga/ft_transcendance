@@ -39,12 +39,12 @@ function InvitationChecker(props: { children: any }) {
 			setInviteCheck(false)
 
 		history.pushState({}, '', window.URL.toString())
-		window.location.replace('https://10.3.2.5:3000/Pong')
+		window.location.replace('https://localhost:3000/Pong')
 
 	});
 
 	function verifInvitationRequest() {
-		axiosConfig.get('https://10.3.2.5:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
+		axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then((res) => {
 			if (res.data.length) {
 
 				for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {

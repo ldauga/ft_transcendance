@@ -22,7 +22,7 @@ const steps = [
   },
   {
     selector: '.reactour-search-box',
-    content: 'Here, you can find a user\'s profiles by their login or their nickname.',
+    content: 'Here, you can find a user\'s profile by their login or their nickname.',
   },
   {
     selector: '.reactour-friend-list',
@@ -63,7 +63,7 @@ function App() {
             Back
           </button>
         )
-      }} 
+      }}
       nextButton={({
         Button,
         currentStep,
@@ -80,14 +80,14 @@ function App() {
               if (last) {
                 setIsOpen(false)
               } else {
-                setCurrentStep((s) => (s === steps!.length - 1 ? 0 : s + 1))  
+                setCurrentStep((s) => (s === steps!.length - 1 ? 0 : s + 1))
               }
             }}
           >
             {last ? 'Close !' : 'Next'}
           </button>
         )
-      }} 
+      }}
       showBadge={false}
       showCloseButton={false}
       disableDotsNavigation={true}

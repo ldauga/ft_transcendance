@@ -194,7 +194,7 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 					<ListItemIcon>
 						<Person fontSize="small" />
 					</ListItemIcon>
-					Invitation Request
+					Invitation Requests
 				</MenuItem>
 				<MenuItem key='Blocked Users' onClick={handleClickBanUser}>
 					<ListItemIcon>

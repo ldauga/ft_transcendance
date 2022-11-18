@@ -10,6 +10,7 @@ import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew, Check, Close } from "@mui/icons-material";
 import { NotifType } from "../../../State/type";
 import { bindActionCreators } from "redux";
+import { Tooltip } from "@mui/material";
 
 function InvitationRequest(props: { setFriendList: Function, setInvitationRequest: Function }) {
 
@@ -21,7 +22,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     const dispatch = useDispatch();
 	const { delNotif } = bindActionCreators(actionCreators, dispatch);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [update, setUpdate] = useState(false);
 
     const handleClick = () => {
@@ -35,10 +36,14 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
         {
             return (
                 <div className="inItem">
-                    <p>{props.item.sender_login} sent a invitation to join {props.item.room_name}</p>
+                    <p>{props.item.sender_login} sent an invitation to join "{props.item.room_name}" group</p>
                     <div>
+						<Tooltip title="Accept">
                         <button onClick={() => acceptRoomInvit(props.item)}><Check /></button>
+						</Tooltip>
+						<Tooltip title="Decline">
                         <button onClick={() => declineRoomInvit(props.item)}><Close /></button>
+						</Tooltip>
                     </div>
                 </div>
             );
@@ -47,10 +52,14 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
         {
             return (
                 <div className="inItem">
-                    <p>{props.item.sender_login} sent a invitation</p>
+                    <p>{props.item.sender_login} sent you a friend request</p>
                     <div>
+						<Tooltip title="Accept">
                         <button onClick={() => acceptFriendInvit(props.item)}><Check /></button>
+						</Tooltip>
+						<Tooltip title="Decline">
                         <button onClick={() => declineFriendInvit(props.item)}><Close /></button>
+						</Tooltip>
                     </div>
                 </div>
             );
@@ -58,7 +67,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     }
 
     const getListItem = async () => {
-        await axiosConfig.get('https://10.3.2.5:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
@@ -164,7 +173,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
                 <div className="cross">
                     <button onClick={handleClick}><ArrowBackIosNew /></button>
                 </div>
-                <h3>Invitation Request</h3>
+                <h3>Invitation Requests</h3>
                 <div className="icons">
 
                 </div>
