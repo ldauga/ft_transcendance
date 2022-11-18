@@ -17,6 +17,7 @@ let tmp = 0
 let verif = false
 function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function }) {
 	const ref = useRef<any>(null);
+	const inputRef = useRef(null);
 	const utilsData = useSelector((state: RootState) => state.utils);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -28,7 +29,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
 	const [conversNotif, setConversNotif] = useState({ name: "", userOrRoom: false });
-	const [searchBarContent, setSearchBarContent] = useState('');
 
 	const [lastNbNotif, setLastNbNotif] = useState(tmp);
 
@@ -54,11 +54,11 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		window.location.replace('https://localhost:3000')
 	}
 
-	async function findUserProfile() {
-		if (searchBarContent) {
-			let res = await axiosConfig.get('https://localhost:5001/user/login/' + searchBarContent);
+	async function findUserProfile(content: string) {
+		if (content) {
+			let res = await axiosConfig.get('https://localhost:5001/user/login/' + content);
 			if (!res.data.login)
-				res = await axiosConfig.get('https://localhost:5001/user/nickname/' + searchBarContent);
+				res = await axiosConfig.get('https://localhost:5001/user/nickname/' + content);
 			if (!res.data.login)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
 			else
@@ -166,7 +166,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							<path d="M8.25 10.875a2.625 2.625 0 115.25 0 2.625 2.625 0 01-5.25 0z" />
 							<path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.125 4.5a4.125 4.125 0 102.338 7.524l2.007 2.006a.75.75 0 101.06-1.06l-2.006-2.007a4.125 4.125 0 00-3.399-6.463z" clipRule="evenodd" />
 						</svg>
-						<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onChange={e => setSearchBarContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile() }} />
+						<input onMouseLeave={() => ref.current.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile(ref.current.value); }} />
 					</div>
 					<button className='reactour-friend-list' onClick={() => { //friendList
 						setOpenPopUp(!open);
