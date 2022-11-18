@@ -365,7 +365,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     }
 
     function demute(item: { login: string, id: number, admin: boolean }) {
-        utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login });
+        utilsData.socket.emit('removeRoomMute', { room_name: props.roomsConversData.name, room_id: props.roomsConversData.id, login_muted: item.login, id_muted: item.id });
         enqueueSnackbar('Participant demuted', { variant: "success", autoHideDuration: 2000 })
     };
 
