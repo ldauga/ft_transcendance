@@ -70,17 +70,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         }
     };
 
-    utilsData.socket.removeListener('getClientStatus');
-
-    utilsData.socket.on('getClientStatus', function (data: any) {
-        console.log("getClientStatus data: ", data);
-        if (data.user == props.conversCorrespondantData.login) {
-            setStatut(data.status);
-        }
-        utilsData.socket.off('getClientStatus');
-        utilsData.socket.removeListener('getClientStatus');
-    })
-
     utilsData.socket.removeListener('friendConnection');
 
     utilsData.socket.on('friendConnection', function (data: any) {
