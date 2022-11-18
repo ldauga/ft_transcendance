@@ -148,8 +148,9 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     }
 
     const debanUser = (item: { id: number, login: string, nickname: string, profile_pic: string }) => {
-        utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_banned: item.login });
+        utilsData.socket.emit('removeUserBan', { id_sender: userData.userReducer.user?.id, login_sender: userData.userReducer.user?.login, login_banned: item.login, id_banned: item.id });
         enqueueSnackbar('User debanned', { variant: "success", autoHideDuration: 2000 })
+        closeAffBanned();
         utilsData.socket.emit('GET_ALL_USERS_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login });
     }
 

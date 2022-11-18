@@ -14,7 +14,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -65,6 +65,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
+        console.log("removeParticipantReturn");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
@@ -73,6 +74,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('debanedUserInRoom');
 
     utilsData.socket.on('debanedUserInRoom', function (debanedUserInRoom: boolean) {
+        console.log("debanedUserInRoom");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('debanedUserInRoom');
         utilsData.socket.removeListener('debanedUserInRoom');
@@ -102,7 +104,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     const debanParticipant = (item: { login: string, id: number, admin: boolean }) => {
         utilsData.socket.emit('removeRoomBan', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name, id_banned: item.id, login_banned: item.login });
         enqueueSnackbar('Participant debaned', { variant: "success", autoHideDuration: 2000 })
-        utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        props.setAffBanned(false);
     }
 
     function RightItem(item: { login: string, id: number, admin: boolean }) {
@@ -147,6 +149,9 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 			utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
 			setUpdate(true);
 		}
+        // for (let i = 0; i < 5; i++) {
+        //     utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        // }
     }, [props, itemListHistory]);
 
     function AffList() {

@@ -638,7 +638,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     useEffect(() => {
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-    }, [props]);
+    }, [props, isAffBanned]);
 
     function MainAff() {
         if (isAffBanned) {
