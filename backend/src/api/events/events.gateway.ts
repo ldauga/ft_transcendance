@@ -1251,18 +1251,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('removeUserBan')
   async removeUserBan(client: Socket, data: any) {
     console.log('Event removeUserBan')
-    this.logger.log(`${client.id} want deban: ${data.login_banned}`);
-    const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
-    if (removeBanReturn) {
-      const tmp = arrClient.find(obj => obj.id == client.id);
-      this.server.to(client.id).emit('debanedUser', true);
-      console.log("emit");
-
-      const _client = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client) {
-        this.server.to(_client.id).emit('debanedUser', true);
+    const verifIfBanExist = await this.BlacklistService.checkUserBan(data.login_banned, data.login_sender);
+    if (verifIfBanExist) {
+      this.logger.log(`${client.id} want deban: ${data.login_banned}`);
+      const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
+      if (removeBanReturn) {
+        const tmp = arrClient.find(obj => obj.id == client.id);
+        this.server.to(client.id).emit('debanedUser', true);
         console.log("emit");
 
+        const _client = arrClient.find(obj => obj.username == data.login_banned);
+        if (_client) {
+          this.server.to(_client.id).emit('debanedUser', true);
+          console.log("emit");
+
+        }
       }
     }
   }
@@ -1701,7 +1704,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             retArr.push(toPush);
           }
         }
-        console.log("emit");
+        console.log("emit getAllParticipantsBannedReturn to ", client.id, ", retArr: ", retArr);
 
         this.server.to(client.id).emit("getAllParticipantsBannedReturn", retArr);
       }
