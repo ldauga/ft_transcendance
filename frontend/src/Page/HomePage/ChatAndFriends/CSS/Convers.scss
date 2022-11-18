@@ -39,17 +39,7 @@
                 p {
                     margin: 0;
                     font-size: 19px;
-
-                    &:first-of-type {
-                        cursor: pointer;
-                    }
-
-                    &:last-of-type {
-                        display: flex;
-                        align-items: baseline;
-                        gap: 5px;
-                        font-weight: 200;
-                    }
+                    cursor: pointer;
                 }
 
                 .status {
