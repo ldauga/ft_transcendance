@@ -175,7 +175,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   sendNotifGame() {
     this.pongInfo.forEach(room => {
       if (room.firstConnectionInviteProfie || !room.started)
-        return
+      return
       let player: Player
       if ((player = room.players.find(player => !player.connected)) != undefined) {
         if (player.user == null)
@@ -415,6 +415,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
       if (this.pongInfo[index].started) {
+        let stop = false;
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
             this.pongInfo[index].players[i].ready = false
@@ -482,7 +483,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
               this.pongInfo.splice(room[0], 1)
 
+              stop = true
+
+
               this.server.to(room[1].roomID).emit('finish', room[1])
+
 
               room[1].players.forEach(async player => {
                 const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
@@ -507,14 +512,15 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
             }
 
+
             // return this.server.to(this.pongInfo[index].players[i ? 0 : 1].id).emit('deconected')
           }
           else if (this.pongInfo[index].players[i ? 0 : 1].connected)
             if (!(this.pongInfo[index].players[0].score == 3 || this.pongInfo[index].players[1].score == 3))
               if (this.pongInfo[index].players[0].ready && this.pongInfo[index].players[1].ready)
                 this.pongInfo[index].moveAll();
-
-        this.render(this.pongInfo[index].roomID)
+        if (!stop)
+          this.render(this.pongInfo[index].roomID)
 
       }
     }

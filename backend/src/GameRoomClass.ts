@@ -195,10 +195,11 @@ class Ball {
 			this.y = this.initial_y
 		}
 
+		this.speed = 3
+
 		this.dx = random(0, 1) ? -this.speed : this.speed
 		this.dy = 0
-
-		this.speed = 7
+		
 
 		this.radius = 10
 
@@ -354,6 +355,10 @@ class gameRoomClass {
 		this.players.push(new Player(this.canvas))
 
 		this.ball = new Ball(this.canvas)
+
+		if (gameMap == 'map2' || gameMap == 'map3')
+			this.ball.x += (this.ball.dx > 0 ? -1 : 1) * 100
+
 	}
 
 	setOponnent(id: string, user: {
@@ -649,6 +654,9 @@ class gameRoomClass {
 			this.ball.dx = -this.ball.speed
 		else
 			this.ball.dx = random(0, 1) ? -this.ball.speed : this.ball.speed
+
+		if (this.map.obstacles.length && (this.map.obstacles[0].state == MOTION || this.map.obstacles[0].state == EXPAND))
+			this.ball.x += (this.ball.dx > 0 ? -1 : 1) * 100
 
 		for (let i = 0; i < 2; i++)
 			this.players[i].resetPos(this.canvas)
