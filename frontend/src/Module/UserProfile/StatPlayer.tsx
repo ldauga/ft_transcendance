@@ -74,7 +74,7 @@ function StatPlayer() {
 	utilsData.socket.on('changeNicknameError', function (error: string) {
 		switch (error) {
 			case 'too-short':
-				enqueueSnackbar('The new nickname must be between 3 and 8 char.', { variant: "warning", autoHideDuration: 2000 })
+				enqueueSnackbar('The new nickname must be between 3 and 8 characters.', { variant: "warning", autoHideDuration: 2000 })
 				break;
 			case 'already-used':
 				enqueueSnackbar('Nickname already taken.', { variant: "warning", autoHideDuration: 2000 })
@@ -83,7 +83,7 @@ function StatPlayer() {
 				enqueueSnackbar("Your nickname can only have alpha-numeric characters or \'_\'.", { variant: "warning", autoHideDuration: 2000 })
 				break;
 			case 'identical-nickname':
-				enqueueSnackbar('Do not put the same nickname.', { variant: "warning", autoHideDuration: 2000 })
+				enqueueSnackbar('Cannot use the same nickname.', { variant: "warning", autoHideDuration: 2000 })
 				break;
 			case 'same-as-login':
 				enqueueSnackbar('Cannot use someone\'s login as your nickname.', { variant: "warning", autoHideDuration: 2000 })
@@ -255,10 +255,10 @@ function StatPlayer() {
 		axios(config).then((res) => {
 			setUser(res.data);
 			setProfile({ ...profile, profile_pic: res.data.profile_pic });
-			enqueueSnackbar('Profile picture changed !', { variant: 'success', autoHideDuration: 2000 })
+			enqueueSnackbar('Your profile picture has been updated !', { variant: 'success', autoHideDuration: 2000 })
 		}).catch((err) => {
 			setProfile({ ...profile, profile_pic: '' });
-			enqueueSnackbar('Unable to update avatar.', { variant: 'warning', autoHideDuration: 2000 })
+			enqueueSnackbar('Unable to update your profile picture.', { variant: 'warning', autoHideDuration: 2000 })
 		})
 	}
 
