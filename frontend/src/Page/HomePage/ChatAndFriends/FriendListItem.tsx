@@ -1,17 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../../State";
 import './CSS/FriendList.scss';
-import AddFriend from "./AddFriend";
-import BanUser from "../../../Trash/BanUser";
 import axiosConfig from "../../../Utils/axiosConfig";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, ListItemIcon, Menu, MenuItem, TextField } from "@mui/material";
 import { ArrowBackIosNew, ArrowForwardIos, Person, Block } from "@mui/icons-material";
 import ChatIcon from '@mui/icons-material/Chat';
 import { bindActionCreators } from "redux";
-import { delChatNotif } from "../../../State/Action-Creators";
 import MapCarousel from "../../Pong/MapCarousel/MapCarousel";
 import { gameRoomClass } from "../../Pong/gameRoomClass";
 import '../../Pong/PongHome.scss'
@@ -27,9 +23,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const [openDialogInviteGame, setOpenDialogInviteGame] = useState(false);
-
-    const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
-    const openInviteGame = Boolean(anchorEl2);
 
     const [activeStep, setActiveStep] = useState(0);
     const [inviteGameMap, setInviteGameMap] = useState('map1');
@@ -61,10 +54,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     const dispatch = useDispatch();
 
     const { delChatNotif, setConversChatNotif, setInviteCheck } = bindActionCreators(actionCreators, dispatch);
-
-    // <button onClick={() => { utilsData.socket.emit('SPECTATE_CLIENT', { user: userData.userReducer.user, specID: friendLogin }) }} className="bi bi-eye"></button>
-    // <button onClick={() => openChat(item)} className="bi bi-chat"></button>
-    // <button onClick={() => removeFriend(item)} className="bi bi-x-lg"></button>
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -120,7 +109,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
     }
 
     const openChat = async () => {
-        //setConversChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setConversCorrespondantData({ id: props.item.user.id, login: props.item.user.login, nickname: props.item.user.nickname, profile_pic: props.item.user.profile_pic });
         delChatNotif({ name: props.item.user.login, userOrRoom: false });
         props.setFriendList(false);
@@ -174,9 +162,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
                         Spectate Friend
                     </MenuItem> :
                     <MenuItem
-                        // aria-controls={openInviteGame ? 'menu-invite-game' : undefined}
-                        // aria-haspopup="true"
-                        // aria-expanded={openInviteGame ? 'true' : undefined}
                         onClick={() => { setOpenDialogInviteGame(true) }}
                         disabled={!(props.item.status == 'online')}>
                         <ListItemIcon>
@@ -199,14 +184,6 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
             </Menu>
         );
     };
-
-    useEffect(() => {
-        // if (props.item.id_user1 == userData.userReducer.user?.id)
-        //     setFriendLogin(props.item.login_user2);
-        // else
-        //     setFriendLogin(props.item.login_user1);
-        // setProfilePic(`https://cdn.intra.42.fr/users/${props.item.login}.jpg`);
-    }, [props]);
 
     const inviteGame = async () => {
         setOpenDialogInviteGame(false);

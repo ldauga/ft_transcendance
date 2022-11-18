@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/AddFriend.scss';
-import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
 function AddFriend(props: { setNewAddFriend: Function }) {
@@ -96,23 +95,16 @@ function AddFriend(props: { setNewAddFriend: Function }) {
         utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS');
     }, []);
 
-    // const [value, setValue] = React.useState<string | null>;
-
     return (
         <div className="addFriendContainer">
             <Autocomplete
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
                 options={connectedClient.map((option) => option.nickname)}
                 renderInput={(params) => <TextField {...params} label="Invite friend" />}
-                // onChange={(event: any, newValue: string | null) => {
-                //   setValue(newValue);
-                // }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
-
-                // value={value}
                 onChange={(event: any, newValue: string | null) => {
                     setInputValue(newValue || "");
                 }}

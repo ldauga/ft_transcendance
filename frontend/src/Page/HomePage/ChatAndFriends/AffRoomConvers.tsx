@@ -6,15 +6,8 @@ import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
 import '../Homepage.scss'
 import React from 'react';
-import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ArrowBackIosNew, Logout, Person, Settings } from "@mui/icons-material";
-import LogoutIcon from '@mui/icons-material/Logout';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { valideInput } from '../../../Utils/utils';
+import {Tooltip } from "@mui/material";
 import { bindActionCreators } from 'redux';
 
 function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
@@ -35,18 +28,8 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
         console.log("newMsgReceived2");
-        //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         getUsers2();
-        // const length = itemListHistory.length;
-        // let secu = 0;
-        // while (length == itemListHistory.length && secu < constWhileSecu) {
-        //     getListItem();
-        //     secu++;
-        // }
         utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
-        // if (data.userOrRoom && data.room_name == props.roomsConversData.name) {
-        //     delChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        // }
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
     })
@@ -55,7 +38,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
 
     utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
         console.log("getAllUsersInRoomReturn: ", data);
-        //getListItem(data);
         utilsData.socket.off('getAllUsersInRoomReturn');
         utilsData.socket.removeListener('getAllUsersInRoomReturn');
     })
@@ -242,22 +224,15 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     useEffect(() => {
         console.log('useEffect aff convers')
         messagesEndRef.current?.scrollIntoView();
-        // if (userData.chatNotifReducer.total != oldChatNotifTotal) {
-        //     initOneConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
-        //     setOldChatNotifTotal(userData.chatNotifReducer.total);
-        // }
     }, [itemListHistory])
 
     useEffect(() => {
         console.log('useEffect aff convers 2')
         if (update) {
             getUsers2();
-            //utilsData.socket.emit('GET_ALL_USERS_IN_ROOM', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
             setUpdate(false);
         }
     });
-
-    // ref={bottom}
 
     return (
         <div className="messages" >

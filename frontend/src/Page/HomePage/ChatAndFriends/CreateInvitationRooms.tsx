@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
@@ -94,15 +93,10 @@ function CreateInvitationRooms(props: { roomsConversData: { name: string, id: nu
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
                 options={connectedClient.map((option) => option.nickname)}
                 renderInput={(params) => <TextField {...params} label="Invite" />}
-                // onChange={(event: any, newValue: string | null) => {
-                //   setValue(newValue);
-                // }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
-
-                // value={value}
                 onChange={(event: any, newValue: string | null) => {
                     setInputValue(newValue || "");
                 }}

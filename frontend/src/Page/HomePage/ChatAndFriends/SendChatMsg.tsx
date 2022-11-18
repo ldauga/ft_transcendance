@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/SendChatMsg.scss'
 import './CSS/Convers.scss'
-import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
 function SendChatMsg(props: {setSendChatMsg: Function}) {
@@ -17,8 +16,6 @@ function SendChatMsg(props: {setSendChatMsg: Function}) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [text, setText] = useState('');
-
-    const [messageText, setMessageText] = useState('');
 
     const [connectedClient, setConnectedClient] = useState<{ id: string, username: string, nickname: string }[]>(new Array());
 

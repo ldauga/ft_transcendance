@@ -10,7 +10,6 @@ const GameSwitch = () => {
     const [createMap, setCreateMap] = useState(false);
     const [verif, setVerif] = useState(false);
     const [spectate, setSpectate] = useState(false);
-    // const [checkReconnexion, setCheckReconnexion] = useState(false);
     const [specID, setSpecID] = useState("atourret");
     const [roomID, setRoomID] = useState("");
     const [gameMap, setGameMap] = React.useState('map1');
@@ -19,13 +18,10 @@ const GameSwitch = () => {
     const utilsData = useSelector((state: RootState) => state.utils);
 
 
-    // useEffect(() => {
     if (!verif) {
         setVerif(true)
         utilsData.socket.emit('CHECK_RECONNEXION', { user: persistantReducer.userReducer.user })
     }
-
-    // })
 
     if (gameStart)
         return (
@@ -52,17 +48,6 @@ const GameSwitch = () => {
                 createMap={createMap}
                 setCreateMap={setCreateMap}
             />
-            // <JoinRoom
-            //     gameStart={gameStart}
-            //     setGameStart={setGameStart}
-            //     setRoomID={setRoomID}
-            //     specID={specID}
-            //     setSpecID={setSpecID}
-            //     gameMap={gameMap}
-            //     setGameMap={setGameMap}
-            //     createMap={createMap}
-            //     setCreateMap={setCreateMap}
-            // />
         )
 }
 

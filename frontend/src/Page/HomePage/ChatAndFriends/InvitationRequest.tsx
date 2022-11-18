@@ -5,7 +5,6 @@ import './CSS/ChatAndFriends.scss';
 import './../Homepage.scss';
 import './CSS/InvitationRequest.scss'
 import axiosConfig from "../../../Utils/axiosConfig";
-import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew, Check, Close } from "@mui/icons-material";
 import { NotifType } from "../../../State/type";

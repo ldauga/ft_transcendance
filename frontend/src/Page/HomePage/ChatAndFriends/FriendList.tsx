@@ -1,12 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import './CSS/FriendList.scss';
 import AddFriend from "./AddFriend";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
-import { Cancel, Close, HourglassBottom, Person, PersonAdd, Settings } from "@mui/icons-material";
+import { ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
+import { Cancel, Close, Person, PersonAdd } from "@mui/icons-material";
 import FriendListItem from "./FriendListItem";
 
 import { constWhileSecu } from "../HomePage";
@@ -24,7 +23,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 
 	const [newAddFriend, setNewAddFriend] = useState(false);
 
-	const [friendArr, setFriendArr] = useState(Array<any>());
 
 	const info = { user: userData.userReducer.user };
 
@@ -48,11 +46,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 	const handleClickInvitationRequest = () => {
 		props.setFriendList(false);
 		props.setInvitationRequest(true);
-	};
-
-	const handleClickRooms = () => {
-		props.setFriendList(false);
-		props.setRooms(true);
 	};
 
 	utilsData.socket.removeAllListeners('friendConnection');
@@ -205,11 +198,6 @@ function FriendList(props: { setFriendList: Function, setInvitationRequest: Func
 			</Menu>
 		);
 	};
-
-	// <button onClick={handleClickBanUser}><i className="bi bi-person-x-fill"></i></button>
-	// <button onClick={handleClickAddFriend}><i className="bi bi-person-plus"></i></button>
-	// <button onClick={handleClickRooms}><i className="bi bi-people-fill"></i></button>
-	// <button onClick={handleClickInvitationRequest}><i className="bi bi-hourglass-split"></i></button>
 
 	return (
 		<div className="mainAffGene">

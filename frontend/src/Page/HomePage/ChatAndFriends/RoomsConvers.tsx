@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionCreators, RootState } from '../../../State';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../State';
 import './CSS/RoomsConvers.scss'
 import './CSS/Rooms.scss'
 import './CSS/Convers.scss'
@@ -8,14 +8,13 @@ import '../Homepage.scss'
 import React from 'react';
 import AffParticipantsRooms from './AffParticipantsRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Divider, IconButton, ListItemIcon, Menu, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, SelectChangeEvent, Grid, Switch, TextField, Tooltip } from "@mui/material";
+import { Divider, IconButton, ListItemIcon, Menu, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Grid, Switch, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ArrowBackIosNew, Logout, Person, Settings, Update } from "@mui/icons-material";
+import { ArrowBackIosNew, Person, Settings } from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { valideInput } from '../../../Utils/utils';
-import { bindActionCreators } from 'redux';
 import AffConvers from './AffRoomConvers';
 import { useSnackbar } from 'notistack';
 
@@ -35,21 +34,11 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const [isAffParticipantsRooms, setAffParticipantsRooms] = useState(false);
     const [isConversRooms, setConversRooms] = useState(true);
-    const [isChangeRoomPassword, setChangeRoomPassword] = useState(false);
-
-    const [oldChatNotifTotal, setOldChatNotifTotal] = useState(0);
-
-    const [users, setUsers] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
-    const [participants, setParticipants] = useState<{ id: number, login: string, nickname: string, profile_pic: string }[]>(new Array());
-
-    const bottom = useRef<null | HTMLDivElement>(null);
 
     const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
 
     const [pp1, setPp1] = useState("");
     const [pp2, setPp2] = useState("");
-
-    // const scrollToBottom = useScrollToBottom();
 
     utilsData.socket.removeAllListeners('roomHasBeenDeleted');
 
@@ -106,7 +95,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     })
 
     const closeConvers = () => {
-        //setConversChatNotif({ name: props.roomsConversData.name, userOrRoom: true });
         props.setRoomsConversData({ name: "", id: 0 });
         props.setRoomsConvers(false);
         props.setChat(true);
@@ -159,12 +147,9 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
     const getUsers = async () => {
         console.log("getUsers");
-        let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
         let i = 0;
         setPp1("");
         setPp2("");
-        setUsers([]);
-        setParticipants([]);
         await axiosConfig.get('https://localhost:5001/participants/allUserForOneRoom/' + props.roomsConversData.name).then(async (res) => {
             res.data.forEach(async (item: { login: string, id: number }) => {
                 await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
@@ -176,20 +161,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         setPp2(res.data.profile_pic);
                         i++;
                     }
-                    itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
+                    else
+                        return ;
                 });
-            });
-            setParticipants(itemList);
-        })
-        await axiosConfig.get('https://localhost:5001/messages/getUsersRoomConversMessages/' + props.roomsConversData.name).then(async (res) => {
-            res.data.forEach(async (item: { login: string, id: number }) => {
-                if (!itemList.find(obj => obj.login == item.login))
-                    await axiosConfig.get('https://localhost:5001/user/id/' + item.id).then(async (res) => {
-                        itemList.push({ id: res.data.id, login: res.data.login, nickname: res.data.nickname, profile_pic: res.data.profile_pic });
-                    });
+                if (i > 1)
+                    return ;
             });
         })
-        setUsers(itemList);
     }
 
     function Header() {
@@ -304,8 +282,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             useEffect(() => {
                 console.log("useEffect HeaderPrint textNicknameHeader: ", textNicknameHeader);
                 getAllParticipant();
-                // if ()
-                //     utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
                 if (update) {
                     setUpdate(false);
                 }
@@ -423,10 +399,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         const [messageText, setMessageText] = useState('');
 
         const [count, setCount] = useState(0);
-
-        useEffect(() => {
-            //console.log("count: ", count);
-        })
 
         function sendMessage() {
             if (messageText.length <= 0 || isMute)

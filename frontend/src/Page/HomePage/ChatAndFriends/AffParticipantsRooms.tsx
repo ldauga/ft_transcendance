@@ -35,7 +35,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const [banRoomParticipant, setBanRoomParticipant] = useState(false);
     const [muteRoomParticipant, setMuteRoomParticipant] = useState(false);
-    const [addAdmin, setAddAdmin] = useState(false);
 
     const [pp1, setPp1] = useState("");
     const [pp2, setPp2] = useState("");
@@ -498,7 +497,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                             <Tooltip title="Admin"><ManageAccountsIcon /></Tooltip>
                         </div> :
                         <></>}
-                    {/* <button onClick={() => removeParticipant(item)} className="bi bi-x-lg"></button> */}
                     <IconButton onClick={(e) => { e.stopPropagation(); handleClickOpenOptions(e) }}>
                         <MoreVertIcon />
                     </IconButton>
@@ -589,10 +587,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         if (isAdmin)
             return (
                 <div className="mainHeaderRight mainHeaderSide">
-                    {/* <button onClick={handleClickMuteRoomParticipant}><i className="bi bi-person-x-fill"></i></button>
-                    <button onClick={affBanned}><i className="bi bi-person-x-fill"></i></button>
-                    <button onClick={handleClickAddAdmin}><i className="bi bi-diagram-2-fill"></i></button>
-                    <button onClick={addInvitationRequest} className="bi bi-plus-lg"></button> */}
                     <IconButton onClick={handleClickOpenOptions}>
                         <MoreVertIcon />
                     </IconButton>

@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/Rooms.scss'
@@ -7,7 +6,6 @@ import '../Homepage.scss'
 import { Button, Checkbox, TextField } from '@mui/material';
 import CreateIcon from '@mui/icons-material/Create';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
 import { valideInput } from '../../../Utils/utils';
 
@@ -97,12 +95,6 @@ function CreateRooms(props: { setCreateGroup: Function }) {
         <div id="CreateGroupContainer">
             <h3>Create a group</h3>
             <TextField id="createRoomTextField" label="Enter a name" variant="outlined" value={text} onChange={e => setText(e.target.value)} />
-            {/* <input
-                value={text}
-                onChange={e => setText(e.target.value)}
-                placeholder="Enter name"
-            // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
-            /> */}
             <div id="PasswordOrNotContainer">
                 <p>Password</p>
                 <Checkbox
@@ -110,14 +102,6 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                     onChange={e => setPasswordOrNot(!passwordOrNot)}
                 />
                 <TextField id="createRoomPasswordTextField" label="Enter a password" type='password' variant="outlined" value={password} onChange={e => setPassword(e.target.value)} disabled={!passwordOrNot} />
-                {/* <input
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="Enter password"
-                    disabled={!passwordOrNot}
-                    id="PasswordOrNotContainerInput"
-                // onKeyDown={(e) => { if (e.key === 'Enter') createGroup() }}
-                /> */}
             </div>
             <div id="PrivateOrNotContainer">
                 <p>Private</p>
@@ -127,9 +111,6 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                 />
             </div>
             <CreateButton />
-            {/* <button type="button" onClick={() => createGroup()}>
-                Create Group
-            </button> */}
         </div>
     );
 };
