@@ -70,6 +70,22 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         }
     };
 
+    utilsData.socket.removeListener('friendConnection');
+
+    utilsData.socket.on('friendConnection', function (data: any) {
+        setStatut("online");
+        utilsData.socket.off('friendConnection');
+        utilsData.socket.removeListener('friendConnection');
+    })
+
+    utilsData.socket.removeListener('friendDeconnection');
+
+    utilsData.socket.on('friendDeconnection', function (data: any) {
+        setStatut("offline");
+        utilsData.socket.off('friendDeconnection');
+        utilsData.socket.removeListener('friendDeconnection');
+    })
+
     utilsData.socket.removeListener('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {

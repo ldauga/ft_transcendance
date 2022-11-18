@@ -566,9 +566,9 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                   }
                 }
 
-                arrClient.forEach((client) => {
-                  this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'offline', emitFrom: 'handleInterval 2' })
-                })
+                // arrClient.forEach((client) => {
+                //   this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'offline', emitFrom: 'handleInterval 2' })
+                // })
 
               })
 
