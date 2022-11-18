@@ -415,7 +415,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleInterval() {
     for (let index = 0; index < this.pongInfo.length; index++) {
       if (this.pongInfo[index].started) {
-        console.log(this.pongInfo[index].ball)
         for (let i = 0; i < 2; i++)
           if (!this.pongInfo[index].players[i].connected) {
             this.pongInfo[index].players[i].ready = false
