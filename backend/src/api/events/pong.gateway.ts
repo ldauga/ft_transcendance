@@ -907,7 +907,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log('Event GET_CLIENT_STATUS info: ', info);
     console.log(arrClient.find((item) => item.username == info.user.login));
     if (this.getRoomByClientLogin(info.user.login))
-      this.server.to(client.id).emit('getClientStatus', { login: info.user.login, status: 'in-game', emitFrom: 'getClientStatus' })
+      this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'in-game', emitFrom: 'getClientStatus' })
     else if (arrClient.find((item) => item.username == info.user.login))
       this.server.to(client.id).emit('getClientStatus', { user: info.user.login, status: 'online', emitFrom: 'getClientStatus' })
     else
