@@ -563,7 +563,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const tmp_room_id = roomReturn.id;
     //const participantReturn = await this.http.post('https://localhost:5001/participants', newParticipant);
     const participantReturn = await this.ParticipantsService.createParticipant(newParticipant);
-    const _client = arrClient.find(obj => obj.username === data.owner_login);
+    const _client = arrClient.find(obj => obj.id === client.id);
     const newRoom = {
       id: tmp_room_id,
       name: data.name,
@@ -572,6 +572,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (_client != null)
       newRoom.users.push(_client);
     arrRoom.push(newRoom);
+    console.log("newRoom: ", newRoom.users);
     for (let i = 0; i < arrClient.length; i++) {
       console.log("emit");
 

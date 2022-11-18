@@ -607,8 +607,15 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
     };
 
     utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
-        const oldLength = itemListHistory.length;
-        getListItem(data);
+        let oldLength = 0;
+        if (itemListHistory)
+            oldLength = itemListHistory.length;
+        let i = 0;
+        while (itemListHistory.length == oldLength && i < 3 ) {
+            getListItem(data);
+            console.log("itemListHistory.length: ", itemListHistory.length);
+            i++;
+        }
         utilsData.socket.off('getAllParticipantsReturn');
         utilsData.socket.removeListener('getAllParticipantsReturn');
     })

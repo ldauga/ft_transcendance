@@ -158,6 +158,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [props]);
 
     const getUsers = async () => {
+        console.log("getUsers");
         let itemList: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
         let i = 0;
         setPp1("");
