@@ -19,7 +19,7 @@ export default function Callback() {
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 
     function turnOn2fa(value: string) {
-        axios.get('https://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
+        axios.get('https://10.4.5.1:5001/auth/2fa/verify/' + value, { withCredentials: true })
             .then((e) => { setTwoFactor(true) })
             .catch((e) => {
                 enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
@@ -27,7 +27,7 @@ export default function Callback() {
     }
 
     if (persistantReducer.userReducer.user === null) {
-        axiosConfig.get("https://localhost:5001/user/userExist/").then((item) => { setUser(item.data); }).catch((err) => setUser(null))
+        axiosConfig.get("https://10.4.5.1:5001/user/userExist/").then((item) => { setUser(item.data); }).catch((err) => setUser(null))
     }
 
     if (persistantReducer.userReducer.user !== null) {

@@ -97,7 +97,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             winner_id: this.pongInfo[allRoom[i].index].players[0].score === 3 ? this.pongInfo[allRoom[i].index].players[0].user.id : this.pongInfo[allRoom[i].index].players[1].user.id,
           }
 
-          //const match = http.post('https://localhost:5001/matchesHistory', data);
+          //const match = http.post('https://10.4.5.1:5001/matchesHistory', data);
           const match = this.MatchesHistoryService.createMatch(data);
 
           this.pongInfo[allRoom[i].index].players.forEach((item, index) => {
@@ -535,7 +535,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 winner_id: room[1].players[0].score === 3 ? room[1].players[0].user.id : room[1].players[1].user.id,
               }
 
-              //const match = http.post('https://localhost:5001/matchesHistory', data);
+              //const match = http.post('https://10.4.5.1:5001/matchesHistory', data);
               const match = this.MatchesHistoryService.createMatch(data);
 
               room[1].players.forEach((item, index) => {

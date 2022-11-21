@@ -336,7 +336,7 @@ const GamePage = (props: any) => {
 
         let U, H;
         setTimeout(function () {
-            window.location.replace('https://localhost:3000');
+            window.location.replace('https://10.4.5.1:3000');
         }, 5000);
 
         if (finishRoom?.players[0].user?.login == persistantReducer.userReducer.user?.login) {

@@ -80,7 +80,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'https://localhost:3000/pong'
+													window.location.href = 'https://10.4.5.1:3000/pong'
 												}} >RECONNECT</button>
 											</div>
 										</div>
