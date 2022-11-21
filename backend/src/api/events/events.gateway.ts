@@ -146,7 +146,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
 
     const tmp = arrClient.find(item => item.id == client.id)
 
@@ -156,7 +155,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   handleConnection(client: any, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
     const newClient: Client = {
       id: client.id,
       username: ""
@@ -212,7 +210,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   };
 
   async afterInit(server: any) {
-    this.logger.log('Init');
     this.RoomsService.getAllRooms().then((res) => {
       res.forEach(item => {
         let newRoom: Room = {
@@ -375,7 +372,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeInvitationRequest(client: Socket, data: any) {
     const checkIfInvit = await this.invitationRequestService.checkInvitationRequest(data.id_user1, data.id_user2);
     if (checkIfInvit) {
-      this.logger.log(`${client.id} said : remove Invitation Request`);
       const invitationRequestReturn = await this.invitationRequestService.removeInvitationRequest(data.id_user1, data.id_user2)
       this.server.to(client.id).emit('returnRemoveInvitationRequest', true);
     }
@@ -566,7 +562,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (checkIfCanJoinReturn == "ok") {
       const verifIfOwner = await this.RoomsService.checkIfOwner(data.user_id, data.room_name);
       const adminTmp = verifIfOwner;
-      this.logger.log(`${client.id} create Participant`);
       const newParticipant = {
         user_id: data.user_id,
         user_login: data.user_login,
@@ -734,7 +729,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const verifIfReceiverIsAdmin = await this.ParticipantsService.checkAdmin(data.login, data.room_name);
         if (verifIfReceiverIsAdmin) {
           const verifIfOwner = await this.RoomsService.checkIfOwner(data.id_sender, data.room_name);
-          if (!verifIfOwner)
+          if (!verifIfOwner && data.login_sender != data.login)
             return;
         }
         const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login, data.room_name);
@@ -777,9 +772,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
             if (_client_sender.username != data.login)
               this.server.to(_client.id).emit('notif', { type: 'YOUWEREKICKEDOUTTHEGROUP', data: { room_name: data.room_name, login_sender: _client_sender.username } })
-            const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-            arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
             const room = arrRoom.find(obj => obj.name == data.room_name);
+            if (room) {
+              const p = room.users.find(obj => obj.username == _client.username);
+              if (p) {
+                const index = room.users.indexOf(p);
+                arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
+              }
+            }
             let i = 0;
             while (i < room.users.length) {
               let iencli = arrClient.find(obj => obj.username == room.users[i].username);
@@ -963,7 +963,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage('createMsg')
   createMsg(client: Socket, data: any) {
-    this.logger.log(`${client.id} create newMsg: ${data.text}`);
     if (!data.userOrRoom) {
       this.BlacklistService.checkUserBan(data.login_sender, data.login_receiver).then((res) => {
         if (!res) {
@@ -1046,7 +1045,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       return;
     const checkFriendship = await this.FriendListService.checkExistRelation(data.id_banned, data.id_sender);
     if (checkFriendship == true) {
-      this.logger.log(`${client.id} remove Friend`);
       const removeFriendReturn = await this.FriendListService.removeFriendShip(data.id_banned, data.id_sender);
       const _notif = arrNotifs.find(obj => obj.username == data.login_banned);
       if (_notif) {
@@ -1095,7 +1093,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeUserBan(client: Socket, data: any) {
     const verifIfBanExist = await this.BlacklistService.checkUserBan(data.login_banned, data.login_sender);
     if (verifIfBanExist) {
-      this.logger.log(`${client.id} want deban: ${data.login_banned}`);
       const removeBanReturn = await this.BlacklistService.removeUserBan(data.id_sender, data.login_banned);
       if (removeBanReturn) {
         const tmp = arrClient.find(obj => obj.id == client.id);
@@ -1113,10 +1110,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const checkIfBan = await this.BlacklistService.checkRoomBan(data.id_banned, data.login_banned, data.room_name);
     if (checkIfBan)
       return;
-    this.logger.log(`${client.id} create newRoomBan: ${data.login_banned} in ${data.room_name}`);
     const checkParticipant = await this.ParticipantsService.checkIfAdminOrParticipant(data.login_banned, data.room_name);
     if (checkParticipant) {
-      this.logger.log(`${client.id} remove Participant`);
       const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login_banned, data.room_name);
       const _notif = arrNotifs.find(obj => obj.username == data.login_banned);
       if (_notif) {
@@ -1207,7 +1202,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async removeRoomBan(client: Socket, data: any) {
     const verifIfBanExist = await this.BlacklistService.checkRoomBan(data.id_banned, data.login_banned, data.room_name);
     if (verifIfBanExist) {
-      this.logger.log(`${client.id} want deban: ${data.login_banned} in room_id: ${data.room_id}`);
       const removeBanReturn = await this.BlacklistService.removeRoomBan(data.room_id, data.login_banned);
       if (removeBanReturn) {
         const room = arrRoom.find(obj => obj.name == data.room_name);
@@ -1230,7 +1224,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       return;
     const checkParticipant = await this.ParticipantsService.checkParticipant(data.login_muted, data.room_name);
     if (checkParticipant == true) {
-      this.logger.log(`${client.id} create newRoomMute: ${data.login_muted} in ${data.room_name}`);
       const newMute = {
         id_sender: data.id_sender,
         id_muted: data.id_muted,
@@ -1291,7 +1284,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     const checkIfMute = await this.MutelistService.checkRoomMute(data.id_muted, data.login_muted, data.room_name);
     if (!checkIfMute)
       return;
-    this.logger.log(`${client.id} want demute: ${data.login_muted} in : ${data.room_name}`);
     const removeMuteReturn = await this.MutelistService.removeRoomMute(data.room_id, data.login_muted);
     if (removeMuteReturn) {
       const room = arrRoom.find(obj => obj.name == data.room_name);

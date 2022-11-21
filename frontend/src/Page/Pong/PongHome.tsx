@@ -128,7 +128,6 @@ function PongHome(props: any) {
 				<div className='loading-screen'>
 					<div className="pong-loader"></div>
 					<h3>Searching</h3>
-					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button>
 						<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
 				</div>}
 		</>

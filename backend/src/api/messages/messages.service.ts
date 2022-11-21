@@ -114,8 +114,6 @@ export class MessagesService {
 	}
 
 	async createMessages(body: any): Promise<MessagesEntity> {
-		this.logger.log(body);
-
 		const newMessage = this.MessagesRepository.save({
 			id_sender: body.id_sender,
 			id_receiver: body.id_receiver,

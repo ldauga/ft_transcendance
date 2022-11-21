@@ -74,7 +74,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
 
     const tmp = arrClient.find(item => item.id == client.id)
 
@@ -120,14 +119,12 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         }
 
-        this.logger.log(`Room ${allRoom[i].room.roomID} has been deleted.`)
         this.pongInfo.splice(allRoom[i].index, 1)
       }
     }
   }
 
   handleConnection(client: any, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
     const newClient: Client = {
       id: client.id,
       username: ""
@@ -227,7 +224,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   };
 
   async afterInit(server: any) {
-    this.logger.log('Init');
   }
 
   @Interval(1000)
@@ -463,7 +459,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.pongInfo[room[0]].addSpectator(client.id, info.user)
 
     for (let i = 0; i < this.pongInfo[room[0]].spectate.length; i++) {
-      this.logger.log(`pannel: ${this.pongInfo[room[0]].spectate[i].pannel} x: ${this.pongInfo[room[0]].spectate[i].x} | y: ${this.pongInfo[room[0]].spectate[i].y}`)
     }
 
     this.server.to(client.id).emit('start_spectate', client.id);
@@ -927,7 +922,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   /*                      POUR PONG                        */
   @SubscribeMessage('friendsListRequest')
   async listFriendsRequest(client: Socket) {
-    this.logger.log(`${arrClient.find(obj => obj.id === client.id).username} request her friends list`);
     this.server.to(client.id).emit('friendsList', arrClient);
   }
 }

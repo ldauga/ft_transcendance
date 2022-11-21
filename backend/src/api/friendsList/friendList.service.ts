@@ -54,8 +54,6 @@ export class FriendListService {
 	}
 
 	async createFriendShip(body: any): Promise<FriendListEntity> {
-		this.logger.log(body);
-
 		const match = this.FriendListRepository.save({
 			id_user1: body.id_user1,
 			id_user2: body.id_user2,
