@@ -56,7 +56,6 @@ function Spectate() {
         }
     }
 
-    // drawObstacle : desine les obstacles du jeu
     function drawObstacle(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -70,7 +69,6 @@ function Spectate() {
         }
     }
 
-    // drawBall : dessine la balle en fonction de sa position
     function drawBall(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -87,7 +85,6 @@ function Spectate() {
         }
     }
 
-    // drawPlayers : dessine les joueurs suivant leurs positions
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -109,7 +106,6 @@ function Spectate() {
         }
     }
 
-    // drawScore : dessine les scores des deux joueurs
     function drawScore(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -125,7 +121,6 @@ function Spectate() {
         }
     }
 
-    // drawLimitsMove : dessine les limitations de mouveùent des deux joueurs (les deux lignes sous les joueurs)
     function drawLimitsMove(ctx: CanvasRenderingContext2D | null) {
         if (ctx !== null) {
 
@@ -146,7 +141,6 @@ function Spectate() {
         }
     }
 
-    // drawLimitCamps : dessine la limitation des deux camps (la grande ligne en pointillé au centre du plateau)
     function drawLimitCamps(ctx: CanvasRenderingContext2D | null) {
         if (ctx !== null) {
 
@@ -165,7 +159,6 @@ function Spectate() {
         }
     }
 
-    // drawText : dessine "Press ENTER to play" au centre de l'écran
     function drawText(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 

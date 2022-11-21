@@ -83,20 +83,9 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		utilsData.socket.removeListener('ChatNotifsInit');
 	})
 
-	// utilsData.socket.removeAllListeners('newMsgReceived');
-
-	// utilsData.socket.on('newMsgReceived', function (data: any) {
-	// 	// if (!(persistantReducer.chatNotifReducer.convers.name == newNotif.name && persistantReducer.chatNotifReducer.convers.userOrRoom == newNotif.userOrRoom))
-	// 	if (data.login_sender == persistantReducer.userReducer.user?.login)
-	// 		addChatNotif({ name: data.login_sender, userOrRoom: data.userOrRoom, nb: 1 });
-	// 	utilsData.socket.off('newMsgReceived');
-	// 	utilsData.socket.removeListener('newMsgReceived');
-	// })
-
 	utilsData.socket.removeAllListeners('newChatNotif');
 
 	utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
-		// if (!(persistantReducer.chatNotifReducer.convers.name == newNotif.name && persistantReducer.chatNotifReducer.convers.userOrRoom == newNotif.userOrRoom))
 		if (!(conversNotif.name == newNotif.name && conversNotif.userOrRoom == newNotif.userOrRoom))
 			addChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom, nb: 1 });
 		else
@@ -106,7 +95,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	})
 
 	useEffect(() => {
-		console.log('useEffect navbar')
 		if (props.openFriendConversFromProfile) {
 			if (isChat) {
 				closeChat();
@@ -125,13 +113,11 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	}, [props]);
 
 	const closeFriendList = () => {
-		//setConversChatNotif({ name: "", userOrRoom: false });
 		setOpenPopUp(false);
 		setFriendList(false);
 	}
 
 	const closeChat = () => {
-		//setConversChatNotif({ name: "", userOrRoom: false });
 		setOpenPopUp(false);
 		setChat(false);
 	}
@@ -159,15 +145,12 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	function getNBNotifUnseen() {
 		let nbNotifs = 0;
 		notifReducer.notifArray.forEach(item => {
-			console.log(item)
 			if (!item.seen)
 				nbNotifs++;
 		})
-		console.log(nbNotifs);
 		return nbNotifs;
 	}
 
-	console.log("navbar");
 	return (
 		<div className="App">
 			<nav>
@@ -180,7 +163,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						</svg>
 						<input onMouseLeave={() => ref?.current?.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile(ref?.current?.value!); }} />
 					</div>
-					<button className='reactour-friend-list' onClick={() => { //friendList
+					<button className='reactour-friend-list' onClick={() => {
 						setOpenPopUp(!open);
 						if (isChat) {
 							setChat(false);
@@ -205,7 +188,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							</svg>
 						</Tooltip>
 					</button>
-					<button className='reactour-notif' onClick={() => { //notifs
+					<button className='reactour-notif' onClick={() => {
 						setAllNotifSeen()
 						setOpenPopUp(!open);
 						if (isChat) {
@@ -231,7 +214,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							</Tooltip>
 						</Badge>
 					</button>
-					<button className='reactour-chat' onClick={() => { //chat
+					<button className='reactour-chat' onClick={() => {
 						setOpenPopUp(!open);
 						if (isChat) {
 							setOpenPopUp(false);

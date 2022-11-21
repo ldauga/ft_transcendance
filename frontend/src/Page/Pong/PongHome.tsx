@@ -62,7 +62,6 @@ function PongHome(props: any) {
 	})
 
 	utilsData.socket.on('start', function (roomID: string) {
-		// console.log('on.(\'start\')')
 		let tmp = -1;
 		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.type == NotifType.DISCONNECTGAME && item.data.roomId == roomID)) != -1)
 			delNotif(persistantReducer.notifReducer.notifArray[tmp])

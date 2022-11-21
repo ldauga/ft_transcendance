@@ -169,8 +169,6 @@ export const setTwoFactor = (item: boolean) => {
     }
 }
 
-// Invite
-
 export const setInviteCheck = (item: boolean) => {
     return (dispatch: Dispatch<inviteCheckAction>) => {
         dispatch({

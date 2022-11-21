@@ -47,7 +47,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
                 </div>
             );
         }
-        else //user
+        else
         {
             return (
                 <div className="inItem">

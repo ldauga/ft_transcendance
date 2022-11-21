@@ -29,7 +29,7 @@ export class MatchesHistoryService {
 		});
 
 		if (!matches)
-			return null; // gestion d erreur needed
+			return null;
 		return matches;
 	}
 

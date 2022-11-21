@@ -52,7 +52,7 @@ function StatPlayer() {
 	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
 
 	const dispatch = useDispatch();
-	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch); // del?
+	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
 	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
@@ -206,7 +206,6 @@ function StatPlayer() {
 	utilsData.socket.off('getClientStatus')
 
 	utilsData.socket.on('getClientStatus', (info: { user: string, status: string, emitFrom: string }) => {
-		console.log(`getClientStatus emit from ${info.emitFrom}.`)
 		if (info.user == profile.login)
 			setProfile({ ...profile, status: info.status })
 	})

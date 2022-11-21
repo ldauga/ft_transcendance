@@ -50,7 +50,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             return;
         if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
             enqueueSnackbar(`Please wait ${(count + 2) - (Math.round(((new Date()).valueOf() / 1000)))} seconds`, { variant: 'warning', autoHideDuration: 1000 })
-            console.log("NON");
             return;
         }
         const newMsg = {

@@ -22,10 +22,6 @@ export class MatchesHistoryController {
   }
 
 
-  //Changer en methode post
-  //Utiliser Req: Express
-  //Utiliser le UseGuard('jwt')
-  //Recuperer l'id et faire le reste
   @Get('/:id')
   @UseGuards(AuthGuard('jwt'))
   public getUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<MatchesHistoryEntity[]> {

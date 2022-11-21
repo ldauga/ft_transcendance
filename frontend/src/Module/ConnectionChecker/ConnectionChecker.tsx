@@ -18,7 +18,6 @@ function ConnectionChecker(props: {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
-		console.log('useEffect connectionChecker')
 
   })
 

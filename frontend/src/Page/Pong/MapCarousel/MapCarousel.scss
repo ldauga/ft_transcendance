@@ -1,4 +1,4 @@
-$pong-color: #2e384e; //var
+$pong-color: #2e384e;
 
 .map-carousel {
     display: flex;
@@ -259,19 +259,19 @@ $pong-color: #2e384e; //var
 }
 
 @keyframes expand-ball {
-	0% { // start in the middle
+	0% {
 		top: 34%;
 		left: 52%;
 	}
-	8.3% { // pong
+	8.3% {
 		top: 52%;
 		left: var(--right);
 	}
-    17.75%{ //expand
+    17.75%{
         top: 60%;
         left: 49.5%;
     }
-	24.9% { // pong
+	24.9% {
 		top: 74%;
 		left: var(--right);
 	}
@@ -279,19 +279,19 @@ $pong-color: #2e384e; //var
 		top: var(--bottom);
 		left: 27%;
 	}
-    40% { //ping
+    40% {
         top: 87%;
         left: var(--left);
     }
-	56.6% { // pong
+	56.6% {
 		top: 70%;
 		left: var(--right);
 	}
-	64.9% { // expand
+	64.9% {
 		top: 55%;
 		left: 49.5%;
 	}
-	74.7% { //pong
+	74.7% {
 		top: 13%;
 		left: var(--right);
 	}
@@ -299,17 +299,17 @@ $pong-color: #2e384e; //var
 		top: var(--top);
 		left: 70%;
 	}
-	91.3% { // ping
+	91.3% {
 		top: 22%;
 		left: var(--left);
 	}
-	100% { // back to center
+	100% {
 		top: 34%;
 		left: 52%;
 	}
 }
 
-@keyframes expand-ping { // left player
+@keyframes expand-ping {
 	0% {
 		top: 10%;
 	}
@@ -322,7 +322,7 @@ $pong-color: #2e384e; //var
 	13% {
 		top: 17%;
 	}
-	24.9% { // tap
+	24.9% {
 		top: var(--racket-bottom);
 	}
     40% {
@@ -337,7 +337,7 @@ $pong-color: #2e384e; //var
 	56% {
 		top: 64%;
 	}
-	58.1% { // tap
+	58.1% {
 		top: 54%;
 	}
 	70% {
@@ -346,7 +346,7 @@ $pong-color: #2e384e; //var
 	84% {
 		top: 12%;
 	}
-	91.3% { // tap
+	91.3% {
 		top: 18%;
 	}
 	100% {
@@ -354,17 +354,17 @@ $pong-color: #2e384e; //var
 	}
 }
 
-@keyframes expand-pong { // right player
+@keyframes expand-pong {
 	0% {
 		top: var(--racket-bottom);
 	}
-	8.3% { // tap
+	8.3% {
 		top: 51%;
 	}
 	20% {
 		top: 60%;
 	}
-	24.9% { //tap
+	24.9% {
 		top: 65%;
 	}
 	41.5% {
@@ -376,7 +376,7 @@ $pong-color: #2e384e; //var
 	52% {
 		top: 18%;
 	}
-    56.6% { //tap
+    56.6% {
         top: 65%;
     }
 	58.1% {
@@ -391,7 +391,7 @@ $pong-color: #2e384e; //var
 	74.7% {
 		top: 10%;
 	}
-	91.3% { // tap
+	91.3% {
 		top: 10%;
 	}
 	100% {
@@ -399,7 +399,7 @@ $pong-color: #2e384e; //var
 	}
 }
 
-@keyframes ia-ping { // left player
+@keyframes ia-ping {
 	0% {
 		top: 25%;
 	}
@@ -412,7 +412,7 @@ $pong-color: #2e384e; //var
 	13% {
 		top: 17%;
 	}
-	24.9% { // tap
+	24.9% {
 		top: 50%;
 	}
     30%{
@@ -430,7 +430,7 @@ $pong-color: #2e384e; //var
 	56% {
 		top: 25%;
 	}
-	58.1% { // tap
+	58.1% {
 		top: 20%;
 	}
     60% {
@@ -442,7 +442,7 @@ $pong-color: #2e384e; //var
 	84% {
 		top: 12%;
 	}
-	91.3% { // tap
+	91.3% {
 		top: 18%;
 	}
 	100% {
@@ -450,11 +450,11 @@ $pong-color: #2e384e; //var
 	}
 }
 
-@keyframes ia-pong { // right player
+@keyframes ia-pong {
 	0% {
 		top: var(--racket-bottom);
 	}
-	8.3% { // tap
+	8.3% {
 		top: 40%;
 	}
 	20% {
@@ -463,7 +463,7 @@ $pong-color: #2e384e; //var
 	25% {
 		top: 34%;
 	}
-	40% { // tap
+	40% {
 		top: 79%;
 	}
 	46% {
@@ -487,7 +487,7 @@ $pong-color: #2e384e; //var
     80% {
         top: 46%;
     }
-	90% { // tap
+	90% {
 		top: 29%;
 	}
 	100% {
@@ -496,63 +496,63 @@ $pong-color: #2e384e; //var
 }
 
 @keyframes ia-ball {
-	0% { // start in the left
+	0% {
 		top: 34%;
 		left: var(--left);
 	}
-	10% { // pong
+	10% {
 		top: 52%;
 		left: var(--right);
 	}
-    15% { //ia
+    15% {
         top: 70%;
         left: 49.5%;
     }
-	20% { //pong
+	20% {
 		top: 85%;
 		left: var(--right);
 	}
-    27%{ //top
+    27%{
         top: 0%;
         left: 28%;
     }
-	30% { // ping
+	30% {
 		top: 25%;
 		left: var(--left);
 	}
-	40% { // pong
+	40% {
 		top: 82%;
 		left: var(--right);
 	}
-	50% { //ping
+	50% {
 		top: 13%;
 		left: var(--left);
 	}
-	55% { //ia
+	55% {
 		top: 15%;
 		left: 49.5%;
 	}
-	60% { // ping
+	60% {
 		top: 22%;
 		left: var(--left);
 	}
-    65% { //ia
+    65% {
         top: 30%;
         left: 49.5%;
     }
-    70% { //ping
+    70% {
         top: 85%;
         left: var(--left);
     }
-    80% { //pong
+    80% {
         top: 52%;
         left: var(--right);
     }
-    85%{ //ia
+    85%{
         top: 45%;
         left: 49.5%;
     }
-    90% { //pong
+    90% {
         top: 40%;
         left: var(--right);
     }
@@ -560,14 +560,14 @@ $pong-color: #2e384e; //var
         top: var(--bottom);
         left: 57%;
     }
-	100% { // back to the left
+	100% {
 		top: 34%;
 		left: var(--left);
 	}
 }
 
 @keyframes ia-racket {
-	0% { // start botom
+	0% {
 		top: var(--racket-bottom);
 	}
     5% {

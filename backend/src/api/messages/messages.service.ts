@@ -95,7 +95,6 @@ export class MessagesService {
 					loginTmp = item.login_receiver;
 				}
 				let returnFind = returnArray.find(item => item.id == idTmp);
-				//const user = await this.UserService.getUserById(idTmp);
 				if (!returnFind) {
 					returnArray.push({ id: idTmp, login: loginTmp, nickname: "", profile_pic: "", userOrRoom: false, room_id: 0, room_name: "" });
 				}

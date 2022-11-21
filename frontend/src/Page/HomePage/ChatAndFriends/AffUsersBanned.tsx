@@ -15,7 +15,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
 
     const { enqueueSnackbar } = useSnackbar();
 

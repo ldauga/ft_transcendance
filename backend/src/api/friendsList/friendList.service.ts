@@ -25,7 +25,7 @@ export class FriendListService {
 			]
 		});
 		if (!matches)
-			return null; // gestion d erreur needed
+			return null;
 		return matches;
 	}
 
@@ -37,7 +37,7 @@ export class FriendListService {
 			]
 		});
 		if (!matches)
-			return null; // gestion d erreur needed
+			return null;
 		return matches;
 	}
 

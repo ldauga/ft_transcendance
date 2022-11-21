@@ -46,9 +46,7 @@ export class RoomsService {
 	}
 
 	async checkRoom(nameToCheck: string): Promise<boolean> {
-		console.log("nameToCheck: ", nameToCheck);
 		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck });
-		console.log("checkRoom: ", check)
 		if (check)
 			return true;
 		return false;

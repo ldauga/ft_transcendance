@@ -40,7 +40,7 @@ function EditNickname(props: {profile: any, setProfile: Function}) {
     const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
 	const dispatch = useDispatch();
-    const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
+    const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const changeNickname = async () => {
