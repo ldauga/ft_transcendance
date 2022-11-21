@@ -304,7 +304,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                   let i = 0;
                   while (_room.users.length > i) {
                     console.log("emit");
-
+                    let iencli = arrClient.find(obj => obj.username == _room.users[i].username);
+                    if (_room.users[i].id != iencli.id)
+                      _room.users[i].id = iencli.id;
                     this.server.to(_room.users[i].id).emit('debanedUserInRoom', true);
                     i++;
                   }
@@ -326,6 +328,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               if (_room) {
                 let i = 0;
                 while (_room.users.length > i) {
+                  let iencli = arrClient.find(obj => obj.username == _room.users[i].username);
+                  if (_room.users[i].id != iencli.id)
+                    _room.users[i].id = iencli.id;
                   this.server.to(_room.users[i].id).emit('demutedUserInRoom', true);
                   i++;
                 }
@@ -614,7 +619,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     let i = 0;
     while (i < room.users.length) {
       console.log("emit");
-
+      let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+      if (room.users[i].id != iencli.id)
+        room.users[i].id = iencli.id;
       this.server.to(room.users[i].id).emit('newMsgReceived', true);
       i++;
     }
@@ -708,20 +715,24 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       let i = 0;
       while (i < room.users.length) {
         console.log("emit");
-
+        let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+        if (room.users[i].id != iencli.id)
+          room.users[i].id = iencli.id;
         this.server.to(room.users[i].id).emit('newMsgReceived', true);
         i++;
       }
       const _client = arrClient.find(obj => obj.username === data.user_login);
       if (_client != null) {
         console.log("emit");
-
         this.server.to(_client.id).emit('joinChatRoomAccepted', true);
         const a = arrRoom.find(obj => obj.name == data.room_name);
         if (a) {
           a.users.push(_client);
           let i = 0;
           while (i < a.users.length) {
+            let iencli = arrClient.find(obj => obj.username == a.users[i].username);
+            if (a.users[i].id != iencli.id)
+              a.users[i].id = iencli.id;
             console.log("emit newParticipant to ", a.users[i].username, ", id: ", a.users[i].id);
             this.server.to(a.users[i].id).emit('newParticipant', true);
             i++;
@@ -776,7 +787,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       let i = 0;
       while (i < room.users.length) {
         console.log("emit");
-
+        let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+        if (room.users[i].id != iencli.id)
+          room.users[i].id = iencli.id;
         this.server.to(room.users[i].id).emit('newMsgReceived', true);
         i++;
       }
@@ -826,7 +839,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     let i = 0;
     while (i < room.users.length) {
       console.log("emit");
-
+      let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+      if (room.users[i].id != iencli.id)
+        room.users[i].id = iencli.id;
       this.server.to(room.users[i].id).emit('newMsgReceived', true);
       i++;
     }
@@ -837,7 +852,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       let i = 0;
       while (i < a.users.length) {
         console.log("emit");
-
+        let iencli = arrClient.find(obj => obj.username == a.users[i].username);
+        if (a.users[i].id != iencli.id)
+          a.users[i].id = iencli.id;
         this.server.to(a.users[i].id).emit('newParticipant', true);
         i++;
       }
@@ -898,7 +915,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             let i2 = 0;
             while (i2 < room2.users.length) {
               console.log("emit");
-
+              let iencli = arrClient.find(obj => obj.username == room2.users[i2].username);
+              if (room2.users[i2].id != iencli.id)
+                room2.users[i2].id = iencli.id;
               this.server.to(room2.users[i2].id).emit('newMsgReceived', true);
               i2++;
             }
@@ -915,7 +934,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             let i = 0;
             while (i < room.users.length) {
               console.log("emit removeParticipantReturn to ", room.users[i].username, ",id : ", room.users[i].id);
-
+              let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+              if (room.users[i].id != iencli.id)
+                room.users[i].id = iencli.id;
               this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
               i++;
             }
@@ -955,38 +976,44 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       };
       //const participantReturn = await this.http.post('https://10.4.5.1:5001/participants/admin', newParticipant);
       const participantReturn = await this.ParticipantsService.createAdmin(newParticipant);
-      const newMsg = {
-        id_sender: 0,
-        id_receiver: 0,
-        login_sender: "server",
-        login_receiver: "",
-        userOrRoom: true,
-        serverMsg: true,
-        room_id: data.room_id,
-        room_name: data.room_name,
-        text: data.login_admin + " is admin",
-        year: getYear(),
-        month: getMonth(),
-        day: getDay(),
-        hour: getHour(),
-        minute: getMinute()
-      }
-      const createMsgReturn = await this.MessagesService.createMessages(newMsg);
-      const room = arrRoom.find(obj => obj.name == data.room_name);
-      let i2 = 0;
-      while (i2 < room.users.length) {
-        console.log("emit");
-
-        this.server.to(room.users[i2].id).emit('newMsgReceived', true);
-        i2++;
-      }
-      const a = arrRoom.find(obj => obj.name == data.room_name);
-      let i = 0;
-      while (i < a.users.length) {
-        console.log("emit");
-
-        this.server.to(a.users[i].id).emit('refreshParticipants', true);
-        i++;
+      if (participantReturn) {
+        const newMsg = {
+          id_sender: 0,
+          id_receiver: 0,
+          login_sender: "server",
+          login_receiver: "",
+          userOrRoom: true,
+          serverMsg: true,
+          room_id: data.room_id,
+          room_name: data.room_name,
+          text: data.login_admin + " is admin",
+          year: getYear(),
+          month: getMonth(),
+          day: getDay(),
+          hour: getHour(),
+          minute: getMinute()
+        }
+        const createMsgReturn = await this.MessagesService.createMessages(newMsg);
+        const room = arrRoom.find(obj => obj.name == data.room_name);
+        let i2 = 0;
+        while (i2 < room.users.length) {
+          console.log("emit");
+          let iencli = arrClient.find(obj => obj.username == room.users[i2].username);
+          if (room.users[i2].id != iencli.id)
+            room.users[i2].id = iencli.id;
+          this.server.to(room.users[i2].id).emit('newMsgReceived', true);
+          i2++;
+        }
+        const a = arrRoom.find(obj => obj.name == data.room_name);
+        let i = 0;
+        while (i < a.users.length) {
+          console.log("emit");
+          let iencli = arrClient.find(obj => obj.username == a.users[i].username);
+          if (a.users[i].id != iencli.id)
+            a.users[i].id = iencli.id;
+          this.server.to(a.users[i].id).emit('refreshParticipants', true);
+          i++;
+        }
       }
     }
   }
@@ -1037,7 +1064,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       let i2 = 0;
       while (i2 < room.users.length) {
         console.log("emit");
-
+        let iencli = arrClient.find(obj => obj.username == room.users[i2].username);
+        if (room.users[i2].id != iencli.id)
+          room.users[i2].id = iencli.id;
         this.server.to(room.users[i2].id).emit('newMsgReceived', true);
         i2++;
       }
@@ -1045,7 +1074,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       let i = 0;
       while (i < a.users.length) {
         console.log("emit");
-
+        let iencli = arrClient.find(obj => obj.username == a.users[i].username);
+        if (a.users[i].id != iencli.id)
+          a.users[i].id = iencli.id;
         this.server.to(a.users[i].id).emit('refreshParticipants', true);
         i++;
       }
@@ -1162,6 +1193,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 console.log("room.users: ", room.users.length);
                 let i = 0;
                 while (i < room.users.length) {
+                  let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+                  if (room.users[i].id != iencli.id)
+                    room.users[i].id = iencli.id;
                   console.log("emit to ", room.users[i].username, ", id: ", room.users[i].id);
                   this.server.to(room.users[i].id).emit('newMsgReceived', data);
                   this.NewMsgNotif(room.users[i].username, data.room_name, true);
@@ -1311,9 +1345,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const room = arrRoom.find(obj => obj.name == data.room_name);
       let i = 0;
       while (i < room.users.length) {
+        let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+        if (room.users[i].id != iencli.id)
+          room.users[i].id = iencli.id;
         this.server.to(room.users[i].id).emit('newMsgReceived', true);
         console.log("emit");
-
         i++;
       }
       this.server.to(client.id).emit('removeParticipantReturn', true);
@@ -1331,6 +1367,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
+          let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+          if (room.users[i].id != iencli.id)
+            room.users[i].id = iencli.id;
           this.server.to(room.users[i].id).emit('removeParticipantReturn', true);
           console.log("emit");
 
@@ -1363,9 +1402,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
+          let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+          if (room.users[i].id != iencli.id)
+            room.users[i].id = iencli.id;
           this.server.to(room.users[i].id).emit('newRoomBan', true);
           console.log("emit");
-
           i++;
         }
       }
@@ -1383,9 +1424,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
+          let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+          if (room.users[i].id != iencli.id)
+            room.users[i].id = iencli.id;
           this.server.to(room.users[i].id).emit('debanedUserInRoom', true);
           console.log("emit");
-
           i++;
         }
       }
@@ -1440,14 +1483,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         const room2 = arrRoom.find(obj => obj.name == data.room_name);
         let i2 = 0;
         while (i2 < room2.users.length) {
+          let iencli = arrClient.find(obj => obj.username == room2.users[i2].username);
+          if (room2.users[i2].id != iencli.id)
+            room2.users[i2].id = iencli.id;
           this.server.to(room2.users[i2].id).emit('newMsgReceived', true);
           console.log("emit");
-
           i2++;
         }
         const room = arrRoom.find(obj => obj.name == data.room_name);
         let i = 0;
         while (i < room.users.length) {
+          let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+          if (room.users[i].id != iencli.id)
+            room.users[i].id = iencli.id;
           this.server.to(room.users[i].id).emit('mutedUserInRoom', true);
           console.log("emit");
 
@@ -1469,9 +1517,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const room = arrRoom.find(obj => obj.name == data.room_name);
       let i = 0;
       while (i < room.users.length) {
+        let iencli = arrClient.find(obj => obj.username == room.users[i].username);
+        if (room.users[i].id != iencli.id)
+          room.users[i].id = iencli.id;
         this.server.to(room.users[i].id).emit('demutedUserInRoom', true);
         console.log("emit");
-
         i++;
       }
     }
