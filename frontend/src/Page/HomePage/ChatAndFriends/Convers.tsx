@@ -7,11 +7,14 @@ import './CSS/Convers.scss'
 import { bindActionCreators } from 'redux';
 import { initOneConversChatNotif } from '../../../State/Action-Creators';
 import { ArrowBackIosNew } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 function Convers(props: { setFriendList: Function, setChat: Function, setConvers: Function, conversCorrespondantData: { id: number, login: string, nickname: string, profile_pic: string }, oldAff: string, openFriendConversFromProfile: boolean, setOpenFriendConversFromProfile: Function, setConversCorrespondantData: Function }) {
 
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [itemListHistory, setItemListHistory] = useState(Array<any>());
 
@@ -29,7 +32,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 
     const { delChatNotif, setConversChatNotif } = bindActionCreators(actionCreators, dispatch);
 
-	const [count, setCount] = useState(0);
+    const [count, setCount] = useState(0);
 
     const closeConvers = () => {
         props.setConversCorrespondantData({ id: 0, login: "", nickname: "", profile_pic: "" });
@@ -45,10 +48,11 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     function sendMessage() {
         if (messageText.length <= 0)
             return;
-		if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
-			console.log("NON");
-			return;
-		}
+        if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
+            enqueueSnackbar(`Please wait ${(count + 2) - (Math.round(((new Date()).valueOf() / 1000)))} seconds`, { variant: 'warning', autoHideDuration: 1000 })
+            console.log("NON");
+            return;
+        }
         const newMsg = {
             id_sender: userData.userReducer.user?.id,
             id_receiver: props.conversCorrespondantData.id,
@@ -61,7 +65,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         }
         utilsData.socket.emit('createMsg', newMsg);
         setMessageText("");
-		setCount(Math.round(((new Date()).valueOf() / 1000)));
+        setCount(Math.round(((new Date()).valueOf() / 1000)));
         for (let i = 0; i < 5; i++) {
             getListItem();
         }
@@ -208,7 +212,7 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         messagesEndRef.current?.scrollIntoView();
         getListItem();
         if (!update) {
-            utilsData.socket.emit('GET_CLIENT_STATUS', {user: {login: props.conversCorrespondantData.login}});
+            utilsData.socket.emit('GET_CLIENT_STATUS', { user: { login: props.conversCorrespondantData.login } });
             setUpdate(true);
         }
     }, [props, correspondantIsBlocked]);

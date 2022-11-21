@@ -47,7 +47,7 @@ export class MessagesService {
 
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });;
 	}
 
 	async getConversMessages(id1: number, id2: number): Promise<MessagesEntity[]> {
@@ -60,7 +60,7 @@ export class MessagesService {
 
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });
 	}
 
 	async getRoomConversMessages(id: number): Promise<MessagesEntity[]> {
@@ -71,7 +71,7 @@ export class MessagesService {
 		});
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });
 	}
 
 	async getRelationMessages(id: number): Promise<any[]> {
