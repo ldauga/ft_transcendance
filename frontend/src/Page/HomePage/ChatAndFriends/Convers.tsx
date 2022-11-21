@@ -32,7 +32,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
 	const [count, setCount] = useState(0);
 
     const closeConvers = () => {
-        //setConversChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
         props.setConversCorrespondantData({ id: 0, login: "", nickname: "", profile_pic: "" });
         if (props.openFriendConversFromProfile)
             props.setOpenFriendConversFromProfile(false);
@@ -41,8 +40,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             props.setChat(true);
         else
             props.setFriendList(true);
-        // utilsData.socket.off('newMsgReceived');
-        // utilsData.socket.removeListener('newMsgReceived');
     };
 
     function sendMessage() {
@@ -92,9 +89,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         for (let i = 0; i < 4; i++) {
             getListItem();
         }
-        // if (!data.userOrRoom && data.login_sender == props.conversCorrespondantData.login) {
-        //     delChatNotif({ name: props.conversCorrespondantData.login, userOrRoom: false });
-        // }
         utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.conversCorrespondantData.login, userOrRoom: false });
         utilsData.socket.off('newMsgReceived');
         utilsData.socket.removeListener('newMsgReceived');
@@ -144,8 +138,6 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
         return (tmp2[1]);
     }
 
-    //onMouseOut={e => { e.currentTarget.children[1].toggleAttribute('className') }}
-
     function Item(props: { item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string } }) {
         if (props.item.id_sender == 0) {
             return (
@@ -191,11 +183,11 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
     };
 
     const getListItem = async () => {
-        await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + props.conversCorrespondantData.login).then(async (res) => {
             if (res.data == true && correspondantIsBlocked == false)
                 setCorrespondantIsBlocked(true);
         });
-        await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/messages/' + userData.userReducer.user?.id + '/' + props.conversCorrespondantData.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={(item.id_sender == userData.userReducer.user?.id ? 'content-sender' : 'content-receiver')}>
@@ -267,9 +259,9 @@ function Convers(props: { setFriendList: Function, setChat: Function, setConvers
             <div className="header">
                 <ArrowBackIosNew onClick={closeConvers} />
                 <div className="profile">
-                    <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }} />
+                    <img src={props.conversCorrespondantData.profile_pic} onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + props.conversCorrespondantData.login) }} />
                     <div className="name">
-                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
+                        <p onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + props.conversCorrespondantData.login) }}>{props.conversCorrespondantData.nickname}</p>
                     </div>
                 </div>
                 {correspondantIsBlocked && <AffBlocked />}

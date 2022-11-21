@@ -11,10 +11,6 @@ import axiosConfig from '../../Utils/axiosConfig';
 
 export const constWhileSecu = 10;
 
-
-
-
-
 function HomePage() {
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -25,12 +21,10 @@ function HomePage() {
 
     const { setIsOpen } = useTour()
 
-    console.log("home page")
-
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {
-			axiosConfig.post('https://localhost:5001/user/firstConnection').then(res => setUser(res.data))
+			axiosConfig.post('https://10.4.5.1:5001/user/firstConnection').then(res => setUser(res.data))
             setIsOpen(true)
 		}
     })

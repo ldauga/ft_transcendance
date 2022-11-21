@@ -48,7 +48,6 @@ export class FriendListService {
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
-
 		if (!returnCheck)
 			return false;
 		return true;
@@ -72,15 +71,20 @@ export class FriendListService {
 	async removeFriendShip(id1: number, id2: number): Promise<boolean> {
 		if (!this.checkExistRelation(id1, id2))
 			return false;
-		const check = await this.FriendListRepository.findOne({
-			where: [
-				{ id_user1: id1, id_user2: id2 },
-				{ id_user1: id2, id_user2: id1 }
-			]
-		});
-
-		const removeReturn = this.FriendListRepository.delete(check);
-		if (removeReturn)
+		let v = false;
+		const check = await this.FriendListRepository.findOneBy({ id_user1: id1, id_user2: id2 });
+		if (check) {
+			const removeReturn = this.FriendListRepository.delete(check);
+			if (removeReturn)
+				v = true;
+		}
+		const check2 = await this.FriendListRepository.findOneBy({ id_user1: id2, id_user2: id1 });
+		if (check2) {
+			const removeReturn2 = this.FriendListRepository.delete(check2);
+			if (removeReturn2)
+				v = true;
+		}
+		if (v)
 			return true;
 		else
 			return false;

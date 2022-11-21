@@ -71,11 +71,7 @@ export class BlackListService {
 	}
 
 	async checkUserBan(login: string, login_receiver: string): Promise<boolean> {
-		const check = await this.BlackListRepository.findOne({
-			where: [
-				{ login_banned: login, login_sender: login_receiver, userOrRoom: false }
-			]
-		});
+		const check = await this.BlackListRepository.findOneBy({ login_banned: login, login_sender: login_receiver, userOrRoom: false });
 		if (check == null)
 			return false;
 		return true;
@@ -138,11 +134,7 @@ export class BlackListService {
 	}
 
 	async removeUserBan(id_sender: number, login_banned: string) {
-		const check = await this.BlackListRepository.findOne({
-			where: [
-				{ id_sender: id_sender, login_banned: login_banned }
-			]
-		});
+		const check = await this.BlackListRepository.findOneBy({ id_sender: id_sender, login_banned: login_banned });
 		if (check) {
 			const removeReturn = this.BlackListRepository.delete(check);
 			if (!removeReturn)
@@ -153,11 +145,7 @@ export class BlackListService {
 	}
 
 	async removeRoomBan(room_id: number, login_banned: string) {
-		const check = await this.BlackListRepository.findOne({
-			where: [
-				{ room_id: room_id, login_banned: login_banned }
-			]
-		});
+		const check = await this.BlackListRepository.findOneBy({ room_id: room_id, login_banned: login_banned });
 		const removeReturn = this.BlackListRepository.delete(check);
 		if (!removeReturn)
 			return false;

@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../State';
 import './Login.scss';
 import logo from '../assets/logo_transcendence.png';
-import Background from '../../Module/Background/Background';
 
 function Login(props: { user?: any }) {
 	const [login, setLogin] = useState('')
@@ -15,13 +14,13 @@ function Login(props: { user?: any }) {
 	function onClick42Login() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-df0f4dd2427878ccac15324ec302d9143641c88217994dd66796c42c8eba923b&redirect_uri=https%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
+		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-df0f4dd2427878ccac15324ec302d9143641c88217994dd66796c42c8eba923b&redirect_uri=https%3A%2F%2F10.4.5.1%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
 	}
 
 	function onClickLoginSans42() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://localhost:5001/auth/loginSans42/` + login, '_self')
+		window.open(`https://10.4.5.1:5001/auth/loginSans42/` + login, '_self')
 	}
 
 	return (

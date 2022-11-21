@@ -1,7 +1,6 @@
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 import Background from "../../Module/Background/Background";
 import NavBar from "../../Module/Navbar/Navbar";
 import { RootState } from "../../State";
@@ -18,10 +17,6 @@ function Spectate() {
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const utilsData = useSelector((state: RootState) => state.utils);
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-
-    // const [room, setRoom] = useState<gameRoomClass | null>(null)
     const [verif, setVerif] = useState(false)
     const [start, setStart] = useState(false)
 
@@ -31,7 +26,7 @@ function Spectate() {
 
 
                 history.pushState({}, '', window.URL.toString())
-                window.location.replace('https://localhost:3000/NotFound')
+                window.location.replace('https://10.4.5.1:3000/NotFound')
             }
             else {
                 utilsData.socket.emit('CHECK_IF_IN_GAME', { login: window.location.href.toString().split('/').reverse()[0] })
@@ -40,11 +35,9 @@ function Spectate() {
         }
     })
 
-    // useEffect(() => { if (room != null) render(room) }, [room])
-
     utilsData.socket.on('client_not_playing', function () {
         history.pushState({}, '', window.URL.toString())
-        window.location.replace('https://localhost:3000/NotFound')
+        window.location.replace('https://10.4.5.1:3000/NotFound')
     })
 
     utilsData.socket.on('start_spectate', function () {
@@ -280,7 +273,7 @@ function Spectate() {
 
         let U, H;
         setTimeout(function () {
-            window.location.replace('https://localhost:3000');
+            window.location.replace('https://10.4.5.1:3000');
         }, 5000);
 
         U = finishRoom?.players[0]

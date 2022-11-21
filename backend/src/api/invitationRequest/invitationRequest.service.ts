@@ -57,11 +57,7 @@ export class InvitationRequestService {
 	}
 
 	async checkInvitationRequestForRooms(id: number, roomName: string): Promise<boolean> {
-		const check = await this.InvitationRequestRepository.findOne({
-			where: [
-				{ id_user2: id, room_name: roomName }
-			]
-		});
+		const check = await this.InvitationRequestRepository.findOneBy({ id_user2: id, room_name: roomName });
 		if (check == null)
 			return false;
 		return true;
@@ -87,11 +83,7 @@ export class InvitationRequestService {
 	}
 
 	async removeInvitationRequest(id1: number, id2: number): Promise<boolean> {
-		const check = await this.InvitationRequestRepository.findOne({
-			where: [
-				{ id_user1: id1, id_user2: id2 }
-			]
-		});
+		const check = await this.InvitationRequestRepository.findOneBy({ id_user1: id1, id_user2: id2 });
 		const removeReturn = this.InvitationRequestRepository.delete(check);
 		if (removeReturn)
 			return true;

@@ -143,20 +143,10 @@ export class MessagesService {
 		if (room_id == 0)
 			return false;
 		const secu = 20000;
-		let messageReturn = await this.MessagesRepository.findOne({
-			where: [
-				{ room_id: room_id },
-				{ room_name: room_name }
-			]
-		});
+		let messageReturn = await this.MessagesRepository.findOneBy({ room_id: room_id, room_name: room_name });
 		while (secu >= 0 && messageReturn) {
 			const removeReturn = this.MessagesRepository.delete(messageReturn);
-			messageReturn = await this.MessagesRepository.findOne({
-				where: [
-					{ room_id: room_id },
-					{ room_name: room_name }
-				]
-			});
+			messageReturn = await this.MessagesRepository.findOneBy({ room_id: room_id, room_name: room_name });
 		}
 		return (true);
 	}

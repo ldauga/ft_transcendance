@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../../State";
-import { notifReducer } from "../../../State/Reducers/notifReducer";
 import { NotifType } from "../../../State/type";
 
 import './CSS/AffNotif.scss'
@@ -16,9 +15,6 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 	const dispatch = useDispatch();
 	const { delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
-	const [verif, setVerif] = useState(false)
-	const [notifArr, setNotifArr] = useState<any[]>([])
-
 	const close = () => {
 		props.closeNotif();
 		props.setNotif(false);
@@ -30,10 +26,6 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 		props.openFriendList();
 		delNotif(persistantReducer.notifReducer.notifArray[index])
 	}
-
-	useEffect(() => {
-		// props.setLastNbNotif(persistantReducer.notifReducer.notifArray.length)
-	}, [props]);
 
 	return (
 		<div className="mainAffGeneNotif">
@@ -66,7 +58,6 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												<button className='inviteButton accept' onClick={(e) => {
 													utilsData.socket.emit("ACCEPT_INVITATION", { user: persistantReducer.userReducer.user, inviteID: persistantReducer.notifReducer.notifArray[index].data.inviteUserID })
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													// window.location.href = 'https://localhost:3000/pong'
 												}} >Accept</button>
 											</div>
 										</div>
@@ -89,7 +80,7 @@ const AffNotif = (props: { setLastNbNotif: Function, setNotif: Function, setFrie
 												}} >Forfeit</button>
 												<button className='inviteButton decline' onClick={(e) => {
 													delNotif(persistantReducer.notifReducer.notifArray[index])
-													window.location.href = 'https://localhost:3000/pong'
+													window.location.href = 'https://10.4.5.1:3000/pong'
 												}} >RECONNECT</button>
 											</div>
 										</div>

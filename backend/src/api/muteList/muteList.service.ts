@@ -52,22 +52,14 @@ export class MuteListService {
 	}
 
 	async checkUserMute(login: string, login_receiver: string): Promise<boolean> {
-		const check = await this.MuteListRepository.findOne({
-			where: [
-				{ login_muted: login, login_sender: login_receiver }
-			]
-		});
+		const check = await this.MuteListRepository.findOneBy({ login_muted: login, login_sender: login_receiver });
 		if (check == null)
 			return false;
 		return true;
 	}
 
 	async checkRoomMute(id: number, login: string, roomName: string): Promise<boolean> {
-		const check = await this.MuteListRepository.findOne({
-			where: [
-				{ id_muted: id, login_muted: login, room_name: roomName }
-			]
-		});
+		const check = await this.MuteListRepository.findOneBy({ id_muted: id, login_muted: login, room_name: roomName });
 		if (check == null)
 			return false;
 		return true;
@@ -95,27 +87,27 @@ export class MuteListService {
 	}
 
 	async removeUserMute(id_sender: number, login_muted: string): Promise<boolean> {
-		const check = await this.MuteListRepository.findOne({
-			where: [
-				{ id_sender: id_sender, login_muted: login_muted }
-			]
-		});
-		const removeReturn = this.MuteListRepository.delete(check);
-		if (removeReturn)
-			return true;
+		const check = await this.MuteListRepository.findOneBy({ id_sender: id_sender, login_muted: login_muted });
+		if (check) {
+			const removeReturn = this.MuteListRepository.delete(check);
+			if (removeReturn)
+				return true;
+			else
+				return false;
+		}
 		else
 			return false;
 	}
 
 	async removeRoomMute(room_id: number, login_muted: string): Promise<boolean> {
-		const check = await this.MuteListRepository.findOne({
-			where: [
-				{ room_id: room_id, login_muted: login_muted }
-			]
-		});
-		const removeReturn = this.MuteListRepository.delete(check);
-		if (removeReturn)
-			return true;
+		const check = await this.MuteListRepository.findOneBy({ room_id: room_id, login_muted: login_muted });
+		if (check) {
+			const removeReturn = this.MuteListRepository.delete(check);
+			if (removeReturn)
+				return true;
+			else
+				return false;
+		}
 		else
 			return false;
 	}

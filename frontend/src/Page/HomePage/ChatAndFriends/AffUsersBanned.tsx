@@ -1,16 +1,12 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import '../Homepage.scss'
-import { constWhileSecu } from '../HomePage';
-import BanUser from '../../../Trash/BanUser';
 import axiosConfig from '../../../Utils/axiosConfig';
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
-import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { Autocomplete, Box, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, TextField, Tooltip } from "@mui/material";
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import './CSS/AffUserBanned.scss';
-import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew, Close } from '@mui/icons-material';
 
@@ -73,7 +69,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
             return;
         }
         if (user) {
-            await axiosConfig.get('https://localhost:5001/user/login/' + user.login).then(async (res) => {
+            await axiosConfig.get('https://10.4.5.1:5001/user/login/' + user.login).then(async (res) => {
                 setInputValue("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
@@ -82,7 +78,7 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                 else {
                     let a = 1;
                     let b = 1;
-                    await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
+                    await axiosConfig.get('https://10.4.5.1:5001/blackList/checkUserBan/' + res.data.login + '/' + userData.userReducer.user?.login).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
@@ -223,15 +219,10 @@ function AffUsersBanned(props: { setFriendList: Function, setBannedUsers: Functi
                                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_BANNED', { id: userData.userReducer.user?.id, login: userData.userReducer.user?.login }) }}
                                 options={connectedClient.map((option) => option.nickname)}
                                 renderInput={(params) => <TextField {...params} label="Enter name to ban" />}
-                                // onChange={(event: any, newValue: string | null) => {
-                                //   setValue(newValue);
-                                // }}
                                 inputValue={inputValue}
                                 onInputChange={(event, newInputValue) => {
                                     setInputValue(newInputValue);
                                 }}
-
-                                // value={value}
                                 onChange={(event: any, newValue: string | null) => {
                                     setInputValue(newValue || "");
                                 }}

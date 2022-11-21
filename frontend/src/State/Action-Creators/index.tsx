@@ -1,7 +1,7 @@
 import { Dispatch } from "redux"
 import { clientListActionType, LogActionType, userActionType, notifActionType, twoFactorActionType, chatNotifActionType, inviteCheckActionType } from "../Action-Types"
 import { clientListAction, logAction, userAction, notifAction, twoFactorAction, chatNotifAction, inviteCheckAction } from "../Actions"
-import { ChatNotif, Client, msg, Notif } from "../type"
+import { Client, msg, Notif } from "../type"
 
 //ClientList
 export const addClient = (item: Client) => {

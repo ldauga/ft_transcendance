@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { CircularProgress, Box, MobileStepper, Paper, Tooltip } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { Tooltip } from '@mui/material';
 import NavBar from '../../Module/Navbar/Navbar';
 import './PongHome.scss';
 import map1 from './../assets/map1.png'
@@ -40,10 +36,8 @@ function PongHome(props: any) {
 	const dispatch = useDispatch();
 	const { delNotif } = bindActionCreators(actionCreators, dispatch);
 
-	const theme = useTheme();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const nbMap = 4;
-	const maxSteps = steps.length;
 
 	const utilsData = useSelector((state: RootState) => state.utils);
 	const persistantReducer = useSelector((state: RootState) => state.persistantReducer);

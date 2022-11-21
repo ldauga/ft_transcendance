@@ -66,7 +66,6 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
 
     const openConvers = (item: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }) => {
         if (!item.userOrRoom) {
-            //setConversChatNotif({ name: item.name, userOrRoom: false });
             props.setConversCorrespondantData({ id: item.id, login: item.login, nickname: item.name, profile_pic: item.profile_pic });
             delChatNotif({ name: item.login, userOrRoom: false });
             utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: item.login, userOrRoom: false });
@@ -74,7 +73,6 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             props.setConvers(true);
         }
         else {
-            //setConversChatNotif({ name: item.name, userOrRoom: true });
             props.setroomsConversData({ name: item.name, id: item.id });
             delChatNotif({ name: item.name, userOrRoom: true });
             utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: item.name, userOrRoom: true });
@@ -108,17 +106,17 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const getListItem = async () => {
         let relationList: any[] = [];
         let ChatList: { login: string, name: string, id: number, profile_pic: string, userOrRoom: boolean }[] = [];
-        await axiosConfig.get('https://localhost:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/messages/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.id).then(async (res) => {
             relationList = res.data;
         });
         if (relationList.length > 0) {
             for (let i = 0; i < relationList.length; i++) {
                 if (!relationList[i].userOrRoom) {
-                    const user = await axiosConfig.get('https://localhost:5001/user/id/' + relationList[i].id);
+                    const user = await axiosConfig.get('https://10.4.5.1:5001/user/id/' + relationList[i].id);
                     ChatList.push({ login: user.data.login, name: user.data.nickname, id: user.data.id, profile_pic: user.data.profile_pic, userOrRoom: false });
                 }
                 else {
-                    const checkIfParticipant = await axiosConfig.get('https://localhost:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
+                    const checkIfParticipant = await axiosConfig.get('https://10.4.5.1:5001/participants/check/' + userData.userReducer.user?.login + '/' + relationList[i].room_name);
                     if (checkIfParticipant.data) {
                         ChatList.push({ login: "", name: relationList[i].room_name, id: relationList[i].room_id, profile_pic: "", userOrRoom: true });
                     }

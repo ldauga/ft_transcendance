@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../State";
 import Chat from "./Chat";
 import Convers from "./Convers";
 import FriendList from "./FriendList";
 import InvitationRequest from "./InvitationRequest";
-import Rooms from "../../../Trash/Rooms";
 import RoomsConvers from "./RoomsConvers";
 import './CSS/ChatAndFriends.scss'
 import AffNotif from "./AffNotif";
@@ -13,8 +10,6 @@ import RoomsList from "./RoomsList";
 import AffUsersBanned from "./AffUsersBanned";
 
 function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: any, isNotif: boolean, isNavChat: boolean, isNavFriendList: boolean, closeFriendList: Function, closeChat: Function, closeNotif: Function, openFriendList: Function, openChat: Function, openNotif: Function, openFriendConversFromProfile: boolean, dataFriendConversFromProfile: { id: number, login: string, nickname: string, profile_pic: string }, setOpenFriendConversFromProfile: Function, setConversNotif: Function }) {
-
-    //const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
 
     const [isFriendList, setFriendList] = useState(false);
     const [isInvitationRequest, setInvitationRequest] = useState(false);
@@ -77,7 +72,6 @@ function ChatAndFriendAndNotif(props: { setLastNbNotif: Function, setOpenPopUp: 
             setGoToOpenInvitationRequest(false);
         }
         else if (props.isNotif) {
-            //props.setLastNbNotif(persistantReduceur.notifReducer.notifArray.length)
             setNotif(true);
         }
         else if (props.openFriendConversFromProfile) {

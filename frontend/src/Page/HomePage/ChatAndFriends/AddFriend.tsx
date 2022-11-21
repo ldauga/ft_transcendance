@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../State";
 import axiosConfig from "../../../Utils/axiosConfig";
 import './CSS/AddFriend.scss';
-import { SnackbarKey, withSnackbar } from 'notistack';
 import { useSnackbar } from 'notistack';
 
 function AddFriend(props: { setNewAddFriend: Function }) {
@@ -21,8 +20,9 @@ function AddFriend(props: { setNewAddFriend: Function }) {
     async function buttonAddFriend() {
         let test = false;
         const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
+        console.log("userToSend: ", userToSend)
         if (userToSend) {
-            await axiosConfig.get('https://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
+            await axiosConfig.get('https://10.4.5.1:5001/user/login/' + userToSend?.username).then(async (res) => {
                 setInputValue("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
@@ -32,21 +32,21 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                     let a = 1;
                     let b = 1;
                     let c = 1;
-                    await axiosConfig.get('https://localhost:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                    await axiosConfig.get('https://10.4.5.1:5001/invitationRequest/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
                             a = 2;
                         }
                     })
-                    await axiosConfig.get('https://localhost:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+                    await axiosConfig.get('https://10.4.5.1:5001/friendList/' + userData.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
                         if (res.data == true) {
                         }
                         else {
                             b = 2;
                         }
                     })
-                    await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
+                    await axiosConfig.get('https://10.4.5.1:5001/blackList/checkUserBan/' + userData.userReducer.user?.login + '/' + receiver_login_tmp).then(async (res) => {
                         if (res.data == true) {
                             enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
                         }
@@ -54,6 +54,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                             c = 2;
                         }
                     })
+                    console.log(a, b, c)
                     if (a == 2 && b == 2 && c == 2) {
                         const newInvitationRequest = {
                             id_user1: userData.userReducer.user?.id,
@@ -67,6 +68,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                             room_id: 0,
                             room_name: ""
                         }
+                        console.log("createInvitationRequest: ", newInvitationRequest)
                         utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                         enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                     }
@@ -96,23 +98,16 @@ function AddFriend(props: { setNewAddFriend: Function }) {
         utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS');
     }, []);
 
-    // const [value, setValue] = React.useState<string | null>;
-
     return (
         <div className="addFriendContainer">
             <Autocomplete
                 onFocus={() => { utilsData.socket.emit('GET_ALL_CLIENT_CONNECTED_WITHOUT_FRIENDS') }}
                 options={connectedClient.map((option) => option.nickname)}
                 renderInput={(params) => <TextField {...params} label="Invite friend" />}
-                // onChange={(event: any, newValue: string | null) => {
-                //   setValue(newValue);
-                // }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
-
-                // value={value}
                 onChange={(event: any, newValue: string | null) => {
                     setInputValue(newValue || "");
                 }}

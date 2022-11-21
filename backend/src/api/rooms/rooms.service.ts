@@ -5,6 +5,7 @@ import { removeEmitHelper } from "typescript";
 import { RoomsDto } from "./dtos/rooms.dto";
 import { RoomsEntity } from "./rooms.entity";
 import * as bcrypt from 'bcryptjs';
+import e from "express";
 
 @Injectable()
 export class RoomsService {
@@ -31,11 +32,7 @@ export class RoomsService {
 	}
 
 	async checkIfCanJoin(user_id: number, user_login: string, room_id: number, room_name: string, password: string): Promise<String> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ id: room_id, name: room_name }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ id: room_id, name: room_name });
 		if (check == null)
 			return ("room not found");
 		if (check.passwordOrNot) {
@@ -49,34 +46,24 @@ export class RoomsService {
 	}
 
 	async checkRoom(nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck }
-			]
-		});
-		if (check == null)
-			return false;
-		return true;
+		console.log("nameToCheck: ", nameToCheck);
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck });
+		console.log("checkRoom: ", check)
+		if (check)
+			return true;
+		return false;
 	}
 
 	async checkIfOwner(idToCheck: number, nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck, owner_id: idToCheck }
-			]
-		});
-		if (check == null)
-			return false;
-		return true;
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck, owner_id: idToCheck });
+		if (check)
+			return true;
+		return false;
 	}
 
 	async checkIfPrivate(nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck }
-			]
-		});
-		if (check == null)
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck });
+		if (!check)
 			return null;
 		if (check.publicOrPrivate)
 			return true;
@@ -86,18 +73,17 @@ export class RoomsService {
 	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
 		if (!this.checkRoom(room_name))
 			return false;
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: room_name }
-			]
-		});
-		check.passwordOrNot = passwordOrNot;
-
-		const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
-		const hash = await bcrypt.hash(password, saltOrRounds);
-		check.password = hash;
-		const returnRoom = this.RoomsRepository.save(check);
-		return true;
+		const check = await this.RoomsRepository.findOneBy({ name: room_name });
+		if (check) {
+			check.passwordOrNot = passwordOrNot;
+			const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
+			const hash = await bcrypt.hash(password, saltOrRounds);
+			check.password = hash;
+			const returnRoom = this.RoomsRepository.save(check);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	async createRoom(body: any): Promise<RoomsEntity> {
@@ -123,25 +109,15 @@ export class RoomsService {
 			return false;
 		if (!this.checkIfOwner(id_user, room_name))
 			return false;
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: room_name }
-			]
-		});
-		const removeReturn = this.RoomsRepository.delete(check);
-		if (removeReturn)
-			return true;
-		return false;
+		const check = await this.RoomsRepository.findOneBy({ name: room_name });
+		if (check) {
+			const removeReturn = this.RoomsRepository.delete(check);
+			if (removeReturn)
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
 	}
-
-	// async getParticipantsRoom(id: number): Promise<number[]> {
-	// 	const room = await this.RoomsRepository.findOne({
-	// 		where: [
-	// 			{ id: id }
-	// 		]
-	// 	});
-	// 	if (!room)
-	// 		return null;
-	// 	return room.participants_id;
-	// }
 }
