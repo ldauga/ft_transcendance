@@ -11,6 +11,7 @@ import Background from '../../Module/Background/Background';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import MapCarousel from './MapCarousel/MapCarousel';
 import { bindActionCreators } from 'redux';
+import { NotifType } from '../../State/type';
 
 const steps = [
 	{
@@ -56,9 +57,14 @@ function PongHome(props: any) {
 		setInQueue(false);
 	});
 
+	utilsData.socket.on('joinRoom', function (roomID: string) {
+		utilsData.socket.emit('JOIN_ROOM', roomID)
+	})
+
 	utilsData.socket.on('start', function (roomID: string) {
+		// console.log('on.(\'start\')')
 		let tmp = -1;
-		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.data.roomId == roomID)) != -1)
+		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.type == NotifType.DISCONNECTGAME && item.data.roomId == roomID)) != -1)
 			delNotif(persistantReducer.notifReducer.notifArray[tmp])
 
 		props.setRoomID(roomID);

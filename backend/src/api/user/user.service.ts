@@ -160,7 +160,9 @@ export class UserService {
 			throw new BadRequestException('Nickname already used');
 		const res = await this.getUserByLogin(nickname)
 		if (res && res?.login != user.login)
-			throw new BadRequestException('Cannot use someone\'s login as a nickname.');
+			throw new BadRequestException('Cannot use someone\'s login as a nickname');
+		if ((await this.getAllUsers()).find(user => user.nickname.toLowerCase() == nickname.toLowerCase()) != undefined)
+			throw new BadRequestException('Nickname already used');
 
 		user.nickname = nickname;
 		this.userRepository.save(user);

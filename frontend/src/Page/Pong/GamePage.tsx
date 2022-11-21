@@ -259,6 +259,8 @@ const GamePage = (props: any) => {
 
     function render(room: gameRoomClass) {
 
+        console.log('on.(\'render\')')
+
         var canvas = document.getElementById('pongBoard') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
@@ -313,6 +315,10 @@ const GamePage = (props: any) => {
         }
         if (e.key === ' ')
             utilsData.socket.emit('SPACE', [props.roomID, true]);
+        if (e.key === '+')
+            utilsData.socket.emit('PLUS', [props.roomID, true]);
+        if (e.key === '-')
+            utilsData.socket.emit('MINUS', [props.roomID, true]);
     }
 
     // Lance la fonction onKeyDown chaque fois qu'une touche est appuyée
@@ -325,6 +331,10 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('ARROW_DOWN', [props.roomID, false]);
         if (e.key === ' ')
             utilsData.socket.emit('SPACE', [props.roomID, false]);
+        if (e.key === '+')
+            utilsData.socket.emit('PLUS', [props.roomID, false]);
+        if (e.key === '-')
+            utilsData.socket.emit('MINUS', [props.roomID, false]);
     }
 
     // Lance la fonction onKeyDown chaque fois qu'une touche est relachée

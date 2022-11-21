@@ -189,7 +189,7 @@ function FriendListItem(props: { setFriendList: Function, setConvers: Function, 
         setOpenDialogInviteGame(false);
         setInviteCheck(true)
         utilsData.socket.emit('INVITE_CUSTOM', { user: userData.userReducer.user, userLoginToSend: props.item.user.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) });
-        enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
+        enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
     };
 
     return (

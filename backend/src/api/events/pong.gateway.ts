@@ -40,6 +40,18 @@ let time = Math.round((date.valueOf() / 1000));
 
 const checkReconnexionArr = []
 
+const userInWaitForGame = Array<{
+  map: string, user: {
+    id: number;
+    login: string;
+    nickname: string;
+    wins: number;
+    looses: number;
+    rank: number;
+    profile_pic: string;
+  }
+}>()
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -239,10 +251,12 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         return
       let player: Player
       if ((player = room.players.find(player => !player.connected)) != undefined) {
+        console.log('test, ', player)
         if (player.user == null)
           return
         let client: Client
         if ((client = arrClient.find(client => client.username == player.user.login)) != undefined) {
+          console.log('okokok', room.players)
           this.server.to(client.id).emit('notif', { type: 'DISCONNECTGAME', data: { roomId: room.roomID, opponentLogin: room.players.find(item => item.user.login != player.user.login).user.login } })
         }
       }
@@ -338,7 +352,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     const room = this.getRoomByClientLogin(info.user.login)
 
-
     if (room != null) {
 
       this.joinRoom(client, this.pongInfo[room[0]].roomID)
@@ -390,65 +403,76 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async joinQueue(client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, gameMap: string }) {
     console.log('Event JOIN_QUEUE')
 
-    this.server.to(client.id).emit('joined')
 
-    for (let roomId = 0; ; roomId++) {
-      var room: [number, gameRoomClass] | null = this.getRoomByID(info.gameMap + roomId.toString())
-      if (room == null || !room[1].players[1].id) {
-        if (room == null) {
-          this.pongInfo.push(new gameRoomClass(info.gameMap + roomId.toString(), client.id, info.user, info.gameMap))
-          room = this.getRoomByID(info.gameMap + roomId.toString());
-          this.pongInfo[room[0]].players[0].connected = true
-        }
-        else
-          this.pongInfo[room[0]].setOponnent(client.id, info.user)
-        this.joinRoom(client, info.gameMap + roomId.toString())
+    let tmp: {
+      map: string; user: {
+        id: number;
+        login: string;
+        nickname: string;
+        wins: number;
+        looses: number;
+        rank: number;
+        profile_pic: string;
+      }
+    };
 
-        if (this.pongInfo[room[0]].players[1].id) {
-          this.pongInfo[room[0]].started = true
-          this.server.to(room[1].roomID).emit('start', room[1].roomID);
-
-          this.pongInfo[room[0]].players.forEach(async player => {
-
-            if (!player.user)
-              return
-
-            const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
-
-            for (let i = 0; i < friendList.length; i++) {
-              let loginTmp: string;
-              if (friendList[i].login_user1 == player.user.login)
-                loginTmp = friendList[i].login_user2;
-              else
-                loginTmp = friendList[i].login_user1;
-              const _client = arrClient.find(obj => obj.username == loginTmp);
-              if (_client) {
-                this.server.to(_client.id).emit('friendConnection', true);
-              }
-            }
-
-            arrClient.forEach((client) => {
-              this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'in-game', emitFrom: 'JOIN_QUEUE' })
-            })
-
+    if ((tmp = userInWaitForGame.find(item => item.map == info.gameMap)) != undefined) {
+      
+      this.pongInfo.push(new gameRoomClass(info.user.login + tmp.user.login, client.id, info.user, info.gameMap))
+      
+      const room = this.getRoomByID(info.user.login + tmp.user.login);
+      
+      this.pongInfo[room[0]].players[0].connected = true
+      
+      this.pongInfo[room[0]].setOponnent(arrClient.find(client => client.username == tmp.user.login).id, tmp.user)
+      
+      this.pongInfo[room[0]].players.forEach(async player => {
+        
+        const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
+        
+        for (let i = 0; i < friendList.length; i++) {
+          let loginTmp: string;
+          if (friendList[i].login_user1 == player.user.login)
+          loginTmp = friendList[i].login_user2;
+          else
+          loginTmp = friendList[i].login_user1;
+          const _client = arrClient.find(obj => obj.username == loginTmp);
+          if (_client) {
+            this.server.to(_client.id).emit('friendConnection', true);
+          }
+          arrClient.forEach((client) => {
+            this.server.to(client.id).emit('getClientStatus', { user: player.user.login, status: 'in-game', emitFrom: 'JOIN_QUEUE' })
           })
         }
-        break
-      }
+      })
+      
+      this.pongInfo[room[0]].started = true
+      
+      this.joinRoom(client, room[1].roomID)
+      this.server.to(arrClient.find(client => client.username == tmp.user.login).id).emit('joinRoom', room[1].roomID)
+
+      this.server.to(arrClient.find(client => client.username == tmp.user.login).id).emit('start', room[1].roomID)
+
+      this.server.to(client.id).emit('start', room[1].roomID)
+
+      userInWaitForGame.splice(userInWaitForGame.findIndex(item => item.map == info.gameMap), 1)
+
     }
+    else {
+      userInWaitForGame.push({ map: info.gameMap, user: info.user })
+      this.server.to(client.id).emit('joined')
+    }
+
   }
 
   @SubscribeMessage('LEAVE_QUEUE')
   async leaveQueue(client: Socket, info: { user: { id: number, login: string, nickname: string, wins: number, looses: number, rank: number, profile_pic: string }, }) {
     console.log('Event LEAVE_QUEUE')
-    const room = this.getRoomByClientLogin(info.user.login)
 
-    if (room != null) {
-      this.pongInfo.splice(room[0], 1)
+    userInWaitForGame.splice(userInWaitForGame.findIndex(item => item.user.login == info.user.login), 1)
 
-      this.server.to(client.id).emit('leave_queue')
+    this.server.to(client.id).emit('leave_queue')
 
-    }
   }
 
   @SubscribeMessage('SPECTATE_CLIENT')
@@ -587,8 +611,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             if (!(this.pongInfo[index].players[0].score == 3 || this.pongInfo[index].players[1].score == 3))
               if (this.pongInfo[index].players[0].ready && this.pongInfo[index].players[1].ready)
                 this.pongInfo[index].moveAll();
-        if (!stop)
+        if (!stop) {
+          // console.log('test')
           this.render(this.pongInfo[index].roomID)
+        }
 
       }
     }
@@ -649,7 +675,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         return;
       }
-
+      
       this.server.to(roomID).emit('render', this.pongInfo[room[0]])
 
     }
@@ -719,6 +745,34 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         for (let index = 0; index < 2; index++)
           if (this.pongInfo[room[0]].players[index].id == client.id) {
             this.pongInfo[room[0]].players[index].cheat = info[1]
+          }
+    }
+  }
+
+  @SubscribeMessage('PLUS')
+  async plus(client: Socket, info: [string, boolean]) {
+    console.log('Event PLUS')
+    var room = this.getRoomByID(info[0])
+    if (room != null) {
+
+      if (arrClient.find(item => item.id == client.id).username == 'ldauga')
+        for (let index = 0; index < 2; index++)
+          if (this.pongInfo[room[0]].players[index].id == client.id) {
+            this.pongInfo[room[0]].players[index].expansion = info[1]
+          }
+    }
+  }
+
+  @SubscribeMessage('MINUS')
+  async minus(client: Socket, info: [string, boolean]) {
+    console.log('Event MINUS')
+    var room = this.getRoomByID(info[0])
+    if (room != null) {
+
+      if (arrClient.find(item => item.id == client.id).username == 'ldauga')
+        for (let index = 0; index < 2; index++)
+          if (this.pongInfo[room[0]].players[index].id == client.id) {
+            this.pongInfo[room[0]].players[index].reduce = info[1]
           }
     }
   }
