@@ -99,7 +99,7 @@ class Player {
 		this.x = canvas.width / 8 - this.width / 2
 		this.y = canvas.height / 2 - this.height / 2
 
-		this.speed = 7
+		this.speed = 3
 	}
 
 }
@@ -288,7 +288,7 @@ class Map {
 			this.mapColor = 'black'
 		else if (gameMap == 'map2') {
 			this.mapColor = 'black'
-			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, MOTION, 0.4))
+			this.obstacles.push(new Obstacle("#4B4B4B", canvas.width / 2 - 10, canvas.height / 2 - 30, 20, 60, MOTION, 2))
 		}
 		else if (gameMap == 'map3') {
 			this.mapColor = 'black'
@@ -523,36 +523,6 @@ class gameRoomClass {
 
 	moveBall() {
 
-		if (this.ball.y < this.ball.radius)
-			this.ball.y = this.ball.radius
-		else if (this.ball.y > this.canvas.height - this.ball.radius)
-			this.ball.y = this.canvas.height - this.ball.radius
-
-		this.ball.addParticles(this.ball.x, this.ball.y)
-
-		// si la balle touche le camps du joueur 1 : augmente le score du joueur 2 et redémare le jeu
-		if (this.ball.x + this.ball.dx > this.canvas.width - this.ball.radius) {
-			this.players[0].score++
-			this.resetAllPos()
-			this.players[0].ready = false
-			this.players[1].ready = false
-			return
-		}
-
-		// si la balle touche le camps du joueur 2 : augmente le score du joueur 1 et redémare le jeu
-		if (this.ball.x + this.ball.dx < this.ball.radius) {
-			this.players[1].score++
-			this.resetAllPos()
-			this.players[0].ready = false
-			this.players[1].ready = false
-			return
-		}
-
-		// si la balle touche le mur du haut ou le mur du bas : rebondis
-		if (this.ball.y + this.ball.dy > this.canvas.height - this.ball.radius || this.ball.y + this.ball.dy < this.ball.radius) {
-			this.ball.dy = 0 - this.ball.dy
-		}
-
 		// check des collisions avec les joueurs
 		for (let i = 0; i < 2; i++)
 			if (this.checkCollisionPlayer(i)) {
@@ -601,6 +571,36 @@ class gameRoomClass {
 					this.ball.dy *= -1;
 				}
 			}
+		}
+
+		if (this.ball.y < this.ball.radius)
+			this.ball.y = this.ball.radius
+		else if (this.ball.y > this.canvas.height - this.ball.radius)
+			this.ball.y = this.canvas.height - this.ball.radius
+
+		this.ball.addParticles(this.ball.x, this.ball.y)
+
+		// si la balle touche le camps du joueur 1 : augmente le score du joueur 2 et redémare le jeu
+		if (this.ball.x + this.ball.dx > this.canvas.width - this.ball.radius) {
+			this.players[0].score++
+			this.resetAllPos()
+			this.players[0].ready = false
+			this.players[1].ready = false
+			return
+		}
+
+		// si la balle touche le camps du joueur 2 : augmente le score du joueur 1 et redémare le jeu
+		if (this.ball.x + this.ball.dx < this.ball.radius) {
+			this.players[1].score++
+			this.resetAllPos()
+			this.players[0].ready = false
+			this.players[1].ready = false
+			return
+		}
+
+		// si la balle touche le mur du haut ou le mur du bas : rebondis
+		if (this.ball.y + this.ball.dy > this.canvas.height - this.ball.radius || this.ball.y + this.ball.dy < this.ball.radius) {
+			this.ball.dy = 0 - this.ball.dy
 		}
 
 		// bouge la balle

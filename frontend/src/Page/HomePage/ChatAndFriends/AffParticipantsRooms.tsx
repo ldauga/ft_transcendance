@@ -105,14 +105,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot) {
             return;
         }
-        await axiosConfig.get('https://localhost:5001/user/login/' + userToMute.login).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/user/login/' + userToMute.login).then(async (res) => {
             if (res.data == "") {
                 return;
             }
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://10.4.5.1:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     if (res.data == true) {
                     }
                     else {
@@ -154,14 +154,14 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot) {
             return;
         }
-        await axiosConfig.get('https://localhost:5001/user/login/' + userToBan.login).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/user/login/' + userToBan.login).then(async (res) => {
             if (res.data == "") {
                 return;
             }
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('https://localhost:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://10.4.5.1:5001/blackList/checkRoomBan/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     if (res.data == true) {
                     }
                     else {
@@ -200,7 +200,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     async function buttonAddAdmin(item: { login: string, id: number, admin: boolean }) {
         let test = false;
-        await axiosConfig.get('https://localhost:5001/user/login/' + item.login).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/user/login/' + item.login).then(async (res) => {
             if (res.data == "") {
                 return;
             }
@@ -222,13 +222,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     async function buttonRemoveAdmin(item: { login: string, id: number, admin: boolean }) {
         let test = false;
-        await axiosConfig.get('https://localhost:5001/user/login/' + item.login).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/user/login/' + item.login).then(async (res) => {
             if (res.data == "") {
                 return;
             }
             else {
                 const oldResData = res.data;
-                await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://10.4.5.1:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
                     if (res.data == true) {
                         enqueueSnackbar('You can\'t remove this admin role, user is the group owner', { variant: "warning", autoHideDuration: 2000 })
                         return;
@@ -255,13 +255,13 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
 
     const checkIfAdmin = async () => {
         let ifAdmin = false;
-        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
             }
         })
-        await axiosConfig.get('https://localhost:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
+        await axiosConfig.get('https://10.4.5.1:5001/participants/checkAdmin/' + userData.userReducer.user?.login + '/' + props.roomsConversData.name, { withCredentials: true }).then(async (res) => {
             if (res.data == true) {
                 setAdmin(true);
                 ifAdmin = true;
@@ -630,7 +630,7 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                 setPp2(item.profile_pic);
                 i++;
             }
-            itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login) }}>
+            itemList.push(<div key={itemList.length.toString()} className='participant' onClick={(e) => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + item.login) }}>
                 <img src={item.profile_pic}></img>
                 {item.mute ? <p>{item.nickname} (Muted)</p> : <p>{item.nickname}</p>}
                 <RightItem login={item.login} id={item.id} admin={admin} participantAdmin={item.admin} muted={item.mute} />
