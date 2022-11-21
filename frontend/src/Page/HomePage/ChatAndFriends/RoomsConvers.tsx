@@ -84,6 +84,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
         console.log("newParticipant");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        getUsers();
         utilsData.socket.off('newParticipant');
         utilsData.socket.removeListener('newParticipant');
     })
@@ -101,6 +102,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
         console.log("removeParticipantReturn");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
+        getUsers();
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
     })
@@ -268,6 +270,8 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         function HeaderPrint() {
 
             const [textNicknameHeader, setTextNicknameHeader] = useState("");
+
+            utilsData.socket.removeAllListeners('getAllParticipantsReturn');
 
             utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
                 let str_nickname = "";

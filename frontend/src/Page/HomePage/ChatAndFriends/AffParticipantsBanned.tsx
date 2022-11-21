@@ -152,7 +152,7 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
         // for (let i = 0; i < 5; i++) {
         //     utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         // }
-    }, [props, itemListHistory]);
+    }, [itemListHistory]);
 
     function AffList() {
         if (banRoomParticipant == true)

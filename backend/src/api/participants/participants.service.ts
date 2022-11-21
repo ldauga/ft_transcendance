@@ -43,22 +43,14 @@ export class ParticipantsService {
 	}
 
 	async checkParticipant(login: string, roomName: string): Promise<boolean> {
-		const check = await this.ParticipantsRepository.findOne({
-			where: [
-				{ user_login: login, room_name: roomName }
-			]
-		});
+		const check = await this.ParticipantsRepository.findOneBy({ user_login: login, room_name: roomName });
 		if (check == null)
 			return false;
 		return true;
 	}
 
 	async checkAdmin(login: string, roomName: string): Promise<boolean> {
-		const check = await this.ParticipantsRepository.findOne({
-			where: [
-				{ user_login: login, room_name: roomName }
-			]
-		});
+		const check = await this.ParticipantsRepository.findOneBy({ user_login: login, room_name: roomName });
 		if (check == null)
 			return false;
 		if (check.admin)
@@ -68,11 +60,7 @@ export class ParticipantsService {
 	}
 
 	async checkIfAdminOrParticipant(login: string, roomName: string): Promise<boolean> {
-		const check = await this.ParticipantsRepository.findOne({
-			where: [
-				{ user_login: login, room_name: roomName }
-			]
-		});
+		const check = await this.ParticipantsRepository.findOneBy({ user_login: login, room_name: roomName });
 		if (check == null)
 			return false;
 		if (check.admin)
@@ -134,13 +122,16 @@ export class ParticipantsService {
 	async removeParticipant(login: string, room_name: string): Promise<boolean> {
 		if (!this.checkParticipant(login, room_name))
 			return false;
-		const check = await this.ParticipantsRepository.findOne({
-			where: [
-				{ user_login: login, room_name: room_name }
-			]
-		});
-		const removeReturn = this.ParticipantsRepository.delete(check);
-		return true;
+		const check = await this.ParticipantsRepository.findOneBy({ user_login: login, room_name: room_name });
+		if (check) {
+			const removeReturn = this.ParticipantsRepository.delete(check);
+			if (removeReturn)
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
 	}
 
 	public async getAllUsersForOneRoom(name: string): Promise<{ login: string, id: number, admin: boolean }[]> {
@@ -162,38 +153,14 @@ export class ParticipantsService {
 				{ room_name: name }
 			]
 		});
-		// const usersWithMessages = await this.MessagesService.getUsersRoomConversMessages(name);
 		const usersWithMessages = await this.MessagesService.getUserMessages(0);
 		let arrParticipants: { login: string, id: number, admin: boolean }[] = [];
 		if (!participants && !usersWithMessages)
 			return arrParticipants;
 		if (participants)
 			participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id, admin: item.admin })));
-		// if (usersWithMessages)
-		// 	usersWithMessages.forEach(item => {
-		// 		if (!arrParticipants.find(obj => obj.login == item.login))
-		// 			arrParticipants.push({ login: item.login, id: item.id, admin: false })
-		// 	});
 		return arrParticipants;
 	}
-
-	// public async getAllUsersForRoom(name: string): Promise<{ id: number, login: string, nickname: string, profile_pic: string }[]> {
-	// 	const participants = await this.ParticipantsRepository.find({
-	// 		where: [
-	// 			{ room_name: name }
-	// 		]
-	// 	});
-	// 	let arrParticipants: { login: string, id: number }[] = [];
-	// 	if (!participants)
-	// 		return null;
-	// 	await participants.forEach(item => (arrParticipants.push({ login: item.user_login, id: item.user_id })));
-	// 	let arrUsers: { id: number, login: string, nickname: string, profile_pic: string }[] = [];
-	// 	await arrParticipants.forEach(async item => {
-	// 		const user = await this.UserService.getUserById(item.id);
-	// 		arrUsers.push({ id: user.id, login: user.login, nickname: user.nickname, profile_pic: user.profile_pic });
-	// 	});
-	// 	return arrUsers;
-	// }
 
 	public async getAllRoomUser(login: string): Promise<{ name: string, id: number }[]> {
 		const participants = await this.ParticipantsRepository.find({

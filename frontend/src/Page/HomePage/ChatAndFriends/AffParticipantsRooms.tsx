@@ -607,6 +607,8 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             );
     };
 
+    utilsData.socket.removeAllListeners('getAllParticipantsReturn');
+
     utilsData.socket.on('getAllParticipantsReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string, admin: boolean, mute: boolean }[]) {
         let oldLength = 0;
         if (itemListHistory)

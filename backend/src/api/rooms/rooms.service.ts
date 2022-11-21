@@ -31,11 +31,7 @@ export class RoomsService {
 	}
 
 	async checkIfCanJoin(user_id: number, user_login: string, room_id: number, room_name: string, password: string): Promise<String> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ id: room_id, name: room_name }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ id: room_id, name: room_name });
 		if (check == null)
 			return ("room not found");
 		if (check.passwordOrNot) {
@@ -49,33 +45,21 @@ export class RoomsService {
 	}
 
 	async checkRoom(nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck });
 		if (check == null)
 			return false;
 		return true;
 	}
 
 	async checkIfOwner(idToCheck: number, nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck, owner_id: idToCheck }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck, owner_id: idToCheck });
 		if (check == null)
 			return false;
 		return true;
 	}
 
 	async checkIfPrivate(nameToCheck: string): Promise<boolean> {
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: nameToCheck }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ name: nameToCheck });
 		if (check == null)
 			return null;
 		if (check.publicOrPrivate)
@@ -86,11 +70,7 @@ export class RoomsService {
 	async changePassword(room_name: string, passwordOrNot: boolean, password: string): Promise<boolean> {
 		if (!this.checkRoom(room_name))
 			return false;
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: room_name }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ name: room_name });
 		check.passwordOrNot = passwordOrNot;
 
 		const saltOrRounds = await bcrypt.genSalt(parseInt(process.env.SALT));
@@ -123,25 +103,10 @@ export class RoomsService {
 			return false;
 		if (!this.checkIfOwner(id_user, room_name))
 			return false;
-		const check = await this.RoomsRepository.findOne({
-			where: [
-				{ name: room_name }
-			]
-		});
+		const check = await this.RoomsRepository.findOneBy({ name: room_name });
 		const removeReturn = this.RoomsRepository.delete(check);
 		if (removeReturn)
 			return true;
 		return false;
 	}
-
-	// async getParticipantsRoom(id: number): Promise<number[]> {
-	// 	const room = await this.RoomsRepository.findOne({
-	// 		where: [
-	// 			{ id: id }
-	// 		]
-	// 	});
-	// 	if (!room)
-	// 		return null;
-	// 	return room.participants_id;
-	// }
 }
