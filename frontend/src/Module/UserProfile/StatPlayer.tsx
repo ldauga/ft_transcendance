@@ -257,7 +257,6 @@ function StatPlayer() {
 			setProfile({ ...profile, profile_pic: res.data.profile_pic });
 			enqueueSnackbar('Your profile picture has been updated !', { variant: 'success', autoHideDuration: 2000 })
 		}).catch((err) => {
-			setProfile({ ...profile, profile_pic: '' });
 			enqueueSnackbar('Unable to update your profile picture.', { variant: 'warning', autoHideDuration: 2000 })
 		})
 	}
