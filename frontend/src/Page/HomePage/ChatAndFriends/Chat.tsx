@@ -16,7 +16,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [isSendChatMsg, setSendChatMsg] = useState(false);
     const [isCreateGroup, setCreateGroup] = useState(false);
 
@@ -89,6 +89,7 @@ function Chat(props: { setFriendList: Function, setChat: Function, setConvers: F
             setSendChatMsg(true);
         }
     }
+
     const affCreateGroup = async () => {
         if (isCreateGroup)
             setCreateGroup(false);

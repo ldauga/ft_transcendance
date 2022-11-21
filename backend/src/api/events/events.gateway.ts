@@ -455,6 +455,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log('Event addFriend')
     const checkIfRelationExist = await this.FriendListService.checkExistRelation(data.id_user1, data.id_user2);
     if (!checkIfRelationExist) {
+      const checkIfBan = await this.BlacklistService.checkIfRelationIsBlocked(data.login_user1, data.login_user2);
+      if (checkIfBan)
+        return ;
       this.logger.log(`${client.id} add Friend`);
       const newFriend = {
         id_user1: data.id_user1,
@@ -1194,7 +1197,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                 let i = 0;
                 while (i < room.users.length) {
                   let iencli = arrClient.find(obj => obj.username == room.users[i].username);
-                  if (room.users[i].id != iencli.id)
+                  if (iencli != undefined && room.users[i].id != iencli.id)
                     room.users[i].id = iencli.id;
                   console.log("emit to ", room.users[i].username, ", id: ", room.users[i].id);
                   this.server.to(room.users[i].id).emit('newMsgReceived', data);

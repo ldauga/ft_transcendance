@@ -417,25 +417,25 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     };
 
     if ((tmp = userInWaitForGame.find(item => item.map == info.gameMap)) != undefined) {
-      
+
       this.pongInfo.push(new gameRoomClass(info.user.login + tmp.user.login, client.id, info.user, info.gameMap))
-      
+
       const room = this.getRoomByID(info.user.login + tmp.user.login);
-      
+
       this.pongInfo[room[0]].players[0].connected = true
-      
+
       this.pongInfo[room[0]].setOponnent(arrClient.find(client => client.username == tmp.user.login).id, tmp.user)
-      
+
       this.pongInfo[room[0]].players.forEach(async player => {
-        
+
         const friendList = await this.FriendListService.getUserFriendListWithLogin(player.user.login);
-        
+
         for (let i = 0; i < friendList.length; i++) {
           let loginTmp: string;
           if (friendList[i].login_user1 == player.user.login)
-          loginTmp = friendList[i].login_user2;
+            loginTmp = friendList[i].login_user2;
           else
-          loginTmp = friendList[i].login_user1;
+            loginTmp = friendList[i].login_user1;
           const _client = arrClient.find(obj => obj.username == loginTmp);
           if (_client) {
             this.server.to(_client.id).emit('friendConnection', true);
@@ -445,9 +445,9 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           })
         }
       })
-      
+
       this.pongInfo[room[0]].started = true
-      
+
       this.joinRoom(client, room[1].roomID)
       this.server.to(arrClient.find(client => client.username == tmp.user.login).id).emit('joinRoom', room[1].roomID)
 
@@ -675,7 +675,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         return;
       }
-      
+
       this.server.to(roomID).emit('render', this.pongInfo[room[0]])
 
     }
@@ -820,6 +820,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       },
       gameRoom: gameRoomClass,
       userLoginToSend: string,
+      fromProfile?: boolean,
+      map?: string,
     }) {
 
     console.log('Event INVITE_CUSTOM')
@@ -831,27 +833,36 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     else
       this.joinRoom(client, "custom" + client.id)
 
-    info.gameRoom.roomID = "custom" + client.id
+    if (info.fromProfile != undefined && info.fromProfile) {
+      if (info.map != undefined && (info.map == 'map2' || info.map == 'map3')) {
+        info.gameRoom.roomID = "custom" + client.id
+        let index = this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, info.map)) - 1
+        this.pongInfo[index].players.forEach(player => player.sendNotif = false)
+      }
+    } else {
 
-    for (let index = 0; index < info.gameRoom.map.obstacles.length; index++) {
-      info.gameRoom.map.obstacles[index].initialX = info.gameRoom.map.obstacles[index].x
-      info.gameRoom.map.obstacles[index].initialY = info.gameRoom.map.obstacles[index].y
-      info.gameRoom.map.obstacles[index].initialHeight = info.gameRoom.map.obstacles[index].height
+      info.gameRoom.roomID = "custom" + client.id
+
+      for (let index = 0; index < info.gameRoom.map.obstacles.length; index++) {
+        info.gameRoom.map.obstacles[index].initialX = info.gameRoom.map.obstacles[index].x
+        info.gameRoom.map.obstacles[index].initialY = info.gameRoom.map.obstacles[index].y
+        info.gameRoom.map.obstacles[index].initialHeight = info.gameRoom.map.obstacles[index].height
+      }
+
+      const index = this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, "map1")) - 1
+
+      this.pongInfo[index].map.obstacles = info.gameRoom.map.obstacles
+
+      this.pongInfo[index].ball.x = info.gameRoom.ball.x
+      this.pongInfo[index].ball.y = info.gameRoom.ball.y
+
+      if (info.gameRoom.ball.initial_x >= 0) {
+        this.pongInfo[index].ball.x = this.pongInfo[index].ball.initial_x = info.gameRoom.ball.initial_x
+        this.pongInfo[index].ball.y = this.pongInfo[index].ball.initial_y = info.gameRoom.ball.initial_y
+      }
+
+      this.pongInfo[index].players.forEach(player => player.sendNotif = false)
     }
-
-    const index = this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, "map1")) - 1
-
-    this.pongInfo[index].map.obstacles = info.gameRoom.map.obstacles
-
-    this.pongInfo[index].ball.x = info.gameRoom.ball.x
-    this.pongInfo[index].ball.y = info.gameRoom.ball.y
-
-    if (info.gameRoom.ball.initial_x >= 0) {
-      this.pongInfo[index].ball.x = this.pongInfo[index].ball.initial_x = info.gameRoom.ball.initial_x
-      this.pongInfo[index].ball.y = this.pongInfo[index].ball.initial_y = info.gameRoom.ball.initial_y
-    }
-
-    this.pongInfo[index].players.forEach(player => player.sendNotif = false)
 
     arrClient.forEach((item) => {
       if (info.userLoginToSend == item.username)

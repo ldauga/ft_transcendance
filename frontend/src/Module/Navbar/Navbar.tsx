@@ -56,13 +56,12 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 	async function findUserProfile(content: string) {
 		if (content) {
-			let res = await axiosConfig.get('https://10.4.5.1:5001/user/login/' + content);
-			if (!res.data.login)
-				res = await axiosConfig.get('https://10.4.5.1:5001/user/nickname/' + content);
-			if (!res.data.login)
+			let users = await axiosConfig.get('https://10.4.5.1:5001/user');
+			let indexUser = -1
+			if ((indexUser = users.data.findIndex((user: any) => user.login.toLowerCase() == content.toLowerCase() || user.nickname.toLowerCase() == content.toLowerCase())) == -1)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
 			else
-				window.location.replace('https://10.4.5.1:3000/Profile/' + res.data.login);
+				window.location.replace('https://10.4.5.1:3000/Profile/' + users.data[indexUser].login);
 		}
 		return true;
 	}
@@ -189,6 +188,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						}
 						else if (isFriendList) {
 							setFriendList(false);
+							props.setOpenFriendConversFromProfile(false);
 							setOpenPopUp(false);
 						}
 						else if (isNotif) {

@@ -255,11 +255,7 @@ const GamePage = (props: any) => {
 
     const utilsData = useSelector((state: RootState) => state.utils);
 
-    // var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
-
     function render(room: gameRoomClass) {
-
-        console.log('on.(\'render\')')
 
         var canvas = document.getElementById('pongBoard') as HTMLCanvasElement
         if (canvas !== null) {
@@ -292,10 +288,14 @@ const GamePage = (props: any) => {
                 drawPlayers(ctx, room)
 
             }
-        }
-    }
 
-    utilsData.socket.on('render', render);
+        }
+        
+    }
+    
+    utilsData.socket.on('render', function (room: gameRoomClass) {
+        render(room)
+    });
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
         setFinishGame(true)
