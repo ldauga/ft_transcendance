@@ -13,7 +13,7 @@ import LeaderBoard from './Page/LeaderBoard/LeaderBoard';
 import { SnackbarProvider } from 'notistack';
 import StatPlayer from './Module/UserProfile/StatPlayer';
 import Spectate from './Page/Pong/Spectate';
-import { TourProvider, useTour } from '@reactour/tour';
+import { TourProvider } from '@reactour/tour';
 
 const steps = [
   {

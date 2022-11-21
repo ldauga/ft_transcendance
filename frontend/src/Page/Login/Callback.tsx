@@ -1,6 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
+import React, { useState } from "react";
 import PinInput from "react-pin-input";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
@@ -16,16 +15,12 @@ export default function Callback() {
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
-    const [cookie, setCookie] = useCookies(['auth-cookie']);
     const dispatch = useDispatch();
     const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch);
-    const [turnOn, setTurnOn] = useState(false);
-    const [res, setRes] = useState(0);
-    const [fullPinCode, setFullPinCode] = useState(false);
 
     function turnOn2fa(value: string) {
         axios.get('https://localhost:5001/auth/2fa/verify/' + value, { withCredentials: true })
-            .then((e) => { setTwoFactor(true), setTurnOn(true) })
+            .then((e) => { setTwoFactor(true) })
             .catch((e) => {
                 enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
             });
@@ -51,8 +46,7 @@ export default function Callback() {
                             type="numeric"
                             inputMode="number"
                             style={{ padding: '10px' }}
-                            onChange={() => setFullPinCode(false)}
-                            onComplete={(value, index) => { turnOn2fa(value); setFullPinCode(true) }}
+                            onComplete={(value, index) => { turnOn2fa(value); }}
                             autoSelect={true}
                         />
                     </div>

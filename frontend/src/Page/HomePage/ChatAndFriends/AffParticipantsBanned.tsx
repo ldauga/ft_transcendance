@@ -1,10 +1,8 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../State';
 import './CSS/BanRoomParticipant.scss'
 import '../Homepage.scss'
-import { constWhileSecu } from '../HomePage';
 import axiosConfig from "../../../Utils/axiosConfig";
 import { useSnackbar } from 'notistack';
 import { ArrowBackIosNew } from '@mui/icons-material';
@@ -149,9 +147,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
 			utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
 			setUpdate(true);
 		}
-        // for (let i = 0; i < 5; i++) {
-        //     utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
-        // }
     }, [itemListHistory]);
 
     function AffList() {

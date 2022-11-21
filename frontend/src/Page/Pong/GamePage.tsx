@@ -9,8 +9,6 @@ import './CSS/GamePage/Board.css';
 import './CSS/GamePage/GameFinished.scss';
 import './CSS/Utils.css';
 import Background from '../../Module/Background/Background';
-import { Tab } from '@mui/material';
-
 
 var canvas = {
     "width": 800,

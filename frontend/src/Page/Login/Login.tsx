@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../State';
 import './Login.scss';
 import logo from '../assets/logo_transcendence.png';
-import Background from '../../Module/Background/Background';
 
 function Login(props: { user?: any }) {
 	const [login, setLogin] = useState('')

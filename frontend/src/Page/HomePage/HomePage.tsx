@@ -11,10 +11,6 @@ import axiosConfig from '../../Utils/axiosConfig';
 
 export const constWhileSecu = 10;
 
-
-
-
-
 function HomePage() {
 
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -24,8 +20,6 @@ function HomePage() {
 	const { setUser } = bindActionCreators(actionCreators, dispatch);
 
     const { setIsOpen } = useTour()
-
-    console.log("home page")
 
     useEffect(() => {
 
