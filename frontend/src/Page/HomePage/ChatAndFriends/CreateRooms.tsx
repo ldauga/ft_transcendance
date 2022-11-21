@@ -66,6 +66,7 @@ function CreateRooms(props: { setCreateGroup: Function }) {
                 publicOrPrivate: publicOrPrivate,
                 passwordOrNot: passwordOrNot
             }
+            console.log("newRoom: ", newRoom);
             utilsData.socket.emit('createChatRooms', newRoom);
             enqueueSnackbar('Your chat room is created', { variant: "success", autoHideDuration: 2000 })
             setText("");

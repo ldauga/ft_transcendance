@@ -382,6 +382,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log('Event createInvitationRequest')
     this.logger.log(`${client.id} said: create Invitation Request`);
     const checkIfInvit = await this.invitationRequestService.checkInvitationRequest(data.id_user1, data.id_user2);
+    console.log("check invitaiton request: ", checkIfInvit);
     if (!checkIfInvit) {
       let verifBan = false;
       if (!data.userOrRoom) {
@@ -544,10 +545,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log('Event createChatRooms')
     this.logger.log(`${client.id} create Rooms`);
     const search = arrRoom.find(obj => obj.name == data.name);
+    console.log("check search: ", search);
     if (search) {
       return;
     }
-    const checkIfRoom = await this.RoomsService.checkRoom(data.room_name);
+    console.log("data.room_name: ", data.name);
+    const checkIfRoom = await this.RoomsService.checkRoom(data.name);
+    console.log("check checkIfRoom: ", checkIfRoom);
     if (checkIfRoom)
       return;
     let password = data.password;

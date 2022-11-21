@@ -43,7 +43,7 @@ export class InvitationRequestService {
 	}
 
 	async checkInvitationRequest(id1: number, id2: number): Promise<boolean> {
-		const check = await this.InvitationRequestRepository.find({
+		const check = await this.InvitationRequestRepository.findOne({
 			where: [
 				{ id_user1: id1, id_user2: id2 },
 				{ id_user1: id2, id_user2: id1 }

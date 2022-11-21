@@ -42,13 +42,12 @@ export class FriendListService {
 	}
 
 	async checkExistRelation(id1: number, id2: number): Promise<boolean> {
-		const returnCheck = await this.FriendListRepository.find({
+		const returnCheck = await this.FriendListRepository.findOne({
 			where: [
 				{ id_user1: id1, id_user2: id2 },
 				{ id_user1: id2, id_user2: id1 }
 			]
 		});
-
 		if (!returnCheck)
 			return false;
 		return true;

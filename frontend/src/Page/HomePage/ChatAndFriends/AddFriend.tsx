@@ -20,6 +20,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
     async function buttonAddFriend() {
         let test = false;
         const userToSend = connectedClient.find(obj => obj.nickname == inputValue);
+        console.log("userToSend: ", userToSend)
         if (userToSend) {
             await axiosConfig.get('https://localhost:5001/user/login/' + userToSend?.username).then(async (res) => {
                 setInputValue("");
@@ -53,6 +54,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                             c = 2;
                         }
                     })
+                    console.log(a, b, c)
                     if (a == 2 && b == 2 && c == 2) {
                         const newInvitationRequest = {
                             id_user1: userData.userReducer.user?.id,
@@ -66,6 +68,7 @@ function AddFriend(props: { setNewAddFriend: Function }) {
                             room_id: 0,
                             room_name: ""
                         }
+                        console.log("createInvitationRequest: ", newInvitationRequest)
                         utilsData.socket.emit('createInvitationRequest', newInvitationRequest);
                         enqueueSnackbar('Invitation sent', { variant: "success", autoHideDuration: 2000 })
                     }
