@@ -451,7 +451,7 @@ function StatPlayer() {
 						<p className='match-played'>Match Played: {profile.wins + profile.losses}</p>
 						<div className="wins-loses">
 							<p>Wins: {profile.wins}</p>
-							<p>Loses: {profile.losses}</p>
+							<p>Losses: {profile.losses}</p>
 						</div>
 					</div>
 				</div>
