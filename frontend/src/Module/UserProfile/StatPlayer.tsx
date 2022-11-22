@@ -32,6 +32,8 @@ import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import MapCarousel from '../../Page/Pong/MapCarousel/MapCarousel'
 import { gameRoomClass } from '../../Page/Pong/gameRoomClass'
 import { Navigate } from 'react-router-dom'
+import TWOFA from './TwoFA'
+import EditNickname from './EditNickname'
 
 function StatPlayer() {
 	const persistantReduceur = useSelector((state: RootState) => state.persistantReducer);
@@ -50,7 +52,7 @@ function StatPlayer() {
 	const [dataOpenConversFromProfile, setDataOpenConversFromProfile] = useState({ id: 0, login: "", nickname: "", profile_pic: "" });
 
 	const dispatch = useDispatch();
-	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch); // del?
+	const { setUser, delNotif, delAllNotif } = bindActionCreators(actionCreators, dispatch);
 
 	const [profileUserMatchHistory, setProfileUserMatchHistory] = useState(Array<any>());
 	const [profile, setProfile] = useState({
@@ -204,7 +206,6 @@ function StatPlayer() {
 	utilsData.socket.off('getClientStatus')
 
 	utilsData.socket.on('getClientStatus', (info: { user: string, status: string, emitFrom: string }) => {
-		console.log(`getClientStatus emit from ${info.emitFrom}.`)
 		if (info.user == profile.login)
 			setProfile({ ...profile, status: info.status })
 	})
@@ -359,103 +360,14 @@ function StatPlayer() {
 		setActiveStep((prevActiveStep) => (prevActiveStep + (3 - 1)) % 3);
 	};
 
+	utilsData.socket.off('changeNicknameSuccess')
+
+    utilsData.socket.on('changeNicknameSuccess', function (param: any) {
+        fetchMatchHistory()
+    })
+
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openInviteGame = Boolean(anchorEl);
-
-	function EditNickname() {
-		const [open, setOpen] = useState(false);
-		const [newNickname, setNewNickname] = useState("");
-
-		const changeNickname = async () => {
-			utilsData.socket.emit('CHANGE_NICKNAME', { newNickname: newNickname, user: persistantReduceur.userReducer.user })
-		}
-
-		utilsData.socket.off('changeNicknameSuccess')
-
-		utilsData.socket.on('changeNicknameSuccess', function (param: any) {
-			setUser(param)
-			enqueueSnackbar('Nickname changed !', { variant: "success", autoHideDuration: 2000 })
-			setProfile({ ...profile, nickname: newNickname })
-			fetchMatchHistory()
-			setOpen(false)
-		})
-
-		return (
-			<>
-				<button onClick={() => { setOpen(true) }}>Edit Nickname</button>
-					<Dialog open={open} onClose={() => { setOpen(false) }}>
-						<DialogTitle>Your New Nickname</DialogTitle>
-						<DialogContent>
-							<TextField
-								autoFocus
-								margin="dense"
-								id="name"
-								label="New Nickname"
-								type="text"
-								onChange={e => setNewNickname(e.target.value)}
-								fullWidth
-								variant="standard"
-								onKeyUp={(e) => {
-									if (e.key === 'Enter') {
-										changeNickname()
-									}
-								}}
-							/>
-						</DialogContent>
-						<DialogActions>
-							<button onClick={changeNickname}>Edit</button>
-						</DialogActions>
-					</Dialog>
-			</>
-		);
-	}
-
-	function TWOFA() {
-		const [userParameter2FAQrCode, setUserParameter2FAQrCode] = useState("");
-		const [openEditZone2fa, setOpenEditZone2fa] = useState(false);
-		const [userParameter2FACode, setUserParameter2FACode] = useState("");
-		const [userParameter2FARes, setUserParameter2FARes] = useState(0);
-		const [fullPinCode, setFullPinCode] = useState(0);
-
-		const { setUser, setTwoFactor } = bindActionCreators(actionCreators, dispatch); // del?
-
-		const sendGetRequest = async (value: string) => {
-			const res = await axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-on/' + value)
-			if (res.request.status === 200) {
-				setTwoFactor(true);
-				setUserParameter2FACode('');
-				setUser(res.data);
-				setUserParameter2FARes(res.status);
-				enqueueSnackbar('2FA enabled.', { variant: 'success', autoHideDuration: 2000 })
-			} else {
-				enqueueSnackbar('Wrong code.', { variant: 'warning', autoHideDuration: 2000 })
-			};
-		}
-
-		return (
-			<>
-				{!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
-					<>
-						<button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://10.4.5.1:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
-						<Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
-							<DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
-							<DialogContent className='two-fa'>
-								<img src={userParameter2FAQrCode} />
-								<PinInput
-									length={6}
-									focus
-									onChange={(value, index) => { setUserParameter2FACode(value); setUserParameter2FARes(0); setFullPinCode(0) }}
-									type="numeric"
-									inputMode="number"
-									style={{ padding: '10px' }}
-									onComplete={(value, index) => { sendGetRequest(value); setFullPinCode(1); setUserParameter2FACode('') }}
-									autoSelect={true}
-								/>
-							</DialogContent>
-						</Dialog></> : <button onClick={() => { axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
-			</>
-		);
-	}
 
 	function profile_btn() {
 		if (login != profile.login) {
@@ -491,7 +403,7 @@ function StatPlayer() {
 								</div>
 								<DialogActions>
 									<button className='join-queue' type='button' onClick={() => { setAnchorEl(null) }}>Cancel</button>
-									<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap) }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
+									<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap), fromProfile: true, map: inviteGameMap }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
 								</DialogActions>
 							</Dialog>
 						</> : <></>}
@@ -501,7 +413,7 @@ function StatPlayer() {
 		} else {
 			return (
 				<div className='buttons'>
-					<EditNickname />
+					<EditNickname profile={profile} setProfile={setProfile} />
 					<label htmlFor="file-upload">
 						Edit Avatar
 					</label>
@@ -539,7 +451,7 @@ function StatPlayer() {
 						<p className='match-played'>Match Played: {profile.wins + profile.losses}</p>
 						<div className="wins-loses">
 							<p>Wins: {profile.wins}</p>
-							<p>Loses: {profile.losses}</p>
+							<p>Losses: {profile.losses}</p>
 						</div>
 					</div>
 				</div>

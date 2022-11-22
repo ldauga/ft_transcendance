@@ -7,7 +7,7 @@
 	--racket-bottom: 87%;
 }
 
-$pong-color: #2e384e; //var
+$pong-color: #2e384e;
 
 .button-reactour {
 	color: #2e384e;
@@ -113,8 +113,6 @@ $pong-color: #2e384e; //var
 		}
 
 		.ball {
-			// top: var(--bottom);
-			// left: var(--left);
 			left: 0%;
 			width: 8px;
 			border-radius: 50%;
@@ -219,41 +217,18 @@ $pong-color: #2e384e; //var
 }
 
 
-// @media screen and (max-width: 375px) {
-// 	.ping-racket, .pong-racket {
-// 		--racket-bottom: 76%;
-// 	}
-// 	.ball {
-// 		--bottom: 96%;
-// 		--left: 7%;
-// 		--right: 91%;
-// 	}
-// 	.homepage {
-// 		margin-top: 144px;
-// 		.field {
-// 			width: 345px;
-// 			height: 174px;
-// 		}
-// 	}
-// }
-
-// ----- keyframes ------
-
 @keyframes ball {
 	0% {
-		// start in the middle
 		top: 34%;
 		left: 52%;
 	}
 
 	8.3% {
-		// pong
 		top: 52%;
 		left: var(--right);
 	}
 
 	24.9% {
-		// ping
 		top: 85%;
 		left: var(--left);
 	}
@@ -264,19 +239,16 @@ $pong-color: #2e384e; //var
 	}
 
 	41.5% {
-		// pong
 		top: 70%;
 		left: var(--right);
 	}
 
 	58.1% {
-		// ping
 		top: 55%;
 		left: var(--left);
 	}
 
 	74.7% {
-		//pong
 		top: 13%;
 		left: var(--right);
 	}
@@ -287,13 +259,11 @@ $pong-color: #2e384e; //var
 	}
 
 	91.3% {
-		// ping
 		top: 22%;
 		left: var(--left);
 	}
 
 	100% {
-		// back to center
 		top: 34%;
 		left: 52%;
 	}
@@ -301,7 +271,6 @@ $pong-color: #2e384e; //var
 
 @keyframes ping {
 
-	// left player
 	0% {
 		top: 10%;
 	}
@@ -319,7 +288,6 @@ $pong-color: #2e384e; //var
 	}
 
 	24.9% {
-		// tap
 		top: var(--racket-bottom);
 	}
 
@@ -336,7 +304,6 @@ $pong-color: #2e384e; //var
 	}
 
 	58.1% {
-		// tap
 		top: 54%;
 	}
 
@@ -349,7 +316,6 @@ $pong-color: #2e384e; //var
 	}
 
 	91.3% {
-		// tap
 		top: 18%;
 	}
 
@@ -360,13 +326,11 @@ $pong-color: #2e384e; //var
 
 @keyframes pong {
 
-	// right player
 	0% {
 		top: var(--racket-bottom);
 	}
 
 	8.3% {
-		// tap
 		top: 51%;
 	}
 
@@ -379,7 +343,6 @@ $pong-color: #2e384e; //var
 	}
 
 	41.5% {
-		// tap
 		top: 68%;
 	}
 
@@ -408,7 +371,6 @@ $pong-color: #2e384e; //var
 	}
 
 	91.3% {
-		// tap
 		top: 10%;
 	}
 

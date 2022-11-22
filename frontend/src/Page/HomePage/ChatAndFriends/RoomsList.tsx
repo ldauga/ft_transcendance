@@ -14,7 +14,7 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     const utilsData = useSelector((state: RootState) => state.utils);
     const userData = useSelector((state: RootState) => state.persistantReducer);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [update, setUpdate] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [password, setPassword] = useState("");
@@ -43,7 +43,8 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     utilsData.socket.removeAllListeners('getAllRoomsCanIJoin');
 
     utilsData.socket.on('getAllRoomsCanIJoin', function (getAllRoomsCanIJoin: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) {
-        getListItem(getAllRoomsCanIJoin);
+        if (getAllRoomsCanIJoin != null)
+            getListItem(getAllRoomsCanIJoin);
         utilsData.socket.off('getAllRoomsCanIJoin');
         utilsData.socket.removeListener('getAllRoomsCanIJoin');
     })

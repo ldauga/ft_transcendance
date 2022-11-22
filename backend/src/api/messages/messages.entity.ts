@@ -2,7 +2,7 @@ import { Index, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany } 
 
 @Entity('messages')
 export class MessagesEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   public id: number;
 
   @Column()

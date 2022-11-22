@@ -63,7 +63,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (roomHasBeenDeletedReturn: string) {
-        console.log("removeParticipantReturn");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('removeParticipantReturn');
         utilsData.socket.removeListener('removeParticipantReturn');
@@ -72,7 +71,6 @@ function AffParticipantsBanned(props: { roomsConversData: { name: string, id: nu
     utilsData.socket.removeAllListeners('debanedUserInRoom');
 
     utilsData.socket.on('debanedUserInRoom', function (debanedUserInRoom: boolean) {
-        console.log("debanedUserInRoom");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS_BANNED', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         utilsData.socket.off('debanedUserInRoom');
         utilsData.socket.removeListener('debanedUserInRoom');

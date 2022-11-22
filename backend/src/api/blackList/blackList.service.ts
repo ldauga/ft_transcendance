@@ -71,7 +71,12 @@ export class BlackListService {
 	}
 
 	async checkUserBan(login: string, login_receiver: string): Promise<boolean> {
-		const check = await this.BlackListRepository.findOneBy({ login_banned: login, login_sender: login_receiver, userOrRoom: false });
+		const check = await this.BlackListRepository.findOne({
+			where: [
+				{ login_banned: login, login_sender: login_receiver, userOrRoom: false },
+				{ login_banned: login_receiver, login_sender: login, userOrRoom: false }
+			]
+		});
 		if (check == null)
 			return false;
 		return true;

@@ -153,14 +153,16 @@ export class UserService {
 		if (nickname.length < 3 || nickname.length > 8)
 			throw new BadRequestException('Nickname too short');
 		if (nickname.search("^[a-zA-Z0-9_]*$") == -1)
-			throw new BadRequestException('No special character');
+			throw new BadRequestException('No special char');
 		if (user.nickname == nickname)
 			throw new BadRequestException('Cannot set identical nickname');
 		if (await this.getUserByNickname(nickname))
 			throw new BadRequestException('Nickname already used');
 		const res = await this.getUserByLogin(nickname)
 		if (res && res?.login != user.login)
-			throw new BadRequestException('Cannot use someone\'s login as a nickname.');
+			throw new BadRequestException('Cannot use someone\'s login as a nickname');
+		if ((await this.getAllUsers()).find(user => user.nickname.toLowerCase() == nickname.toLowerCase()) != undefined)
+			throw new BadRequestException('Nickname already used');
 
 		user.nickname = nickname;
 		this.userRepository.save(user);

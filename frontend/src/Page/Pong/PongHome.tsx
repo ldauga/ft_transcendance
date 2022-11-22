@@ -11,6 +11,7 @@ import Background from '../../Module/Background/Background';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import MapCarousel from './MapCarousel/MapCarousel';
 import { bindActionCreators } from 'redux';
+import { NotifType } from '../../State/type';
 
 const steps = [
 	{
@@ -56,9 +57,13 @@ function PongHome(props: any) {
 		setInQueue(false);
 	});
 
+	utilsData.socket.on('joinRoom', function (roomID: string) {
+		utilsData.socket.emit('JOIN_ROOM', roomID)
+	})
+
 	utilsData.socket.on('start', function (roomID: string) {
 		let tmp = -1;
-		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.data.roomId == roomID)) != -1)
+		while ((tmp = persistantReducer.notifReducer.notifArray.findIndex(item => item.type == NotifType.DISCONNECTGAME && item.data.roomId == roomID)) != -1)
 			delNotif(persistantReducer.notifReducer.notifArray[tmp])
 
 		props.setRoomID(roomID);
@@ -123,7 +128,6 @@ function PongHome(props: any) {
 				<div className='loading-screen'>
 					<div className="pong-loader"></div>
 					<h3>Searching</h3>
-					<button className='join-queue' type='button' onClick={joinQueue}>Join queue</button>
 						<button className='leave-queue' type='button' onClick={() => { utilsData.socket.emit('LEAVE_QUEUE', { user: persistantReducer.userReducer.user }) }}>Cancel</button>
 				</div>}
 		</>

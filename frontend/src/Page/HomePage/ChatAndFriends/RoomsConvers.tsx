@@ -28,7 +28,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     const [isMute, setMute] = useState(false);
     const [textPlaceHolder, setTextPlaceHolder] = useState("Your message...");
 
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [update, setUpdate] = useState(true);
 
@@ -71,7 +71,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('newParticipant');
 
     utilsData.socket.on('newParticipant', function (newParticipantReturn: boolean) {
-        console.log("newParticipant");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         getUsers();
         utilsData.socket.off('newParticipant');
@@ -89,7 +88,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     utilsData.socket.removeAllListeners('removeParticipantReturn');
 
     utilsData.socket.on('removeParticipantReturn', function (removeParticipantReturnReturn: boolean) {
-        console.log("removeParticipantReturn");
         utilsData.socket.emit('GET_ALL_PARTICIPANTS', { room_id: props.roomsConversData.id, room_name: props.roomsConversData.name });
         getUsers();
         utilsData.socket.off('removeParticipantReturn');
@@ -148,7 +146,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }, [props]);
 
     const getUsers = async () => {
-        console.log("getUsers");
         let i = 0;
         setPp1("");
         setPp2("");
@@ -164,10 +161,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                         i++;
                     }
                     else
-                        return ;
+                        return;
                 });
                 if (i > 1)
-                    return ;
+                    return;
             });
         })
     }
@@ -270,13 +267,13 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
                     for (let i = 0; i < res.data.length; i++) {
                         if (i + 1 < res.data.length) {
                             await axiosConfig.get('https://10.4.5.1:5001/user/id/' + res.data[i].id).then(async (element) => {
-                            str_nickname = str_nickname + element.data.nickname + ", ";
-                        });
+                                str_nickname = str_nickname + element.data.nickname + ", ";
+                            });
                         }
                         else {
                             await axiosConfig.get('https://10.4.5.1:5001/user/id/' + res.data[i].id).then(async (element) => {
                                 str_nickname = str_nickname + element.data.nickname;
-                        });
+                            });
                         }
                     }
                     setTextNicknameHeader(str_nickname);
@@ -284,7 +281,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             }
 
             useEffect(() => {
-                console.log("useEffect HeaderPrint textNicknameHeader: ", textNicknameHeader);
                 getAllParticipant();
                 if (update) {
                     setUpdate(false);
@@ -408,7 +404,7 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
             if (messageText.length <= 0 || isMute)
                 return;
             if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
-                console.log("NON");
+                enqueueSnackbar(`Please wait ${(count + 2) - (Math.round(((new Date()).valueOf() / 1000)))} seconds`, { variant: 'warning', autoHideDuration: 1000 })
                 return;
             }
             const newMsg = {
@@ -464,7 +460,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
     }
 
     function AffRoomConvers() {
-        console.log("affroomconvers");
         return (
             <div className="chat">
                 <Header />
@@ -520,21 +515,21 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
 
         const updateSettings = async () => {
             if (password.length <= 0 && passwordOrNot) {
-				enqueueSnackbar('Empty password.', { variant: 'error', autoHideDuration: 2000 })
+                enqueueSnackbar('Empty password.', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
             if (password.length > 10 && passwordOrNot) {
-				enqueueSnackbar('Password too long. (10 char. max.)', { variant: 'error', autoHideDuration: 2000 })
+                enqueueSnackbar('Password too long. (10 char. max.)', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
             if (!valideInput(password, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890") && passwordOrNot) {
-				enqueueSnackbar('Allowed characters: only alpha and only digits.', { variant: 'error', autoHideDuration: 2000 })
+                enqueueSnackbar('Allowed characters: only alpha and only digits.', { variant: 'error', autoHideDuration: 2000 })
                 return;
             }
             if (password.length >= 0 || !passwordOrNot) {
                 const newPassword = {
                     login: userData.userReducer.user?.login,
-					room_id: props.roomsConversData.id,
+                    room_id: props.roomsConversData.id,
                     room_name: props.roomsConversData.name,
                     passwordOrNot: passwordOrNot,
                     password: password
@@ -588,7 +583,6 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         );
     }
 
-    console.log("return roomconvers")
 
     return (
         <div className="roomsConvers">

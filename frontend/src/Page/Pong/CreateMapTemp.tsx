@@ -473,7 +473,7 @@ const CreateMapTemp = (props: any) => {
 		if (!checkAllCollisionsBall(room.ball)) {
 			utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, gameRoom: room, userLoginToSend: inviteInput })
 			setInviteCheck(true)
-			enqueueSnackbar('Invit sent', { variant: "success", autoHideDuration: 2000 })
+			enqueueSnackbar('Invite sent', { variant: "success", autoHideDuration: 2000 })
 		}
 	}
 

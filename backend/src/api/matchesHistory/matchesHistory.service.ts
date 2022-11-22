@@ -29,7 +29,7 @@ export class MatchesHistoryService {
 		});
 
 		if (!matches)
-			return null; // gestion d erreur needed
+			return null;
 		return matches;
 	}
 
@@ -65,9 +65,6 @@ export class MatchesHistoryService {
 		return ret;
 	}
 
-
-	//Recuperer les id des joueurs
-	//Inserer les datas de base
 	async createMatch(body: any): Promise<MatchesHistoryEntity> {
 		const match = await this.MatchesHistoryRepository.save({
 			id_user1: body.id_user1,

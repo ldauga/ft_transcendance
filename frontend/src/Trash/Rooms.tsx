@@ -17,9 +17,9 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
 
     const [isCreateGroup, setCreateGroup] = useState(false);
 
-    const [itemListHistory, setItemListHistory] = useState(Array<any>);
+    const [itemListHistory, setItemListHistory] = useState(Array<any>());
     const [update, setUpdate] = useState(false);
-    const [itemListMyRooms, setitemListMyRooms] = useState(Array<{ name: string, id: number }>);
+    const [itemListMyRooms, setitemListMyRooms] = useState(Array<{ name: string, id: number }>());
 
     const dispatch = useDispatch();
 
@@ -43,7 +43,6 @@ function Rooms(props: { setChat: Function, setFriendList: Function, setRooms: Fu
     };
 
     const openConvers = (item: { name: string, id: number }) => {
-        //setConversChatNotif({ name: item.name, userOrRoom: true });
         props.setroomsConversData({ name: item.name, id: item.id });
         delChatNotif({ name: item.name, userOrRoom: true });
         props.setRooms(false);

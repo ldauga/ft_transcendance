@@ -22,7 +22,6 @@ const GamePage = (props: any) => {
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<gameRoomClass | undefined>(undefined);
 
-    // drawFont : desine le fond du jeu
     function drawFont(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -33,7 +32,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawObstacle : desine les obstacles du jeu
     function drawObstacle(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -47,24 +45,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    function drawBallParticles(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
-        if (ctx !== null) {
-
-            for (var index = room.ball.particle_x.length - 1; index >= 0; index--) {
-
-                ctx.beginPath();
-
-                ctx.fillStyle = '#00' + ((255 - ((index) * (256 / 16))).toString(16).length == 1 ? "0" + (255 - ((index) * (256 / 16))).toString(16) : (255 - ((index) * (256 / 16))).toString(16)) + '00';
-
-                ctx.arc(room.ball.particle_x[index], room.ball.particle_y[index], room.ball.radius, 0, Math.PI * 2);
-
-                ctx.fill();
-
-            }
-        }
-    }
-
-    // drawBall : dessine la balle en fonction de sa position
     function drawBall(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -81,7 +61,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawPlayers : dessine les joueurs suivant leurs positions
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -108,7 +87,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawScore : dessine les scores des deux joueurs
     function drawScore(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -124,7 +102,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawLimitsMove : dessine les limitations de mouveùent des deux joueurs (les deux lignes sous les joueurs)
     function drawLimitsMove(ctx: CanvasRenderingContext2D | null) {
         if (ctx !== null) {
 
@@ -145,7 +122,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawLimitCamps : dessine la limitation des deux camps (la grande ligne en pointillé au centre du plateau)
     function drawLimitCamps(ctx: CanvasRenderingContext2D | null) {
         if (ctx !== null) {
 
@@ -164,7 +140,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    // drawText : dessine "Press ENTER to play" au centre de l'écran
     function drawText(ctx: CanvasRenderingContext2D | null, room: gameRoomClass) {
         if (ctx !== null) {
 
@@ -255,8 +230,6 @@ const GamePage = (props: any) => {
 
     const utilsData = useSelector((state: RootState) => state.utils);
 
-    // var interval = setInterval(() => { if (!finishGame && !props.spectate) utilsData.socket.emit('RENDER', props.roomID) }, 10);
-
     function render(room: gameRoomClass) {
 
         var canvas = document.getElementById('pongBoard') as HTMLCanvasElement
@@ -290,10 +263,14 @@ const GamePage = (props: any) => {
                 drawPlayers(ctx, room)
 
             }
-        }
-    }
 
-    utilsData.socket.on('render', render);
+        }
+        
+    }
+    
+    utilsData.socket.on('render', function (room: gameRoomClass) {
+        render(room)
+    });
 
     utilsData.socket.on('finish', (room: gameRoomClass) => {
         setFinishGame(true)
@@ -313,9 +290,12 @@ const GamePage = (props: any) => {
         }
         if (e.key === ' ')
             utilsData.socket.emit('SPACE', [props.roomID, true]);
+        if (e.key === '+')
+            utilsData.socket.emit('PLUS', [props.roomID, true]);
+        if (e.key === '-')
+            utilsData.socket.emit('MINUS', [props.roomID, true]);
     }
 
-    // Lance la fonction onKeyDown chaque fois qu'une touche est appuyée
     document.addEventListener("keydown", (e) => onKeyDown(e));
 
     function onKeyUp(e: any) {
@@ -325,9 +305,12 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('ARROW_DOWN', [props.roomID, false]);
         if (e.key === ' ')
             utilsData.socket.emit('SPACE', [props.roomID, false]);
+        if (e.key === '+')
+            utilsData.socket.emit('PLUS', [props.roomID, false]);
+        if (e.key === '-')
+            utilsData.socket.emit('MINUS', [props.roomID, false]);
     }
 
-    // Lance la fonction onKeyDown chaque fois qu'une touche est relachée
     document.addEventListener("keyup", onKeyUp);
 
     const [tabValue, setTabValue] = useState('1')

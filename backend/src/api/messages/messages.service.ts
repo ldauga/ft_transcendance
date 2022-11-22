@@ -47,7 +47,7 @@ export class MessagesService {
 
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });;
 	}
 
 	async getConversMessages(id1: number, id2: number): Promise<MessagesEntity[]> {
@@ -60,7 +60,7 @@ export class MessagesService {
 
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });
 	}
 
 	async getRoomConversMessages(id: number): Promise<MessagesEntity[]> {
@@ -71,7 +71,7 @@ export class MessagesService {
 		});
 		if (!messagesReturn)
 			return null;
-		return messagesReturn;
+		return messagesReturn.sort(function (a, b) { return a.id - b.id });
 	}
 
 	async getRelationMessages(id: number): Promise<any[]> {
@@ -95,7 +95,6 @@ export class MessagesService {
 					loginTmp = item.login_receiver;
 				}
 				let returnFind = returnArray.find(item => item.id == idTmp);
-				//const user = await this.UserService.getUserById(idTmp);
 				if (!returnFind) {
 					returnArray.push({ id: idTmp, login: loginTmp, nickname: "", profile_pic: "", userOrRoom: false, room_id: 0, room_name: "" });
 				}
@@ -115,8 +114,6 @@ export class MessagesService {
 	}
 
 	async createMessages(body: any): Promise<MessagesEntity> {
-		this.logger.log(body);
-
 		const newMessage = this.MessagesRepository.save({
 			id_sender: body.id_sender,
 			id_receiver: body.id_receiver,

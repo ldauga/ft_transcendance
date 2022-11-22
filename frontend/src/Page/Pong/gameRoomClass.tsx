@@ -501,19 +501,6 @@ class gameRoomClass {
 		const Δx = distX - obstacle.width / 2;
 		const Δy = distY - obstacle.height / 2;
 		return Δx * Δx + Δy * Δy <= this.ball.radius * this.ball.radius;
-
-
-		// var ptop = obstacle.y
-		// var pbottom = obstacle.y + obstacle.height
-		// var pleft = obstacle.x
-		// var pright = obstacle.x + obstacle.width
-
-		// var btop = this.ball.y - this.ball.radius
-		// var bbottom = this.ball.y + this.ball.radius
-		// var bleft = this.ball.x - this.ball.radius
-		// var bright = this.ball.x + this.ball.radius
-
-		// return pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop
 	}
 
 	moveBall() {
@@ -525,7 +512,6 @@ class gameRoomClass {
 
 		this.ball.addParticles(this.ball.x, this.ball.y)
 
-		// si la balle touche le camps du joueur 1 : augmente le score du joueur 2 et redémare le jeu
 		if (this.ball.x + this.ball.dx > this.canvas.width - this.ball.radius) {
 			this.players[0].score++
 			this.resetAllPos()
@@ -534,7 +520,6 @@ class gameRoomClass {
 			return
 		}
 
-		// si la balle touche le camps du joueur 2 : augmente le score du joueur 1 et redémare le jeu
 		if (this.ball.x + this.ball.dx < this.ball.radius) {
 			this.players[1].score++
 			this.resetAllPos()
@@ -543,28 +528,21 @@ class gameRoomClass {
 			return
 		}
 
-		// si la balle touche le mur du haut ou le mur du bas : rebondis
 		if (this.ball.y + this.ball.dy > this.canvas.height - this.ball.radius || this.ball.y + this.ball.dy < this.ball.radius) {
 			this.ball.dy = 0 - this.ball.dy
 		}
 
-		// check des collisions avec les joueurs
 		for (let i = 0; i < 2; i++)
 			if (this.checkCollisionPlayer(i)) {
 
-				// ou la balle touche le player 1
 				let collidePoint = (this.ball.y - (this.players[i].y + this.players[i].height / 2))
 
-				// changement du point de collision pour un chiffre en -1 et 1
 				collidePoint = collidePoint / (this.players[i].height / 2)
 
-				// nouvel angle de la balle suivant le point de collision
 				let angleRad = (Math.PI / 4) * collidePoint
 
-				// nouvelle direction de la balle suivant le nouvel angle
 				let direction = (this.ball.x + this.ball.radius < this.canvas.width / 2) ? 1 : -1
 
-				// donne les nouvelles direction à la balle
 				this.ball.dx = direction * this.ball.speed * Math.cos(angleRad)
 				this.ball.dy = this.ball.speed * Math.sin(angleRad)
 
@@ -573,7 +551,6 @@ class gameRoomClass {
 					this.players[0].speed += 1
 					this.players[1].speed += 1
 				}
-				// augmente la vitesse de la balle à chaque contact avec un joueur
 			}
 
 		for (let index = 0; index < this.map.obstacles.length; index++) {
@@ -598,7 +575,6 @@ class gameRoomClass {
 			}
 		}
 
-		// bouge la balle
 		this.ball.x += this.ball.dx
 		this.ball.y += this.ball.dy
 	}

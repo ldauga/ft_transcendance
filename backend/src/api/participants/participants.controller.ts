@@ -9,7 +9,6 @@ export class ParticipantsController {
   @Inject(ParticipantsService)
   private readonly service: ParticipantsService;
 
-  //FAIRE FONCTIONNER AVEC LES GUARDS
   @Get()
   @UseGuards(AuthGuard('jwt'))
   public getAllParticipants(): Promise<{ login: string, room_name: string }[]> {

@@ -12,6 +12,7 @@ import { PopupContainer } from '../PopupContainer/PopupContainer';
 import './Navbar.scss';
 import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
+import AffPtnDeNotifChat from './AffPtnChatNotif';
 
 let tmp = 0
 let verif = false
@@ -19,7 +20,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const ref = useRef<HTMLInputElement | null>(null);
 	const inputRef = useRef(null);
 	const utilsData = useSelector((state: RootState) => state.utils);
-
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	let location = useLocation();
@@ -56,20 +56,21 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 	async function findUserProfile(content: string) {
 		if (content) {
-			let res = await axiosConfig.get('https://10.4.5.1:5001/user/login/' + content);
-			if (!res.data.login)
-				res = await axiosConfig.get('https://10.4.5.1:5001/user/nickname/' + content);
-			if (!res.data.login)
+			let users = await axiosConfig.get('https://10.4.5.1:5001/user');
+			let indexUser = -1
+			if ((indexUser = users.data.findIndex((user: any) => user.login.toLowerCase() == content.toLowerCase() || user.nickname.toLowerCase() == content.toLowerCase())) == -1)
 				enqueueSnackbar('Cannot find user\'s profile.', { variant: "error", autoHideDuration: 2000 })
 			else
-				window.location.replace('https://10.4.5.1:3000/Profile/' + res.data.login);
+				window.location.replace('https://10.4.5.1:3000/Profile/' + users.data[indexUser].login);
 		}
 		return true;
 	}
 
-	const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-	const nickname = persistantReducer.userReducer.user?.nickname;
-	const avatar = persistantReducer.userReducer.user?.profile_pic;
+	const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer)
+	const notifReducer = useSelector((state: RootState) => state.persistantReducer.notifReducer)
+
+	const nickname = userReducer.user?.nickname;
+	const avatar = userReducer.user?.profile_pic;
 
 	utilsData.socket.removeAllListeners('ChatNotifsInit');
 
@@ -82,30 +83,18 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 		utilsData.socket.removeListener('ChatNotifsInit');
 	})
 
-	// utilsData.socket.removeAllListeners('newMsgReceived');
-
-	// utilsData.socket.on('newMsgReceived', function (data: any) {
-	// 	// if (!(persistantReducer.chatNotifReducer.convers.name == newNotif.name && persistantReducer.chatNotifReducer.convers.userOrRoom == newNotif.userOrRoom))
-	// 	if (data.login_sender == persistantReducer.userReducer.user?.login)
-	// 		addChatNotif({ name: data.login_sender, userOrRoom: data.userOrRoom, nb: 1 });
-	// 	utilsData.socket.off('newMsgReceived');
-	// 	utilsData.socket.removeListener('newMsgReceived');
-	// })
-
 	utilsData.socket.removeAllListeners('newChatNotif');
 
 	utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
-		// if (!(persistantReducer.chatNotifReducer.convers.name == newNotif.name && persistantReducer.chatNotifReducer.convers.userOrRoom == newNotif.userOrRoom))
 		if (!(conversNotif.name == newNotif.name && conversNotif.userOrRoom == newNotif.userOrRoom))
 			addChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom, nb: 1 });
 		else
-			utilsData.socket.emit('delChatNotifs', { loginOwner: persistantReducer.userReducer.user?.login, name: newNotif.name, userOrRoom: newNotif.userOrRoom });
+			utilsData.socket.emit('delChatNotifs', { loginOwner: userReducer.user?.login, name: newNotif.name, userOrRoom: newNotif.userOrRoom });
 		utilsData.socket.off('newChatNotif');
 		utilsData.socket.removeListener('newChatNotif');
 	})
 
 	useEffect(() => {
-		console.log('useEffect navbar')
 		if (props.openFriendConversFromProfile) {
 			if (isChat) {
 				closeChat();
@@ -124,13 +113,11 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	}, [props]);
 
 	const closeFriendList = () => {
-		//setConversChatNotif({ name: "", userOrRoom: false });
 		setOpenPopUp(false);
 		setFriendList(false);
 	}
 
 	const closeChat = () => {
-		//setConversChatNotif({ name: "", userOrRoom: false });
 		setOpenPopUp(false);
 		setChat(false);
 	}
@@ -157,16 +144,13 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 
 	function getNBNotifUnseen() {
 		let nbNotifs = 0;
-		persistantReducer.notifReducer.notifArray.forEach(item => {
-			console.log(item)
+		notifReducer.notifArray.forEach(item => {
 			if (!item.seen)
 				nbNotifs++;
 		})
-		console.log(nbNotifs);
 		return nbNotifs;
 	}
 
-	console.log("navbar");
 	return (
 		<div className="App">
 			<nav>
@@ -179,7 +163,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						</svg>
 						<input onMouseLeave={() => ref?.current?.blur()} ref={ref} type="text" maxLength={8} placeholder="Find user..." onKeyDown={(e) => { if (e.key === 'Enter') findUserProfile(ref?.current?.value!); }} />
 					</div>
-					<button className='reactour-friend-list' onClick={() => { //friendList
+					<button className='reactour-friend-list' onClick={() => {
 						setOpenPopUp(!open);
 						if (isChat) {
 							setChat(false);
@@ -187,6 +171,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						}
 						else if (isFriendList) {
 							setFriendList(false);
+							props.setOpenFriendConversFromProfile(false);
 							setOpenPopUp(false);
 						}
 						else if (isNotif) {
@@ -203,7 +188,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							</svg>
 						</Tooltip>
 					</button>
-					<button className='reactour-notif' onClick={() => { //notifs
+					<button className='reactour-notif' onClick={() => {
 						setAllNotifSeen()
 						setOpenPopUp(!open);
 						if (isChat) {
@@ -229,7 +214,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 							</Tooltip>
 						</Badge>
 					</button>
-					<button className='reactour-chat' onClick={() => { //chat
+					<button className='reactour-chat' onClick={() => {
 						setOpenPopUp(!open);
 						if (isChat) {
 							setOpenPopUp(false);
@@ -246,14 +231,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						else
 							setChat(true);
 					}}>
-						<Badge color="error" badgeContent={persistantReducer.chatNotifReducer.total}>
-							<Tooltip title="Chat">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-									<path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z" />
-									<path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z" />
-								</svg>
-							</Tooltip>
-						</Badge>
+						<AffPtnDeNotifChat />
 					</button>
 					<Tooltip title="Account">
 						<div className='profile reactour-profile' onClick={handleClick}>
@@ -297,7 +275,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 						transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 						anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 					>
-						<MenuItem key='Profile' component={Link} href={`/Profile/${persistantReducer.userReducer.user!.login}`}>
+						<MenuItem key='Profile' component={Link} href={`/Profile/${userReducer.user!.login}`}>
 							<ListItemIcon>
 								<Person fontSize="small" />
 							</ListItemIcon>

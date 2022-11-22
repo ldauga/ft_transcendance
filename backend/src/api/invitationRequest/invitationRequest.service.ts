@@ -25,7 +25,7 @@ export class InvitationRequestService {
 		});
 
 		if (!invit)
-			return []; // gestion d erreur needed
+			return [];
 		return invit;
 	}
 
@@ -38,7 +38,7 @@ export class InvitationRequestService {
 		});
 
 		if (!invit)
-			return null; // gestion d erreur needed
+			return null;
 		return invit;
 	}
 

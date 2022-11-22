@@ -61,8 +61,6 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.removeAllListeners('notif');
 
 	utilsData.socket.on('notif', function (notif: { type: NotifType, data?: Dictionary<any> }) {
-		console.log('notif', notif)
-		console.log('notif arr', persistantReducer.notifReducer.notifArray)
 		for (let index = 0; index < persistantReducer.notifReducer.notifArray.length; index++) {
 
 			if (persistantReducer.notifReducer.notifArray[index].type == NotifType.PENDINGINVITATION && notif.type == NotifType.PENDINGINVITATION)
@@ -89,7 +87,6 @@ function InvitationChecker(props: { children: any }) {
 	})
 
 	useEffect(() => {
-		console.log('useEffect invitation Checker')
 		if (!test) {
 			verifInvitationRequest()
 			test = true

@@ -440,7 +440,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
                     id="account-menu"
                     open={open}
                     className='setting-participant'
-                    // onClose={(e) => { e.stopPropagation(); handleCloseOptions()}}
                     onClick={(e) => { e.stopPropagation(); handleCloseOptions() }}
                     PaperProps={{
                         elevation: 0,
@@ -610,7 +609,6 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
         let i = 0;
         while (itemListHistory.length == oldLength && i < 3 ) {
             getListItem(data);
-            console.log("itemListHistory.length: ", itemListHistory.length);
             i++;
         }
         utilsData.socket.off('getAllParticipantsReturn');

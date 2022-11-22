@@ -15,7 +15,7 @@ export class BlackListController {
     return this.BlackListService.getAllBanTimer();
   }
 
-  @Get('/getAllRoomBan/:roomId/:roomName') //used
+  @Get('/getAllRoomBan/:roomId/:roomName')
   public getAllRoomBan(@Param('roomId', ParseIntPipe) roomId: number, @Param('roomName') roomName: string): Promise<{ id_banned: number, login_banned: string }[]> {
     return this.BlackListService.getAllRoomBan(roomId, roomName);
   }

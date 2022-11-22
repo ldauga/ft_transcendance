@@ -7,7 +7,7 @@ import { store } from './State/index';
 import { CookiesProvider } from 'react-cookie';
 
 const container = document.getElementById('app');
-const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+const root = createRoot(container!);
 root.render(
   <CookiesProvider>
     <Provider store={store}>

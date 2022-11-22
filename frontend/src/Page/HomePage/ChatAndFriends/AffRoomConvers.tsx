@@ -27,7 +27,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('newMsgReceived');
 
     utilsData.socket.on('newMsgReceived', function (data: any) {
-        console.log("newMsgReceived2");
         getUsers2();
         utilsData.socket.emit('delChatNotifs', { loginOwner: userData.userReducer.user?.login, name: props.roomsConversData.name, userOrRoom: true });
         utilsData.socket.off('newMsgReceived');
@@ -37,7 +36,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     utilsData.socket.removeAllListeners('getAllUsersInRoomReturn');
 
     utilsData.socket.on('getAllUsersInRoomReturn', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
-        console.log("getAllUsersInRoomReturn: ", data);
         utilsData.socket.off('getAllUsersInRoomReturn');
         utilsData.socket.removeListener('getAllUsersInRoomReturn');
     })
@@ -183,7 +181,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         const usersTmp = await getUsers(data);
         await axiosConfig.get('https://10.4.5.1:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             let itemList: any[] = []
-            console.log("res: ", res);
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item usersTmp={usersTmp} item={item} />
@@ -210,8 +207,6 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
         })
         await axiosConfig.get('https://10.4.5.1:5001/messages/room/' + props.roomsConversData.id).then(async (res) => {
             let itemList: any[] = []
-            console.log("res: ", res);
-            console.log("USERS: ", users);
             res.data.forEach((item: { id_sender: number, id_receiver: number, login_sender: string, login_receiver: string, userOrRoom: boolean, serverMsg: boolean, room_id: number, room_name: string, text: string, year: string, month: string, day: string, hour: string, minute: string }) => {
                 itemList.push(<div key={itemList.length.toString()} className={((item.id_sender == userData.userReducer.user?.id && !item.serverMsg) ? 'content-sender' : (item.serverMsg ? 'itemListConversContainerServer' : 'content-receiver'))}>
                     <Item usersTmp={users} item={item} />
@@ -222,12 +217,10 @@ function AffConvers(props: { roomsConversData: { name: string, id: number } }) {
     }
 
     useEffect(() => {
-        console.log('useEffect aff convers')
         messagesEndRef.current?.scrollIntoView();
     }, [itemListHistory])
 
     useEffect(() => {
-        console.log('useEffect aff convers 2')
         if (update) {
             getUsers2();
             setUpdate(false);

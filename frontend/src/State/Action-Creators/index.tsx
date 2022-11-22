@@ -3,7 +3,6 @@ import { clientListActionType, LogActionType, userActionType, notifActionType, t
 import { clientListAction, logAction, userAction, notifAction, twoFactorAction, chatNotifAction, inviteCheckAction } from "../Actions"
 import { Client, msg, Notif } from "../type"
 
-//ClientList
 export const addClient = (item: Client) => {
     return (dispatch: Dispatch<clientListAction>) => {
         dispatch({
@@ -40,7 +39,6 @@ export const setActivConvers = (item: string) => {
     }
 }
 
-//LogData
 export const setUsername = (item: string) => {
     return (dispatch: Dispatch<logAction>) => {
         dispatch({
@@ -59,7 +57,6 @@ export const setId = (item: string) => {
     }
 }
 
-//User
 export const setUser = (item: {
     id: number,
     login: string,
@@ -80,7 +77,6 @@ export const setUser = (item: {
     }
 }
 
-//Notif
 export const setNotif = (item: any) => {
     return (dispatch: Dispatch<notifAction>) => {
         dispatch({
@@ -115,7 +111,6 @@ export const delAllNotif = () => {
     }
 }
 
-//Chat Notif
 export const addChatNotif = (item: { name: string, userOrRoom: boolean, nb: number }) => {
     return (dispatch: Dispatch<chatNotifAction>) => {
         dispatch({
@@ -168,8 +163,6 @@ export const setTwoFactor = (item: boolean) => {
         })
     }
 }
-
-// Invite
 
 export const setInviteCheck = (item: boolean) => {
     return (dispatch: Dispatch<inviteCheckAction>) => {
