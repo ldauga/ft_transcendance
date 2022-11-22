@@ -40,10 +40,9 @@ export class AuthService {
 			let user = await this.userServices.getUserByLogin(data.login);
 
 			if (!user) {
-
 				this.userServices.checkErrorNickname(data.login)
-
-				user = await this.userServices.createUser(data);
+				const body = { login: data.login, image: data.image.link}
+				user = await this.userServices.createUser(body);
 			}
 			return this.signUser(user);
 		} catch (error) {

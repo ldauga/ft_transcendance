@@ -4,8 +4,6 @@ import { RootState } from '../../../State';
 import './CSS/AffParticipantsRooms.scss'
 import './CSS/FriendList.scss'
 import '../Homepage.scss'
-import { constWhileSecu } from '../HomePage';
-import BanRoomParticipant from '../../../Trash/BanRoomParticipant';
 import CreateInvitationRooms from './CreateInvitationRooms';
 import axiosConfig from '../../../Utils/axiosConfig';
 import MuteRoomParticipant from './MuteRoomParticipant';
@@ -19,6 +17,7 @@ import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useSnackbar } from 'notistack';
+import BanRoomParticipant from './BanRoomParticipant';
 
 function AffParticipantsRooms(props: { roomsConversData: { name: string, id: number }, setAffParticipantsRooms: Function, setConversRooms: Function, closeConvers: Function, setRooms: Function, oldAffRoomConvers: string, setChat: Function }) {
 

@@ -1,9 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
-	@IsString()
-	@IsNotEmpty()
-	public nickname: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -11,5 +8,5 @@ export class CreateUserDto {
 
 	@IsString()
 	@IsNotEmpty()
-	public image_url: string;
+	public image: string;
 }
