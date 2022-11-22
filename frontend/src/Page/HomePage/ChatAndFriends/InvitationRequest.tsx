@@ -66,7 +66,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
     }
 
     const getListItem = async () => {
-        await axiosConfig.get('https://10.4.5.1:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReducer.userReducer.user?.id).then(async (res) => {
             let itemList: any[] = []
             res.data.forEach((item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string, admin: boolean }) => {
                 itemList.push(<div key={itemList.length.toString()} className='itemList'>
@@ -129,7 +129,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
 
     const acceptFriendInvit = (item: { id_user1: number, id_user2: number, user1_accept: boolean, user2_accept: boolean, sender_login: string, receiver_login: string, userOrRoom: boolean, room_id: number, room_name: string }) => {
         utilsData.socket.emit('removeInvitationRequest', item);
-        axiosConfig.get('https://10.4.5.1:5001/blackList/checkIfRelationIsBlocked/' + item.sender_login + '/' + item.receiver_login).then(async (res) => {
+        axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + item.sender_login + '/' + item.receiver_login).then(async (res) => {
             if (res.data) {
                 enqueueSnackbar('Unable to add friend, relation is blocked.', { variant: "warning", autoHideDuration: 2000 })
             }
@@ -143,7 +143,7 @@ function InvitationRequest(props: { setFriendList: Function, setInvitationReques
                 if (!itemListHistory.length)
                     if (persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.PENDINGINVITATION) != undefined)
                         delNotif(persistantReducer.notifReducer.notifArray.find(notif => notif.type == NotifType.PENDINGINVITATION)!)
-        
+
                 utilsData.socket.emit('addFriend', newFriend);
                 enqueueSnackbar('You have accepted a friend request', { variant: "success", autoHideDuration: 2000 })
             }

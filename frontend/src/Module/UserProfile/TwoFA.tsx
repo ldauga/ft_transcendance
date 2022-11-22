@@ -45,7 +45,7 @@ function TWOFA() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const sendGetRequest = async (value: string) => {
-        const res = await axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-on/' + value)
+        const res = await axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
         if (res.request.status === 200) {
             setTwoFactor(true);
             setUserParameter2FACode('');
@@ -61,7 +61,7 @@ function TWOFA() {
         <>
             {!persistantReduceur.userReducer.user?.isTwoFactorAuthenticationEnabled ?
                 <>
-                    <button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://10.4.5.1:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
+                    <button onClick={() => { setOpenEditZone2fa(true); axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data))) }}>Set 2FA</button>
                     <Dialog open={openEditZone2fa} onClose={() => { setOpenEditZone2fa(false) }}>
                         <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
                         <DialogContent className='two-fa'>
@@ -77,7 +77,7 @@ function TWOFA() {
                                 autoSelect={true}
                             />
                         </DialogContent>
-                    </Dialog></> : <button onClick={() => { axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
+                    </Dialog></> : <button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate 2FA</button>}
         </>
     );
 }

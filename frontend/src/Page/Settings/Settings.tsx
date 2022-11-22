@@ -31,13 +31,13 @@ function Settings() {
 		param(true);
 
 		if (param == setOpenEditZone2fa) {
-			axiosConfig.get('https://10.4.5.1:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data)))
+			axiosConfig.get('https://localhost:5001/auth/2fa/generate/').then(res => (setUserParameter2FAQrCode(res.data)))
 		}
 	};
 
 	const handleClose = (param: any) => {
 		if (userParameterNewNickname != persistantReduceur.userReducer.user?.nickname)
-			axiosConfig.post('https://10.4.5.1:5001/user/updateNickname', { nickname: userParameterNewNickname }).then((res) => { if (res.data) setUser(res.data) })
+			axiosConfig.post('https://localhost:5001/user/updateNickname', { nickname: userParameterNewNickname }).then((res) => { if (res.data) setUser(res.data) })
 
 		if (userParameterNewProfilePicture != null) {
 
@@ -46,7 +46,7 @@ function Settings() {
 
 			var config = {
 				method: 'post',
-				url: 'https://10.4.5.1:5001/user/upload',
+				url: 'https://localhost:5001/user/upload',
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
@@ -65,7 +65,7 @@ function Settings() {
 	};
 
 	const sendGetRequest = (value: string) => {
-		axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-on/' + value)
+		axiosConfig.get('https://localhost:5001/auth/2fa/turn-on/' + value)
 			.then(res => {
 				setTwoFactor(true);
 				setUserParameter2FACode('');
@@ -178,7 +178,7 @@ function Settings() {
 							<><h3>Desactivate 2FA :</h3>
 								<div className='edit'>
 									<p>Your two factor connection is already activated</p>
-									<button onClick={() => { axiosConfig.get('https://10.4.5.1:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate</button>
+									<button onClick={() => { axiosConfig.get('https://localhost:5001/auth/2fa/turn-off/').then(res => { setUser(res.data) }) }}>Desactivate</button>
 								</div>
 							</>
 						}

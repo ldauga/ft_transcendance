@@ -52,15 +52,6 @@ export class AuthService {
 		}
 	}
 
-	async loginSans42(login: string) {
-		let user = await this.userServices.getUserByLogin(login);
-
-		if (!user) {
-			user = await this.userServices.createUserSans42(login);
-		}
-		return this.signUser(user);
-	}
-
 	async generateTwoFactorAuthenticationSecret(refreshToken: string) {
 		const secret = authenticator.generateSecret();
 		const response = await this.userServices.getUserByRefreshToken(refreshToken);

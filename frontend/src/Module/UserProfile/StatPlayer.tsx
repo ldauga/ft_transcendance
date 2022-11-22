@@ -134,7 +134,7 @@ function StatPlayer() {
 
 	const fetchUser = async () => {
 		if (profile.login) {
-			const res = await axiosConfig.get('https://10.4.5.1:5001/user/login/' + profile.login)
+			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
 			if (res.data !== '') {
 				setProfile({
 					...profile,
@@ -166,13 +166,13 @@ function StatPlayer() {
 				}
 				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			} else
-				location.replace('/https://10.4.5.1:3000/NotFound');
+				location.replace('/https://localhost:3000/NotFound');
 		} else
-			location.replace('/https://10.4.5.1:3000/NotFound');
+			location.replace('/https://localhost:3000/NotFound');
 	}
 
 	const fetchMatchHistory = async () => {
-		await axiosConfig.get('https://10.4.5.1:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
+		await axiosConfig.get('https://localhost:5001/matchesHistory/parsedMatchesHistory/' + profile.id)
 			.then((res) => {
 				let matches: any[] = []
 				res.data.forEach((item: { nickname_user1: string, login_user1: string, score_u1: number, nickname_user2: string, login_user2: string, score_u2: number, winner_nickname: string, date: Date }) => {
@@ -181,11 +181,11 @@ function StatPlayer() {
 							<div className="card">
 								<h3>{item.winner_nickname == profile.nickname ? 'Victory' : 'Defeat'}</h3>
 								<div className='opponent'>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + item.login_user1) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user1) }}>
 										{item.nickname_user1}
 									</span>
 									<span className='score'>{item.score_u1.toString() + '-' + item.score_u2.toString()}</span>
-									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + item.login_user2) }}>
+									<span onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + item.login_user2) }}>
 										{item.nickname_user2}
 									</span>
 								</div>
@@ -245,7 +245,7 @@ function StatPlayer() {
 
 		var config = {
 			method: 'post',
-			url: 'https://10.4.5.1:5001/user/upload',
+			url: 'https://localhost:5001/user/upload',
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
@@ -264,7 +264,7 @@ function StatPlayer() {
 
 	async function buttonAddFriend() {
 		let test = false;
-		await axiosConfig.get('https://10.4.5.1:5001/user/login/' + profile.login).then(async (res) => {
+		await axiosConfig.get('https://localhost:5001/user/login/' + profile.login).then(async (res) => {
 			let receiver_login_tmp: string = res.data.login;
 			if (res.data == "") {
 				return;
@@ -273,7 +273,7 @@ function StatPlayer() {
 				let a = 1;
 				let b = 1;
 				let c = 1;
-				await axiosConfig.get('https://10.4.5.1:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://localhost:5001/invitationRequest/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Invitation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
@@ -281,7 +281,7 @@ function StatPlayer() {
 						a = 2;
 					}
 				})
-				await axiosConfig.get('https://10.4.5.1:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
+				await axiosConfig.get('https://localhost:5001/friendList/' + persistantReduceur.userReducer.user?.id + '/' + res.data.id).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Relation already exist', { variant: "warning", autoHideDuration: 2000 })
 					}
@@ -289,7 +289,7 @@ function StatPlayer() {
 						b = 2;
 					}
 				})
-				await axiosConfig.get('https://10.4.5.1:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
+				await axiosConfig.get('https://localhost:5001/blackList/checkUserBan/' + persistantReduceur.userReducer.user?.login + '/' + profile.login).then(async (res) => {
 					if (res.data == true) {
 						enqueueSnackbar('Your relation is blocked', { variant: "warning", autoHideDuration: 2000 })
 					}

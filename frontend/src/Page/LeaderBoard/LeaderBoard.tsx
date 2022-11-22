@@ -17,7 +17,7 @@ function LeaderBoard() {
 
 	useEffect(() => {
 		if (!rows.length) {
-			axiosConfig.get('https://10.4.5.1:5001/user').then(res => {
+			axiosConfig.get('https://localhost:5001/user').then(res => {
 
 				let tmp = res.data
 
@@ -69,7 +69,7 @@ function LeaderBoard() {
 					<table>
 						<tbody>
 							{rows.map((row) => (
-								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://10.4.5.1:3000/Profile/' + row.login) }} key={row.nickname}>
+								<tr className='element' onClick={() => { history.pushState({}, '', window.URL.toString()); window.location.replace('https://localhost:3000/Profile/' + row.login) }} key={row.nickname}>
 									<td><div className="user"><img src={row.profile_pic} /> <span>{row.nickname}</span></div></td>
 									<td>
 										<Tooltip title={ToolTipHelper(row.wins)}>

@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, ForbiddenException, Get, Logger, Param, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { Response } from 'express';
@@ -8,8 +8,9 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
 	constructor(
 		private authService: AuthService,
-		private userServices: UserService
+		private userServices: UserService,
 	) {}
+	private readonly logger = new Logger('Auth');
 
 	@Get('/login')
 	async login(@Query() query, @Res({ passthrough: true }) res: Response) {
@@ -25,23 +26,10 @@ export class AuthController {
 			};
 
 			res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-			res.status(302).redirect(`https://10.4.5.1:3000/Login/Callback`);
+			res.status(302).redirect(`https://localhost:3000/Login/Callback`);
 		} catch(e) {
-			res.status(403).redirect('https://10.4.5.1:3000/Login');
+			res.status(403).redirect('https://localhost:3000/Login');
 		};
-	}
-
-	@Get('/loginSans42/:login')
-	async loginSans42(@Param('login') login: string, @Res({ passthrough: true }) res: Response) {
-		const accessToken = await this.authService.loginSans42(login);
-		const refreshToken = await this.userServices.getRefreshToken(accessToken);
-		const secretData = {
-			accessToken,
-			refreshToken
-		};
-
-		res.cookie('auth-cookie', secretData, { httpOnly: true, secure: true });
-		res.status(302).redirect(`https://10.4.5.1:3000/Login/Callback`);
 	}
 
 	@Get('2fa/generate')
@@ -110,6 +98,7 @@ export class AuthController {
 	@Get('/refresh/')
 	@UseGuards(AuthGuard('refresh'))
 	async refresh(@Req() request, @Res({ passthrough: true }) res: Response) {
+		this.logger.log('Refresh');
 		const accessToken = await this.authService.createAccessTokenFromRefresh(request);
 		let refreshToken = request?.cookies["auth-cookie"].refreshToken;
 		const secretData = {

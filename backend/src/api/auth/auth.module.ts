@@ -19,7 +19,7 @@ import { ConfigService } from '@nestjs/config';
 				return {
 					secret: configService.get<string>('SECRET'),
 					signOptions: {
-						expiresIn: '1h',
+						expiresIn: '15min',
 					},
 				};
 			},

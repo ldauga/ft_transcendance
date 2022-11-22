@@ -22,7 +22,7 @@ function ConnectionChecker(props: {
   })
 
   if (!test) {
-      axios.get("https://10.4.5.1:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
+      axios.get("https://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
 
       utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
       test = true;

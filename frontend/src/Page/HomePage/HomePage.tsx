@@ -24,7 +24,7 @@ function HomePage() {
     useEffect(() => {
 
         if (persistantReducer.userReducer.user?.isFirstConnection) {
-			axiosConfig.post('https://10.4.5.1:5001/user/firstConnection').then(res => setUser(res.data))
+			axiosConfig.post('https://localhost:5001/user/firstConnection').then(res => setUser(res.data))
             setIsOpen(true)
 		}
     })

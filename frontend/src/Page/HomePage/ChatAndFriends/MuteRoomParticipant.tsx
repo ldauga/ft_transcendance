@@ -28,7 +28,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
         if (text.length <= 0 || (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && !alwaysOrNot)) {
             return;
         }
-        await axiosConfig.get('https://10.4.5.1:5001/user/login/' + text).then(async (res) => {
+        await axiosConfig.get('https://localhost:5001/user/login/' + text).then(async (res) => {
             setText("");
             let receiver_login_tmp: string = res.data.login;
             if (res.data == "") {
@@ -37,7 +37,7 @@ function MuteRoomParticipant(props: { roomsConversData: { name: string, id: numb
             else {
                 let a = 1;
                 let b = 1;
-                await axiosConfig.get('https://10.4.5.1:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
+                await axiosConfig.get('https://localhost:5001/muteList/checkRoomMute/' + res.data.id + '/' + res.data.login + '/' + props.roomsConversData.name).then(async (res) => {
                     if (res.data == true) {
                     }
                     else {
