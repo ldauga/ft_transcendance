@@ -146,6 +146,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
+    if (arrClient.find(item => item.id == client.id).username != "")
+      this.logger.log(`[Event-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
+    else
+      this.logger.log(`[Event-Gateway] Client unregistered disconect : ${client.id}`)
 
     const tmp = arrClient.find(item => item.id == client.id)
 
@@ -155,6 +159,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
 
   handleConnection(client: any, ...args: any[]) {
+    this.logger.log(`[Event-Gateway] New client connected : ${client.id}`)
     const newClient: Client = {
       id: client.id,
       username: ""

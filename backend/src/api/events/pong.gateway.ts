@@ -75,6 +75,11 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   handleDisconnect(client: Socket) {
 
+    if (arrClient.find(item => item.id == client.id).username != "")
+      this.logger.log(`[Pong-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
+    else
+      this.logger.log(`[Pong-Gateway] Client unregistered disconect : ${client.id}`)
+
     const tmp = arrClient.find(item => item.id == client.id)
 
     if (tmp != undefined && tmp.username != "" && tmp.username != undefined) {
@@ -125,6 +130,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleConnection(client: any, ...args: any[]) {
+    this.logger.log(`[Pong-Gateway] New client connected : ${client.id}`)
     const newClient: Client = {
       id: client.id,
       username: ""
