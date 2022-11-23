@@ -10,6 +10,42 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
 import { Observable } from 'rxjs';
+import { extname } from 'path';
+import { existsSync, mkdirSync } from 'fs';
+
+export const multerOptions = {
+  // Enable file size limits
+  limits: {
+      fileSize: 1048576,
+  },
+  // Check the mimetypes to allow for upload
+  fileFilter: (req: any, file: any, cb: any) => {
+      if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          // Allow storage of file
+          cb(null, true);
+      } else {
+          // Reject file
+          cb(new BadRequestException(`Unsupported file type ${extname(file.originalname)}`));
+      }
+  },
+  // Storage properties
+  storage: diskStorage({
+      // Destination storage path details
+      destination: (req: any, file: any, cb: any) => {
+          const uploadPath = './uploads/profileImages';
+          // Create folder if doesn't exist
+          if (!existsSync(uploadPath)) {
+              mkdirSync(uploadPath);
+          }
+          cb(null, uploadPath);
+      },
+      // File modification details
+      filename: (req: any, file: any, cb: any) => {
+          // Calling the callback passing the random name generated with the original extension name
+          cb(null, `${uuidv4()}${extname(file.originalname)}`);
+      },
+  }),
+};
 
 export const storage = {
   storage: diskStorage({
@@ -78,7 +114,7 @@ export class UserController {
 
   @Post('upload')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('photo', storage))
+  @UseInterceptors(FileInterceptor('photo', multerOptions))
   public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
     return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
   }
