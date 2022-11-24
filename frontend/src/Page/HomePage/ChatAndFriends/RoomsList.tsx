@@ -95,18 +95,24 @@ function RoomsList(props: { setRooms: Function, setRoomsList: Function, setChat:
     };
 
     const joinWithPassword = async () => {
-        await axiosConfig.get('https://localhost:5001/rooms/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + roomToJoin.id + '/' + roomToJoin.name + '/' + password).then(async (res) => {
-            if (res.data == "ok") {
-                join(roomToJoin);
-                setPassword("");
-                setOpenDialog(false);
-                setRoomToJoin({ id: 0, name: "", publicOrPrivate: false });
-            }
-            else {
-                setPassword("");
-                enqueueSnackbar('Wrong password', { variant: "error", autoHideDuration: 2000 })
-            }
-        });
+        if (password.length <= 0 || password.length > 10) {
+            setPassword("");
+            enqueueSnackbar('Wrong password', { variant: "error", autoHideDuration: 2000 })
+        }
+        else {
+            await axiosConfig.get('https://localhost:5001/rooms/' + userData.userReducer.user?.id + '/' + userData.userReducer.user?.login + '/' + roomToJoin.id + '/' + roomToJoin.name + '/' + password).then(async (res) => {
+                if (res.data == "ok") {
+                    join(roomToJoin);
+                    setPassword("");
+                    setOpenDialog(false);
+                    setRoomToJoin({ id: 0, name: "", publicOrPrivate: false });
+                }
+                else {
+                    setPassword("");
+                    enqueueSnackbar('Wrong password', { variant: "error", autoHideDuration: 2000 })
+                }
+            });
+        }
     };
 
     const getListItem = async (data: { id: number, name: string, publicOrPrivate: boolean, passwordOrNot: boolean }[]) => {

@@ -11,7 +11,7 @@ import AffParticipantsBanned from './AffParticipantsBanned';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, ListItemIcon, Menu, TextField, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from 'react';
-import { ArrowBackIosNew, Person, Settings } from '@mui/icons-material';
+import { ArrowBackIosNew, Person, Settings, TrendingDown } from '@mui/icons-material';
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SendIcon from '@mui/icons-material/Send';
@@ -227,24 +227,32 @@ function AffParticipantsRooms(props: { roomsConversData: { name: string, id: num
             }
             else {
                 const oldResData = res.data;
-                await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
-                    if (res.data == true) {
-                        enqueueSnackbar('You can\'t remove this admin role, user is the group owner', { variant: "warning", autoHideDuration: 2000 })
-                        return;
+                await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + userData.userReducer.user?.id + '/' + props.roomsConversData.name).then(async (res) => {
+                    if (res.data) {
+                        await axiosConfig.get('https://localhost:5001/rooms/checkIfOwner/' + item.id + '/' + props.roomsConversData.name).then(async (res) => {
+                            if (res.data == true) {
+                                enqueueSnackbar('You can\'t remove this admin role, user is the group owner', { variant: "warning", autoHideDuration: 2000 })
+                                return;
+                            }
+                            else {
+                                if (oldResData) {
+                                    const removeAdmin = {
+                                        id_sender: userData.userReducer.user?.id,
+                                        id_admin: oldResData.id,
+                                        login_sender: userData.userReducer.user?.login,
+                                        login_admin: oldResData.login,
+                                        room_id: props.roomsConversData.id,
+                                        room_name: props.roomsConversData.name
+                                    }
+                                    utilsData.socket.emit('removeAdmin', removeAdmin);
+                                    enqueueSnackbar('Admin removed', { variant: "success", autoHideDuration: 2000 })
+                                }
+                            }
+                        });
                     }
                     else {
-                        if (oldResData) {
-                            const removeAdmin = {
-                                id_sender: userData.userReducer.user?.id,
-                                id_admin: oldResData.id,
-                                login_sender: userData.userReducer.user?.login,
-                                login_admin: oldResData.login,
-                                room_id: props.roomsConversData.id,
-                                room_name: props.roomsConversData.name
-                            }
-                            utilsData.socket.emit('removeAdmin', removeAdmin);
-                            enqueueSnackbar('Admin removed', { variant: "success", autoHideDuration: 2000 })
-                        }
+                        enqueueSnackbar('You can\'t remove this admin role, you\'re not the group owner', { variant: "warning", autoHideDuration: 2000 })
+                        return;
                     }
                 });
             }

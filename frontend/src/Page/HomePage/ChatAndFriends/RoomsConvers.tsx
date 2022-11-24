@@ -403,6 +403,10 @@ function RoomsConvers(props: { setFriendList: Function, setRooms: Function, setR
         function sendMessage() {
             if (messageText.length <= 0 || isMute)
                 return;
+            if (messageText.length > 300) {
+                enqueueSnackbar(`Max message size: 300 characters`, { variant: 'warning', autoHideDuration: 1000 })
+                setMessageText("");
+            }
             if ((Math.round(((new Date()).valueOf() / 1000))) < count + 2) {
                 enqueueSnackbar(`Please wait ${(count + 2) - (Math.round(((new Date()).valueOf() / 1000)))} seconds`, { variant: 'warning', autoHideDuration: 1000 })
                 return;

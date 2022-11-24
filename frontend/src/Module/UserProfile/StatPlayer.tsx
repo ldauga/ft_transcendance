@@ -135,7 +135,7 @@ function StatPlayer() {
 	const fetchUser = async () => {
 		if (profile.login) {
 			const res = await axiosConfig.get('https://localhost:5001/user/login/' + profile.login)
-			if (res.data !== '') {
+			if (res.data && res.data !== '') {
 				setProfile({
 					...profile,
 					id: res.data.id,

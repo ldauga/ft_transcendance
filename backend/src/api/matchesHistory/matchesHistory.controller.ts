@@ -25,13 +25,19 @@ export class MatchesHistoryController {
   @Get('/:id')
   @UseGuards(AuthGuard('jwt'))
   public getUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<MatchesHistoryEntity[]> {
-  	return this.MatchesHistoryService.getUserMatchesHistory(id);
+    if (id)
+  	  return this.MatchesHistoryService.getUserMatchesHistory(id);
+    else
+      return null;
   }
 
   @Get('parsedMatchesHistory/:id')
   @UseGuards(AuthGuard('jwt'))
   public async getParsedUserMatchesHistory(@Param('id', ParseIntPipe) id: number): Promise<{nickname_user1: string, score_u1: number, nickname_user2: string, score_u2: number, winner_login: string, date: number}[]> {
-    return this.MatchesHistoryService.getParsedUserMatchesHistory(id);
+    if (id)
+      return this.MatchesHistoryService.getParsedUserMatchesHistory(id);
+    else
+      return null;
   }
 
   @Post()

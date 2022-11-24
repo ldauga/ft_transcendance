@@ -14,6 +14,7 @@ import { SnackbarProvider } from 'notistack';
 import StatPlayer from './Module/UserProfile/StatPlayer';
 import Spectate from './Page/Pong/Spectate';
 import { TourProvider } from '@reactour/tour';
+import { useLocation } from 'react-router-dom'
 
 const steps = [
   {
@@ -43,7 +44,6 @@ const steps = [
 ]
 
 function App() {
-
 
   return (
     <SnackbarProvider maxSnack={5}>
@@ -94,11 +94,11 @@ function App() {
 
       >
 
-        <BrowserRouter>
+        <BrowserRouter >
 
           <PersistGate loading={null} persistor={persistor}>
 
-            <Routes>
+            <Routes >
               <Route path='/' element={<Navigate to="/HomePage" replace />} />
 
               <Route path='/Login' element={<Login />} />
@@ -117,7 +117,7 @@ function App() {
 
 
               <Route path='/NotFound' element={<ConnectionChecker component={<NotFound />} />} />
-              <Route path='/*' element={<Navigate to="/NotFound" replace />} />
+              <Route path='/*' element={<ConnectionChecker component={<NotFound />} />} />
             </Routes>
 
           </PersistGate>
