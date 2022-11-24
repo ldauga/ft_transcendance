@@ -33,6 +33,8 @@ export class UserService {
 	}
 
 	async getUserByLogin(login: string): Promise<UserEntity> {
+		if (!login)
+			return null;
 		const user = await this.userRepository.findOneBy({ login: login });
 		if (!user)
 			return null;

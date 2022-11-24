@@ -27,7 +27,6 @@ function InvitationChecker(props: { children: any }) {
 	utilsData.socket.off('start_invite_game')
 
 
-
 	window.onload = function () {
 		if (persistantReducer.inviteCheckReducer.verif)
 			setInviteCheckReload(true)

@@ -1119,7 +1119,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (checkParticipant) {
       const removeParticipantReturn = await this.ParticipantsService.removeParticipant(data.login_banned, data.room_name);
       const _notif = arrNotifs.find(obj => obj.username == data.login_banned);
-      if (_notif) {
+      if (_notif && removeParticipantReturn) {
         const _notifToReset = _notif.notifs.findIndex(obj => obj.name == data.room_name);
         if (_notifToReset)
           _notif.notifs.splice(_notifToReset, 1);
@@ -1156,8 +1156,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.server.to(_client.id).emit('kickedOutOfTheGroup', true);
         this.server.to(_client.id).emit('notif', { type: 'YOUWEREBANFROMTHEGROUP', data: { room_name: data.room_name, login_sender: data.login_sender } })
         const index = arrRoom.find(obj => obj.name == data.room_name).users.indexOf(_client);
-        arrRoom.find(obj => obj.name == data.room_name).users.splice(index, 1);
         const room = arrRoom.find(obj => obj.name == data.room_name);
+        room.users.splice(index, 1);
         let i = 0;
         while (i < room.users.length) {
           let iencli = arrClient.find(obj => obj.username == room.users[i].username);
@@ -1330,7 +1330,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         for (let i = 0; _rooms.length > i; i++) {
           const _participant = await this.ParticipantsService.checkParticipant(_user.login, _rooms[i].name);
           const _ban = await this.BlacklistService.checkRoomBan(_user.id, _user.login, _rooms[i].name);
-          if (!_participant && !_ban)
+          if (!_participant && !_ban && !_rooms[i].publicOrPrivate)
             retArr.push({ id: _rooms[i].id, name: _rooms[i].name, publicOrPrivate: _rooms[i].publicOrPrivate, passwordOrNot: _rooms[i].passwordOrNot });
         }
         if (retArr.length <= 0)

@@ -37,19 +37,44 @@ export class UserController {
   @Get('/id/:id')
   @UseGuards(AuthGuard('jwt'))
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
-    return this.service.getUserById(id);
+    if (id)
+      return this.service.getUserById(id);
+    else
+      return null;
   }
 
   @Get('/login/:login')
   @UseGuards(AuthGuard('jwt'))
   public getUserByLogin(@Param('login') login: string): Promise<UserEntity> {
-    return this.service.getUserByLogin(login);
+    if (login.length <= 8 && login.length > 0) {
+      for (let i = 0; i < login.length; i++) {
+        var char1 = login.charAt(i);
+        var cc = char1.charCodeAt(0);
+
+        if (!((cc > 96 && cc < 123) || cc == 45)) {
+          return null;
+        }
+      }
+      return this.service.getUserByLogin(login);
+    }
+    return null;
   }
 
   @Get('/nickname/:nickname')
   @UseGuards(AuthGuard('jwt'))
   public getUserByNickname(@Param('nickname') nickname: string): Promise<UserEntity> {
-    return this.service.getUserByNickname(nickname);
+    if (nickname.length <= 8 && nickname.length > 0) {
+      for (let i = 0; i < nickname.length; i++) {
+        var char1 = nickname.charAt(i);
+        var cc = char1.charCodeAt(0);
+
+        if (!((cc > 96 && cc < 123) || cc == 45)) {
+          return null;
+        }
+      }
+      return this.service.getUserByNickname(nickname);
+    }
+    return null;
   }
 
   @Get('/userExist')

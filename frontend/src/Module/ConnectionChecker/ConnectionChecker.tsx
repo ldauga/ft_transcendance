@@ -5,6 +5,8 @@ import { bindActionCreators } from "redux";
 import axios from "axios";
 import InvitationChecker from "../InvitationChecker/InvitationChecker";
 import { useEffect } from "react";
+import { useLocation } from 'react-router-dom'
+import Callback from "../../Page/Login/Callback";
 
 var test = false
 
@@ -28,8 +30,48 @@ function ConnectionChecker(props: {
       test = true;
   }
 
+  const location = useLocation();
+
+  const verifPath = () => {
+    if (location.pathname) {
+      if (location.pathname.length > 20 || location.pathname.length < 2) {
+        return false;
+      }
+      else {
+        // if (location.pathname.length >= 8) {
+        //   console.log(location.pathname.substring(0, 7))
+        //   if (location.pathname.substring(0, 8) == "/Profile") {
+        //     if (location.pathname.length != 17)
+        //       return false;
+        //     else {
+        //       const tmp = location.pathname.substring(9, 8);
+        //       console.log(tmp);
+        //       axios.get("https://localhost:5001/user/login/" + tmp, { withCredentials: true }).then((item) => {
+        //         if (item.data)
+        //           return true;
+        //         else {
+        //           console.log("null");
+        //           return false;
+        //         }
+        //      })
+        //     }
+        //   }
+        //     console.log("profile")
+        // }
+        return true;
+      }
+    }
+    return false;
+  }
+
   if (persistantReducer.userReducer.user !== null && ((persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled && persistantReducer.twoFactorReducer.verif) || !persistantReducer.userReducer.user.isTwoFactorAuthenticationEnabled))
-    return <InvitationChecker children={props.component} ></InvitationChecker>
+  {
+    if (verifPath()) {
+      return <InvitationChecker children={props.component} ></InvitationChecker>
+    }
+    else
+      return <Callback />
+  }
   else
     return <Navigate to="/Login" />
 }
