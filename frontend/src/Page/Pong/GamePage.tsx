@@ -148,7 +148,7 @@ const GamePage = (props: any) => {
             ctx.textAlign = "center";
 
             if (!room.players[0].connected || !room.players[1].connected) {
-                ctx.fillText("Opponent disconected.", canvas.width / 2, canvas.height / 3);
+                ctx.fillText("Opponent disconnected.", canvas.width / 2, canvas.height / 3);
                 ctx.fillText((15 - Math.floor((Date.now() - room.players[room.players[0].connected ? 1 : 0].dateDeconnection) / 1000)).toString(), canvas.width / 2, canvas.height / 2);
             }
             else
