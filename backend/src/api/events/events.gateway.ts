@@ -149,7 +149,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     if (arrClient.find(item => item.id == client.id).username != "")
       this.logger.log(`[Event-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
     else
-      this.logger.log(`[Event-Gateway] Client unregistered disconect : ${client.id}`)
+      this.logger.log(`[Event-Gateway] Client unregistered disconnect : ${client.id}`)
 
     const tmp = arrClient.find(item => item.id == client.id)
 
