@@ -17,7 +17,7 @@ function SendChatMsg(props: {setSendChatMsg: Function}) {
 
     const [text, setText] = useState('');
 
-    const [connectedClient, setConnectedClient] = useState<{ id: string, username: string, nickname: string }[]>(new Array());
+    const [connectedClient, setConnectedClient] = useState<{ id: string, login: string, nickname: string }[]>(new Array());
 
     const [inputValue, setInputValue] = useState('');
 
@@ -26,8 +26,9 @@ function SendChatMsg(props: {setSendChatMsg: Function}) {
     utilsData.socket.on('getAllClientConnected', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
         const tmp: any[] = []
         data.forEach(client => {
+            console.log(client)
             if (client.login != userData.userReducer.user?.login) {
-                const a = { id: client.id, username: client.login, nickname: client.nickname };
+                const a = { id: client.id, login: client.login, nickname: client.nickname };
                 tmp.push(a);
             }
         })
@@ -49,14 +50,14 @@ function SendChatMsg(props: {setSendChatMsg: Function}) {
         }
         const _user = connectedClient.find(obj => obj.nickname == inputValue);
         if (_user) {
-            await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + _user.username).then(async (res) => {
+            await axiosConfig.get('https://localhost:5001/blackList/checkIfRelationIsBlocked/' + userData.userReducer.user?.login + '/' + _user.login).then(async (res) => {
                 if (res.data == true) {
                     enqueueSnackbar('You can\'t send a message to ' + _user.nickname + ', your relation is blocked', { variant: "error", autoHideDuration: 6000 })
                     return;
                 }
             });
             let test = false;
-            await axiosConfig.get('https://localhost:5001/user/login/' + _user.username).then(async (res) => {
+            await axiosConfig.get('https://localhost:5001/user/nickname/' + _user.nickname).then(async (res) => {
                 setText("");
                 let receiver_login_tmp: string = res.data.login;
                 if (res.data == "") {
