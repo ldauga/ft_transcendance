@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, UseInterceptors, UploadedFile, Res, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards, Req, UseInterceptors, UploadedFile, Res, UnauthorizedException, BadRequestException, Logger, ConsoleLogger } from '@nestjs/common';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from './user.entity';
@@ -11,53 +11,32 @@ import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
 import { Observable } from 'rxjs';
 import { extname } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, unlink } from 'fs';
 
 export const multerOptions = {
-  // Enable file size limits
   limits: {
       fileSize: 1048576,
   },
-  // Check the mimetypes to allow for upload
   fileFilter: (req: any, file: any, cb: any) => {
       if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
-          // Allow storage of file
           cb(null, true);
       } else {
-          // Reject file
           cb(new BadRequestException(`Unsupported file type ${extname(file.originalname)}`));
       }
   },
-  // Storage properties
   storage: diskStorage({
-      // Destination storage path details
       destination: (req: any, file: any, cb: any) => {
           const uploadPath = './uploads/profileImages';
-          // Create folder if doesn't exist
           if (!existsSync(uploadPath)) {
               mkdirSync(uploadPath);
           }
           cb(null, uploadPath);
       },
-      // File modification details
       filename: (req: any, file: any, cb: any) => {
-          // Calling the callback passing the random name generated with the original extension name
           cb(null, `${uuidv4()}${extname(file.originalname)}`);
       },
   }),
 };
-
-export const storage = {
-  storage: diskStorage({
-    destination: './uploads/profileImages',
-    filename: (req, file, cb) => {
-      const filename: string = uuidv4();
-      const extension: string = path.parse(file.originalname).ext;
-
-      cb(null, `${filename}${extension}`)
-    }
-  })
-}
 
 @Controller('user')
 export class UserController {
@@ -115,8 +94,18 @@ export class UserController {
   @Post('upload')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', multerOptions))
-  public uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
-    return this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
+  public async uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
+	const buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
+	const res = await this.service.checkMagicNumber(image.mimetype, buffer);
+	if (!res) {
+		unlink(process.cwd() + '/uploads/profileImages/'+ image.filename, (err) => {
+			if(err)
+				return err;
+		});
+		throw new BadRequestException('Unable to update your avatar.')
+	}
+	const ret = this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
+	return ret;
   }
 
   @Post('firstConnection')
