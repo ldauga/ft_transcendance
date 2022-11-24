@@ -120,17 +120,20 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', multerOptions))
   public async uploadFile(@Req() req: Request, @UploadedFile() image: Express.Multer.File) {
-	const buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
-	const res = await this.service.checkMagicNumber(image.mimetype, buffer);
-	if (!res) {
-		unlink(process.cwd() + '/uploads/profileImages/'+ image.filename, (err) => {
-			if(err)
+	if (image.filename) {
+		let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
+		const res = await this.service.checkMagicNumber(image.mimetype, buffer);
+		if (!res) {
+			unlink(process.cwd() + '/uploads/profileImages/'+ image.filename, (err) => {
+				if(err)
 				return err;
-		});
-		throw new BadRequestException('Unable to update your avatar.')
-	}
-	const ret = this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
-	return ret;
+			});
+			throw new BadRequestException('Unable to update your avatar.')
+		}
+		const ret = this.service.updateProfilePic(req.cookies['auth-cookie'].refreshToken, image.filename)
+		return ret;
+	} else
+		throw new BadRequestException('Unable to update your avatar, file too big.');
   }
 
   @Post('firstConnection')

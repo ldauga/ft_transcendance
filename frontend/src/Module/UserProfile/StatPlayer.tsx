@@ -166,9 +166,9 @@ function StatPlayer() {
 				}
 				utilsData.socket.emit('GET_CLIENT_STATUS', { user: res.data })
 			} else
-				location.replace('/https://localhost:3000/NotFound');
+				window.location.replace('https://localhost:3000/NotFound')
 		} else
-			location.replace('/https://localhost:3000/NotFound');
+			window.location.replace('https://localhost:3000/NotFound')
 	}
 
 	const fetchMatchHistory = async () => {
@@ -258,7 +258,12 @@ function StatPlayer() {
 			setProfile({ ...profile, profile_pic: res.data.profile_pic });
 			enqueueSnackbar('Your profile picture has been updated !', { variant: 'success', autoHideDuration: 2000 })
 		}).catch((err) => {
-			enqueueSnackbar('Unable to update your profile picture.', { variant: 'warning', autoHideDuration: 2000 })
+			if (err.response.status == 413)
+				enqueueSnackbar('File size too big', { variant: 'warning', autoHideDuration: 2000 })
+			else if (err.response.status == 400)
+				enqueueSnackbar('Unable to update your avatar', { variant: 'warning', autoHideDuration: 2000 })
+			else
+				enqueueSnackbar(err.response?.data.error, { variant: 'warning', autoHideDuration: 2000 })
 		})
 	}
 
@@ -428,41 +433,46 @@ function StatPlayer() {
 
 	return (
 		<>
-			<NavBar openFriendConversFromProfile={openConversFromProfile} dataFriendConversFromProfile={dataOpenConversFromProfile} setOpenFriendConversFromProfile={setOpenConversFromProfile} />
-			<Background />
-			<div className='stat-player-content'>
-				<div className='profile'>
-					<div className='user'>
-						<img src={profile.profile_pic} />
-						<div className='name'>
-							<p>{profile.nickname}</p>
-							<p>{profile.login}</p>
-							<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'rgb(28, 177, 123)' : profile.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }} ></span> {profile.status}</p>
+		{ (profile.loaded) ?
+			<>
+				<NavBar openFriendConversFromProfile={openConversFromProfile} dataFriendConversFromProfile={dataOpenConversFromProfile} setOpenFriendConversFromProfile={setOpenConversFromProfile} />
+				<Background />
+				<div className='stat-player-content'>
+					<div className='profile'>
+						<div className='user'>
+							<img src={profile.profile_pic} />
+							<div className='name'>
+								<p>{profile.nickname}</p>
+								<p>{profile.login}</p>
+								<p><span className='status-player' style={{ backgroundColor: profile.status == 'online' ? 'rgb(28, 177, 123)' : profile.status == 'in-game' ? 'orange' : 'rgb(203, 90, 98)' }} ></span> {profile.status}</p>
+							</div>
+						</div>
+						{profile_btn()}
+					</div>
+					<div className='stat'>
+						<div className="rank">
+							<img src={rank.img} />
+							<span>{rank.label}</span>
+						</div>
+						<div className="all-match">
+							<p className='match-played'>Match Played: {profile.wins + profile.losses}</p>
+							<div className="wins-loses">
+								<p>Wins: {profile.wins}</p>
+								<p>Losses: {profile.losses}</p>
+							</div>
 						</div>
 					</div>
-					{profile_btn()}
-				</div>
-				<div className='stat'>
-					<div className="rank">
-						<img src={rank.img} />
-						<span>{rank.label}</span>
-					</div>
-					<div className="all-match">
-						<p className='match-played'>Match Played: {profile.wins + profile.losses}</p>
-						<div className="wins-loses">
-							<p>Wins: {profile.wins}</p>
-							<p>Losses: {profile.losses}</p>
+					<div className="match-history">
+						<h1>Match History</h1>
+						<div className="cards">
+							{profileUserMatchHistory}
 						</div>
 					</div>
 				</div>
-				<div className="match-history">
-					<h1>Match History</h1>
-					<div className="cards">
-						{profileUserMatchHistory}
-					</div>
-				</div>
-			</div>
-		</>
+			</> : <></>
+
+}
+</>
 	)
 }
 

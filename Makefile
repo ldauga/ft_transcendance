@@ -14,6 +14,7 @@ clean:
 
 fclean: clean
 	docker system prune --all --force --volumes
+	rm -rf backend/uploads
 
 re : fclean all
 
