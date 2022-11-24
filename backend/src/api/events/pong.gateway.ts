@@ -75,10 +75,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   handleDisconnect(client: Socket) {
 
-    if (arrClient.find(item => item.id == client.id).username != "")
-      this.logger.log(`[Pong-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
-    else
-      this.logger.log(`[Pong-Gateway] Client unregistered disconect : ${client.id}`)
 
     const tmp = arrClient.find(item => item.id == client.id)
 
@@ -130,7 +126,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleConnection(client: any, ...args: any[]) {
-    this.logger.log(`[Pong-Gateway] New client connected : ${client.id}`)
+    // this.logger.log(`[Pong-Gateway] { handleConnection } New client connected : ${client.id}`)
     const newClient: Client = {
       id: client.id,
       username: ""
@@ -159,7 +155,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         arrClient.forEach((client) => {
           this.server.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline', emitFrom: 'tmpFunction' })
         })
-        checkReconnexionArr.splice(index, 1)
+      this.logger.log(`[Pong-Gateway] Client \'${user.username}\' disconnect`)
+      checkReconnexionArr.splice(index, 1)
       }
     })
 
@@ -169,6 +166,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('storeClientInfo')
   storeClientInfo(client: Socket, user: { login: string }) {
+
     let tmp: number;
     let tmpRoom: [number, gameRoomClass];
     if ((tmpRoom = this.getRoomByClientLogin(user.login)) != null && !tmpRoom[1].players.find(player => player.user.login == user.login).connected) {
@@ -196,6 +194,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       checkReconnexionArr.splice(tmp, 1)
     }
     else if (user.login) {
+      this.logger.log(`[Pong-Gateway] { storeClientInfo } Client \'${client.id}\' is registered as : ${user.login}`)
       this.FriendListService.getUserFriendListWithLogin(user.login).then((res) => {
         for (let i = 0; i < res.length; i++) {
           let loginTmp: string;
@@ -252,8 +251,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('JOIN_ROOM')
   async joinRoom(client: Socket, roomId: string) {
+    this.logger.log(`[Pong-Gateway] { joinRoom } Client \'${arrClient.find(item => item.id == client.id).username}\' join room \'${roomId}\'`)
     client.join(roomId);
   }
+  
 
   private pongInfo: Array<gameRoomClass> = new Array()
 
@@ -762,12 +763,10 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     else
       this.joinRoom(client, "custom" + client.id)
 
-    if (info.fromProfile != undefined && info.fromProfile) {
-      if (info.map != undefined && (info.map == 'map2' || info.map == 'map3')) {
+    if (info.fromProfile != undefined && info.fromProfile && info.map != undefined && (info.map == 'map2' || info.map == 'map3')) {
         info.gameRoom.roomID = "custom" + client.id
         let index = this.pongInfo.push(new gameRoomClass(info.gameRoom.roomID, client.id, info.user, info.map)) - 1
         this.pongInfo[index].players.forEach(player => player.sendNotif = false)
-      }
     } else {
 
       info.gameRoom.roomID = "custom" + client.id
@@ -838,7 +837,6 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }) {
 
     var room = this.getRoomByID("custom" + info.inviteID)
-
 
     if (room != null) {
 
