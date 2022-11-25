@@ -13,6 +13,7 @@ import './Navbar.scss';
 import { SnackbarKey, withSnackbar } from 'notistack'
 import { useSnackbar } from 'notistack';
 import AffPtnDeNotifChat from './AffPtnChatNotif';
+import { delChatNotif } from '../../State/Action-Creators';
 
 let tmp = 0
 let verif = false
@@ -93,6 +94,14 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 			utilsData.socket.emit('delChatNotifs', { loginOwner: userReducer.user?.login, name: newNotif.name, userOrRoom: newNotif.userOrRoom });
 		utilsData.socket.off('newChatNotif');
 		utilsData.socket.removeListener('newChatNotif');
+	})
+
+	utilsData.socket.removeAllListeners('delChatNotif');
+
+	utilsData.socket.on('delChatNotif', function (name: string) {
+		delChatNotif({name: name, userOrRoom: true});
+		utilsData.socket.off('delChatNotif');
+		utilsData.socket.removeListener('delChatNotif');
 	})
 
 	useEffect(() => {
