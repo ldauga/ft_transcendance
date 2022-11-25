@@ -69,6 +69,8 @@ export const chatNotifReducer = (state: ChatNotifArray = initialState, action: c
 			};
 		}
 		case chatNotifActionType.DELCHATNOTIF: {
+			if (!action.payload || !action.payload.userOrRoom || !action.payload.name)
+				return state;
 			if (!action.payload.userOrRoom) {
 				let _notif = state.chatNotifArray.find(obj => (obj.name == action.payload.name && !action.payload.userOrRoom));
 				if (_notif) {

@@ -298,6 +298,34 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
       });
     });
+    this.RoomsService.getAllRooms().then((res) => {
+      if (res) {
+        res.forEach((item) => {
+          if (!arrRoom.find(obj => obj.name == item.name))
+            arrRoom.push({id: item.id, name: item.name, users: []});
+          const _room = arrRoom.find(obj => obj.name == item.name);
+          if (_room) {
+            const participants = this.ParticipantsService.getAllUsersForOneRoom(item.name).then((res) => {
+              if (res) {
+                res.forEach((element) => {
+                  const _client = arrClient.find(obj => obj.username == element.login);
+                  if (_client) {
+                    if (_room.users.find(obj => obj.username == element.login)) {
+                      if (_room.users.find(obj => obj.username == element.login).id != _client.id)
+                        _room.users.find(obj => obj.username == element.login).id = _client.id
+                    }
+                    else {
+                      console.log("push newClient modif de Camille le boss");
+                      _room.users.push(_client);
+                    }
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
   }
 
   @SubscribeMessage('deconnection')
@@ -543,6 +571,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
               if (_notifToReset)
                 _notif.notifs.splice(_notifToReset, 1);
             }
+            if (removeParticipantReturn) {
+              const _client = arrClient.find(obj => obj.username == _room.users[i].username);
+              if (_client)
+                this.server.to(_client.id).emit('delChatNotif', _room.name);
+            }
             i++;
           }
           const removeAllRoomMessagesReturn = await this.MessagesService.removeAllRoomMessages(_room.id, _room.name);
@@ -746,6 +779,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
         if (removeParticipantReturn) {
           this.server.to(client.id).emit('removeParticipantReturn', true);
+          const _client1 = arrClient.find(obj => obj.username == data.login);
+          if (_client1)
+            this.server.to(_client1.id).emit('delChatNotif', data.room_name);
           const _client = arrClient.find(obj => obj.username == data.login);
           if (_client != undefined) {
             const newMsg = {
@@ -947,7 +983,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
       const _client = arrClient.find(obj => obj.username == receiver_name);
       if (_client) {
-        this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
+        if (userOrRoom) {
+          this.BlacklistService.checkRoomBanWithLogin(receiver_name, sender_name).then((res) => {
+            if (!res) {
+              console.log("emit newChatNotif to ", _client.username);
+              this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
+            }
+            else {
+              console.log("le mec est ban bouffon")
+            }
+          })
+        }
+        else
+          this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
       }
     }
     else {
@@ -1124,6 +1172,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (_notifToReset)
           _notif.notifs.splice(_notifToReset, 1);
       }
+      const _client1 = arrClient.find(obj => obj.username == data.login_banned);
+      if (_client1)
+        this.server.to(_client1.id).emit('delChatNotif', data.room_name);
       const newMsg = {
         id_sender: 0,
         id_receiver: 0,
