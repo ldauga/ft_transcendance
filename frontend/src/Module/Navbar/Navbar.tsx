@@ -86,6 +86,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	utilsData.socket.removeAllListeners('newChatNotif');
 
 	utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
+		console.log(conversNotif.name, newNotif.name, conversNotif.userOrRoom, newNotif.userOrRoom);
 		if (!(conversNotif.name == newNotif.name && conversNotif.userOrRoom == newNotif.userOrRoom))
 			addChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom, nb: 1 });
 		else

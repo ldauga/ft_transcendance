@@ -117,6 +117,17 @@ export class BlackListService {
 		return true;
 	}
 
+	async checkRoomBanWithLogin(login: string, roomName: string): Promise<boolean> {
+		const check = await this.BlackListRepository.findOne({
+			where: [
+				{ login_banned: login, room_name: roomName }
+			]
+		});
+		if (check == null)
+			return false;
+		return true;
+	}
+
 	async createBan(body: any): Promise<BlackListEntity> {
 		const returnBan = this.BlackListRepository.save({
 			id_sender: body.id_sender,

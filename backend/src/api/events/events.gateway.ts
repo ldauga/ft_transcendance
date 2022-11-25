@@ -298,6 +298,34 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         }
       });
     });
+    this.RoomsService.getAllRooms().then((res) => {
+      if (res) {
+        res.forEach((item) => {
+          if (!arrRoom.find(obj => obj.name == item.name))
+            arrRoom.push({id: item.id, name: item.name, users: []});
+          const _room = arrRoom.find(obj => obj.name == item.name);
+          if (_room) {
+            const participants = this.ParticipantsService.getAllUsersForOneRoom(item.name).then((res) => {
+              if (res) {
+                res.forEach((element) => {
+                  const _client = arrClient.find(obj => obj.username == element.login);
+                  if (_client) {
+                    if (_room.users.find(obj => obj.username == element.login)) {
+                      if (_room.users.find(obj => obj.username == element.login).id != _client.id)
+                        _room.users.find(obj => obj.username == element.login).id = _client.id
+                    }
+                    else {
+                      console.log("push newClient modif de Camille le boss");
+                      _room.users.push(_client);
+                    }
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
   }
 
   @SubscribeMessage('deconnection')
@@ -947,7 +975,19 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       }
       const _client = arrClient.find(obj => obj.username == receiver_name);
       if (_client) {
-        this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
+        if (userOrRoom) {
+          this.BlacklistService.checkRoomBanWithLogin(receiver_name, sender_name).then((res) => {
+            if (!res) {
+              console.log("emit newChatNotif to ", _client.username);
+              this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
+            }
+            else {
+              console.log("le mec est ban bouffon")
+            }
+          })
+        }
+        else
+          this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
       }
     }
     else {
