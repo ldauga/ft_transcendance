@@ -9,7 +9,7 @@ export interface ChatNotifArray {
 }
 
 export const initialState: ChatNotifArray = {
-	chatNotifArray: new Array<ChatNotif>,
+	chatNotifArray: new Array<ChatNotif>(),
 	total: 0,
 	convers: { name: "", userOrRoom: false }
 }
@@ -69,14 +69,13 @@ export const chatNotifReducer = (state: ChatNotifArray = initialState, action: c
 			};
 		}
 		case chatNotifActionType.DELCHATNOTIF: {
-			if (!action.payload || !action.payload.userOrRoom || !action.payload.name)
+			if (!action.payload)
 				return state;
 			if (!action.payload.userOrRoom) {
 				let _notif = state.chatNotifArray.find(obj => (obj.name == action.payload.name && !action.payload.userOrRoom));
 				if (_notif) {
 					state.total -= _notif.nb;
 					_notif.nb = 0;
-
 				}
 			}
 			else {

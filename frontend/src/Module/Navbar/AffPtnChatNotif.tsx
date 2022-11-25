@@ -1,13 +1,17 @@
 import { Badge, Tooltip } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
 import './Navbar.scss';
 
 function AffPtnDeNotifChat() {
-    const chatNotifTotal = useSelector((state: RootState) => state.persistantReducer.chatNotifReducer.total);
+    const chatNotif = useSelector((state: RootState) => state.persistantReducer.chatNotifReducer);
+
+	useEffect(() => {
+	}, [chatNotif])
+
     return (
-        <Badge color="error" badgeContent={chatNotifTotal}>
+        <Badge color="error" badgeContent={chatNotif.total}>
             <Tooltip title="Chat">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z" />

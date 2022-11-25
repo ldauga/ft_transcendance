@@ -128,7 +128,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleConnection(client: any, ...args: any[]) {
-    // this.logger.log(`[Pong-Gateway] { handleConnection } New client connected : ${client.id}`)
+    this.logger.log(`[Pong-Gateway] { handleConnection } New client connected : ${client.id}`)
     const newClient: Client = {
       id: client.id,
       username: ""
@@ -256,7 +256,7 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log(`[Pong-Gateway] { joinRoom } Client \'${arrClient.find(item => item.id == client.id).username}\' join room \'${roomId}\'`)
     client.join(roomId);
   }
-  
+
 
   private pongInfo: Array<gameRoomClass> = new Array()
 

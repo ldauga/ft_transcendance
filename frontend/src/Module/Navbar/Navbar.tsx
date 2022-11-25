@@ -25,7 +25,7 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	const open = Boolean(anchorEl);
 	let location = useLocation();
 	const dispatch = useDispatch();
-	const { setUser, setAllNotifSeen, delAllNotif, setTwoFactor, setConversChatNotif, addChatNotif, initChatNotif } = bindActionCreators(actionCreators, dispatch);
+	const { setUser, setAllNotifSeen, delAllNotif, setTwoFactor, setConversChatNotif, addChatNotif, initChatNotif, delChatNotif } = bindActionCreators(actionCreators, dispatch);
 	const [cookies, setCookie, removeCookie] = useCookies(["auth-cookie"]);
 	const [openPopup, setOpenPopUp] = useState(false);
 	const [content, setContent] = useState('');
@@ -87,7 +87,6 @@ function NavBar(props: { openFriendConversFromProfile: boolean, dataFriendConver
 	utilsData.socket.removeAllListeners('newChatNotif');
 
 	utilsData.socket.on('newChatNotif', function (newNotif: { name: string, userOrRoom: boolean }) {
-		console.log(conversNotif.name, newNotif.name, conversNotif.userOrRoom, newNotif.userOrRoom);
 		if (!(conversNotif.name == newNotif.name && conversNotif.userOrRoom == newNotif.userOrRoom))
 			addChatNotif({ name: newNotif.name, userOrRoom: newNotif.userOrRoom, nb: 1 });
 		else

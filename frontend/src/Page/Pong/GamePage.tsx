@@ -286,7 +286,6 @@ const GamePage = (props: any) => {
         if (e.key === 'ArrowDown')
             utilsData.socket.emit('ARROW_DOWN', [props.roomID, true]);
         if (e.key === 'Enter') {
-            console.log('enter event')
             utilsData.socket.emit('ENTER', [props.roomID, true]);
         }
         if (e.key === ' ')

@@ -4,9 +4,7 @@ import { actionCreators, RootState } from "../../State";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import InvitationChecker from "../InvitationChecker/InvitationChecker";
-import { useEffect } from "react";
 import { useLocation } from 'react-router-dom'
-import Callback from "../../Page/Login/Callback";
 import NotFound from "../../Page/NotFound/NotFound";
 
 var test = false

@@ -146,10 +146,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   private logger: Logger = new Logger('AppGateway');
 
   handleDisconnect(client: Socket) {
-    if (arrClient.find(item => item.id == client.id).username != "")
-      this.logger.log(`[Event-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
-    else
-      this.logger.log(`[Event-Gateway] Client unregistered disconnect : ${client.id}`)
+	const _client = arrClient.find(item => item.id == client.id);
+	if (_client) {
+		if (_client.username != "")
+			this.logger.log(`[Event-Gateway] Client \'${arrClient.find(item => item.id == client.id).username}\' disconnect : ${client.id}`)
+		else
+			this.logger.log(`[Event-Gateway] Client unregistered disconnect : ${client.id}`)
+	}
+	else
+		this.logger.log(`[Event-Gateway] Client unregistered disconnect : ${client.id}`)
 
     const tmp = arrClient.find(item => item.id == client.id)
 
@@ -315,7 +320,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
                         _room.users.find(obj => obj.username == element.login).id = _client.id
                     }
                     else {
-                      console.log("push newClient modif de Camille le boss");
                       _room.users.push(_client);
                     }
                   }
@@ -573,8 +577,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             }
             if (removeParticipantReturn) {
               const _client = arrClient.find(obj => obj.username == _room.users[i].username);
-              if (_client)
+              if (_client) {
                 this.server.to(_client.id).emit('delChatNotif', _room.name);
+				this.delChatNotifs2({loginOwner: _client.username, name: _room.name, userOrRoom: true});
+			  }
             }
             i++;
           }
@@ -780,8 +786,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (removeParticipantReturn) {
           this.server.to(client.id).emit('removeParticipantReturn', true);
           const _client1 = arrClient.find(obj => obj.username == data.login);
-          if (_client1)
+          if (_client1) {
             this.server.to(_client1.id).emit('delChatNotif', data.room_name);
+			this.delChatNotifs2({loginOwner: _client1.username, name: data.room_name, userOrRoom: true});
+		  }
           const _client = arrClient.find(obj => obj.username == data.login);
           if (_client != undefined) {
             const newMsg = {
@@ -986,11 +994,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         if (userOrRoom) {
           this.BlacklistService.checkRoomBanWithLogin(receiver_name, sender_name).then((res) => {
             if (!res) {
-              console.log("emit newChatNotif to ", _client.username);
               this.server.to(_client.id).emit('newChatNotif', { name: sender_name, userOrRoom: userOrRoom });
-            }
-            else {
-              console.log("le mec est ban bouffon")
             }
           })
         }
@@ -1002,6 +1006,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       return;
     }
   };
+
+  delChatNotifs2(data: {loginOwner: string, name: string, userOrRoom: boolean}) {
+    const _notif = arrNotifs.find(obj => obj.username == data.loginOwner);
+    if (_notif) {
+      const _notifToReset = _notif.notifs.find(obj => (obj.name == data.name && obj.userOrRoom == data.userOrRoom));
+      if (_notifToReset) {
+        _notifToReset.nb = 0;
+      }
+    }
+  }
 
   @SubscribeMessage('delChatNotifs')
   delChatNotifs(client: Socket, data: any) {
@@ -1173,8 +1187,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
           _notif.notifs.splice(_notifToReset, 1);
       }
       const _client1 = arrClient.find(obj => obj.username == data.login_banned);
-      if (_client1)
+      if (_client1) {
         this.server.to(_client1.id).emit('delChatNotif', data.room_name);
+		this.delChatNotifs2({loginOwner: _client1.username, name: data.room_name, userOrRoom: true});
+	  }
       const newMsg = {
         id_sender: 0,
         id_receiver: 0,

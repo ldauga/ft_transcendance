@@ -8,6 +8,7 @@ import './CSS/CreateMap/CreateMapTemp.scss';
 import Background from "../../Module/Background/Background";
 import { bindActionCreators } from "redux";
 import { useSnackbar } from "notistack";
+import { inviteCheckReducer } from "../../State/Reducers/inviteCheckReducer";
 
 var canvas = {
 	"width": 800,
@@ -575,8 +576,8 @@ const CreateMapTemp = (props: any) => {
 							options={connectedClient.map((option) => option.username)}
 							renderInput={(params) => <TextField {...params} label="Invite friend" />}
 						/>
-						<Tooltip title={inviteInput.length ? `Invite ${inviteInput} on your map` : 'Create your map and invite one of your friend connected'}>
-							<button className="play" disabled={checkAllCollisionsBall(room.ball)} onClick={inviteButtonClick}>Play</button>
+						<Tooltip title={inviteInput.length ? `Invite ${inviteInput} on your map` : 'Create your map and invite one of your connected friends'}>
+							<button className="play" disabled={checkAllCollisionsBall(room.ball) || !inviteInput.length} onClick={inviteButtonClick}>Play</button>
 						</Tooltip>
 					</div>
 				</div>

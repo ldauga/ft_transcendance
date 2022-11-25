@@ -408,7 +408,7 @@ function StatPlayer() {
 								</div>
 								<DialogActions>
 									<button className='join-queue' type='button' onClick={() => { setAnchorEl(null) }}>Cancel</button>
-									<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap), fromProfile: true, map: inviteGameMap }); setAnchorEl(null); enqueueSnackbar(`Game invitation send to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
+									<button className='join-queue' type='button' onClick={() => { utilsData.socket.emit('INVITE_CUSTOM', { user: persistantReduceur.userReducer.user, userLoginToSend: profile.login, gameRoom: new gameRoomClass('', '', null, inviteGameMap), fromProfile: true, map: inviteGameMap }); setAnchorEl(null); enqueueSnackbar(`Game invitation sent to ${profile.login}.`, { variant: 'success', autoHideDuration: 2000 }) }}>{'Invite ' + profile.nickname}</button>
 								</DialogActions>
 							</Dialog>
 						</> : <></>}
