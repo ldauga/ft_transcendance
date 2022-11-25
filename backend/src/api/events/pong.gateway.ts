@@ -118,6 +118,8 @@ export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             }
           })
 
+          this.server.to(this.pongInfo[allRoom[i].index].roomID).emit('finish', this.pongInfo[allRoom[i].index])
+
         }
 
         this.pongInfo.splice(allRoom[i].index, 1)

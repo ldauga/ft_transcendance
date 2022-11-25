@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../../Module/Navbar/Navbar';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../State';
@@ -286,6 +286,7 @@ const GamePage = (props: any) => {
         if (e.key === 'ArrowDown')
             utilsData.socket.emit('ARROW_DOWN', [props.roomID, true]);
         if (e.key === 'Enter') {
+            console.log('enter event')
             utilsData.socket.emit('ENTER', [props.roomID, true]);
         }
         if (e.key === ' ')
@@ -296,7 +297,7 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('MINUS', [props.roomID, true]);
     }
 
-    document.addEventListener("keydown", (e) => onKeyDown(e));
+    
 
     function onKeyUp(e: any) {
         if (e.key === 'ArrowUp')
@@ -311,7 +312,7 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('MINUS', [props.roomID, false]);
     }
 
-    document.addEventListener("keyup", onKeyUp);
+    
 
     const [tabValue, setTabValue] = useState('1')
 
@@ -350,6 +351,16 @@ const GamePage = (props: any) => {
         )
 
     }
+
+    const [verif, setVerif] = useState(false)
+
+    useEffect(() => {
+        if (!verif) {
+            document.addEventListener("keydown", (e) => onKeyDown(e));
+            document.addEventListener("keyup", onKeyUp);
+            setVerif(true);
+        }
+    })
 
     return (
         <div className="mainDiv">

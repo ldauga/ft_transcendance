@@ -26,7 +26,6 @@ function SendChatMsg(props: {setSendChatMsg: Function}) {
     utilsData.socket.on('getAllClientConnected', function (data: { id: number, login: string, nickname: string, profile_pic: string }[]) {
         const tmp: any[] = []
         data.forEach(client => {
-            console.log(client)
             if (client.login != userData.userReducer.user?.login) {
                 const a = { id: client.id, login: client.login, nickname: client.nickname };
                 tmp.push(a);

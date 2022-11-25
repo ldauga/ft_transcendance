@@ -170,10 +170,29 @@ export class UserService {
 		return retUser;
 	}
 
+	async checkMagicNumber(type: string, buffer: Buffer) {
+		if (type == 'image/jpg' || type == 'image/jpeg') {
+			if (buffer.toString('hex').length < "ffd8ff".length) {
+				return false;
+			}
+			if (buffer.toString('hex').substring(0, 6) == "ffd8ff")
+				return true;
+		}
+		else if (type == 'image/png') {
+			if (buffer.toString('hex').length < "89504e47".length) {
+				return false;
+			}
+			if (buffer.toString('hex').substring(0, 8) == "89504e47")
+				return true;
+		}
+		return false;
+	}
+
 	async updateProfilePic(refreshToken, filename: string): Promise<GetUserDto> {
 		const user = await this.getUserByRefreshToken(refreshToken);
 		if (!user)
 			return null;
+
 
 		user.profile_pic = `${process.env.BASE_URL}/user/profilePic/:${filename}`;
 		this.userRepository.save(user);
