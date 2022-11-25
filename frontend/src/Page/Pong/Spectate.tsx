@@ -23,8 +23,6 @@ function Spectate() {
     useEffect(() => {
         if (!verif) {
             if (window.location.href.toString().split('/').reverse()[0] == 'Spectate') {
-
-
                 history.pushState({}, '', window.URL.toString())
                 window.location.replace('https://localhost:3000/NotFound')
             }
@@ -167,7 +165,7 @@ function Spectate() {
             ctx.textAlign = "center";
 
             if (!room.players[0].connected || !room.players[1].connected) {
-                ctx.fillText("Oponent disconected.", canvas.width / 2, canvas.height / 3);
+                ctx.fillText("Oponent disconnected.", canvas.width / 2, canvas.height / 3);
                 ctx.fillText((15 - Math.floor((Date.now() - room.players[room.players[0].connected ? 1 : 0].dateDeconnection) / 1000)).toString(), canvas.width / 2, canvas.height / 2);
             }
             else

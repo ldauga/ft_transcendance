@@ -13,7 +13,7 @@ function Login() {
 	function onClick42Login() {
 		setUser(null)
 		setTwoFactor(false)
-		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-bfefebbec4535153df2d3db283bafab0ba8027dd304604a100070653921d9721&redirect_uri=https%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
+		window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-df0f4dd2427878ccac15324ec302d9143641c88217994dd66796c42c8eba923b&redirect_uri=https%3A%2F%2Flocalhost%3A5001%2Fauth%2Flogin&response_type=code`, '_self')
 	}
 
 	return (

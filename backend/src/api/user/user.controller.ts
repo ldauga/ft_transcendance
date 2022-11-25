@@ -25,13 +25,7 @@ export const multerOptions = {
       }
   },
   storage: diskStorage({
-      destination: (req: any, file: any, cb: any) => {
-          const uploadPath = './uploads/profileImages';
-          if (!existsSync(uploadPath)) {
-              mkdirSync(uploadPath);
-          }
-          cb(null, uploadPath);
-      },
+      destination: './uploads/profileImages',
       filename: (req: any, file: any, cb: any) => {
           cb(null, `${uuidv4()}${extname(file.originalname)}`);
       },
@@ -103,17 +97,22 @@ export class UserController {
 
   @Get('profilePic/:fileId')
   @UseGuards(AuthGuard('jwt'))
-  getProfilePic(@Param('fileId') fileId: string, @Res() res): Observable<Object> {
+  async getProfilePic(@Param('fileId') fileId: string, @Req() req: Request, @Res() res): Promise<Object> {
+	const refreshToken = req.cookies['auth-cookie']?.refreshToken;
     const fileName = fileId.split(':')[1];
     var options = {
       root: path.join(process.cwd() + '/uploads/profileImages/')
     };
 
-    return res.sendFile(fileName, options, function (err) {
-      if (err) {
-        throw new BadRequestException('Unable to find user\'s avatar');
-      }
-    });
+	const user = await this.service.getUserByRefreshToken(refreshToken);
+	if (user.profile_pic.substring(8, 11) == "cdn") {
+		return res.sendFile(fileName, options, function (err) {
+			if (err) {
+				throw new BadRequestException('Unable to find user\'s avatar');
+			}
+		});
+	}
+	return res.sendFile(fileName, options);
   }
 
   @Post('upload')

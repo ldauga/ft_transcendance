@@ -297,7 +297,7 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('MINUS', [props.roomID, true]);
     }
 
-    
+
 
     function onKeyUp(e: any) {
         if (e.key === 'ArrowUp')
@@ -312,7 +312,7 @@ const GamePage = (props: any) => {
             utilsData.socket.emit('MINUS', [props.roomID, false]);
     }
 
-    
+
 
     const [tabValue, setTabValue] = useState('1')
 
